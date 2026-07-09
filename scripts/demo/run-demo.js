@@ -134,7 +134,55 @@ function wordCount(text) {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+function freePort(port) {
+  try {
+    if (process.platform === 'win32') {
+      execSync(
+        `for /f "tokens=5" %a in ('netstat -ano ^| findstr :${port}') do taskkill /F /PID %a`,
+        { stdio: 'ignore', shell: true },
+      );
+    } else {
+      // Kill anything still bound to the demo port from a prior run
+      try {
+        const pids = execSync(`lsof -tiTCP:${port} -sTCP:LISTEN 2>/dev/null`, {
+          encoding: 'utf8',
+        })
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean);
+        for (const pid of pids) {
+          try {
+            process.kill(Number(pid), 'SIGTERM');
+          } catch {
+            /* ignore */
+          }
+        }
+        if (pids.length) {
+          // brief wait then force
+          try {
+            execSync('sleep 0.4', { stdio: 'ignore' });
+          } catch {
+            /* ignore */
+          }
+          for (const pid of pids) {
+            try {
+              process.kill(Number(pid), 'SIGKILL');
+            } catch {
+              /* ignore */
+            }
+          }
+        }
+      } catch {
+        /* nothing listening */
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 function startServer() {
+  freePort(PORT);
   const env = {
     ...process.env,
     RESONARA_LITE: '1',
@@ -159,6 +207,7 @@ function startServer() {
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   let log = '';
+  let exited = false;
   child.stdout.on('data', (d) => {
     log += d.toString();
   });
@@ -166,11 +215,16 @@ function startServer() {
     log += d.toString();
   });
   child.on('exit', (code) => {
+    exited = true;
     if (code && code !== 0) {
       console.error('Server exited', code, log.slice(-2000));
     }
   });
-  return { child, getLog: () => log };
+  return {
+    child,
+    getLog: () => log,
+    isAlive: () => !exited && child.exitCode == null,
+  };
 }
 
 async function synthesizeSample(name, opts = {}) {
@@ -260,10 +314,15 @@ async function main() {
     execSync('npm run build', { cwd: ROOT, stdio: 'inherit' });
   }
 
-  const { child } = startServer();
+  const { child, isAlive, getLog } = startServer();
   try {
     console.log(`Waiting for server on ${BASE}…`);
     const health = await waitHealth();
+    if (!isAlive()) {
+      throw new Error(
+        `Demo server died before health stabilized.\n${getLog().slice(-2000)}`,
+      );
+    }
     console.log('Health OK', typeof health === 'object' ? JSON.stringify(health).slice(0, 200) : health);
 
     if (compareIdx >= 0) {
@@ -316,6 +375,14 @@ async function main() {
         JSON.stringify({ generatedAt: new Date().toISOString(), results: report }, null, 2),
       );
       console.log('Wrote', path.join(OUT_DIR, 'report.json'));
+      const failed = report.filter((r) => r.error);
+      if (failed.length) {
+        console.error(
+          `\n${failed.length} demo(s) failed:`,
+          failed.map((f) => f.name).join(', '),
+        );
+        process.exitCode = 1;
+      }
       return;
     }
 
@@ -325,15 +392,22 @@ async function main() {
     printStats(stats);
     if (!noOpen) openAudio(stats.output);
   } finally {
-    child.kill('SIGTERM');
+    try {
+      child.kill('SIGTERM');
+    } catch {
+      /* ignore */
+    }
     await sleep(300);
     try {
       child.kill('SIGKILL');
     } catch {
       /* ignore */
     }
+    freePort(PORT);
   }
 }
+
+
 
 main().catch((e) => {
   console.error(e);

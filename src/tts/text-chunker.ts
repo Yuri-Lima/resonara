@@ -107,14 +107,34 @@ export function estimateWordCount(text: string): number {
 /**
  * Detect chapter headings in plain/markdown text for bookmarking.
  */
+/**
+ * Detect chapter boundaries for long-form TTS.
+ * Conservative: only real chapter markers (Chapter N / H1), not every ## section.
+ * Markdown ##/### headings are ignored unless the document has few large sections
+ * (avg body ≥ 200 words) — avoids 20+ micro-chapters that break concat.
+ */
 export function detectChapters(
   text: string,
 ): { title: string; text: string }[] {
-  const re = /(?:^|\n)(#{1,3}\s+[^\n]+|Chapter\s+\d+[:.\s][^\n]*)/gi;
-  const matches = [...text.matchAll(re)];
-  if (!matches.length) {
-    return text.trim() ? [{ title: 'Body', text: text.trim() }] : [];
+  if (!text?.trim()) return [];
+
+  // Primary: explicit "Chapter N" or ATX H1 only
+  const primaryRe = /(?:^|\n)(#\s+[^\n]+|Chapter\s+\d+[:.\s][^\n]*)/gi;
+  let matches = [...text.matchAll(primaryRe)];
+
+  // Fallback: ## headings only when they form a small number of substantial sections
+  if (matches.length < 2) {
+    const h2Re = /(?:^|\n)(#{2,3}\s+[^\n]+)/gi;
+    const h2 = [...text.matchAll(h2Re)];
+    if (h2.length >= 2 && h2.length <= 12) {
+      matches = h2;
+    }
   }
+
+  if (matches.length < 2) {
+    return [{ title: 'Body', text: text.trim() }];
+  }
+
   const chapters: { title: string; text: string }[] = [];
   for (let i = 0; i < matches.length; i++) {
     const m = matches[i];
@@ -124,6 +144,18 @@ export function detectChapters(
       i + 1 < matches.length ? matches[i + 1].index ?? text.length : text.length;
     const body = text.slice(start, end).trim();
     if (body) chapters.push({ title, text: body });
+  }
+
+  if (chapters.length < 2) {
+    return [{ title: 'Body', text: text.trim() }];
+  }
+
+  const avgWords =
+    chapters.reduce((n, c) => n + estimateWordCount(c.text), 0) /
+    chapters.length;
+  // Too many tiny sections → treat as single body (use chunker instead)
+  if (chapters.length > 12 || avgWords < 40) {
+    return [{ title: 'Body', text: text.trim() }];
   }
   return chapters;
 }

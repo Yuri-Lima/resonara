@@ -180,6 +180,71 @@ code { font-family: var(--mono); font-size: 0.85em; color: #c7d7ff; }
 }
 .bar-fill.before { background: linear-gradient(90deg, #5a3a20, var(--warn)); width: var(--before) !important; position: absolute; opacity: 0.35; }
 .bar-track { position: relative; }
+/* Demo table Play buttons + shared player */
+.demo-player-bar {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.65rem;
+}
+.demo-player-bar audio {
+  width: 100%;
+  max-width: 640px;
+}
+.demo-play-btn {
+  background: linear-gradient(180deg, #2a4a8a, #1a3060);
+  border: 1px solid #3d6acc;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: 4.5rem;
+}
+.demo-play-btn:hover,
+.demo-play-btn:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.35);
+}
+.demo-play-btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+.demo-play-btn.is-playing {
+  background: linear-gradient(180deg, #1a5a40, #0f3a28);
+  border-color: var(--good);
+}
+.demo-play-btn.is-error {
+  background: linear-gradient(180deg, #6a2a30, #3a1518);
+  border-color: var(--bad);
+}
+.demo-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  max-width: 640px;
+}
+.demo-progress-track {
+  flex: 1;
+  height: 8px;
+  background: #1a2030;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.demo-progress-track i {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--good));
+  transition: width 0.25s ease;
+}
+#demo-progress-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  min-width: 2.5rem;
+}
 .chapter-demo-list { margin: 0.75rem 0 0; padding-left: 0; list-style: none; }
 .chapter-demo-list li { margin: 0.35rem 0; }
 .chapter-demo-list button,

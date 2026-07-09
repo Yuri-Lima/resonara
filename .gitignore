@@ -8,6 +8,8 @@ release/
 .env.*
 !.env.example
 *.log
+.resonara-ui.pid
+.resonara-ui.log
 .DS_Store
 tmp/
 uploads/

@@ -979,17 +979,27 @@ export class FfmpegService implements OnModuleInit {
       `areverse,` +
       `silenceremove=start_periods=1:start_silence=${minSil}:start_threshold=${threshold}dB,` +
       `areverse`;
-    await this.runFfmpegRaw([
-      '-hide_banner',
-      '-y',
-      '-i',
-      inputPath,
-      '-af',
-      af,
-      '-acodec',
-      'pcm_s16le',
-      outputPath,
-    ]);
+    try {
+      await this.runFfmpegRaw([
+        '-hide_banner',
+        '-y',
+        '-i',
+        inputPath,
+        '-af',
+        af,
+        '-acodec',
+        'pcm_s16le',
+        outputPath,
+      ]);
+      // Guard against over-trim (empty / near-empty output)
+      const inStat = await fs.promises.stat(inputPath);
+      const outStat = await fs.promises.stat(outputPath);
+      if (outStat.size < 1024 || outStat.size < inStat.size * 0.05) {
+        await fs.promises.copyFile(inputPath, outputPath);
+      }
+    } catch {
+      await fs.promises.copyFile(inputPath, outputPath);
+    }
     return outputPath;
   }
 
@@ -1029,6 +1039,70 @@ export class FfmpegService implements OnModuleInit {
    * boundaries; longer ones produce smear / double-speak. Tuned via listening.
    * Progressive pairwise acrossfade for N>2.
    */
+  /**
+   * Hard-concat WAV/audio segments via the concat demuxer (no crossfade).
+   * More reliable for many short clips / mixed silence gaps.
+   */
+  async concatAudioFiles(
+    partPaths: string[],
+    outputPath: string,
+    options: { format?: 'wav' | 'mp3' } = {},
+  ): Promise<string> {
+    if (!partPaths.length) {
+      throw new BadRequestException('No parts to concatenate');
+    }
+    await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
+    const format = options.format ?? 'wav';
+    if (partPaths.length === 1) {
+      if (format === 'wav' && partPaths[0] !== outputPath) {
+        await fs.promises.copyFile(partPaths[0], outputPath);
+        return outputPath;
+      }
+    }
+    const listFile = path.join(
+      path.dirname(outputPath),
+      `concat-list-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`,
+    );
+    const body = partPaths
+      .map((p) => `file '${p.replace(/\\/g, '/').replace(/'/g, "'\\''")}'`)
+      .join('\n');
+    await fs.promises.writeFile(listFile, body, 'utf8');
+    try {
+      const wavOut =
+        format === 'wav' ? outputPath : outputPath.replace(/\.[^.]+$/, '') + '.tmp.wav';
+      await this.runFfmpegRaw([
+        '-hide_banner',
+        '-y',
+        '-f',
+        'concat',
+        '-safe',
+        '0',
+        '-i',
+        listFile,
+        '-acodec',
+        'pcm_s16le',
+        wavOut,
+      ]);
+      if (format === 'mp3') {
+        await this.runFfmpegRaw([
+          '-hide_banner',
+          '-y',
+          '-i',
+          wavOut,
+          '-c:a',
+          'libmp3lame',
+          '-b:a',
+          '192k',
+          outputPath,
+        ]);
+        await fs.promises.unlink(wavOut).catch(() => undefined);
+      }
+    } finally {
+      await fs.promises.unlink(listFile).catch(() => undefined);
+    }
+    return outputPath;
+  }
+
   async crossfadeChunks(
     partPaths: string[],
     outputPath: string,
@@ -1040,16 +1114,32 @@ export class FfmpegService implements OnModuleInit {
     await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
     const d = options.durationSec ?? 0.02;
     const format = options.format ?? 'wav';
+    const workDir = path.dirname(outputPath);
+    const uid = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-    if (partPaths.length === 1) {
+    // Drop missing / empty parts
+    const existing: string[] = [];
+    for (const p of partPaths) {
+      try {
+        const st = await fs.promises.stat(p);
+        if (st.size > 44) existing.push(p);
+      } catch {
+        /* skip missing */
+      }
+    }
+    if (!existing.length) {
+      throw new BadRequestException('No valid audio parts to crossfade');
+    }
+
+    if (existing.length === 1) {
       if (format === 'wav') {
-        await fs.promises.copyFile(partPaths[0], outputPath);
+        await fs.promises.copyFile(existing[0], outputPath);
       } else {
         await this.runFfmpegRaw([
           '-hide_banner',
           '-y',
           '-i',
-          partPaths[0],
+          existing[0],
           '-c:a',
           'libmp3lame',
           '-b:a',
@@ -1060,17 +1150,61 @@ export class FfmpegService implements OnModuleInit {
       return outputPath;
     }
 
-    // Progressive: crossfade into temp files
-    const workDir = path.dirname(outputPath);
-    let current = partPaths[0];
-    for (let i = 1; i < partPaths.length; i++) {
-      const next = partPaths[i];
-      const isLast = i === partPaths.length - 1;
+    // Re-encode to a common mono PCM format so acrossfade never sees
+    // mismatched sample rates / channel layouts (source of ffmpeg graph asserts).
+    const unified: string[] = [];
+    for (let i = 0; i < existing.length; i++) {
+      const u = path.join(workDir, `xfade-u-${uid}-${i}.wav`);
+      try {
+        await this.runFfmpegRaw([
+          '-hide_banner',
+          '-y',
+          '-i',
+          existing[i],
+          '-ac',
+          '1',
+          '-ar',
+          '22050',
+          '-acodec',
+          'pcm_s16le',
+          u,
+        ]);
+        unified.push(u);
+      } catch {
+        unified.push(existing[i]);
+      }
+    }
+
+    // acrossfade requires each input longer than d; if any clip is short, hard-concat
+    const minSafe = Math.max(d * 3, 0.08);
+    let anyShort = false;
+    for (const p of unified) {
+      try {
+        const probe = await this.probe(p);
+        if (!probe.duration || probe.duration < minSafe) {
+          anyShort = true;
+          break;
+        }
+      } catch {
+        anyShort = true;
+        break;
+      }
+    }
+    if (anyShort) {
+      return this.concatAudioFiles(unified, outputPath, { format });
+    }
+
+    // Progressive pairwise acrossfade
+    let current = unified[0];
+    for (let i = 1; i < unified.length; i++) {
+      const next = unified[i];
+      const isLast = i === unified.length - 1;
       const out =
         isLast && format === 'wav'
           ? outputPath
-          : path.join(workDir, `xfade-${i}.wav`);
-      const filter = `acrossfade=d=${d}:c1=tri:c2=tri`;
+          : path.join(workDir, `xfade-${uid}-${i}.wav`);
+      // Explicit mono stream labels avoid "best_input >= 0" on some ffmpeg builds
+      const filter = `[0:a][1:a]acrossfade=d=${d}:c1=tri:c2=tri[a]`;
       try {
         await this.runFfmpegRaw([
           '-hide_banner',
@@ -1081,32 +1215,18 @@ export class FfmpegService implements OnModuleInit {
           next,
           '-filter_complex',
           filter,
+          '-map',
+          '[a]',
           '-acodec',
           'pcm_s16le',
           out,
         ]);
+        current = out;
       } catch {
-        // Fallback: hard concat of current+next
-        const listFile = path.join(workDir, `concat-fallback-${i}.txt`);
-        const body = [current, next]
-          .map((p) => `file '${p.replace(/'/g, "'\\''")}'`)
-          .join('\n');
-        await fs.promises.writeFile(listFile, body, 'utf8');
-        await this.runFfmpegRaw([
-          '-hide_banner',
-          '-y',
-          '-f',
-          'concat',
-          '-safe',
-          '0',
-          '-i',
-          listFile,
-          '-acodec',
-          'pcm_s16le',
-          out,
-        ]);
+        // Pairwise failure → hard-concat remainder from current
+        const rest = [current, ...unified.slice(i)];
+        return this.concatAudioFiles(rest, outputPath, { format });
       }
-      current = out;
     }
 
     if (format === 'mp3') {
@@ -1129,6 +1249,8 @@ export class FfmpegService implements OnModuleInit {
 
   /**
    * TTS post-processing: highpass + optional compressor + EBU R128 normalize.
+   * Falls back gracefully if loudnorm/filters trip ffmpeg graph bugs
+   * (e.g. "Assertion best_input >= 0" on some ffmpeg builds).
    */
   async postProcessTts(
     inputPath: string,
@@ -1147,6 +1269,10 @@ export class FfmpegService implements OnModuleInit {
     const format = options.format ?? 'wav';
     await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
 
+    const workDir = path.dirname(outputPath);
+    const uid = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    let work = inputPath;
+
     const filters: string[] = [];
     if (highpass) filters.push('highpass=f=80');
     if (compress) {
@@ -1155,33 +1281,61 @@ export class FfmpegService implements OnModuleInit {
       );
     }
 
-    let work = inputPath;
-    const workDir = path.dirname(outputPath);
     if (filters.length) {
-      const filtered = path.join(workDir, 'tts-filtered.wav');
-      await this.runFfmpegRaw([
-        '-hide_banner',
-        '-y',
-        '-i',
-        inputPath,
-        '-af',
-        filters.join(','),
-        '-acodec',
-        'pcm_s16le',
-        filtered,
-      ]);
-      work = filtered;
+      const filtered = path.join(workDir, `tts-filtered-${uid}.wav`);
+      try {
+        await this.runFfmpegRaw([
+          '-hide_banner',
+          '-y',
+          '-i',
+          inputPath,
+          '-af',
+          filters.join(','),
+          '-acodec',
+          'pcm_s16le',
+          filtered,
+        ]);
+        work = filtered;
+      } catch (e) {
+        this.logger.warn(
+          `TTS filter pass failed, continuing without: ${(e as Error).message}`,
+        );
+        work = inputPath;
+      }
     }
 
     if (normalize) {
       const target = options.targetLufs ?? -16;
-      const normalized = path.join(workDir, 'tts-normalized.wav');
-      await this.normalize(work, normalized, {
-        targetLufs: target,
-        truePeak: -1.5,
-        lra: 11,
-      });
-      work = normalized;
+      const normalized = path.join(workDir, `tts-normalized-${uid}.wav`);
+      try {
+        await this.normalize(work, normalized, {
+          targetLufs: target,
+          truePeak: -1.5,
+          lra: 11,
+        });
+        work = normalized;
+      } catch (e) {
+        // loudnorm can assert on some ffmpeg builds; keep speech usable
+        this.logger.warn(
+          `loudnorm failed, falling back to dynaudnorm: ${(e as Error).message}`,
+        );
+        try {
+          await this.runFfmpegRaw([
+            '-hide_banner',
+            '-y',
+            '-i',
+            work,
+            '-af',
+            'dynaudnorm=f=150:g=15',
+            '-acodec',
+            'pcm_s16le',
+            normalized,
+          ]);
+          work = normalized;
+        } catch {
+          // last resort: keep un-normalized speech
+        }
+      }
     }
 
     if (format === 'mp3') {

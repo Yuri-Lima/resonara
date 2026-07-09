@@ -140,22 +140,27 @@
 
     <section id="demos" class="section">
       <h2>Demo script reference</h2>
+      <p class="lede">
+        Press <strong>Play</strong> to hear each sample (cached <code>demo-output/</code> when present,
+        otherwise live API synthesis). Open this page via
+        <code>npm run ui</code> → <code>http://127.0.0.1:3847/ui/deliverable/</code>
+        so the API and audio can load. If the browser blocks autoplay, press ▶ on the player below.
+      </p>
+      <div class="demo-player-bar card" id="demo-player-bar">
+        <audio id="demo-audio" controls preload="none"></audio>
+        <p id="demo-play-status" class="chapter-status" aria-live="polite">Ready — pick a demo and press Play</p>
+        <div class="demo-progress-wrap" id="demo-progress-wrap" hidden>
+          <div class="demo-progress-track" aria-hidden="true"><i id="demo-progress-bar"></i></div>
+          <span id="demo-progress-label">0%</span>
+        </div>
+      </div>
       <div class="table-wrap" role="region" aria-label="Demo commands" tabindex="0">
         <table>
           <thead>
-            <tr><th>Command</th><th>Sample</th><th>What to listen for</th></tr>
+            <tr><th>Play</th><th>Command</th><th>Sample</th><th>What to listen for</th></tr>
           </thead>
-          <tbody>
-            <tr><td><code>npm run demo:quick</code></td><td>16 words</td><td>Natural single sentence</td></tr>
-            <tr><td><code>npm run demo:paragraph</code></td><td>~75 words</td><td>Prosody, punctuation pauses</td></tr>
-            <tr><td><code>npm run demo:article</code></td><td>~500 words</td><td>Paragraph transitions</td></tr>
-            <tr><td><code>npm run demo:news</code></td><td>~2k words</td><td>Numbers, URLs, quotes</td></tr>
-            <tr><td><code>npm run demo:chapter</code></td><td>~5k words</td><td>Zero audible seams</td></tr>
-            <tr><td><code>npm run demo:ssml</code></td><td>SSML showcase</td><td>Breaks, emphasis, rate</td></tr>
-            <tr><td><code>npm run demo:dialogue</code></td><td>3 speakers</td><td>Clean voice switches</td></tr>
-            <tr><td><code>npm run demo:pronunciation</code></td><td>Tech terms</td><td>Dictionary substitutions</td></tr>
-            <tr><td><code>npm run demo:compare</code></td><td>A/B engines</td><td>Platform vs Piper quality</td></tr>
-            <tr><td><code>npm run demo:all</code></td><td>All 10</td><td>Full report.json</td></tr>
+          <tbody id="demo-table-body">
+            <!-- filled by app.js so every npm demo:* has a working Play button -->
           </tbody>
         </table>
       </div>

@@ -746,13 +746,23 @@ export class TtsService implements OnModuleInit {
       });
     }
 
+    if (!parts.length) {
+      throw new Error('Dialogue synthesis produced no audio parts');
+    }
+
     job.status = TtsJobStatus.CONCATENATING;
     await this.jobsRepo.save(job);
     const concatPath = path.join(opts.workDir, 'dlg-concat.wav');
-    await this.ffmpeg.crossfadeChunks(parts, concatPath, {
-      durationSec: 0.02,
-      format: 'wav',
-    });
+    // Hard-concat is more reliable for dialogue (short lines + silence gaps).
+    // Crossfade still used for same-voice long-form chunks.
+    if (typeof this.ffmpeg.concatAudioFiles === 'function') {
+      await this.ffmpeg.concatAudioFiles(parts, concatPath, { format: 'wav' });
+    } else {
+      await this.ffmpeg.crossfadeChunks(parts, concatPath, {
+        durationSec: 0.02,
+        format: 'wav',
+      });
+    }
     job.status = TtsJobStatus.NORMALIZING;
     await this.jobsRepo.save(job);
     await this.ffmpeg.postProcessTts(concatPath, opts.outputPath, {
