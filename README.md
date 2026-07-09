@@ -2,10 +2,13 @@
 
 **Shape sound. Speak the long form. Play freely.**
 
+[![Website](https://img.shields.io/badge/website-yuri--lima.github.io%2Fresonara-2dd4bf?style=flat-square)](https://yuri-lima.github.io/resonara/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-0f766e?style=flat-square)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-1e293b?style=flat-square)](#install)
 [![Stack](https://img.shields.io/badge/stack-Electron%20%7C%20NestJS%20%7C%20ffmpeg-334155?style=flat-square)](#architecture)
 [![Mode](https://img.shields.io/badge/desktop-offline%20lite-0ea5e9?style=flat-square)](#desktop-lite-mode)
+
+**Site:** [yuri-lima.github.io/resonara](https://yuri-lima.github.io/resonara/) · **Docs:** [Get started](https://yuri-lima.github.io/resonara/get-started.html)
 
 Resonara is a cross-platform **desktop audio studio** for creators, producers, and anyone who needs local control over sound and speech. One installable app unifies:
 

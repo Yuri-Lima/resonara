@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Get started — Resonara</title>
+  <meta name="description" content="Developer guide for Resonara: desktop lite mode, full stack, packaging, API, and tests." />
+  <meta name="theme-color" content="#020617" />
+  <link rel="canonical" href="https://yuri-lima.github.io/resonara/get-started.html" />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-nav">
+    <div class="container nav-inner">
+      <a class="brand" href="./">
+        <img src="assets/logo.svg" width="32" height="32" alt="" />
+        Resonara
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="./#features" class="hide-sm">Features</a>
+        <a href="get-started.html" aria-current="page">Docs</a>
+        <a class="btn btn-primary btn-sm" href="https://github.com/Yuri-Lima/resonara">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <header class="page-hero">
+      <h1>Developer documentation</h1>
+      <p>Run Resonara in lite desktop mode, stand up the full Docker stack, package installers, and exercise the APIs.</p>
+    </header>
+
+    <div class="prose" style="padding-bottom: 3rem;">
+      <h2 id="requirements">Requirements</h2>
+      <ul>
+        <li>Node.js 20+</li>
+        <li>npm</li>
+        <li>ffmpeg &amp; ffprobe on <code>PATH</code></li>
+        <li>Docker Compose (full stack only)</li>
+      </ul>
+
+      <h2 id="desktop">Desktop lite (recommended)</h2>
+      <pre class="code"><span class="c"># clone &amp; install</span>
+git clone https://github.com/Yuri-Lima/resonara.git
+cd resonara
+npm install
+npm run build
+npm run desktop:dev    <span class="c"># Electron + lite API :3847</span>
+
+<span class="c"># API only</span>
+RESONARA_LITE=1 PORT=3000 npm run start:lite</pre>
+      <p>Open <code>/ui/</code>, <code>/ui/piano/</code>, <code>/ui/voice/</code>, and Swagger at <code>/docs</code>.</p>
+
+      <h2 id="full">Full stack</h2>
+      <pre class="code">docker compose up -d postgres redis minio minio-init
+npm run start:dev      <span class="c"># API :3000 without RESONARA_LITE</span></pre>
+
+      <h2 id="package">Packaging</h2>
+      <pre class="code">npm run dist:mac    <span class="c"># release/*.dmg , *.zip</span>
+npm run dist:win    <span class="c"># NSIS .exe (Windows / CI)</span>
+npm run dist:all</pre>
+      <p>Config lives in <code>package.json</code> → <code>build</code>. Artifacts are written to <code>release/</code>.</p>
+
+      <h2 id="api">Key APIs</h2>
+      <ul>
+        <li><code>GET /health</code> — product, mode, ffmpeg, TTS</li>
+        <li><code>POST /tts/synthesize</code> — long-form system TTS job</li>
+        <li><code>POST /tracks/upload</code> · normalize · transcode · trim</li>
+        <li><code>GET /piano/packs</code> · takes · export</li>
+        <li>WebSocket <code>/jobs</code> — <code>subscribe</code> → <code>job:progress</code></li>
+      </ul>
+
+      <h2 id="test">Tests</h2>
+      <pre class="code">npm test
+npm run smoke:tts
+npm run smoke:service</pre>
+
+      <h2 id="limits">v1 limits</h2>
+      <ul>
+        <li>Unsigned installers by default</li>
+        <li>ffmpeg not bundled — install on the host</li>
+        <li>TTS quality depends on OS voices</li>
+        <li>No Linux installer yet</li>
+      </ul>
+
+      <p style="margin-top: 2rem;">
+        <a class="btn btn-primary" href="https://github.com/Yuri-Lima/resonara">Open repository</a>
+        <a class="btn btn-ghost" href="./">Back to home</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="margin-top: 0; border-top: 0; padding-top: 0;">
+        <span>© <span data-year></span> Resonara · MIT</span>
+        <span><a href="./">Home</a> · <a href="https://github.com/Yuri-Lima/resonara">GitHub</a></span>
+      </div>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>
