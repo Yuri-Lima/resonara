@@ -1,0 +1,35 @@
+[
+  {
+    "key": "en_US-lessac-medium",
+    "name": "Lessac (US English, medium)",
+    "language": "en-US",
+    "quality": "medium",
+    "gender": "female",
+    "sampleRate": 22050,
+    "sizeBytes": 63201294,
+    "onnxUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx?download=true",
+    "jsonUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json?download=true"
+  },
+  {
+    "key": "en_US-amy-medium",
+    "name": "Amy (US English, medium)",
+    "language": "en-US",
+    "quality": "medium",
+    "gender": "female",
+    "sampleRate": 22050,
+    "sizeBytes": 63200000,
+    "onnxUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/amy/medium/en_US-amy-medium.onnx?download=true",
+    "jsonUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/amy/medium/en_US-amy-medium.onnx.json?download=true"
+  },
+  {
+    "key": "en_US-ryan-medium",
+    "name": "Ryan (US English, medium)",
+    "language": "en-US",
+    "quality": "medium",
+    "gender": "male",
+    "sampleRate": 22050,
+    "sizeBytes": 63200000,
+    "onnxUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/medium/en_US-ryan-medium.onnx?download=true",
+    "jsonUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/medium/en_US-ryan-medium.onnx.json?download=true"
+  }
+]

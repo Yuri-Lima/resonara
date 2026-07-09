@@ -16,3 +16,27 @@ test/fixtures/generated/
 .vscode/
 *.tsbuildinfo
 .cache/
+.env
+
+# Piper models (download via scripts/download-piper.js)
+resources/piper/**/*.onnx
+resources/piper/espeak-ng-data/
+*.onnx
+
+# Demo synthesis output
+demo-output/*
+!demo-output/.gitkeep
+
+tools/piper-venv/
+
+# Piper native binaries (download via npm run download:piper)
+resources/piper/piper
+resources/piper/piper.exe
+resources/piper/piper_phonemize
+resources/piper/espeak-ng
+resources/piper/libtashkeel_model.ort
+resources/piper/*.dylib
+resources/piper/**/*.dSYM/
+tools/piper-venv/
+demo-output/*
+!demo-output/.gitkeep

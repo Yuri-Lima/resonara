@@ -1,0 +1,8 @@
+[narrator]: The coffee shop was nearly empty at this hour.
+[alice]: Do you think the presentation went well?
+[bob]: Honestly? I think we lost them at slide seven.
+[alice]: The one with the revenue projections?
+[bob]: No, the one where you accidentally showed the cat meme.
+[narrator]: Alice buried her face in her hands.
+[alice]: That was supposed to be a team-building moment.
+[bob]: It was. The team has never been more united in laughter.

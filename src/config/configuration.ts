@@ -52,4 +52,8 @@ export default () => ({
     productName: 'Resonara',
     tagline: 'Shape sound. Speak the long form. Play freely.',
   },
+  piper: {
+    path: process.env.PIPER_PATH || '',
+    modelsDir: process.env.PIPER_MODELS_DIR || '',
+  },
 });

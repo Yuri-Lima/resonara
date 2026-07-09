@@ -27,7 +27,22 @@
     "dist:win": "npm run build && electron-builder --win nsis",
     "dist:all": "npm run build && electron-builder --mac dmg zip --win nsis",
     "smoke:tts": "node scripts/smoke-tts.js",
-    "smoke:service": "node scripts/smoke-service.js"
+    "smoke:service": "node scripts/smoke-service.js",
+    "download:piper": "node scripts/download-piper.js",
+    "postinstall": "",
+    "demo:quick": "node scripts/demo/run-demo.js quick-sentence",
+    "demo:paragraph": "node scripts/demo/run-demo.js paragraph",
+    "demo:article": "node scripts/demo/run-demo.js short-article",
+    "demo:news": "node scripts/demo/run-demo.js news-article",
+    "demo:chapter": "node scripts/demo/run-demo.js book-chapter",
+    "demo:technical": "node scripts/demo/run-demo.js technical-doc",
+    "demo:ssml": "node scripts/demo/run-demo.js ssml-showcase",
+    "demo:dialogue": "node scripts/demo/run-demo.js dialogue-script",
+    "demo:pronunciation": "node scripts/demo/run-demo.js pronunciation-challenge",
+    "demo:numbers": "node scripts/demo/run-demo.js numbers-and-dates",
+    "demo:all": "node scripts/demo/run-demo.js --all --no-open",
+    "demo:compare": "node scripts/demo/run-demo.js --compare paragraph",
+    "benchmark": "node scripts/benchmark.js"
   },
   "dependencies": {
     "@nestjs/bullmq": "^10.2.3",
@@ -39,21 +54,25 @@
     "@nestjs/swagger": "^8.1.0",
     "@nestjs/typeorm": "^10.0.2",
     "@nestjs/websockets": "^10.4.15",
+    "adm-zip": "^0.5.18",
     "bullmq": "^5.34.5",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "file-type": "^16.5.4",
     "fluent-ffmpeg": "^2.1.3",
     "ioredis": "^5.4.2",
+    "mammoth": "^1.12.0",
+    "marked": "^18.0.6",
     "minio": "^8.0.3",
     "multer": "^1.4.5-lts.1",
+    "pdf-parse": "^2.4.5",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "socket.io": "^4.8.1",
+    "sql.js": "^1.14.1",
     "typeorm": "^0.3.20",
-    "uuid": "^11.0.3",
-    "sql.js": "^1.14.1"
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.9",
@@ -64,6 +83,7 @@
     "@types/jest": "^29.5.14",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.10.2",
+    "@types/pdf-parse": "^1.1.5",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.18.2",
@@ -91,12 +111,29 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "tts/ssml-parser.ts",
+      "tts/text-chunker.ts",
+      "tts/pronunciation.service.ts",
+      "tts/tts.controller.ts",
+      "tts/voice-manager.ts",
+      "entities/tts-job.entity.ts",
+      "entities/pronunciation.entity.ts",
+      "common/constants.ts",
+      "config/configuration.ts",
+      "gateway/jobs.gateway.ts",
+      "jobs/jobs.service.ts",
+      "health/health.controller.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1"
+    },
+    "coverageThreshold": {
+      "global": {
+        "lines": 80,
+        "statements": 80
+      }
     }
   },
   "productName": "Resonara",
@@ -139,6 +176,13 @@
       {
         "from": "node_modules",
         "to": "node_modules"
+      },
+      {
+        "from": "resources/piper",
+        "to": "piper",
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "mac": {

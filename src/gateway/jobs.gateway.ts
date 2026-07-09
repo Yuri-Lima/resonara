@@ -46,4 +46,30 @@ export class JobsGateway implements OnGatewayConnection {
   emitFailed(jobId: string, error: string) {
     this.server?.to(`job:${jobId}`).emit('job:failed', { jobId, error });
   }
+
+  /** Streaming preview: a synthesized chunk is ready for progressive playback. */
+  emitChunkReady(
+    jobId: string,
+    payload: {
+      chunkIndex: number;
+      totalChunks: number;
+      url: string;
+      durationMs?: number;
+    },
+  ) {
+    this.server?.to(`job:${jobId}`).emit('tts:chunk:ready', {
+      jobId,
+      ...payload,
+    });
+  }
+
+  emitBatchProgress(payload: {
+    batchId: string;
+    completedJobs: number;
+    totalJobs: number;
+    currentJobId?: string;
+    currentJobProgress?: number;
+  }) {
+    this.server?.emit('tts:batch:progress', payload);
+  }
 }
