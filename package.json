@@ -187,5 +187,13 @@
       "target": []
     },
     "asar": true
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yuri-Lima/resonara.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Yuri-Lima/resonara/issues"
+  },
+  "homepage": "https://github.com/Yuri-Lima/resonara#readme"
 }
