@@ -958,4 +958,255 @@ export class FfmpegService implements OnModuleInit {
     };
     return map[format] || 'bin';
   }
+
+
+  /**
+   * Trim leading/trailing silence from a chunk WAV (TTS seam reduction).
+   * Uses silenceremove with reverse for trailing edge.
+   */
+  async trimChunkSilence(
+    inputPath: string,
+    outputPath: string,
+    options: {
+      thresholdDb?: number;
+      minSilenceSec?: number;
+    } = {},
+  ): Promise<string> {
+    const threshold = options.thresholdDb ?? -50;
+    const minSil = options.minSilenceSec ?? 0.03;
+    await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
+    const af =
+      `silenceremove=start_periods=1:start_silence=${minSil}:start_threshold=${threshold}dB,` +
+      `areverse,` +
+      `silenceremove=start_periods=1:start_silence=${minSil}:start_threshold=${threshold}dB,` +
+      `areverse`;
+    await this.runFfmpegRaw([
+      '-hide_banner',
+      '-y',
+      '-i',
+      inputPath,
+      '-af',
+      af,
+      '-acodec',
+      'pcm_s16le',
+      outputPath,
+    ]);
+    return outputPath;
+  }
+
+  /**
+   * Crossfade a list of audio chunks into one file (equal-power triangular).
+   * Progressive pairwise acrossfade for N>2.
+   */
+  async crossfadeChunks(
+    partPaths: string[],
+    outputPath: string,
+    options: { durationSec?: number; format?: 'wav' | 'mp3' } = {},
+  ): Promise<string> {
+    if (!partPaths.length) {
+      throw new BadRequestException('No chunks to crossfade');
+    }
+    await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
+    const d = options.durationSec ?? 0.02;
+    const format = options.format ?? 'wav';
+
+    if (partPaths.length === 1) {
+      if (format === 'wav') {
+        await fs.promises.copyFile(partPaths[0], outputPath);
+      } else {
+        await this.runFfmpegRaw([
+          '-hide_banner',
+          '-y',
+          '-i',
+          partPaths[0],
+          '-c:a',
+          'libmp3lame',
+          '-b:a',
+          '192k',
+          outputPath,
+        ]);
+      }
+      return outputPath;
+    }
+
+    // Progressive: crossfade into temp files
+    const workDir = path.dirname(outputPath);
+    let current = partPaths[0];
+    for (let i = 1; i < partPaths.length; i++) {
+      const next = partPaths[i];
+      const isLast = i === partPaths.length - 1;
+      const out =
+        isLast && format === 'wav'
+          ? outputPath
+          : path.join(workDir, `xfade-${i}.wav`);
+      const filter = `acrossfade=d=${d}:c1=tri:c2=tri`;
+      try {
+        await this.runFfmpegRaw([
+          '-hide_banner',
+          '-y',
+          '-i',
+          current,
+          '-i',
+          next,
+          '-filter_complex',
+          filter,
+          '-acodec',
+          'pcm_s16le',
+          out,
+        ]);
+      } catch {
+        // Fallback: hard concat of current+next
+        const listFile = path.join(workDir, `concat-fallback-${i}.txt`);
+        const body = [current, next]
+          .map((p) => `file '${p.replace(/'/g, "'\\''")}'`)
+          .join('\n');
+        await fs.promises.writeFile(listFile, body, 'utf8');
+        await this.runFfmpegRaw([
+          '-hide_banner',
+          '-y',
+          '-f',
+          'concat',
+          '-safe',
+          '0',
+          '-i',
+          listFile,
+          '-acodec',
+          'pcm_s16le',
+          out,
+        ]);
+      }
+      current = out;
+    }
+
+    if (format === 'mp3') {
+      await this.runFfmpegRaw([
+        '-hide_banner',
+        '-y',
+        '-i',
+        current,
+        '-c:a',
+        'libmp3lame',
+        '-b:a',
+        '192k',
+        outputPath,
+      ]);
+    } else if (current !== outputPath) {
+      await fs.promises.copyFile(current, outputPath);
+    }
+    return outputPath;
+  }
+
+  /**
+   * TTS post-processing: highpass + optional compressor + EBU R128 normalize.
+   */
+  async postProcessTts(
+    inputPath: string,
+    outputPath: string,
+    options: {
+      normalize?: boolean;
+      highpass?: boolean;
+      compress?: boolean;
+      targetLufs?: number;
+      format?: 'wav' | 'mp3';
+    } = {},
+  ): Promise<string> {
+    const normalize = options.normalize !== false;
+    const highpass = options.highpass !== false;
+    const compress = options.compress === true;
+    const format = options.format ?? 'wav';
+    await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
+
+    const filters: string[] = [];
+    if (highpass) filters.push('highpass=f=80');
+    if (compress) {
+      filters.push(
+        'acompressor=threshold=-18dB:ratio=3:attack=5:release=50:makeup=2',
+      );
+    }
+
+    let work = inputPath;
+    const workDir = path.dirname(outputPath);
+    if (filters.length) {
+      const filtered = path.join(workDir, 'tts-filtered.wav');
+      await this.runFfmpegRaw([
+        '-hide_banner',
+        '-y',
+        '-i',
+        inputPath,
+        '-af',
+        filters.join(','),
+        '-acodec',
+        'pcm_s16le',
+        filtered,
+      ]);
+      work = filtered;
+    }
+
+    if (normalize) {
+      const target = options.targetLufs ?? -16;
+      const normalized = path.join(workDir, 'tts-normalized.wav');
+      await this.normalize(work, normalized, {
+        targetLufs: target,
+        truePeak: -1.5,
+        lra: 11,
+      });
+      work = normalized;
+    }
+
+    if (format === 'mp3') {
+      await this.runFfmpegRaw([
+        '-hide_banner',
+        '-y',
+        '-i',
+        work,
+        '-c:a',
+        'libmp3lame',
+        '-b:a',
+        '192k',
+        outputPath,
+      ]);
+    } else if (work !== outputPath) {
+      await fs.promises.copyFile(work, outputPath);
+    }
+    return outputPath;
+  }
+
+  /**
+   * Build M4B-ish AAC with chapter metadata file.
+   */
+  async embedChapterMetadata(
+    inputPath: string,
+    outputPath: string,
+    chapters: { title: string; startTime: number; endTime: number }[],
+    title?: string,
+  ): Promise<string> {
+    const metaPath = outputPath + '.ffmeta';
+    const lines = [';FFMETADATA1', `title=${title || 'Resonara Audiobook'}`];
+    for (const ch of chapters) {
+      const startMs = Math.round(ch.startTime * 1000);
+      const endMs = Math.round(ch.endTime * 1000);
+      lines.push('[CHAPTER]');
+      lines.push('TIMEBASE=1/1000');
+      lines.push(`START=${startMs}`);
+      lines.push(`END=${endMs}`);
+      lines.push(`title=${ch.title.replace(/\n/g, ' ')}`);
+    }
+    await fs.promises.writeFile(metaPath, lines.join('\n'), 'utf8');
+    await this.runFfmpegRaw([
+      '-hide_banner',
+      '-y',
+      '-i',
+      inputPath,
+      '-i',
+      metaPath,
+      '-map_metadata',
+      '1',
+      '-c:a',
+      'aac',
+      '-b:a',
+      '128k',
+      outputPath,
+    ]);
+    return outputPath;
+  }
 }

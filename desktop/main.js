@@ -46,6 +46,23 @@ function startBackend() {
     path.join(__dirname, '..', 'node_modules'),
   ].filter((p) => fs.existsSync(p));
 
+  const piperDir = path.join(root, isDev ? 'resources/piper' : 'piper');
+  const piperBin = path.join(
+    piperDir,
+    process.platform === 'win32' ? 'piper.exe' : 'piper',
+  );
+  const piperNested = path.join(
+    piperDir,
+    'piper',
+    process.platform === 'win32' ? 'piper.exe' : 'piper',
+  );
+  const piperPath = fs.existsSync(piperBin)
+    ? piperBin
+    : fs.existsSync(piperNested)
+      ? piperNested
+      : process.env.PIPER_PATH || '';
+  const piperModels = path.join(piperDir, 'models');
+
   const env = {
     ...process.env,
     PORT: String(PORT),
@@ -55,6 +72,11 @@ function startBackend() {
     API_PUBLIC_URL: `http://127.0.0.1:${PORT}`,
     PATH: augmentPath(process.env.PATH),
     NODE_PATH: [...moduleDirs, process.env.NODE_PATH].filter(Boolean).join(path.delimiter),
+    PIPER_PATH: piperPath || process.env.PIPER_PATH || '',
+    PIPER_MODELS_DIR: fs.existsSync(piperModels)
+      ? piperModels
+      : process.env.PIPER_MODELS_DIR || '',
+    ELECTRON_RESOURCES_PATH: root,
   };
 
   const entry = path.join(root, 'dist', 'main.js');

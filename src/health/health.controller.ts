@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
 import Redis from 'ioredis';
 import { ttsEngineAvailable } from '../tts/platform-tts';
+import { isPiperAvailable } from '../tts/piper-tts';
 import { probeFfmpegAvailability } from '../ffmpeg/resolve-ffmpeg';
 
 @ApiTags('health')
@@ -59,7 +60,9 @@ export class HealthController {
     checks.ffmpeg = ff.available ? 'ok' : 'error';
 
     const tts = ttsEngineAvailable();
-    checks.tts = tts.available ? 'ok' : 'error';
+    const piper = isPiperAvailable();
+    checks.tts = tts.available || piper.available ? 'ok' : 'error';
+    checks.piper = piper.available ? 'ok' : 'error';
 
     const required = lite
       ? ['database', 'ffmpeg']
@@ -73,6 +76,13 @@ export class HealthController {
       tagline: 'Shape sound. Speak the long form. Play freely.',
       checks,
       tts: tts,
+      piper: {
+        available: piper.available,
+        binary: piper.binary || null,
+        modelsDir: piper.modelsDir || null,
+        voiceCount: piper.voiceCount,
+        detail: piper.detail || null,
+      },
       ffmpeg: {
         available: ff.available,
         path: ff.ffmpeg,
