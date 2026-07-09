@@ -11,7 +11,6 @@ import { JobsGateway } from '../gateway/jobs.gateway';
 import { TtsService } from './tts.service';
 import * as platformTts from './platform-tts';
 import * as piperTts from './piper-tts';
-import { VoiceManager } from './voice-manager';
 
 describe('TtsService', () => {
   let service: TtsService;
@@ -106,7 +105,7 @@ describe('TtsService', () => {
   beforeEach(async () => {
     jobs.length = 0;
     jest.restoreAllMocks();
-    jest.spyOn(global, 'setImmediate').mockImplementation((fn: any) => { return 0 as any; });
+    jest.spyOn(global, 'setImmediate').mockImplementation(((_fn: (...args: unknown[]) => void) => 0) as typeof setImmediate);
     jest.spyOn(platformTts, 'ttsEngineAvailable').mockReturnValue({
       available: true,
       engine: 'macOS say',
