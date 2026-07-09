@@ -105,7 +105,8 @@ describe('TtsService', () => {
   beforeEach(async () => {
     jobs.length = 0;
     jest.restoreAllMocks();
-    jest.spyOn(global, 'setImmediate').mockImplementation(((_fn: (...args: unknown[]) => void) => 0) as typeof setImmediate);
+    // Prevent background job from firing during unit tests
+    jest.spyOn(global, 'setImmediate').mockImplementation(((..._args: unknown[]) => 0) as unknown as typeof setImmediate);
     jest.spyOn(platformTts, 'ttsEngineAvailable').mockReturnValue({
       available: true,
       engine: 'macOS say',
