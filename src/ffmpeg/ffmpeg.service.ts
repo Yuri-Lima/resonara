@@ -10,7 +10,6 @@ import { spawn } from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { Readable } from 'stream';
 import {
   CoverArtResult,
   LoudnormMeasure,
@@ -101,8 +100,8 @@ export class FfmpegService implements OnModuleInit {
         }
         try {
           resolve(this.mapProbe(data));
-        } catch (e: any) {
-          reject(new BadRequestException(e.message));
+        } catch (e: unknown) {
+          reject(new BadRequestException(e instanceof Error ? e.message : String(e)));
         }
       });
     });
@@ -223,7 +222,7 @@ export class FfmpegService implements OnModuleInit {
 
       const timer = setTimeout(() => {
         try {
-          (cmd as any).kill?.('SIGKILL');
+          (cmd as { kill?: (s: string) => void }).kill?.('SIGKILL');
         } catch {
           /* ignore */
         }
@@ -257,7 +256,7 @@ export class FfmpegService implements OnModuleInit {
               channels: out.channels,
               bitRate: out.bitRate,
             });
-          } catch (e: any) {
+          } catch (e: unknown) {
             reject(e);
           }
         })
@@ -465,7 +464,7 @@ export class FfmpegService implements OnModuleInit {
 
       const timer = setTimeout(() => {
         try {
-          (cmd as any).kill?.('SIGKILL');
+          (cmd as { kill?: (s: string) => void }).kill?.('SIGKILL');
         } catch {
           /* ignore */
         }
@@ -693,7 +692,7 @@ export class FfmpegService implements OnModuleInit {
       });
       child.on('error', (e) => {
         clearTimeout(timer);
-        reject(new BadRequestException(e.message));
+        reject(new BadRequestException(e instanceof Error ? e.message : String(e)));
       });
       child.on('close', (code) => {
         clearTimeout(timer);
@@ -806,7 +805,7 @@ export class FfmpegService implements OnModuleInit {
 
       const timer = setTimeout(() => {
         try {
-          (cmd as any).kill?.('SIGKILL');
+          (cmd as { kill?: (s: string) => void }).kill?.('SIGKILL');
         } catch {
           /* ignore */
         }
@@ -838,7 +837,7 @@ export class FfmpegService implements OnModuleInit {
               start,
               end: end ?? null,
             });
-          } catch (e: any) {
+          } catch (e: unknown) {
             reject(e);
           }
         })
@@ -899,7 +898,7 @@ export class FfmpegService implements OnModuleInit {
       });
       child.on('error', (e) => {
         clearTimeout(timer);
-        reject(new BadRequestException(e.message));
+        reject(new BadRequestException(e instanceof Error ? e.message : String(e)));
       });
       child.on('close', (code) => {
         clearTimeout(timer);

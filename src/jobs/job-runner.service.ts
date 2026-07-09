@@ -69,17 +69,18 @@ export class JobRunnerService {
       entity.progress = 100;
       entity.resultJson = result as Record<string, unknown>;
       entity.completedAt = new Date();
-      if ((result as any).outputStorageKey) {
-        entity.outputStorageKey = (result as any).outputStorageKey;
+      const outKey = result['outputStorageKey'];
+      if (typeof outKey === 'string') {
+        entity.outputStorageKey = outKey;
       }
       await this.jobsRepo.save(entity);
       track.status = TrackStatus.READY;
       await this.tracksRepo.save(track);
       this.gateway.emitCompleted(jobId, entity);
       return result;
-    } catch (err: any) {
+    } catch (err: unknown) {
       entity.status = JobStatus.FAILED;
-      entity.errorMessage = err?.message || String(err);
+      entity.errorMessage = err instanceof Error ? err.message : String(err);
       await this.jobsRepo.save(entity);
       track.status = TrackStatus.ERROR;
       await this.tracksRepo.save(track);
@@ -99,7 +100,7 @@ export class JobRunnerService {
   ): Promise<Record<string, unknown>> {
     switch (entity.type) {
       case JobType.TRANSCODE: {
-        const format = String(params.format || 'mp3') as any;
+        const format = String(params.format || 'mp3') as 'mp3' | 'aac' | 'flac' | 'ogg' | 'opus' | 'wav';
         const ext = this.ffmpeg.extensionFor(format);
         const output = path.join(tmp, `out.${ext}`);
         const result = await this.ffmpeg.transcode(input, output, {
@@ -148,7 +149,7 @@ export class JobRunnerService {
           end: params.end != null ? Number(params.end) : undefined,
           fadeIn: params.fadeIn as number | undefined,
           fadeOut: params.fadeOut as number | undefined,
-          fadeCurve: params.fadeCurve as any,
+          fadeCurve: params.fadeCurve as 'linear' | 'exponential' | 'logarithmic' | 'quarter-sine' | undefined,
           onProgress: (p) => {
             void onProgress(p);
           },
@@ -161,12 +162,12 @@ export class JobRunnerService {
         await onProgress(10);
         const result = await this.ffmpeg.extractWaveform(input, {
           resolution: Number(params.resolution || 1800),
-          channels: (params.channels as any) || 'stereo',
+          channels: (params.channels as 'mono' | 'stereo' | undefined) || 'stereo',
         });
         await onProgress(90);
         const key = `${entity.trackId}/artifacts/waveform-job-${entity.id}.json`;
         await this.storage.putJson(this.storage.artifactBucket, key, result);
-        return { ...result, outputStorageKey: key } as any;
+        return { ...result, outputStorageKey: key };
       }
       case JobType.SILENCE: {
         await onProgress(20);

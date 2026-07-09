@@ -261,7 +261,7 @@ export class TracksService {
       );
       const probe = await this.ffmpeg.probe(local);
       let coverUrl: string | null = null;
-      const coverKey = (track.metadataJson as any)?.coverArtKey;
+      const coverKey = (track.metadataJson as Record<string, unknown> | null)?.coverArtKey as string | undefined;
       if (coverKey) {
         coverUrl = await this.storage.presignedGet(
           this.storage.artifactBucket,
