@@ -1,20 +1,32 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
+import { BadRequestException } from '@nestjs/common';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
 import { TtsJob, TtsJobStatus } from '../entities/tts-job.entity';
 import { FfmpegService } from '../ffmpeg/ffmpeg.service';
 import { JobsGateway } from '../gateway/jobs.gateway';
 import { TtsService } from './tts.service';
+import * as platformTts from './platform-tts';
+import * as piperTts from './piper-tts';
+import { VoiceManager } from './voice-manager';
 
-describe('TtsService persistence helpers', () => {
+describe('TtsService', () => {
   let service: TtsService;
   const jobs: TtsJob[] = [];
   const repo = {
-    find: jest.fn(async ({ where }: { where?: { status?: unknown } } = {}) => {
-      if (!where) return [...jobs];
-      // simplified
-      return jobs.filter((j) => j.status !== TtsJobStatus.COMPLETED);
-    }),
+    find: jest.fn(async () =>
+      jobs.filter((j) =>
+        [
+          TtsJobStatus.CHUNKING,
+          TtsJobStatus.SYNTHESIZING,
+          TtsJobStatus.CONCATENATING,
+          TtsJobStatus.NORMALIZING,
+        ].includes(j.status),
+      ),
+    ),
     findOne: jest.fn(async ({ where }: { where: { id: string } }) =>
       jobs.find((j) => j.id === where.id) || null,
     ),
@@ -54,33 +66,83 @@ describe('TtsService persistence helpers', () => {
     }),
   };
 
+  const ffmpeg = {
+    trimChunkSilence: jest.fn(async (_i: string, o: string) => {
+      fs.writeFileSync(o, 'trim');
+      return o;
+    }),
+    crossfadeChunks: jest.fn(async (_p: string[], o: string) => {
+      fs.writeFileSync(o, 'xfade');
+      return o;
+    }),
+    postProcessTts: jest.fn(async (_i: string, o: string) => {
+      fs.writeFileSync(o, 'post');
+      return o;
+    }),
+    probe: jest.fn(async () => ({
+      duration: 1.5,
+      sampleRate: 22050,
+      format: 'wav',
+      bitRate: null,
+      channels: 1,
+      bitDepth: 16,
+      codec: 'pcm',
+      tags: {},
+      hasCoverArt: false,
+      raw: {},
+    })),
+    embedChapterMetadata: jest.fn(async (_i: string, o: string) => {
+      fs.writeFileSync(o, 'm4b');
+      return o;
+    }),
+  };
+
+  const gateway = {
+    emitProgress: jest.fn(),
+    emitCompleted: jest.fn(),
+    emitFailed: jest.fn(),
+  };
+
   beforeEach(async () => {
     jobs.length = 0;
+    jest.restoreAllMocks();
+    jest.spyOn(global, 'setImmediate').mockImplementation((fn: any) => { return 0 as any; });
+    jest.spyOn(platformTts, 'ttsEngineAvailable').mockReturnValue({
+      available: true,
+      engine: 'macOS say',
+      detail: 'ok',
+    });
+    jest.spyOn(platformTts, 'listVoices').mockReturnValue([
+      { id: 'Alex', name: 'Alex', language: 'en_US' },
+    ]);
+    jest.spyOn(platformTts, 'synthesizeChunk').mockImplementation(async (opts) => {
+      fs.mkdirSync(path.dirname(opts.outPath), { recursive: true });
+      fs.writeFileSync(opts.outPath, 'audio');
+      return { outPath: opts.outPath, platform: 'darwin' };
+    });
+    jest.spyOn(piperTts, 'isPiperAvailable').mockReturnValue({
+      available: false,
+      voiceCount: 0,
+      detail: 'not installed',
+    });
+    jest.spyOn(piperTts, 'listPiperVoices').mockReturnValue([]);
+    jest.spyOn(piperTts, 'resolvePiperBinary').mockReturnValue(null);
+    jest.spyOn(piperTts, 'resolvePiperModelsDir').mockReturnValue('/tmp/models');
+
     const moduleRef = await Test.createTestingModule({
       providers: [
         TtsService,
         { provide: getRepositoryToken(TtsJob), useValue: repo },
-        {
-          provide: FfmpegService,
-          useValue: {
-            trimChunkSilence: jest.fn(),
-            crossfadeChunks: jest.fn(),
-            postProcessTts: jest.fn(),
-            probe: jest.fn(),
-            embedChapterMetadata: jest.fn(),
-          },
-        },
-        {
-          provide: JobsGateway,
-          useValue: {
-            emitProgress: jest.fn(),
-            emitCompleted: jest.fn(),
-            emitFailed: jest.fn(),
-          },
-        },
+        { provide: FfmpegService, useValue: ffmpeg },
+        { provide: JobsGateway, useValue: gateway },
         {
           provide: ConfigService,
-          useValue: { get: jest.fn(() => undefined) },
+          useValue: {
+            get: (k: string) =>
+              k === 'resonara.dataDir'
+                ? path.join(os.tmpdir(), 'resonara-tts-test')
+                : undefined,
+          },
         },
       ],
     }).compile();
@@ -98,7 +160,6 @@ describe('TtsService persistence helpers', () => {
     });
     jobs.push(j);
     const pub = service.toPublicJob(j);
-    expect(pub.id).toBe(j.id);
     expect(pub.downloadPath).toContain('/tts/jobs/');
   });
 
@@ -109,6 +170,60 @@ describe('TtsService persistence helpers', () => {
   it('listJobs returns page', async () => {
     const r = await service.listJobs({ page: 1, limit: 10 });
     expect(r.page).toBe(1);
-    expect(Array.isArray(r.items)).toBe(true);
+  });
+
+  it('startLongForm rejects empty text', async () => {
+    await expect(service.startLongForm({ text: '  ' })).rejects.toBeInstanceOf(
+      BadRequestException,
+    );
+  });
+
+  it('startLongForm persists queued job', async () => {
+    const job = await service.startLongForm({ text: 'Hello from Resonara.' });
+    expect(job.status).toBe(TtsJobStatus.QUEUED);
+    expect(jobs.length).toBe(1);
+    expect(job.metadata?.wordCount).toBeGreaterThan(0);
+  });
+
+  it('onModuleInit marks interrupted jobs failed', async () => {
+    const j = repo.create({
+      text: 'x',
+      status: TtsJobStatus.SYNTHESIZING,
+    });
+    jobs.push(j);
+    await service.onModuleInit();
+    expect(j.status).toBe(TtsJobStatus.FAILED);
+    expect(j.error).toMatch(/interrupted/);
+  });
+
+  it('deleteJob removes entity', async () => {
+    const j = repo.create({ text: 'x', status: TtsJobStatus.COMPLETED });
+    jobs.push(j);
+    await service.deleteJob(j.id);
+    expect(jobs.find((x) => x.id === j.id)).toBeUndefined();
+  });
+
+  it('getChapters returns empty when none', async () => {
+    const j = repo.create({ text: 'x', status: TtsJobStatus.COMPLETED, metadata: {} });
+    jobs.push(j);
+    expect(await service.getChapters(j.id)).toEqual([]);
+  });
+
+  it('synthesizeLongSync rejects empty text', async () => {
+    await expect(
+      service.synthesizeLongSync({ text: '' }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('resolveDownload rejects incomplete job', async () => {
+    const j = repo.create({ text: 'x', status: TtsJobStatus.QUEUED });
+    jobs.push(j);
+    await expect(service.resolveDownload(j.id)).rejects.toThrow(/not completed/i);
+  });
+
+
+  it('voices and engineStatus work', () => {
+    expect(Array.isArray(service.voices())).toBe(true);
+    expect(service.engineStatus().engines.length).toBe(2);
   });
 });

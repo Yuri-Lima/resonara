@@ -62,11 +62,37 @@ describe('PronunciationService', () => {
     expect(out).toMatch(/sub alias="sequel"/i);
   });
 
+  it('applies phoneme dictionary', async () => {
+    await service.create({ word: 'tomato', phoneme: 'təˈmeɪtoʊ' });
+    const out = await service.applyDictionary('A tomato', 'piper');
+    expect(out).toMatch(/phoneme/);
+  });
+
   it('exports and imports', async () => {
     await service.create({ word: 'tts', alias: 'text to speech' });
     const exp = await service.exportJson();
     store.length = 0;
     const r = await service.importJson(exp);
     expect(r.imported).toBe(1);
+  });
+
+  it('updates and removes entries', async () => {
+    const created = await service.create({ word: 'CPU', alias: 'C P U' });
+    const updated = await service.update(created.id, {
+      alias: 'central processing unit',
+    });
+    expect(updated.alias).toContain('central');
+    await service.remove(created.id);
+    const list = await service.list();
+    expect(list.find((x) => x.id === created.id)).toBeUndefined();
+  });
+
+  it('rejects create without phoneme or alias', async () => {
+    await expect(service.create({ word: 'xyz' })).rejects.toThrow();
+  });
+
+  it('seeds on empty module init', async () => {
+    await service.onModuleInit();
+    expect(store.length).toBeGreaterThan(5);
   });
 });

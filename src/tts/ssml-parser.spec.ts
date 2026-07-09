@@ -55,3 +55,44 @@ describe('transformSsml', () => {
     expect(supportedSsmlElements().length).toBeGreaterThan(3);
   });
 });
+
+describe('transformSsml extra', () => {
+  it('expands digits say-as', () => {
+    const r = transformSsml(
+      '<speak><say-as interpret-as="digits">42</say-as></speak>',
+      { engine: 'piper', isSsml: true },
+    );
+    expect(r.engineText.replace(/\s/g, '')).toContain('4');
+  });
+
+  it('maps mac emphasis', () => {
+    const r = transformSsml(
+      '<speak><emphasis level="strong">Boom</emphasis></speak>',
+      { engine: 'platform-darwin', isSsml: true },
+    );
+    expect(r.engineText).toContain('[[emph');
+  });
+
+  it('empty input', () => {
+    const r = transformSsml('', { engine: 'plain' });
+    expect(r.plainText).toBe('');
+  });
+});
+
+describe('mac rate mapping edge cases', () => {
+  it('maps percent rate', () => {
+    const r = transformSsml(
+      '<speak><prosody rate="120%">fastish</prosody></speak>',
+      { engine: 'platform-darwin', isSsml: true },
+    );
+    expect(r.engineText).toContain('[[rate');
+  });
+
+  it('maps slow rate keyword', () => {
+    const r = transformSsml(
+      '<speak><prosody rate="slow">slow</prosody></speak>',
+      { engine: 'platform-darwin', isSsml: true },
+    );
+    expect(r.engineText).toContain('[[rate');
+  });
+});

@@ -42,3 +42,16 @@ describe('document-extractor', () => {
     fs.unlinkSync(tmp);
   });
 });
+
+describe('document-extractor html', () => {
+  it('extracts html headings as chapters', async () => {
+    const tmp = path.join(os.tmpdir(), `doc-${Date.now()}.html`);
+    fs.writeFileSync(
+      tmp,
+      '<html><body><h1>One</h1><p>Alpha beta.</p><h2>Two</h2><p>Gamma delta.</p></body></html>',
+    );
+    const doc = await extractText(tmp, 'html');
+    expect(doc.chapters.length).toBeGreaterThanOrEqual(1);
+    fs.unlinkSync(tmp);
+  });
+});
