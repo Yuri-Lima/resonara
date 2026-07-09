@@ -132,6 +132,21 @@ make ui                  # opens ui/index.html
 
 Dark-themed dashboard: codec matrix, loudness visualizer, waveform canvas, filter graphs, queue simulator.
 
+## Hybrid Piano
+
+Sample-based piano + live meters + server analysis (see [PIANO_ARCHITECTURE.md](./PIANO_ARCHITECTURE.md)).
+
+```bash
+# Generate synthetic 49-key pack (C2–C6)
+make seed-piano
+# Start API (auto-registers samples/upright-basic into MinIO + DB)
+npm run build && npm start
+# Open piano UI (same-origin /ui/piano/)
+make piano
+```
+
+Play with mouse/touch, QWERTY, or MIDI. **Record** uploads a take and runs waveform + silence + loudness measure. **Export** enqueues two-pass normalize (−14 LUFS).
+
 ## License
 
 MIT

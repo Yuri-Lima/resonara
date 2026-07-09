@@ -1,10 +1,14 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { join } from 'path';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -13,10 +17,13 @@ async function bootstrap() {
     }),
   );
 
+  // Serve dashboard + piano UI same-origin (presigned sample fetch + API)
+  app.useStaticAssets(join(process.cwd(), 'ui'), { prefix: '/ui' });
+
   const config = new DocumentBuilder()
     .setTitle('Audio Processing Service')
     .setDescription(
-      'Upload, transcode, two-pass EBU R128 normalize, waveform, silence, trim, stream',
+      'Upload, transcode, two-pass EBU R128 normalize, waveform, silence, trim, stream, piano',
     )
     .setVersion('1.0')
     .build();
@@ -26,7 +33,9 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   await app.listen(port);
   // eslint-disable-next-line no-console
-  console.log(`Audio service listening on :${port} — Swagger /docs`);
+  console.log(
+    `Audio service :${port} — Swagger /docs — Piano /ui/piano/ — Dashboard /ui/`,
+  );
 }
 
 bootstrap();

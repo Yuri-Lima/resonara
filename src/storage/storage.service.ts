@@ -7,7 +7,12 @@ import { Readable } from 'stream';
 export class StorageService implements OnModuleInit {
   private readonly logger = new Logger(StorageService.name);
   private client!: Minio.Client;
-  private buckets!: { originals: string; derivatives: string; artifacts: string };
+  private buckets!: {
+    originals: string;
+    derivatives: string;
+    artifacts: string;
+    samples: string;
+  };
 
   constructor(private readonly config: ConfigService) {}
 
@@ -39,6 +44,9 @@ export class StorageService implements OnModuleInit {
   }
   get artifactBucket() {
     return this.buckets.artifacts;
+  }
+  get samplesBucket() {
+    return this.buckets.samples;
   }
 
   /** Stream upload — never buffer entire file. */

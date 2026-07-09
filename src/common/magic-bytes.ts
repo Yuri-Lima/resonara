@@ -10,10 +10,21 @@ export type DetectedAudioFormat =
   | 'aiff'
   | 'aac'
   | 'm4a'
+  | 'webm'
   | 'unknown';
 
 export function detectAudioFormat(buf: Buffer): DetectedAudioFormat {
   if (buf.length < 12) return 'unknown';
+
+  // WebM / Matroska (MediaRecorder)
+  if (
+    buf[0] === 0x1a &&
+    buf[1] === 0x45 &&
+    buf[2] === 0xdf &&
+    buf[3] === 0xa3
+  ) {
+    return 'webm';
+  }
 
   // WAV: RIFF....WAVE
   if (
@@ -85,5 +96,6 @@ export const FORMAT_MIME: Record<DetectedAudioFormat, string> = {
   aiff: 'audio/aiff',
   aac: 'audio/aac',
   m4a: 'audio/mp4',
+  webm: 'audio/webm',
   unknown: 'application/octet-stream',
 };

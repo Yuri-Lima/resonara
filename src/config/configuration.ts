@@ -23,6 +23,7 @@ export default () => ({
       originals: process.env.MINIO_BUCKET_ORIGINALS || 'audio-originals',
       derivatives: process.env.MINIO_BUCKET_DERIVATIVES || 'audio-derivatives',
       artifacts: process.env.MINIO_BUCKET_ARTIFACTS || 'audio-artifacts',
+      samples: process.env.MINIO_BUCKET_SAMPLES || 'piano-samples',
     },
   },
   ffmpeg: {
@@ -38,4 +39,5 @@ export default () => ({
     maxMb: parseInt(process.env.MAX_UPLOAD_MB || '2048', 10),
   },
   presignTtlSec: parseInt(process.env.PRESIGN_TTL_SEC || '3600', 10),
+  apiPublicUrl: process.env.API_PUBLIC_URL || '',
 });

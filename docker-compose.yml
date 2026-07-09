@@ -55,6 +55,7 @@ services:
       mc mb -p local/audio-originals || true;
       mc mb -p local/audio-derivatives || true;
       mc mb -p local/audio-artifacts || true;
+      mc mb -p local/piano-samples || true;
       mc anonymous set download local/audio-artifacts || true;
       exit 0;
       "

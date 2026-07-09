@@ -1,4 +1,4 @@
-.PHONY: build test lint ui docker-up docker-down verify-ffmpeg
+.PHONY: build test lint ui piano docker-up docker-down verify-ffmpeg seed-piano
 
 build:
 	npm run build
@@ -11,6 +11,12 @@ lint:
 
 ui:
 	bash scripts/open-ui.sh
+
+piano:
+	bash scripts/open-piano.sh
+
+seed-piano:
+	bash scripts/seed-piano-pack.sh
 
 verify-ffmpeg:
 	bash scripts/verify-ffmpeg.sh

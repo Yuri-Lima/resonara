@@ -19,6 +19,12 @@ describe('magic-bytes', () => {
     expect(detectAudioFormat(buf)).toBe('mp3');
   });
 
+  it('detects WebM (MediaRecorder)', () => {
+    const buf = Buffer.from([0x1a, 0x45, 0xdf, 0xa3, 0, 0, 0, 0, 0, 0, 0, 0]);
+    expect(detectAudioFormat(buf)).toBe('webm');
+    expect(isAllowedAudio(buf)).toBe(true);
+  });
+
   it('rejects unknown', () => {
     expect(detectAudioFormat(Buffer.from('hello world!!'))).toBe('unknown');
     expect(isAllowedAudio(Buffer.from('hello world!!'))).toBe(false);

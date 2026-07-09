@@ -377,6 +377,17 @@ export class FfmpegService implements OnModuleInit {
     };
   }
 
+  /** Pass-1 only: measure integrated loudness without rewriting audio. */
+  async measureLoudness(
+    inputPath: string,
+    targetLufs = -14,
+    truePeak = -1,
+    lra = 11,
+  ): Promise<LoudnormMeasure> {
+    await this.probe(inputPath);
+    return this.loudnormMeasure(inputPath, targetLufs, truePeak, lra);
+  }
+
   private async loudnormMeasure(
     inputPath: string,
     I: number,
