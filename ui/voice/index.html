@@ -20,38 +20,71 @@
       <a href="../">Audio Lab</a>
       <a href="../piano/">Piano</a>
       <a href="./" aria-current="page">Voice</a>
+      <a href="../deliverable/">TTS Dashboard</a>
     </nav>
   </header>
 
   <main class="voice-main">
     <section class="panel">
-      <h2>Long-form system TTS</h2>
+      <h2>Long-form neural TTS</h2>
       <p class="lede">
-        Uses your Mac or Windows system voices offline. Long documents are
-        automatically chunked, synthesized, and concatenated — progress updates
-        without freezing the UI.
+        Piper neural voices (offline) with platform fallback. Seam-free chunking,
+        SSML control, pronunciation dictionary, and document import.
       </p>
 
       <div class="voice-toolbar">
         <label>
           Voice
-          <select id="voice-select"><option value="">Default system voice</option></select>
+          <select id="voice-select" aria-label="Voice selector">
+            <option value="">Auto (prefer Piper)</option>
+          </select>
+        </label>
+        <label>
+          Engine
+          <select id="engine-select" aria-label="TTS engine">
+            <option value="auto">Auto</option>
+            <option value="piper">Piper neural</option>
+            <option value="platform">Platform</option>
+          </select>
         </label>
         <label>
           Format
           <select id="format-select">
             <option value="wav">WAV</option>
             <option value="mp3">MP3</option>
+            <option value="m4b">M4B (chapters)</option>
           </select>
         </label>
-        <button type="button" id="btn-engine" class="ghost">Check engine</button>
+        <button type="button" id="btn-preview" class="ghost">Preview voice</button>
+        <button type="button" id="btn-engine" class="ghost">Engine status</button>
+      </div>
+
+      <div class="mode-toggle" role="group" aria-label="Input mode">
+        <button type="button" id="mode-plain" class="mode active" aria-pressed="true">Plain Text</button>
+        <button type="button" id="mode-ssml" class="mode" aria-pressed="false">SSML</button>
+      </div>
+
+      <div id="ssml-toolbar" class="ssml-toolbar" hidden>
+        <button type="button" data-ssml="break" class="ghost">Pause</button>
+        <button type="button" data-ssml="emphasis" class="ghost">Emphasis</button>
+        <button type="button" data-ssml="prosody" class="ghost">Slow</button>
+        <button type="button" data-ssml="sub" class="ghost">Sub</button>
+        <button type="button" data-ssml="phoneme" class="ghost">Phoneme</button>
       </div>
 
       <label class="block-label" for="tts-text">Document text</label>
-      <textarea id="tts-text" rows="14" placeholder="Paste a long document (multi-paragraph / 10k+ words)…"></textarea>
+      <textarea id="tts-text" rows="12" placeholder="Paste a long document or write SSML…"></textarea>
+
+      <div class="upload-zone" id="upload-zone" tabindex="0" role="button" aria-label="Upload document">
+        <p>Drop EPUB / PDF / DOCX / MD here or <label class="linkish">browse<input type="file" id="file-input" accept=".md,.txt,.pdf,.docx,.epub,.html" hidden /></label></p>
+        <p id="upload-meta" class="meta"></p>
+      </div>
 
       <div class="voice-actions">
         <button type="button" id="btn-speak" class="primary">Speak &amp; export</button>
+        <label class="chk"><input type="checkbox" id="opt-normalize" checked /> Normalize</label>
+        <label class="chk"><input type="checkbox" id="opt-highpass" checked /> High-pass</label>
+        <label class="chk"><input type="checkbox" id="opt-compress" /> Compress</label>
         <span id="word-count" class="meta">0 words</span>
       </div>
 
@@ -63,9 +96,36 @@
       <div id="result" class="result" hidden>
         <audio id="player" controls></audio>
         <a id="download-link" class="primary" href="#" download>Download audio</a>
+        <div id="chapter-list" class="chapter-list" hidden>
+          <h3>Chapters</h3>
+          <ul id="chapters"></ul>
+        </div>
       </div>
 
       <pre id="status" class="status" aria-live="polite"></pre>
+    </section>
+
+    <section class="panel side-panel">
+      <h2>Job history</h2>
+      <ul id="job-history" class="job-history"></ul>
+      <button type="button" id="btn-refresh-jobs" class="ghost">Refresh</button>
+
+      <h2>Pronunciation dictionary</h2>
+      <form id="dict-form" class="dict-form">
+        <input id="dict-word" placeholder="word" required aria-label="Word" />
+        <input id="dict-alias" placeholder="alias or leave blank" aria-label="Alias" />
+        <input id="dict-phoneme" placeholder="IPA phoneme optional" aria-label="Phoneme" />
+        <button type="submit" class="primary">Add</button>
+      </form>
+      <div class="dict-actions">
+        <button type="button" id="btn-dict-export" class="ghost">Export JSON</button>
+        <button type="button" id="btn-dict-import" class="ghost">Import JSON</button>
+        <input type="file" id="dict-import-file" accept="application/json" hidden />
+      </div>
+      <table class="dict-table" aria-label="Pronunciation dictionary">
+        <thead><tr><th>Word</th><th>Alias / Phoneme</th><th></th></tr></thead>
+        <tbody id="dict-body"></tbody>
+      </table>
     </section>
   </main>
   <script src="app.js"></script>

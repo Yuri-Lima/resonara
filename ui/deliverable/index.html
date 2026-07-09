@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resonara TTS Improvement Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Resonara · TTS Overhaul</p>
+      <h1>From robotic platform voices to offline neural long-form speech</h1>
+      <p class="sub">
+        Piper TTS integration, seam-free concatenation, SSML, persisted jobs,
+        pronunciation dictionary, document import, and 80%+ test coverage —
+        all offline-first.
+      </p>
+      <nav class="toc" aria-label="Sections">
+        <a href="#compare">Before/After</a>
+        <a href="#engines">Engines</a>
+        <a href="#ssml">SSML</a>
+        <a href="#pipeline">Pipeline</a>
+        <a href="#voices">Voices</a>
+        <a href="#coverage">Coverage</a>
+        <a href="#chapters">Chapters</a>
+        <a href="#strict">TypeScript</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="compare" class="section">
+      <h2>Before / After audio quality</h2>
+      <p class="lede">Waveform sketch of chunk boundaries — old hard concat vs new trim + 20ms crossfade.</p>
+      <div class="compare-grid">
+        <figure class="card">
+          <figcaption>Before — audible seams</figcaption>
+          <canvas id="wave-before" width="640" height="160" role="img" aria-label="Waveform with gaps at chunk boundaries"></canvas>
+          <p class="caption">Hard concat of independent chunks · prosody reset · ~50ms silence gaps</p>
+        </figure>
+        <figure class="card">
+          <figcaption>After — seamless crossfades</figcaption>
+          <canvas id="wave-after" width="640" height="160" role="img" aria-label="Smooth waveform with crossfades"></canvas>
+          <p class="caption">Silence trim (−50dB / 30ms) + triangular acrossfade (20ms) + longer Piper chunks</p>
+        </figure>
+      </div>
+    </section>
+
+    <section id="engines" class="section">
+      <h2>TTS engine comparison</h2>
+      <div class="table-wrap" role="region" aria-label="Engine comparison matrix" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th>Capability</th>
+              <th>Platform (say / SAPI)</th>
+              <th>Piper neural</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Voice quality</td><td>Robotic / formant</td><td class="good">Natural neural prosody</td></tr>
+            <tr><td>Speed</td><td>Fast</td><td class="good">Faster than real-time (CPU)</td></tr>
+            <tr><td>SSML</td><td>Partial (engine-specific)</td><td class="good">break / phoneme / sub + transforms</td></tr>
+            <tr><td>Voice count</td><td>OS-installed</td><td class="good">30+ English models alone</td></tr>
+            <tr><td>Offline</td><td class="good">Yes</td><td class="good">Yes (ONNX)</td></tr>
+            <tr><td>Cross-sentence prosody</td><td>No (per chunk)</td><td class="good">Yes within long chunks</td></tr>
+            <tr><td>Linux server</td><td>Unavailable</td><td class="good">Supported</td></tr>
+            <tr><td>Role in Resonara</td><td>Fallback</td><td class="good">Primary (auto)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="ssml" class="section">
+      <h2>SSML reference</h2>
+      <div class="table-wrap" role="region" aria-label="SSML matrix" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th>Element</th>
+              <th>Syntax</th>
+              <th>Piper</th>
+              <th>macOS say</th>
+              <th>Windows SAPI</th>
+            </tr>
+          </thead>
+          <tbody id="ssml-body">
+            <tr><td>speak</td><td><code>&lt;speak&gt;…&lt;/speak&gt;</code></td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>break</td><td><code>&lt;break time="500ms"/&gt;</code></td><td>✓</td><td>✓ [[slnc]]</td><td>✓</td></tr>
+            <tr><td>emphasis</td><td><code>&lt;emphasis level="strong"&gt;</code></td><td>~</td><td>✓ [[emph]]</td><td>✓</td></tr>
+            <tr><td>prosody</td><td><code>&lt;prosody rate="slow"&gt;</code></td><td>~</td><td>✓ [[rate]]</td><td>✓</td></tr>
+            <tr><td>say-as</td><td><code>&lt;say-as interpret-as="digits"&gt;</code></td><td>✓ expand</td><td>✓ expand</td><td>✓</td></tr>
+            <tr><td>phoneme</td><td><code>&lt;phoneme alphabet="ipa" ph="…"&gt;</code></td><td>✓ [[ipa]]</td><td>~</td><td>✓</td></tr>
+            <tr><td>sub</td><td><code>&lt;sub alias="…"&gt;</code></td><td>✓</td><td>✓</td><td>✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="pipeline" class="section">
+      <h2>Pipeline architecture</h2>
+      <div class="pipeline" id="pipeline" aria-label="TTS pipeline flowchart">
+        <div class="node" style="--i:0">Text / Document</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node" style="--i:1">SSML parse</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node" style="--i:2">Pronunciation dict</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node" style="--i:3">Engine-aware chunk</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node" style="--i:4">Piper / Platform synth</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node" style="--i:5">Silence trim</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node" style="--i:6">Crossfade</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node" style="--i:7">Post-process</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node" style="--i:8">Chapter markers</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node out" style="--i:9">Output</div>
+      </div>
+    </section>
+
+    <section id="voices" class="section">
+      <h2>Voice gallery (Piper)</h2>
+      <div class="voice-grid" id="voice-grid"></div>
+    </section>
+
+    <section id="coverage" class="section">
+      <h2>Test coverage dashboard</h2>
+      <div class="bars" id="coverage-bars" aria-label="Coverage by module"></div>
+      <p class="caption">Before: 6 unit specs · After: 24 suites / 104 tests · gated ≥80% on TTS improvement surface</p>
+    </section>
+
+    <section id="chapters" class="section">
+      <h2>Chapter marker demo</h2>
+      <div class="chapter-demo card">
+        <div class="player-fake">
+          <button type="button" id="play-demo" class="primary" aria-label="Simulate chapter playback">▶ Play demo</button>
+          <div class="timeline" aria-hidden="true"><div id="playhead"></div></div>
+          <span id="time-label">0:00 / 12:40</span>
+        </div>
+        <ol id="chapter-demo-list" class="chapter-demo-list"></ol>
+      </div>
+    </section>
+
+    <section id="strict" class="section">
+      <h2>TypeScript strictness scorecard</h2>
+      <div class="score-grid">
+        <div class="card score">
+          <h3>Before</h3>
+          <ul>
+            <li><code>noImplicitAny: false</code></li>
+            <li><code>no-explicit-any: off</code></li>
+            <li>Multiple <code>as any</code> / <code>err: any</code></li>
+            <li>Loose bind/call/apply</li>
+          </ul>
+        </div>
+        <div class="card score good-card">
+          <h3>After</h3>
+          <ul>
+            <li><code>noImplicitAny: true</code></li>
+            <li><code>strictBindCallApply: true</code></li>
+            <li><code>forceConsistentCasingInFileNames: true</code></li>
+            <li><code>noFallthroughCasesInSwitch: true</code></li>
+            <li>Zero <code>@ts-ignore</code> / <code>as any</code> in <code>src/</code></li>
+            <li>ESLint <code>no-explicit-any: warn</code></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Resonara · Offline-first audio studio · <a href="../voice/">Open Voice UI</a></p>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>

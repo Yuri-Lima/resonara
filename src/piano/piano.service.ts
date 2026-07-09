@@ -340,9 +340,9 @@ export class PianoService implements OnModuleInit {
       take.analysisStatus = PianoTakeStatus.READY;
       await this.takes.save(take);
       return take;
-    } catch (e: any) {
+    } catch (e: unknown) {
       take.analysisStatus = PianoTakeStatus.ERROR;
-      take.analysisJson = { error: e?.message || String(e) };
+      take.analysisJson = { error: e instanceof Error ? e.message : String(e) };
       await this.takes.save(take);
       throw e;
     } finally {
@@ -371,7 +371,8 @@ export class PianoService implements OnModuleInit {
     const take = await this.getTake(id);
     let waveform: unknown = null;
     const waveKey =
-      (take.analysisJson as any)?.waveformKey || take.track?.waveformKey;
+      ((take.analysisJson as Record<string, unknown> | null)?.waveformKey as string | undefined) ||
+      take.track?.waveformKey;
     if (waveKey) {
       waveform = await this.storage.getJson(
         this.storage.artifactBucket,
@@ -404,11 +405,10 @@ export class PianoService implements OnModuleInit {
 
     // Enqueue normalize (two-pass) then client can poll; for trim we chain simply
     if (dto.trimSilence) {
-      const segs =
-        ((take.analysisJson as any)?.silence?.segments as Array<{
-          start: number;
-          end: number;
-        }>) || [];
+      const analysis = take.analysisJson as {
+        silence?: { segments?: Array<{ start: number; end: number }> };
+      } | null;
+      const segs = analysis?.silence?.segments || [];
       const duration = take.durationSec || track.durationSec || 0;
       let start = 0;
       let end = duration;

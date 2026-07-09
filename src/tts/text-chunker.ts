@@ -1,13 +1,18 @@
 /**
  * Split long documents into TTS-safe chunks at sentence/paragraph boundaries.
  * Pure functions — unit-testable without platform APIs.
+ * Engine-aware: Piper uses larger chunks for cross-sentence prosody.
  */
 
+export type ChunkEngine = 'piper' | 'platform';
+
 export interface ChunkOptions {
-  /** Soft max characters per chunk (platform voice limits). Default 1800. */
+  /** Soft max characters per chunk. Default engine-aware. */
   maxChars?: number;
-  /** Hard max; force-split if a single sentence exceeds this. Default 2400. */
+  /** Hard max; force-split if a single sentence exceeds this. */
   hardMaxChars?: number;
+  /** Engine selects defaults when max not provided. */
+  engine?: ChunkEngine;
 }
 
 export interface TextChunk {
@@ -16,23 +21,43 @@ export interface TextChunk {
   charCount: number;
 }
 
-const DEFAULT_MAX = 1800;
-const DEFAULT_HARD = 2400;
+const PLATFORM_MAX = 1800;
+const PLATFORM_HARD = 2400;
+const PIPER_MAX = 4000;
+const PIPER_HARD = 6000;
+
+export function defaultChunkLimits(engine: ChunkEngine = 'platform'): {
+  maxChars: number;
+  hardMaxChars: number;
+} {
+  if (engine === 'piper') {
+    return { maxChars: PIPER_MAX, hardMaxChars: PIPER_HARD };
+  }
+  return { maxChars: PLATFORM_MAX, hardMaxChars: PLATFORM_HARD };
+}
 
 /**
  * Chunk text for long-form TTS. Prefer paragraph breaks, then sentences, then words.
+ * Never splits inside SSML tags when markup is present.
  */
 export function chunkTextForTts(
   input: string,
   options: ChunkOptions = {},
 ): TextChunk[] {
-  const maxChars = options.maxChars ?? DEFAULT_MAX;
-  const hardMax = options.hardMaxChars ?? DEFAULT_HARD;
+  const engine = options.engine ?? 'platform';
+  const defaults = defaultChunkLimits(engine);
+  const maxChars = options.maxChars ?? defaults.maxChars;
+  const hardMax = options.hardMaxChars ?? defaults.hardMaxChars;
   const text = normalizeWhitespace(input);
   if (!text) return [];
 
   if (text.length <= maxChars) {
     return [{ index: 0, text, charCount: text.length }];
+  }
+
+  // SSML-aware: protect tags by splitting only on safe boundaries
+  if (/<[^>]+>/.test(text)) {
+    return chunkSsmlAware(text, maxChars, hardMax);
   }
 
   const paragraphs = text.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
@@ -74,7 +99,33 @@ export function chunkTextForTts(
 export function estimateWordCount(text: string): number {
   const t = text.trim();
   if (!t) return 0;
-  return t.split(/\s+/).filter(Boolean).length;
+  // Strip tags for counting
+  const plain = t.replace(/<[^>]+>/g, ' ');
+  return plain.split(/\s+/).filter(Boolean).length;
+}
+
+/**
+ * Detect chapter headings in plain/markdown text for bookmarking.
+ */
+export function detectChapters(
+  text: string,
+): { title: string; text: string }[] {
+  const re = /(?:^|\n)(#{1,3}\s+[^\n]+|Chapter\s+\d+[:.\s][^\n]*)/gi;
+  const matches = [...text.matchAll(re)];
+  if (!matches.length) {
+    return text.trim() ? [{ title: 'Body', text: text.trim() }] : [];
+  }
+  const chapters: { title: string; text: string }[] = [];
+  for (let i = 0; i < matches.length; i++) {
+    const m = matches[i];
+    const title = m[1].replace(/^#+\s*/, '').trim();
+    const start = (m.index ?? 0) + m[0].length;
+    const end =
+      i + 1 < matches.length ? matches[i + 1].index ?? text.length : text.length;
+    const body = text.slice(start, end).trim();
+    if (body) chapters.push({ title, text: body });
+  }
+  return chapters;
 }
 
 function normalizeWhitespace(input: string): string {
@@ -84,6 +135,66 @@ function normalizeWhitespace(input: string): string {
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
+}
+
+function chunkSsmlAware(
+  text: string,
+  maxChars: number,
+  hardMax: number,
+): TextChunk[] {
+  // Split only at paragraph boundaries outside tags, or between closed tags
+  const paragraphs = text.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  const packed: string[] = [];
+  let buf = '';
+  for (const para of paragraphs) {
+    if (para.length > hardMax) {
+      if (buf) {
+        packed.push(buf);
+        buf = '';
+      }
+      // Fall back to sentence split but avoid mid-tag
+      packed.push(...splitSsmlSafe(para, maxChars));
+      continue;
+    }
+    const candidate = buf ? `${buf}\n\n${para}` : para;
+    if (candidate.length <= maxChars) {
+      buf = candidate;
+    } else {
+      if (buf) packed.push(buf);
+      buf = para;
+    }
+  }
+  if (buf) packed.push(buf);
+  return packed.map((t, index) => ({ index, text: t, charCount: t.length }));
+}
+
+function splitSsmlSafe(text: string, maxChars: number): string[] {
+  if (text.length <= maxChars) return [text];
+  const out: string[] = [];
+  let i = 0;
+  while (i < text.length) {
+    let end = Math.min(i + maxChars, text.length);
+    if (end < text.length) {
+      // Prefer break at space not inside <...>
+      let j = end;
+      while (j > i + maxChars / 2) {
+        if (text[j] === ' ' && !insideTag(text, j)) break;
+        j--;
+      }
+      if (j > i + maxChars / 2) end = j;
+    }
+    out.push(text.slice(i, end).trim());
+    i = end;
+  }
+  return out.filter(Boolean);
+}
+
+function insideTag(text: string, pos: number): boolean {
+  const before = text.lastIndexOf('<', pos);
+  const after = text.indexOf('>', pos);
+  if (before === -1) return false;
+  const closeBefore = text.lastIndexOf('>', pos);
+  return before > closeBefore && after !== -1;
 }
 
 function splitBySentences(
@@ -128,7 +239,6 @@ function splitByWords(text: string, maxChars: number): string[] {
       buf = candidate;
     } else {
       if (buf) out.push(buf);
-      // Force-break oversize tokens
       if (w.length > maxChars) {
         for (let i = 0; i < w.length; i += maxChars) {
           out.push(w.slice(i, i + maxChars));

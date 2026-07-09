@@ -7,7 +7,7 @@ module.exports = {
   env: { node: true, jest: true },
   ignorePatterns: ['.eslintrc.js', 'dist', 'ui', 'coverage'],
   rules: {
-    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
   },
 };

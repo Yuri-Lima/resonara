@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-# Open the Audio Pipeline dashboard in the default browser (local file URL).
+# Open the Resonara TTS improvement dashboard (deliverable) in the default browser.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-UI="${ROOT}/ui/index.html"
+UI="${ROOT}/ui/deliverable/index.html"
+if [[ ! -f "$UI" ]]; then
+  # Fallback to main UI
+  UI="${ROOT}/ui/index.html"
+fi
 if [[ ! -f "$UI" ]]; then
   echo "UI not found at $UI" >&2
   exit 1

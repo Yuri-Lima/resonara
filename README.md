@@ -16,7 +16,7 @@ Resonara is a cross-platform **desktop audio studio** for creators, producers, a
 |--------|------------------|
 | **Audio lab** | Import, transcode, two-pass EBU R128 loudnorm, trim, silence detect, waveform, stream & export |
 | **Piano** | Play a hybrid sample piano, record takes, analyze and export |
-| **Voice** | Offline system TTS for long documents (10k+ words): chunk → synthesize → seamless concat |
+| **Voice** | Offline **Piper neural TTS** (primary) + platform fallback: SSML, pronunciation dict, document import, chapter markers, seam-free concat |
 
 End users get a normal **macOS** or **Windows** installer — no Docker, no Node, no terminal setup.
 
@@ -26,7 +26,7 @@ End users get a normal **macOS** or **Windows** installer — no Docker, no Node
 
 - **Offline-first desktop** — local engine, filesystem storage, no cloud account required for core flows  
 - **Production audio path** — two-pass loudnorm (not single-pass), soxr-aware processing via ffmpeg  
-- **Long-form speech** — native **macOS `say`** and **Windows System.Speech**, with automatic chunking and progress  
+- **Long-form speech** — **Piper** neural voices (offline ONNX) with **macOS `say` / Windows SAPI** fallback; SSML, dictionary, EPUB/PDF/DOCX/MD import, persisted jobs  
 - **Hybrid piano** — sample-pack playback, take capture, and export wired into the same job model  
 - **Live job progress** — normalize, export, and TTS report progress without freezing the UI  
 - **Health checks** — first-run / on-demand status for **ffmpeg** and **TTS** engines (with path resolution for GUI apps)
@@ -74,6 +74,33 @@ winget install Gyan.FFmpeg
 Resonara resolves common install locations (`/opt/homebrew/bin`, `/usr/local/bin`, Windows ffmpeg folders) when GUI apps strip `PATH`.
 
 ---
+
+
+
+## Voice / TTS
+
+Primary engine is **Piper** (offline neural). Platform voices remain as automatic fallback.
+
+```bash
+# Optional: download Piper binary + default English voice
+npm run download:piper
+export PIPER_PATH=./resources/piper/piper
+export PIPER_MODELS_DIR=./resources/piper/models
+```
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /tts/voices` | Unified Piper + platform voices |
+| `GET /tts/engines` | Engine availability |
+| `POST /tts/synthesize` | Long-form job (`engine`, `ssml`, post-process flags) |
+| `POST /tts/import` | Multipart document → chapters → synthesize |
+| `GET /tts/jobs` | Paginated persisted jobs |
+| `GET /tts/jobs/:id/chapters` | Chapter timestamps |
+| `GET/POST /tts/dictionary` | Pronunciation CRUD |
+| `GET /tts/ssml` | Supported SSML subset |
+
+See [IMPROVEMENT_PLAN.md](./IMPROVEMENT_PLAN.md) for architecture and phase plan.
+Dashboard: `ui/deliverable/` (`make ui`).
 
 ## Screenshots & UI surfaces
 

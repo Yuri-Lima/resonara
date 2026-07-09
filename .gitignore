@@ -16,3 +16,9 @@ test/fixtures/generated/
 .vscode/
 *.tsbuildinfo
 .cache/
+.env
+
+# Piper models (download via scripts/download-piper.js)
+resources/piper/**/*.onnx
+resources/piper/espeak-ng-data/
+*.onnx
