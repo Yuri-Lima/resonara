@@ -1,10 +1,9 @@
+# Optional Actions-based deploy for the docs/ site.
+# Primary publish path: GitHub Pages legacy source = main branch /docs
+# (Settings → Pages → Deploy from a branch → /docs).
+# Use this workflow only if you switch Pages build type to "GitHub Actions".
 name: Deploy GitHub Pages
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'docs/**'
-      - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
   contents: read
