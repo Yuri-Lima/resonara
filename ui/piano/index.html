@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resonara · Hybrid Piano · Sample + Analysis</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="top">
+    <div class="brand">
+      <a href="/ui/" class="back">← Dashboard</a>
+      <h1>Hybrid Piano</h1>
+      <p class="tag">Samples from MinIO · Live meters · Server analysis pipeline</p>
+    </div>
+    <div class="api-bar">
+      <label>API <input id="api-base" type="text" value="" size="28" aria-label="API base URL" /></label>
+      <button type="button" id="btn-load-pack">Load pack</button>
+      <span id="pack-status" class="status" role="status">No pack</span>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="panel transport" aria-label="Transport">
+      <div class="row">
+        <button type="button" id="btn-record" class="rec">● Record</button>
+        <button type="button" id="btn-stop" disabled>■ Stop</button>
+        <button type="button" id="btn-sustain" aria-pressed="false">Sustain</button>
+        <label>Octave <input id="octave" type="number" min="-2" max="3" value="0" /></label>
+        <label>Velocity <input id="velocity" type="range" min="20" max="127" value="96" /></label>
+        <span id="rec-timer" class="muted">0.0s</span>
+      </div>
+      <p class="hint">Keys: <kbd>A</kbd>–<kbd>;</kbd> white · <kbd>W</kbd><kbd>E</kbd><kbd>T</kbd><kbd>Y</kbd><kbd>U</kbd> black · <kbd>Z</kbd>/<kbd>X</kbd> octave · Space sustain · MIDI supported</p>
+    </section>
+
+    <section class="panel meters" aria-label="Live meters">
+      <h2>Live meters <span class="badge">not integrated LUFS</span></h2>
+      <div class="meter-grid">
+        <div>
+          <label>Peak <span id="peak-val">−∞</span></label>
+          <div class="bar"><i id="peak-bar"></i></div>
+        </div>
+        <div>
+          <label>RMS <span id="rms-val">−∞</span></label>
+          <div class="bar rms"><i id="rms-bar"></i></div>
+        </div>
+        <canvas id="spectrum" width="480" height="80" aria-label="Live spectrum"></canvas>
+        <canvas id="live-wave" width="480" height="60" aria-label="Live waveform"></canvas>
+      </div>
+    </section>
+
+    <section class="panel keyboard-wrap" aria-label="Piano keyboard">
+      <div id="keyboard" class="keyboard" role="group" aria-label="49-key piano"></div>
+    </section>
+
+    <section class="panel analysis" aria-label="Take analysis">
+      <h2>Take analysis <span class="badge">server pipeline</span></h2>
+      <div class="row">
+        <button type="button" id="btn-export" disabled>Export normalize (−14 LUFS)</button>
+        <span id="take-status" class="status" role="status">No take yet</span>
+      </div>
+      <div class="analysis-grid">
+        <div>
+          <h3>Integrated loudness</h3>
+          <pre id="lufs-box" class="code">—</pre>
+        </div>
+        <div>
+          <h3>Silence / phrases</h3>
+          <pre id="silence-box" class="code">—</pre>
+        </div>
+      </div>
+      <canvas id="take-wave" width="960" height="140" aria-label="Server waveform of take"></canvas>
+    </section>
+  </main>
+
+  <footer>
+    <p>Play path = browser samples · Analysis = two-pass loudnorm / waveform / silence on NestJS · See <code>PIANO_ARCHITECTURE.md</code></p>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>

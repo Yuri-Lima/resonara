@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resonara · Audio Lab</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">◈</span>
+      <div>
+        <h1>Resonara</h1>
+        <p class="tagline">Shape sound. Speak the long form. Play freely.</p>
+      </div>
+    </div>
+    <nav aria-label="Primary">
+      <a href="#matrix">Codecs</a>
+      <a href="#loudness">Loudness</a>
+      <a href="#waveform">Waveform</a>
+      <a href="#filters">Filters</a>
+      <a href="#queue">Queue</a>
+      <a href="#formats">Formats</a>
+      <a href="piano/">Piano</a>
+      <a href="voice/">Voice</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <h2>Audio lab</h2>
+      <p>
+        Import, transcode, two-pass loudnorm, trim, silence detect, waveform, and export — locally in Resonara.
+      </p>
+      <div class="hero-badges" role="list">
+        <span role="listitem">±0.5 LUFS</span>
+        <span role="listitem">soxr + TPDF</span>
+        <span role="listitem">HTTP Range 206</span>
+        <span role="listitem">No full-file RAM buffers</span>
+      </div>
+    </section>
+
+    <section id="matrix" class="panel" tabindex="-1">
+      <h2>Codec matrix</h2>
+      <p class="lede">Input × output support. All cells supported; notes mark quality path.</p>
+      <div class="table-wrap" role="region" aria-label="Codec support matrix" tabindex="0">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th scope="col">In \ Out</th>
+              <th scope="col">MP3</th>
+              <th scope="col">AAC</th>
+              <th scope="col">FLAC</th>
+              <th scope="col">OGG</th>
+              <th scope="col">Opus</th>
+              <th scope="col">WAV</th>
+            </tr>
+          </thead>
+          <tbody id="matrix-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="loudness" class="panel" tabindex="-1">
+      <h2>Loudness normalization (two-pass)</h2>
+      <div class="loudness-grid">
+        <div class="steps" aria-label="Two-pass workflow">
+          <div class="step" id="step1">
+            <span class="step-num">1</span>
+            <div>
+              <strong>Measure</strong>
+              <code>loudnorm=print_format=json</code>
+              <p>Read input_i, LRA, TP, thresh</p>
+            </div>
+          </div>
+          <div class="step-arrow" aria-hidden="true">→</div>
+          <div class="step" id="step2">
+            <span class="step-num">2</span>
+            <div>
+              <strong>Normalize</strong>
+              <code>measured_* + linear=true</code>
+              <p>Constant gain + true-peak limit</p>
+            </div>
+          </div>
+        </div>
+        <div class="charts">
+          <div>
+            <h3>Integrated LUFS</h3>
+            <canvas id="lufs-chart" width="420" height="160" aria-label="Before and after LUFS histogram"></canvas>
+          </div>
+          <div class="meters">
+            <div>
+              <label>LRA <span id="lra-val">8.4 LU</span></label>
+              <div class="bar" role="meter" aria-valuenow="8.4" aria-valuemin="0" aria-valuemax="20"><i id="lra-bar"></i></div>
+            </div>
+            <div>
+              <label>True peak <span id="tp-val">−1.0 dBTP</span></label>
+              <div class="bar tp" role="meter" aria-valuenow="-1" aria-valuemin="-9" aria-valuemax="0"><i id="tp-bar"></i></div>
+            </div>
+            <p class="target">Target: <strong>−14 LUFS</strong> (Spotify) · tolerance ±0.5</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="waveform" class="panel" tabindex="-1">
+      <h2>Waveform renderer</h2>
+      <p class="lede">Peak outline + RMS fill · stereo L/R from sample JSON</p>
+      <canvas id="wave-canvas" width="960" height="220" aria-label="Stereo waveform display"></canvas>
+      <div class="wave-legend">
+        <span class="lg peak">Peak</span>
+        <span class="lg rms">RMS</span>
+        <span class="lg left">Left</span>
+        <span class="lg right">Right</span>
+      </div>
+    </section>
+
+    <section id="filters" class="panel" tabindex="-1">
+      <h2>ffmpeg filter graphs</h2>
+      <div class="filter-tabs" role="tablist" aria-label="Operations">
+        <button role="tab" aria-selected="true" data-op="transcode">Transcode</button>
+        <button role="tab" aria-selected="false" data-op="normalize">Normalize</button>
+        <button role="tab" aria-selected="false" data-op="trim">Trim+Fade</button>
+        <button role="tab" aria-selected="false" data-op="waveform">Waveform</button>
+      </div>
+      <pre id="filter-graph" class="filter-graph" role="tabpanel" aria-live="polite"></pre>
+    </section>
+
+    <section id="queue" class="panel" tabindex="-1">
+      <h2>Processing queue simulator</h2>
+      <p class="lede">Jobs move queued → processing → complete/failed. Concurrency capped.</p>
+      <div class="queue-controls">
+        <button type="button" id="spawn-jobs">Spawn batch</button>
+        <label>Concurrency <input type="number" id="conc" min="1" max="8" value="2" /></label>
+      </div>
+      <div class="lanes">
+        <div class="lane" data-state="queued"><h3>Queued</h3><div class="cards" id="lane-queued"></div></div>
+        <div class="lane" data-state="processing"><h3>Processing</h3><div class="cards" id="lane-processing"></div></div>
+        <div class="lane" data-state="done"><h3>Complete / Failed</h3><div class="cards" id="lane-done"></div></div>
+      </div>
+    </section>
+
+    <section id="formats" class="panel" tabindex="-1">
+      <h2>Format reference</h2>
+      <div class="table-wrap" tabindex="0">
+        <table class="ref">
+          <thead>
+            <tr>
+              <th>Codec</th><th>Bitrate / quality</th><th>Use case</th>
+              <th>Metadata</th><th>Gapless</th><th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>MP3 (LAME)</td><td>128–320 CBR / V0–V9</td><td>Universal playback</td><td>ID3v2</td><td>Partial (LAME tags)</td><td>Lossy</td></tr>
+            <tr><td>AAC (native)</td><td>128–256 kbps</td><td>Streaming / Apple</td><td>MP4 atoms</td><td>Limited</td><td>Lossy</td></tr>
+            <tr><td>FLAC</td><td>Level 0–8</td><td>Archival masters</td><td>Vorbis comments</td><td>Excellent</td><td>Lossless</td></tr>
+            <tr><td>OGG Vorbis</td><td>q −1…10</td><td>Open web audio</td><td>Vorbis comments</td><td>Good</td><td>Lossy</td></tr>
+            <tr><td>Opus</td><td>64–256 kbps</td><td>Speech / VoIP</td><td>Opus tags</td><td>Excellent</td><td>Lossy</td></tr>
+            <tr><td>WAV PCM</td><td>16/24/32 · 44.1–96k</td><td>Interchange</td><td>RIFF / BWF</td><td>Perfect</td><td>Lossless</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Audio Processing Service · see <code>AUDIO_ARCHITECTURE.md</code> · Swagger <code>/docs</code></p>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
