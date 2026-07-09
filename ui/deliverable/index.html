@@ -202,12 +202,20 @@
 
     <section id="chapters" class="section">
       <h2>Chapter marker demo</h2>
+      <p class="lede">
+        Simulated M4B chapter navigation. <strong>Play</strong> advances the scrubber,
+        highlights the active chapter, and speaks each chapter title (browser speech).
+        Click a chapter to jump, or click the timeline to seek.
+      </p>
       <div class="chapter-demo card">
         <div class="player-fake">
-          <button type="button" id="play-demo" class="primary" aria-label="Simulate chapter playback">▶ Play demo</button>
-          <div class="timeline" aria-hidden="true"><div id="playhead"></div></div>
+          <button type="button" id="play-demo" class="primary" aria-pressed="false" aria-label="Play chapter demo">▶ Play demo</button>
+          <div class="timeline" id="chapter-timeline" role="slider" aria-label="Seek in chapter demo" aria-valuemin="0" aria-valuemax="760" aria-valuenow="0" tabindex="0">
+            <div id="playhead"></div>
+          </div>
           <span id="time-label">0:00 / 12:40</span>
         </div>
+        <p id="chapter-status" class="chapter-status" aria-live="polite">Ready — press Play demo</p>
         <ol id="chapter-demo-list" class="chapter-demo-list"></ol>
       </div>
     </section>

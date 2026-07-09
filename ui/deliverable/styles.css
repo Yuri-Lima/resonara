@@ -180,26 +180,57 @@ code { font-family: var(--mono); font-size: 0.85em; color: #c7d7ff; }
 }
 .bar-fill.before { background: linear-gradient(90deg, #5a3a20, var(--warn)); width: var(--before) !important; position: absolute; opacity: 0.35; }
 .bar-track { position: relative; }
-.chapter-demo-list { margin: 1rem 0 0; padding-left: 1.2rem; }
+.chapter-demo-list { margin: 0.75rem 0 0; padding-left: 0; list-style: none; }
 .chapter-demo-list li { margin: 0.35rem 0; }
-.chapter-demo-list button {
+.chapter-demo-list button,
+.chapter-item {
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
+  border-radius: 8px;
   color: #9ec1ff;
   cursor: pointer;
   font: inherit;
   text-align: left;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
-.chapter-demo-list button:hover, .chapter-demo-list button:focus { text-decoration: underline; outline: none; }
+.chapter-demo-list button:hover,
+.chapter-demo-list button:focus,
+.chapter-item:hover,
+.chapter-item:focus {
+  text-decoration: none;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  background: rgba(79, 140, 255, 0.08);
+}
+.chapter-demo-list button.is-active,
+.chapter-item.is-active {
+  background: rgba(79, 140, 255, 0.18);
+  border-color: rgba(79, 140, 255, 0.45);
+  color: #fff;
+  font-weight: 600;
+}
+.chapter-status {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  min-height: 1.4em;
+}
 .player-fake { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
 .timeline {
   flex: 1;
   min-width: 160px;
-  height: 8px;
+  height: 12px;
   background: #1a2030;
   border-radius: 999px;
   position: relative;
   overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.timeline:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 #playhead {
   position: absolute;
@@ -207,7 +238,22 @@ code { font-family: var(--mono); font-size: 0.85em; color: #c7d7ff; }
   top: 0;
   bottom: 0;
   width: 0%;
-  background: var(--accent);
+  min-width: 0;
+  background: linear-gradient(90deg, #3558a0, var(--accent));
+  transition: width 0.05s linear;
+  border-radius: 999px;
+}
+#playhead::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--accent);
 }
 .primary {
   background: var(--accent);
