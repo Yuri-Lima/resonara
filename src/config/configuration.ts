@@ -1,4 +1,8 @@
 import * as os from 'os';
+import * as path from 'path';
+
+const lite =
+  process.env.RESONARA_LITE === '1' || process.env.RESONARA_DESKTOP === '1';
 
 export default () => ({
   port: parseInt(process.env.PORT || '3000', 10),
@@ -40,4 +44,12 @@ export default () => ({
   },
   presignTtlSec: parseInt(process.env.PRESIGN_TTL_SEC || '3600', 10),
   apiPublicUrl: process.env.API_PUBLIC_URL || '',
+  resonara: {
+    lite,
+    dataDir:
+      process.env.RESONARA_DATA_DIR ||
+      path.join(os.homedir(), '.resonara', 'data'),
+    productName: 'Resonara',
+    tagline: 'Shape sound. Speak the long form. Play freely.',
+  },
 });

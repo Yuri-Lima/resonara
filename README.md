@@ -1,83 +1,110 @@
-# Audio Processing Service
+# Resonara
 
-Production NestJS service for **upload → probe → queue → ffmpeg → MinIO → stream**.
+**Shape sound. Speak the long form. Play freely.**
 
-| Capability | Implementation |
-|------------|----------------|
-| Transcode | MP3 / AAC (native) / FLAC / OGG Vorbis / Opus / WAV |
-| Loudness | **Two-pass** EBU R128 `loudnorm` (not single-pass) |
-| Waveform | Streamed f32le PCM → JSON `[min,max]` + RMS |
-| Metadata | ffprobe + tags + cover art |
-| Silence | `silencedetect` |
-| Trim / fade | Sample-accurate + `afade` curves |
-| Delivery | HTTP Range `206` + MinIO presigned URLs |
+Resonara is a cross-platform **desktop audio studio** for macOS and Windows:
 
-Architecture details: **[AUDIO_ARCHITECTURE.md](./AUDIO_ARCHITECTURE.md)**  
-Interactive dashboard: **[ui/index.html](./ui/index.html)** · `make ui`
+| Area | What you get |
+|------|----------------|
+| **Audio lab** | Import → transcode, two-pass EBU R128 loudnorm, trim, silence detect, waveform, stream/export |
+| **Piano** | Hybrid sample piano, record takes, export |
+| **Voice** | Offline **system TTS** for long documents (10k+ words): chunk → synthesize → concat |
 
-## Stack
+End users install a normal app — **no Docker, Node, or terminal** required for the desktop build.
 
-- NestJS 10, fluent-ffmpeg, BullMQ (Redis), PostgreSQL, MinIO, Socket.IO
-- ffmpeg with **libsoxr**, LAME, Vorbis, Opus (see `scripts/verify-ffmpeg.sh`)
+---
 
-## Quick start (local)
+## Install (desktop)
+
+### macOS
+1. Download the latest **Resonara** `.dmg` from [Releases](../../releases) (or build with `npm run dist:mac`).
+2. Open the DMG and drag **Resonara** to Applications.
+3. Launch **Resonara** from Applications (first launch may require right-click → Open if unsigned).
+4. The app starts a local engine and opens the UI automatically.
+
+**Supported:** macOS 12+ on Apple Silicon and Intel (universal/zip targets via electron-builder).
+
+### Windows
+1. Download the **Resonara Setup** `.exe` (NSIS) from Releases (or build with `npm run dist:win` on a Windows machine / CI).
+2. Run the installer; choose install directory if prompted.
+3. Launch **Resonara** from the Start Menu or desktop shortcut.
+
+**Supported:** Windows 10/11 x64.
+
+### Known limits (v1)
+- Builds ship **unsigned** (no Apple notarization / Authenticode) unless you add your own certificates.
+- System TTS uses **macOS `say`** / **Windows System.Speech** — quality and languages depend on OS voices installed.
+- Full multi-user cloud SaaS is out of scope; desktop mode is offline-first (**lite**: sql.js + filesystem + inline jobs).
+- Linux installer is not provided in v1.
+- **ffmpeg** must be on PATH (the app does not yet ship a static ffmpeg binary). Install via Homebrew (`brew install ffmpeg`) or the Windows ffmpeg build.
+- Packaged app runs the local API via **Electron as Node** (`ELECTRON_RUN_AS_NODE`) — end users do **not** install Node.js or Docker.
+
+---
+
+## Developer quick start
+
+### Desktop (lite, no Docker)
 
 ```bash
-# Dependencies
-cp .env.example .env
+npm install
+npm run build
+npm run desktop:dev    # Electron + local lite API on :3847
+# or API only:
+RESONARA_LITE=1 PORT=3000 npm run start:lite
+```
+
+Open `http://127.0.0.1:3000/ui/` (lab), `/ui/piano/`, `/ui/voice/`.
+
+### Full stack (Docker: Postgres, Redis, MinIO)
+
+```bash
+cp .env.example .env   # if present
 docker compose up -d postgres redis minio minio-init
 npm install
 npm run build
-npm run start:dev   # API :3000  — Swagger /docs
-# optional dedicated worker:
-# FFMPEG_CONCURRENCY=2 node dist/worker.js
+npm run start:dev      # API :3000 — Swagger /docs
 ```
 
-## Format support matrix
+---
 
-| In \ Out | MP3 | AAC | FLAC | OGG | Opus | WAV |
-|----------|-----|-----|------|-----|------|-----|
-| MP3      | ✓   | ✓   | ✓    | ✓   | ✓    | ✓   |
-| AAC/M4A  | ✓   | ✓   | ✓    | ✓   | ✓    | ✓   |
-| FLAC     | ✓*  | ✓   | ✓    | ✓   | ✓    | ✓   |
-| OGG/Opus | ✓   | ✓   | ✓    | ✓   | ✓    | ✓   |
-| WAV/AIFF | ✓*  | ✓   | ✓    | ✓   | ✓    | ✓   |
+## Packaging installers
 
-\* High-rate / high-bit-depth sources use **soxr** resampling and **TPDF dither** (`dither_method=triangular`) when reducing to 16-bit.
+```bash
+npm run dist:mac    # → release/*.dmg , *.zip
+npm run dist:win    # → release/*Setup*.exe (NSIS) — run on Windows or wine/CI
+npm run dist:all    # mac + win targets from electron-builder config
+```
 
-### Quality knobs
+Configuration lives in `package.json` → `"build"` (electron-builder):
 
-| Format | Options |
-|--------|---------|
-| MP3 | CBR 128/192/256/320 or VBR V0–V9 (`quality` 0–9) |
-| AAC | 128/192/256 kbps (**native** encoder — not libfdk_aac) |
-| FLAC | compression 0–8 |
-| OGG | quality −1…10 |
-| Opus | 64–256 kbps |
-| WAV | 16/24/32-bit, 44.1/48/96 kHz |
+- **mac:** `dmg` + `zip` for `arm64` and `x64`
+- **win:** `nsis` x64 with Start Menu + desktop shortcuts
 
-## Loudness normalization guide
+Artifacts are written to `release/`.
 
-**Always two-pass:**
+---
 
-1. **Measure:** `loudnorm=I=<target>:TP=<tp>:LRA=<lra>:print_format=json` → parse `input_i`, `input_lra`, `input_tp`, `input_thresh`, `target_offset`
-2. **Apply:** feed `measured_*` + `offset` + `linear=true`
-
-| Profile | LUFS | True peak | LRA |
-|---------|------|-----------|-----|
-| Spotify | −14 | −1 dBTP | 11 |
-| Podcast | −16 | −1.5 dBTP | 11 |
-| EBU R128 | −23 | −1 dBTP | 7 |
-
-Acceptance: output integrated loudness within **±0.5 LUFS** of target.
+## System TTS API
 
 ```http
-POST /tracks/:id/normalize
-{ "profile": "spotify" }
-# or { "targetLufs": -14, "truePeak": -1, "lra": 11 }
+GET  /tts/voices
+GET  /tts/engine
+POST /tts/synthesize   { "text": "...", "voice": "Samantha", "format": "wav" }
+GET  /tts/jobs/:id
+GET  /tts/jobs/:id/download
 ```
 
-## API (summary)
+Long text is chunked at paragraph/sentence boundaries, synthesized per platform, concatenated with ffmpeg. Progress: job polling + Socket.IO `job:progress` on namespace `/jobs`.
+
+Health (includes ffmpeg + TTS):
+
+```http
+GET /health
+```
+
+---
+
+## Audio lab API (summary)
 
 | Method | Path | Notes |
 |--------|------|-------|
@@ -89,63 +116,22 @@ POST /tracks/:id/normalize
 | GET | `/tracks/:id/silence` | Silence regions |
 | POST | `/tracks/:id/trim` | Trim + fade job |
 | GET | `/tracks/:id/stream` | Range / 206 |
-| GET | `/tracks/:id/download` | Presigned URL |
 | GET | `/jobs/:id` | Progress / result |
-| GET | `/health` | DB, Redis, ffmpeg |
 | WS | `/jobs` | `subscribe` → `job:progress` |
 
-Full OpenAPI: `http://localhost:3000/docs`
+Architecture: **[AUDIO_ARCHITECTURE.md](./AUDIO_ARCHITECTURE.md)** · Piano: **[PIANO_ARCHITECTURE.md](./PIANO_ARCHITECTURE.md)**
 
-## Constraints (enforced)
+---
 
-- No single-pass loudnorm
-- No default SWR for sample-rate conversion — **soxr only**
-- No full-file Node buffers — streams / temp files
-- Always ffprobe before process
-- ffmpeg path from `PATH` or `FFMPEG_PATH` / `FFPROBE_PATH`
-- Worker concurrency = `FFMPEG_CONCURRENCY` (default CPU count); queue backpressure, not rejection
-
-## Gapless limitation
-
-Album-gapless MP3 requires LAME `--nogap` multi-file encode. Per-file transcodes may retain LAME delay/padding tags but true album gapless is **not** implemented in v1. Prefer FLAC/Opus for seamless albums.
-
-## Tests
+## Tests & smoke
 
 ```bash
-npm test                 # unit + ffmpeg fixtures
-make verify-ffmpeg
+npm test                 # unit (chunker, platform TTS builders, ffmpeg, …)
+npm run smoke:tts        # real macOS say chunk→concat when on Darwin
+npm run smoke:service    # boot lite API, health + UI surfaces
 ```
 
-## Docker Compose full stack
-
-```bash
-docker compose up --build
-```
-
-Services: `api`, `worker`, `postgres`, `redis`, `minio`.
-
-## UI
-
-```bash
-make ui                  # opens ui/index.html
-```
-
-Dark-themed dashboard: codec matrix, loudness visualizer, waveform canvas, filter graphs, queue simulator.
-
-## Hybrid Piano
-
-Sample-based piano + live meters + server analysis (see [PIANO_ARCHITECTURE.md](./PIANO_ARCHITECTURE.md)).
-
-```bash
-# Generate synthetic 49-key pack (C2–C6)
-make seed-piano
-# Start API (auto-registers samples/upright-basic into MinIO + DB)
-npm run build && npm start
-# Open piano UI (same-origin /ui/piano/)
-make piano
-```
-
-Play with mouse/touch, QWERTY, or MIDI. **Record** uploads a take and runs waveform + silence + loudness measure. **Export** enqueues two-pass normalize (−14 LUFS).
+---
 
 ## License
 

@@ -32,7 +32,7 @@ export class Track {
   @Column({ type: 'text', nullable: true })
   format!: string | null;
 
-  @Column({ name: 'duration_sec', type: 'double precision', nullable: true })
+  @Column({ name: 'duration_sec', type: 'float', nullable: true })
   durationSec!: number | null;
 
   @Column({ name: 'sample_rate', type: 'int', nullable: true })
@@ -47,17 +47,17 @@ export class Track {
   @Column({ name: 'bit_depth', type: 'int', nullable: true })
   bitDepth!: number | null;
 
-  @Column({ name: 'size_bytes', type: 'bigint', default: 0 })
+  @Column({ name: 'size_bytes', type: 'text', default: '0' })
   sizeBytes!: string;
 
-  @Column({ name: 'metadata_json', type: 'jsonb', nullable: true })
+  @Column({ name: 'metadata_json', type: 'simple-json', nullable: true })
   metadataJson!: Record<string, unknown> | null;
 
   @Column({ name: 'waveform_key', type: 'text', nullable: true })
   waveformKey!: string | null;
 
   @Column({
-    type: 'enum',
+    type: 'simple-enum',
     enum: TrackStatus,
     default: TrackStatus.UPLOADED,
   })
@@ -66,9 +66,9 @@ export class Track {
   @OneToMany(() => TranscodeJob, (j) => j.track)
   jobs!: TranscodeJob[];
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date;
 }

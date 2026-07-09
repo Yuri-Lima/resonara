@@ -26,6 +26,10 @@ import {
   WaveformOptions,
   WaveformResult,
 } from './ffmpeg.types';
+import {
+  augmentedPath,
+  resolveFfmpegBinary,
+} from './resolve-ffmpeg';
 
 const FADE_CURVE_MAP: Record<string, string> = {
   linear: 'tri',
@@ -44,19 +48,30 @@ export class FfmpegService implements OnModuleInit {
   constructor(private readonly config: ConfigService) {}
 
   onModuleInit() {
+    // GUI / Electron apps often lack Homebrew on PATH — resolve absolute bins.
+    process.env.PATH = augmentedPath();
+
     const cfg = this.config.get('ffmpeg') || {};
-    if (cfg.path) {
-      this.ffmpegPath = cfg.path;
-      ffmpeg.setFfmpegPath(cfg.path);
-    }
-    if (cfg.ffprobePath) {
-      this.ffprobePath = cfg.ffprobePath;
-      ffmpeg.setFfprobePath(cfg.ffprobePath);
-    }
+    this.ffmpegPath = resolveFfmpegBinary(cfg.path || undefined, 'ffmpeg');
+    this.ffprobePath = resolveFfmpegBinary(
+      cfg.ffprobePath || undefined,
+      'ffprobe',
+    );
+    ffmpeg.setFfmpegPath(this.ffmpegPath);
+    ffmpeg.setFfprobePath(this.ffprobePath);
     this.timeoutMs = cfg.timeoutMs || 600_000;
     this.logger.log(
       `ffmpeg=${this.ffmpegPath} ffprobe=${this.ffprobePath} timeout=${this.timeoutMs}ms`,
     );
+  }
+
+  /** Absolute or resolved ffmpeg binary path. */
+  getFfmpegPath(): string {
+    return this.ffmpegPath;
+  }
+
+  getFfprobePath(): string {
+    return this.ffprobePath;
   }
 
   /** Always probe before processing. */

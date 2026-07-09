@@ -17,13 +17,13 @@ async function bootstrap() {
     }),
   );
 
-  // Serve dashboard + piano UI same-origin (presigned sample fetch + API)
+  // Serve dashboard + piano + voice UI same-origin
   app.useStaticAssets(join(process.cwd(), 'ui'), { prefix: '/ui' });
 
   const config = new DocumentBuilder()
-    .setTitle('Audio Processing Service')
+    .setTitle('Resonara')
     .setDescription(
-      'Upload, transcode, two-pass EBU R128 normalize, waveform, silence, trim, stream, piano',
+      'Shape sound. Speak the long form. Play freely. — Audio lab, sample piano, long-form system TTS.',
     )
     .setVersion('1.0')
     .build();
@@ -34,7 +34,7 @@ async function bootstrap() {
   await app.listen(port);
   // eslint-disable-next-line no-console
   console.log(
-    `Audio service :${port} — Swagger /docs — Piano /ui/piano/ — Dashboard /ui/`,
+    `Resonara :${port} — Swagger /docs — Lab /ui/ — Piano /ui/piano/ — Voice /ui/voice/`,
   );
 }
 

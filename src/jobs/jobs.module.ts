@@ -14,21 +14,27 @@ import {
 import { JobsController } from './jobs.controller';
 import { JobsService } from './jobs.service';
 
+const isLite =
+  process.env.RESONARA_LITE === '1' || process.env.RESONARA_DESKTOP === '1';
+
+const processors = isLite
+  ? []
+  : [
+      TranscodeProcessor,
+      NormalizeProcessor,
+      TrimProcessor,
+      WaveformProcessor,
+      SilenceProcessor,
+      MetadataProcessor,
+    ];
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([TranscodeJob, Track]),
     QueueModule,
   ],
   controllers: [JobsController],
-  providers: [
-    JobsService,
-    TranscodeProcessor,
-    NormalizeProcessor,
-    TrimProcessor,
-    WaveformProcessor,
-    SilenceProcessor,
-    MetadataProcessor,
-  ],
+  providers: [JobsService, ...processors],
   exports: [JobsService],
 })
 export class JobsModule {}

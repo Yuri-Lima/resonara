@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import * as fs from 'fs';
+import * as path from 'path';
 import configuration from './config/configuration';
 import { Track } from './entities/track.entity';
 import { TranscodeJob } from './entities/transcode-job.entity';
@@ -14,6 +16,10 @@ import { PianoModule } from './piano/piano.module';
 import { QueueModule } from './queue/queue.module';
 import { StorageModule } from './storage/storage.module';
 import { TracksModule } from './tracks/tracks.module';
+import { TtsModule } from './tts/tts.module';
+
+const isLite =
+  process.env.RESONARA_LITE === '1' || process.env.RESONARA_DESKTOP === '1';
 
 @Module({
   imports: [
@@ -21,17 +27,34 @@ import { TracksModule } from './tracks/tracks.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get('database.host'),
-        port: config.get('database.port'),
-        username: config.get('database.username'),
-        password: config.get('database.password'),
-        database: config.get('database.name'),
-        entities: [Track, TranscodeJob, SamplePack, PianoTake],
-        synchronize: true,
-        logging: false,
-      }),
+      useFactory: (config: ConfigService): TypeOrmModuleOptions => {
+        if (isLite) {
+          const dataDir =
+            config.get<string>('resonara.dataDir') ||
+            path.join(process.cwd(), '.resonara-data');
+          fs.mkdirSync(dataDir, { recursive: true });
+          // sql.js — pure JS, no native compile (desktop-friendly)
+          return {
+            type: 'sqljs',
+            location: path.join(dataDir, 'resonara.db'),
+            autoSave: true,
+            entities: [Track, TranscodeJob, SamplePack, PianoTake],
+            synchronize: true,
+            logging: false,
+          };
+        }
+        return {
+          type: 'postgres',
+          host: config.get<string>('database.host'),
+          port: config.get<number>('database.port'),
+          username: config.get<string>('database.username'),
+          password: config.get<string>('database.password'),
+          database: config.get<string>('database.name'),
+          entities: [Track, TranscodeJob, SamplePack, PianoTake],
+          synchronize: true,
+          logging: false,
+        };
+      },
     }),
     StorageModule,
     FfmpegModule,
@@ -41,6 +64,7 @@ import { TracksModule } from './tracks/tracks.module';
     JobsModule,
     PianoModule,
     HealthModule,
+    TtsModule,
   ],
 })
 export class AppModule {}

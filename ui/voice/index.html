@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resonara · Voice</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="voice-page">
+  <header class="site-header">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">◈</span>
+      <div>
+        <h1>Resonara</h1>
+        <p class="tagline">Shape sound. Speak the long form. Play freely.</p>
+      </div>
+    </div>
+    <nav aria-label="Primary">
+      <a href="../">Audio Lab</a>
+      <a href="../piano/">Piano</a>
+      <a href="./" aria-current="page">Voice</a>
+    </nav>
+  </header>
+
+  <main class="voice-main">
+    <section class="panel">
+      <h2>Long-form system TTS</h2>
+      <p class="lede">
+        Uses your Mac or Windows system voices offline. Long documents are
+        automatically chunked, synthesized, and concatenated — progress updates
+        without freezing the UI.
+      </p>
+
+      <div class="voice-toolbar">
+        <label>
+          Voice
+          <select id="voice-select"><option value="">Default system voice</option></select>
+        </label>
+        <label>
+          Format
+          <select id="format-select">
+            <option value="wav">WAV</option>
+            <option value="mp3">MP3</option>
+          </select>
+        </label>
+        <button type="button" id="btn-engine" class="ghost">Check engine</button>
+      </div>
+
+      <label class="block-label" for="tts-text">Document text</label>
+      <textarea id="tts-text" rows="14" placeholder="Paste a long document (multi-paragraph / 10k+ words)…"></textarea>
+
+      <div class="voice-actions">
+        <button type="button" id="btn-speak" class="primary">Speak &amp; export</button>
+        <span id="word-count" class="meta">0 words</span>
+      </div>
+
+      <div class="progress-wrap" hidden id="progress-wrap">
+        <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+        <p id="progress-label">Queued…</p>
+      </div>
+
+      <div id="result" class="result" hidden>
+        <audio id="player" controls></audio>
+        <a id="download-link" class="primary" href="#" download>Download audio</a>
+      </div>
+
+      <pre id="status" class="status" aria-live="polite"></pre>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

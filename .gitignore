@@ -1,7 +1,12 @@
 node_modules/
 dist/
 coverage/
+release/
+.resonara-data/
+*.db
 .env
+.env.*
+!.env.example
 *.log
 .DS_Store
 tmp/
@@ -10,3 +15,4 @@ test/fixtures/generated/
 .idea/
 .vscode/
 *.tsbuildinfo
+.cache/

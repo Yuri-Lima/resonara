@@ -1,0 +1,99 @@
+.voice-page .voice-main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+.voice-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: flex-end;
+}
+.voice-toolbar label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+}
+.voice-toolbar select {
+  min-width: 12rem;
+  padding: 0.4rem 0.6rem;
+}
+.block-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+#tts-text {
+  width: 100%;
+  font: inherit;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #2a3544;
+  background: #0f141c;
+  color: #e8eef7;
+  resize: vertical;
+}
+.voice-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+button.primary, a.primary {
+  background: #3d8bfd;
+  color: #fff;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.55rem 1.1rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+button.ghost {
+  background: transparent;
+  border: 1px solid #3d4a5c;
+  color: #c5d0e0;
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+}
+.progress-wrap {
+  background: #1a2330;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 1rem 0;
+  position: relative;
+  min-height: 2rem;
+}
+.progress-bar {
+  height: 2rem;
+  background: linear-gradient(90deg, #2f6fed, #5ad0a8);
+  transition: width 0.25s ease;
+}
+#progress-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  margin: 0;
+  font-size: 0.85rem;
+}
+.result {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+.status {
+  background: #0c1017;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  overflow: auto;
+  max-height: 12rem;
+}
+.meta { color: #8b9bb0; font-size: 0.9rem; }

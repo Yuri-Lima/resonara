@@ -1,0 +1,1 @@
+Resonara electron-builder resources

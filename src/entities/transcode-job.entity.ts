@@ -30,26 +30,26 @@ export class TranscodeJob {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ name: 'track_id', type: 'uuid' })
+  @Column({ name: 'track_id', type: 'text' })
   trackId!: string;
 
   @ManyToOne(() => Track, (t) => t.jobs, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'track_id' })
   track!: Track;
 
-  @Column({ type: 'enum', enum: JobType })
+  @Column({ type: 'simple-enum', enum: JobType })
   type!: JobType;
 
-  @Column({ type: 'enum', enum: JobStatus, default: JobStatus.QUEUED })
+  @Column({ type: 'simple-enum', enum: JobStatus, default: JobStatus.QUEUED })
   status!: JobStatus;
 
   @Column({ type: 'int', default: 0 })
   progress!: number;
 
-  @Column({ name: 'params_json', type: 'jsonb', nullable: true })
+  @Column({ name: 'params_json', type: 'simple-json', nullable: true })
   paramsJson!: Record<string, unknown> | null;
 
-  @Column({ name: 'result_json', type: 'jsonb', nullable: true })
+  @Column({ name: 'result_json', type: 'simple-json', nullable: true })
   resultJson!: Record<string, unknown> | null;
 
   @Column({ name: 'error_message', type: 'text', nullable: true })
@@ -61,12 +61,12 @@ export class TranscodeJob {
   @Column({ name: 'output_storage_key', type: 'text', nullable: true })
   outputStorageKey!: string | null;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date;
 
-  @Column({ name: 'completed_at', type: 'timestamptz', nullable: true })
+  @Column({ name: 'completed_at', type: 'datetime', nullable: true })
   completedAt!: Date | null;
 }

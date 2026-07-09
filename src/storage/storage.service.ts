@@ -1,12 +1,21 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as Minio from 'minio';
+import * as fs from 'fs';
+import * as fsp from 'fs/promises';
+import * as path from 'path';
 import { Readable } from 'stream';
+import { pipeline } from 'stream/promises';
 
+/**
+ * Object storage: MinIO in full mode, local filesystem in Resonara lite/desktop mode.
+ */
 @Injectable()
 export class StorageService implements OnModuleInit {
   private readonly logger = new Logger(StorageService.name);
-  private client!: Minio.Client;
+  private client: Minio.Client | null = null;
+  private lite = false;
+  private root = '';
   private buckets!: {
     originals: string;
     derivatives: string;
@@ -19,6 +28,22 @@ export class StorageService implements OnModuleInit {
   async onModuleInit() {
     const m = this.config.get('minio');
     this.buckets = m.buckets;
+    this.lite =
+      this.config.get<boolean>('resonara.lite') === true ||
+      process.env.RESONARA_LITE === '1' ||
+      process.env.RESONARA_DESKTOP === '1';
+
+    if (this.lite) {
+      this.root =
+        this.config.get<string>('resonara.dataDir') ||
+        path.join(process.cwd(), '.resonara-data');
+      for (const b of Object.values(this.buckets)) {
+        await fsp.mkdir(path.join(this.root, b), { recursive: true });
+      }
+      this.logger.log(`Storage lite mode root=${this.root}`);
+      return;
+    }
+
     this.client = new Minio.Client({
       endPoint: m.endPoint,
       port: m.port,
@@ -49,7 +74,10 @@ export class StorageService implements OnModuleInit {
     return this.buckets.samples;
   }
 
-  /** Stream upload — never buffer entire file. */
+  private keyPath(bucket: string, key: string): string {
+    return path.join(this.root, bucket, key);
+  }
+
   async putStream(
     bucket: string,
     key: string,
@@ -57,7 +85,13 @@ export class StorageService implements OnModuleInit {
     size: number,
     meta?: Record<string, string>,
   ): Promise<void> {
-    await this.client.putObject(bucket, key, stream, size, meta);
+    if (this.lite) {
+      const dest = this.keyPath(bucket, key);
+      await fsp.mkdir(path.dirname(dest), { recursive: true });
+      await pipeline(stream, fs.createWriteStream(dest));
+      return;
+    }
+    await this.client!.putObject(bucket, key, stream, size, meta);
   }
 
   async putFile(
@@ -66,7 +100,13 @@ export class StorageService implements OnModuleInit {
     filePath: string,
     meta?: Record<string, string>,
   ): Promise<void> {
-    await this.client.fPutObject(bucket, key, filePath, meta);
+    if (this.lite) {
+      const dest = this.keyPath(bucket, key);
+      await fsp.mkdir(path.dirname(dest), { recursive: true });
+      await fsp.copyFile(filePath, dest);
+      return;
+    }
+    await this.client!.fPutObject(bucket, key, filePath, meta);
   }
 
   async getStream(
@@ -74,27 +114,70 @@ export class StorageService implements OnModuleInit {
     key: string,
     range?: { start: number; end: number },
   ): Promise<Readable> {
-    if (range) {
-      return this.client.getPartialObject(bucket, key, range.start, range.end - range.start + 1);
+    if (this.lite) {
+      const dest = this.keyPath(bucket, key);
+      if (range) {
+        return fs.createReadStream(dest, {
+          start: range.start,
+          end: range.end,
+        });
+      }
+      return fs.createReadStream(dest);
     }
-    return this.client.getObject(bucket, key);
+    if (range) {
+      return this.client!.getPartialObject(
+        bucket,
+        key,
+        range.start,
+        range.end - range.start + 1,
+      );
+    }
+    return this.client!.getObject(bucket, key);
   }
 
   async getFile(bucket: string, key: string, destPath: string): Promise<void> {
-    await this.client.fGetObject(bucket, key, destPath);
+    if (this.lite) {
+      const src = this.keyPath(bucket, key);
+      await fsp.mkdir(path.dirname(destPath), { recursive: true });
+      await fsp.copyFile(src, destPath);
+      return;
+    }
+    await this.client!.fGetObject(bucket, key, destPath);
   }
 
   async stat(bucket: string, key: string) {
-    return this.client.statObject(bucket, key);
+    if (this.lite) {
+      const st = await fsp.stat(this.keyPath(bucket, key));
+      return { size: st.size, lastModified: st.mtime, etag: '', metaData: {} };
+    }
+    return this.client!.statObject(bucket, key);
   }
 
   async remove(bucket: string, key: string): Promise<void> {
-    await this.client.removeObject(bucket, key);
+    if (this.lite) {
+      await fsp.unlink(this.keyPath(bucket, key)).catch(() => undefined);
+      return;
+    }
+    await this.client!.removeObject(bucket, key);
   }
 
-  async presignedGet(bucket: string, key: string, expirySec?: number): Promise<string> {
-    const ttl = expirySec ?? this.config.get<number>('presignTtlSec') ?? 3600;
-    return this.client.presignedGetObject(bucket, key, ttl);
+  async presignedGet(
+    bucket: string,
+    key: string,
+    _expirySec?: number,
+  ): Promise<string> {
+    if (this.lite) {
+      // Local HTTP path served by Nest static/stream endpoints — use API download
+      const port = this.config.get<number>('port') || 3000;
+      const publicUrl =
+        this.config.get<string>('apiPublicUrl') || `http://127.0.0.1:${port}`;
+      return `${publicUrl}/storage/${encodeURIComponent(bucket)}/${key
+        .split('/')
+        .map(encodeURIComponent)
+        .join('/')}`;
+    }
+    const ttl = _expirySec ?? this.config.get<number>('presignTtlSec') ?? 3600;
+    return this.client!.presignedGetObject(bucket, key, ttl);
   }
 
   async getJson<T>(bucket: string, key: string): Promise<T | null> {
@@ -110,8 +193,24 @@ export class StorageService implements OnModuleInit {
 
   async putJson(bucket: string, key: string, data: unknown): Promise<void> {
     const buf = Buffer.from(JSON.stringify(data), 'utf8');
-    await this.client.putObject(bucket, key, buf, buf.length, {
+    if (this.lite) {
+      const dest = this.keyPath(bucket, key);
+      await fsp.mkdir(path.dirname(dest), { recursive: true });
+      await fsp.writeFile(dest, buf);
+      return;
+    }
+    await this.client!.putObject(bucket, key, buf, buf.length, {
       'Content-Type': 'application/json',
     });
+  }
+
+  /** Absolute path for lite mode (desktop local files). */
+  resolveLocalPath(bucket: string, key: string): string | null {
+    if (!this.lite) return null;
+    return this.keyPath(bucket, key);
+  }
+
+  isLite(): boolean {
+    return this.lite;
   }
 }

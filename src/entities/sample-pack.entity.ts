@@ -38,15 +38,15 @@ export class SamplePack {
   @Column({ name: 'storage_prefix', type: 'text' })
   storagePrefix!: string;
 
-  @Column({ name: 'manifest_json', type: 'jsonb' })
+  @Column({ name: 'manifest_json', type: 'simple-json' })
   manifestJson!: SamplePackManifest;
 
   @Column({ type: 'text', default: 'ready' })
   status!: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date;
 }
