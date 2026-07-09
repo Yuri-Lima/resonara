@@ -1,8 +1,11 @@
-name: Deploy UI to GitHub Pages
+name: Deploy GitHub Pages
 on:
   push:
     branches: [main]
-    paths: ['ui/**']
+    paths:
+      - 'docs/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
 permissions:
   contents: read
   pages: write
@@ -19,8 +22,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: ui
+          path: docs
       - id: deployment
         uses: actions/deploy-pages@v4
