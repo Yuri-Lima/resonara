@@ -97,6 +97,7 @@ describe('VoiceManager', () => {
     const vm = new VoiceManager();
     expect(vm.resolveEngine('auto', 'pt-BR')).toBe('piper');
     expect(vm.resolveEngine('auto', 'pt_BR')).toBe('piper');
+    expect(vm.resolveEngine('auto', 'pt')).toBe('piper');
   });
 
   it('getDefaultVoiceForLanguage never returns kokoro for pt-BR', () => {

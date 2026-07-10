@@ -113,7 +113,7 @@ export class VoiceManager {
    * Prefer Kokoro (when available) > Piper high > platform for English.
    * For pt-BR (and other non-English), Kokoro is English-only and must be
    * skipped — otherwise auto mode tries kokoro:af_sarah on Portuguese text.
-   * Evidence-based default refined in Phase 9 shootout + G26 multilingual.
+   * Evidence-based default refined in Phase 9 shootout + G26/G27 multilingual.
    */
   resolveEngine(
     requested: 'auto' | 'piper' | 'platform' | 'kokoro' = 'auto',
@@ -141,11 +141,11 @@ export class VoiceManager {
       return 'platform';
     }
     // auto: language-aware order. Kokoro has no pt-BR voices.
+    // English: kokoro → piper → platform. Portuguese: piper → platform.
     const lang = (language || 'en').toLowerCase().replace(/_/g, '-');
     const isPortuguese = lang.startsWith('pt');
     if (!isPortuguese && kokoro) return 'kokoro';
     if (piper.available) return 'piper';
-    if (!isPortuguese && kokoro) return 'kokoro';
     const p = ttsEngineAvailable();
     if (p.available) return 'platform';
     throw new Error(
