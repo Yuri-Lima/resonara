@@ -1,15 +1,16 @@
 # Phase 02 — Baseline + Regression Safety Net
 
-**Date:** 2026-07-11  
-**Branch:** `feat/g27-parity-session`  
+**Date:** 2026-07-10  
 **Tag:** `pre-g27` (local only)
 
 ## What changed
 
 | File | Rationale |
 |------|-----------|
-| `reports/phase-02.md` | Freeze baseline metrics before feature work |
-| git tag `pre-g27` | Diffable regression anchor (local only, never pushed) |
+| `reports/phase-02.md` | Record green baseline metrics before feature work |
+| git tag `pre-g27` | Diffable regression anchor (never pushed) |
+
+No application code changes. Piper binary + models downloaded via existing `npm run download:piper` (gitignored).
 
 ## Commands run (real output)
 
@@ -25,70 +26,83 @@ Exit: 0
 Test Suites: 30 passed, 30 total
 Tests:       133 passed, 133 total
 Snapshots:   0 total
-Time:        6.328 s
+Time:        5.392 s
 ```
 
-### Lint (`npx eslint src/ --ext .ts`)
+### Lint
 ```
 ✖ 8 problems (0 errors, 8 warnings)
 ```
-0 errors; 8 pre-existing warnings only.
+Baseline lint: **0 errors**, 8 pre-existing warnings (ffmpeg, piano dto, queue, tracks).
 
 ### Coverage (`npm run test:cov`)
 ```
 All files                  |   77.08 |    55.13 |   69.85 |   79.26 |
 ```
-Jest global thresholds (80% statements/lines) not met at baseline — recorded as-is. Target for Phase 21: ≥ baseline + 5 points (statements ≥ 82.08, lines ≥ 84.26) or raise coverage via new module tests.
+| Metric | Baseline |
+|--------|----------|
+| Statements | 77.08% |
+| Branches | 55.13% |
+| Functions | 69.85% |
+| Lines | 79.26% |
+| Tests | 133 pass |
+
+Note: package.json coverage thresholds are set to 80% statements/lines; baseline currently reports below threshold (Jest prints threshold failure) while unit tests still pass under `npm test`. Phase 21 target: ≥ baseline + 5 points (statements ≥ 82.08%).
 
 ### demo:quick
 ```
-voiceId: "piper:en_US-lessac-medium"
-words: 16, chars: 92, elapsedMs: 2422
-duration: 4.860188, realTimeFactor: 2.0066837324525184
-output: demo-output/quick-sentence.wav
+{
+  "name": "quick-sentence",
+  "engine": "auto",
+  "voiceId": "piper:en_US-lessac-medium",
+  "words": 16,
+  "elapsedMs": 2345,
+  "duration": 4.903855,
+  "realTimeFactor": 2.0911961620469084
+}
 ```
 
-### demo:all (10/10 English samples)
-| Sample | RTF | Duration (s) | Words |
-|--------|-----|--------------|-------|
-| quick-sentence | 2.04 | 4.97 | 16 |
-| paragraph | 7.35 | 21.44 | 74 |
-| short-article | 15.87 | 181.73 | 471 |
-| news-article | 17.14 | 911.95 | 2039 |
-| book-chapter | 16.99 | 1799.79 | 5164 |
-| technical-doc | 17.21 | 1591.16 | 3102 |
-| ssml-showcase | 5.18 | 12.40 | 47 |
-| dialogue-script | 2.71 | 20.35 | 75 |
-| pronunciation-challenge | 8.92 | 34.73 | 91 |
-| numbers-and-dates | 8.96 | 34.91 | 50 |
+### demo:all (10 EN samples — all green)
+| Sample | Words | Duration (s) | RTF | Elapsed (ms) |
+|--------|-------|--------------|-----|--------------|
+| quick-sentence | 16 | 4.95 | 2.06 | 2397 |
+| paragraph | 74 | 21.77 | 7.55 | 2885 |
+| short-article | 471 | 180.53 | 16.52 | 10929 |
+| news-article | 2039 | 912.84 | 18.41 | 49587 |
+| book-chapter | 5164 | (long) | ~17+ | 100924 |
+| technical-doc | (ok) | | 17.58 | |
+| ssml-showcase | 47 | 12.50 | 4.91 | 2545 |
+| dialogue-script | 75 | 20.30 | 2.73 | 7440 |
+| pronunciation-challenge | 91 | 33.62 | 9.69 | 3471 |
+| numbers-and-dates | 50 | 33.88 | 8.74 | 3878 |
 
-All demos completed with `engine: auto` → `piper:en_US-lessac-medium`. Piper via `tools/piper-venv`.
-
-## Baseline numbers (freeze)
-
-| Metric | Value |
-|--------|-------|
-| Test suites | 30 passed |
-| Tests | 133 passed |
-| Lint errors | 0 |
-| Lint warnings | 8 (pre-existing) |
-| Coverage statements | 77.08% |
-| Coverage lines | 79.26% |
-| Coverage branches | 55.13% |
-| Demos EN | 10/10 green |
-| Default engine | piper lessac-medium |
+```
+Wrote /private/tmp/trace-swe19-20260710-100350/demo-output/report.json
+```
+WAV count: 10 files under `demo-output/`.
 
 ## Adversarial self-review (Pass B)
 
-1. **Finding:** `npm run test:cov` fails the package.json 80% gate even though unit tests pass — CI that uses test:cov would fail at baseline.  
-   **Resolution:** Documented as known baseline debt; Phase 21 must raise coverage ≥ +5 pts on new modules without regressing demos.
+1. **Finding:** `npm run test:cov` fails global 80% thresholds while `npm test` is green — later phases might claim "tests pass" while coverage gate is red.  
+   **Resolution:** Documented as baseline; Phase 21 must raise coverage ≥ baseline+5 and ideally meet package thresholds. Acceptable for Phase 2 recording.
 
-2. **Finding:** `resources/piper/` contains Windows `piper.exe` + DLLs on macOS arm64; actual runtime uses `tools/piper-venv`.  
-   **Resolution:** Acceptable — download script dual-path; demos prove venv path works. Do not delete Windows assets (desktop packaging).
+2. **Finding:** `demo:all` wall time ~4.6 min is dominated by news-article + book-chapter; if a later phase only runs `demo:quick`, regressions in long-form seams could slip.  
+   **Resolution:** Phase 19/24 require full `demo:all`; Phase 2 records full suite as the comparison baseline.
 
-3. **Finding:** Long demos (news-article ~15 min audio, book-chapter ~30 min) dominate wall-clock; baseline does not record peak RSS.  
-   **Resolution:** Phase 20 benchmark matrix will capture peak RSS × engine; baseline is functional correctness only.
+3. **Finding:** Coverage table in jest output is truncated for some large files (`tts.service.ts` not fully listed in tail) — absolute baseline for that file is approximate.  
+   **Resolution:** Use aggregate All files % as the gate metric (77.08% stmts / 79.26% lines); re-run full cov table in Phase 21.
 
 ## Self-review Pass A
 
-No application code modified. Demos green. Tag is local-only. Ready for feature phases.
+No code modified. Baseline is green for build/test/lint-errors/demos. Piper venv + models present. Tag created after this report commit.
+
+## Metrics snapshot (compare later)
+
+| Check | Value |
+|-------|-------|
+| Tests | 133 pass / 0 fail |
+| Lint errors | 0 |
+| Lint warnings | 8 |
+| Coverage stmts | 77.08% |
+| Coverage lines | 79.26% |
+| demo:all | 10/10 green |
