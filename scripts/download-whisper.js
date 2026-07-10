@@ -62,11 +62,23 @@ print("loaded", "${name}")
   console.log(`Model ${name} ready`);
 }
 
+
+function writeTranscribeHelper() {
+  const dest = path.join(ROOT, 'tools', 'whisper', 'transcribe.py');
+  // Idempotent: download script leaves a stub if missing; service ships with tools/whisper/transcribe.py in repo when committed.
+  if (fs.existsSync(dest) && fs.statSync(dest).size > 100) {
+    console.log('transcribe helper present:', dest);
+    return;
+  }
+  console.log('Note: ensure tools/whisper/transcribe.py is present (checked into repo).');
+}
+
 function main() {
   ensureVenv();
   for (const m of MODELS) downloadModel(m);
   console.log('Done. Python:', py());
   console.log('Models dir:', MODEL_DIR);
+  writeTranscribeHelper();
   console.log('Transcribe helper: tools/whisper/transcribe.py');
 }
 

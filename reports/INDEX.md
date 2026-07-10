@@ -1,30 +1,30 @@
 # G27 Phase Reports Index
 
-| Phase | Title | Report |
-|------:|-------|--------|
-| 01 | Competitive research | [phase-01.md](./phase-01.md) |
-| 02 | Baseline + pre-g27 | [phase-02.md](./phase-02.md) |
-| 03 | Text preprocessor | [phase-03.md](./phase-03.md) |
-| 04 | Preprocessing A/B listen | [phase-04.md](./phase-04.md) |
-| 05 | Whisper STT | [phase-05.md](./phase-05.md) |
-| 06 | QA WER loop | [phase-06.md](./phase-06.md) |
-| 07 | QA verification marathon | [phase-07.md](./phase-07.md) |
-| 08 | Kokoro engine | [phase-08.md](./phase-08.md) |
-| 09 | Engine shootout | [phase-09.md](./phase-09.md) |
-| 10 | Forced alignment | [phase-10.md](./phase-10.md) |
-| 11 | Read-along karaoke UI | [phase-11.md](./phase-11.md) |
-| 12 | Sync verification | [phase-12.md](./phase-12.md) |
-| 13 | EPUB3 Media Overlays | [phase-13.md](./phase-13.md) |
-| 14 | Playback UX | [phase-14.md](./phase-14.md) |
-| 15 | Audiobook library | [phase-15.md](./phase-15.md) |
-| 16 | Cover art + metadata | [phase-16.md](./phase-16.md) |
-| 17 | Podcast RSS | [phase-17.md](./phase-17.md) |
-| 18 | CLI + watch folder | [phase-18.md](./phase-18.md) |
-| 19 | Full integration | [phase-19.md](./phase-19.md) |
-| 20 | Benchmarks v3 | [phase-20.md](./phase-20.md) |
-| 21 | Test expansion | [phase-21.md](./phase-21.md) |
-| 22 | Deliverable dashboard | [phase-22.md](./phase-22.md) |
-| 23 | Docs + INDEX | [phase-23.md](./phase-23.md) |
-| 24 | Final verification + PR | [phase-24.md](./phase-24.md) |
+Session branch: `feat/g27-parity-session` · Date: 2026-07-11
 
-Every report includes: what changed, real command output, 3 adversarial findings with resolutions.
+| Phase | Report | One-line summary |
+|------:|--------|------------------|
+| 01 | [phase-01.md](phase-01.md) | Competitive analysis + pillar roadmap; baseline 133 tests green |
+| 02 | [phase-02.md](phase-02.md) | pre-g27 tag; 10/10 demos; coverage 77%/79% baseline |
+| 03 | [phase-03.md](phase-03.md) | Text preprocessor + preview endpoint |
+| 04 | [phase-04.md](phase-04.md) | messy-extract A/B; 14 removals; artifacts gone |
+| 05 | [phase-05.md](phase-05.md) | faster-whisper tiny/base + transcribe.py |
+| 06 | [phase-06.md](phase-06.md) | WER DP + QA service + qa:sample/all scripts |
+| 07 | [phase-07.md](phase-07.md) | MEAN_PROSE_WER 0.038; deliberate-break proven |
+| 08 | [phase-08.md](phase-08.md) | Kokoro adapter; 10 voices; download script |
+| 09 | [phase-09.md](phase-09.md) | Default order kokoro > piper > platform |
+| 10 | [phase-10.md](phase-10.md) | Needleman–Wunsch forced aligner |
+| 11 | [phase-11.md](phase-11.md) | Read-along karaoke UI |
+| 12 | [phase-12.md](phase-12.md) | Sync drift verification notes |
+| 13 | [phase-13.md](phase-13.md) | EPUB3 Media Overlays exporter |
+| 14 | [phase-14.md](phase-14.md) | Speed/sleep/bookmarks/resume |
+| 15 | [phase-15.md](phase-15.md) | Library bookshelf aggregation |
+| 16 | [phase-16.md](phase-16.md) | Cover art + metadata embed |
+| 17 | [phase-17.md](phase-17.md) | Podcast RSS re-emit (gated) |
+| 18 | [phase-18.md](phase-18.md) | CLI synth/voices/engines + watch proven |
+| 19 | [phase-19.md](phase-19.md) | Full-feature integration verification |
+| 20 | [phase-20.md](phase-20.md) | Benchmark v3 engine matrix notes |
+| 21 | [phase-21.md](phase-21.md) | Test expansion (187 tests) |
+| 22 | [phase-22.md](phase-22.md) | Deliverable competitive dashboard |
+| 23 | [phase-23.md](phase-23.md) | Docs + audit |
+| 24 | [phase-24.md](phase-24.md) | Final marathon + PR |
