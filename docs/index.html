@@ -34,7 +34,7 @@
     "description": "Cross-platform desktop audio studio: audio lab, hybrid sample piano, and offline long-form system TTS.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "url": "https://yuri-lima.github.io/resonara/",
-    "downloadUrl": "https://github.com/Yuri-Lima/resonara/releases",
+    "downloadUrl": "https://github.com/Yuri-Lima/resonara/releases/latest",
     "license": "https://github.com/Yuri-Lima/resonara/blob/main/LICENSE"
   }
   </script>
@@ -53,7 +53,7 @@
         <a href="#how" class="hide-sm">How it works</a>
         <a href="#architecture" class="hide-sm">Architecture</a>
         <a href="get-started.html">Docs</a>
-        <a class="btn btn-primary btn-sm" href="https://github.com/Yuri-Lima/resonara/releases">Download</a>
+        <a class="btn btn-primary btn-sm" data-download="primary" href="https://github.com/Yuri-Lima/resonara/releases/download/v1.0.0/Resonara-1.0.0-arm64.dmg">Download</a>
       </nav>
     </div>
   </header>
@@ -72,8 +72,11 @@
         with system voices. Fully local. No cloud account.
       </p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="https://github.com/Yuri-Lima/resonara/releases">
-          Get Resonara
+        <a class="btn btn-primary" data-download="primary" data-mac-label="Download for macOS" data-win-label="Download for Windows" href="https://github.com/Yuri-Lima/resonara/releases/download/v1.0.0/Resonara-1.0.0-arm64.dmg">
+          Download Resonara
+        </a>
+        <a class="btn btn-ghost" data-download="releases" href="https://github.com/Yuri-Lima/resonara/releases/latest">
+          All releases
         </a>
         <a class="btn btn-ghost" href="https://github.com/Yuri-Lima/resonara">
           View on GitHub
@@ -82,6 +85,7 @@
           Developer docs
         </a>
       </div>
+      <p id="release-status" class="release-status" aria-live="polite">Latest release: <strong>v1.0.0</strong></p>
       <div class="hero-meta">
         <span><strong>macOS</strong> DMG · Apple Silicon &amp; Intel</span>
         <span><strong>Windows</strong> NSIS installer · x64</span>
@@ -203,22 +207,28 @@
       <div class="container">
         <div class="section-head">
           <h2>Download &amp; platforms</h2>
-          <p>Unsigned v1 builds are fine for development; add your own certificates for distribution.</p>
+          <p>
+            Installers ship with offline Piper voices for <strong>English</strong> and
+            <strong>Brazilian Portuguese</strong>. Unsigned v1 builds are fine for local use;
+            right-click → Open on first macOS launch.
+          </p>
         </div>
         <div class="download-strip">
           <div class="dl-card">
             <h3>macOS</h3>
-            <p>DMG and ZIP via electron-builder. Apple Silicon and Intel targets. Requires ffmpeg on PATH (<code>brew install ffmpeg</code>).</p>
+            <p>DMG for Apple Silicon. Requires ffmpeg on PATH (<code>brew install ffmpeg</code>). Bundled en + pt-BR neural voices.</p>
             <div class="actions">
-              <a class="btn btn-primary btn-sm" href="https://github.com/Yuri-Lima/resonara/releases">Releases</a>
+              <a class="btn btn-primary btn-sm" data-download="mac" href="https://github.com/Yuri-Lima/resonara/releases/download/v1.0.0/Resonara-1.0.0-arm64.dmg">Download DMG</a>
+              <a class="btn btn-ghost btn-sm" data-download="mac-zip" href="https://github.com/Yuri-Lima/resonara/releases/download/v1.0.0/Resonara-1.0.0-arm64-mac.zip">Download ZIP</a>
               <a class="btn btn-ghost btn-sm" href="get-started.html#package">Build from source</a>
             </div>
           </div>
           <div class="dl-card">
             <h3>Windows</h3>
-            <p>NSIS installer with Start Menu and desktop shortcuts. Build with <code>npm run dist:win</code> on Windows or CI.</p>
+            <p>NSIS x64 installer with Start Menu and desktop shortcuts. Bundled <code>piper.exe</code> + en/pt-BR models.</p>
             <div class="actions">
-              <a class="btn btn-primary btn-sm" href="https://github.com/Yuri-Lima/resonara/releases">Releases</a>
+              <a class="btn btn-primary btn-sm" data-download="windows" href="https://github.com/Yuri-Lima/resonara/releases/download/v1.0.0/Resonara%20Setup%201.0.0.exe">Download Setup</a>
+              <a class="btn btn-ghost btn-sm" data-download="releases" href="https://github.com/Yuri-Lima/resonara/releases/latest">All releases</a>
               <a class="btn btn-ghost btn-sm" href="get-started.html#package">Packaging docs</a>
             </div>
           </div>
@@ -266,7 +276,8 @@
           <h2>Ship sound without the cloud tax</h2>
           <p>Clone the repo, run the desktop shell, or grab a release. MIT licensed and ready to extend.</p>
           <div class="hero-cta" style="margin-bottom: 0;">
-            <a class="btn btn-primary" href="https://github.com/Yuri-Lima/resonara">Star on GitHub</a>
+            <a class="btn btn-primary" data-download="primary" href="https://github.com/Yuri-Lima/resonara/releases/download/v1.0.0/Resonara-1.0.0-arm64.dmg">Download Resonara</a>
+            <a class="btn btn-ghost" href="https://github.com/Yuri-Lima/resonara">Star on GitHub</a>
             <a class="btn btn-ghost" href="get-started.html">Read the docs</a>
           </div>
         </div>
@@ -286,7 +297,7 @@
             <h4>Product</h4>
             <a href="#features">Features</a>
             <a href="#download">Download</a>
-            <a href="https://github.com/Yuri-Lima/resonara/releases">Releases</a>
+            <a data-download="releases" href="https://github.com/Yuri-Lima/resonara/releases/latest">Releases</a>
           </div>
           <div>
             <h4>Developers</h4>
