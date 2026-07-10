@@ -51,6 +51,11 @@ import {
   normalizeLanguageCode,
   planMixedLanguageSynthesis,
 } from './language';
+import {
+  preprocessText,
+  PreprocessResult,
+  PreprocessRules,
+} from './text-preprocessor';
 
 export interface SynthesizeLongOptions {
   text: string;
@@ -72,6 +77,16 @@ export interface SynthesizeLongOptions {
   batchId?: string;
   /** Per-language voice ids for mixed documents. */
   voiceMap?: { en?: string; 'pt-BR'?: string };
+  /**
+   * Text preprocessing before chunking.
+   * - document imports default ON (documentMode)
+   * - raw text paste defaults OFF unless preprocessing.enabled or rules set
+   */
+  preprocessing?: {
+    enabled?: boolean;
+    documentMode?: boolean;
+    rules?: import('./text-preprocessor').PreprocessRules;
+  };
 }
 
 export interface JobListQuery {
@@ -199,11 +214,55 @@ export class TtsService implements OnModuleInit {
   }
 
   /**
+   * Preview preprocessing without synthesizing.
+   */
+  previewPreprocess(
+    text: string,
+    opts?: {
+      documentMode?: boolean;
+      rules?: PreprocessRules;
+      enabled?: boolean;
+    },
+  ): PreprocessResult {
+    const documentMode = opts?.documentMode === true;
+    const enabled =
+      opts?.enabled === true ||
+      documentMode ||
+      (opts?.rules != null && Object.keys(opts.rules).length > 0);
+    if (!enabled) {
+      return { original: text || '', cleaned: text || '', removals: [] };
+    }
+    return preprocessText(text || '', {
+      documentMode,
+      rules: opts?.rules,
+    });
+  }
+
+  /**
    * Start long-form TTS: persist job → chunk → synthesize → trim → crossfade → post-process.
    */
   async startLongForm(opts: SynthesizeLongOptions): Promise<TtsJob> {
     let text = (opts.text || '').trim();
     if (!text) throw new BadRequestException('text is required');
+
+    // Preprocessing: document path opts in documentMode; raw paste only if enabled
+    const prep = opts.preprocessing;
+    const wantPrep =
+      prep?.enabled === true ||
+      prep?.documentMode === true ||
+      (prep?.rules != null && Object.keys(prep.rules).length > 0);
+    if (wantPrep) {
+      const result = preprocessText(text, {
+        documentMode: prep?.documentMode === true,
+        rules: prep?.rules,
+      });
+      text = result.cleaned.trim();
+      if (!text) {
+        throw new BadRequestException(
+          'text is empty after preprocessing (all content removed by rules)',
+        );
+      }
+    }
 
     let engine: 'piper' | 'platform';
     try {
@@ -552,14 +611,38 @@ export class TtsService implements OnModuleInit {
     doc: ExtractedDocument,
     opts: Omit<SynthesizeLongOptions, 'text' | 'chapters'>,
   ): Promise<TtsJob> {
-    const fullText = doc.chapters
+    // Document imports: preprocess each chapter with document defaults ON
+    // unless caller explicitly disables preprocessing.enabled === false.
+    const prepDisabled = opts.preprocessing?.enabled === false;
+    const chapters = doc.chapters.map((c) => {
+      if (prepDisabled) return c;
+      const cleaned = preprocessText(c.text, {
+        documentMode: true,
+        rules: opts.preprocessing?.rules,
+      }).cleaned;
+      const title = preprocessText(c.title || '', {
+        documentMode: true,
+        rules: {
+          ...opts.preprocessing?.rules,
+          // Titles: keep caps transform + whitespace; skip aggressive header strip on short titles
+          headers: false,
+          pageNumbers: true,
+        },
+      }).cleaned;
+      return { title: title || c.title, text: cleaned };
+    });
+    const fullText = chapters
       .map((c) => `### ${c.title}\n\n${c.text}`)
       .join('\n\n');
     return this.startLongForm({
       ...opts,
+      // Already cleaned per-chapter; avoid double-processing chapter markers
+      preprocessing: prepDisabled
+        ? { enabled: false }
+        : { enabled: false, documentMode: true, rules: opts.preprocessing?.rules },
       text: fullText,
       title: doc.title,
-      chapters: doc.chapters,
+      chapters,
     });
   }
 
