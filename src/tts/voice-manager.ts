@@ -191,6 +191,26 @@ export class VoiceManager {
     const pool =
       voices.length > 0 ? voices : this.listVoices({ engine: eng });
 
+    if (eng === 'kokoro') {
+      if (/pt/i.test(lang)) {
+        return (
+          pool.find((v) => /pf_|pm_/.test(v.nativeId || v.id)) || pool[0]
+        );
+      }
+      if (/en-gb|en_gb|british/i.test(lang)) {
+        return (
+          pool.find((v) => /bf_emma|bm_george/i.test(v.id)) ||
+          pool.find((v) => /^bf_|^bm_/.test(v.nativeId || '')) ||
+          pool[0]
+        );
+      }
+      return (
+        pool.find((v) => /af_sarah/i.test(v.id)) ||
+        pool.find((v) => /^af_/.test(v.nativeId || '')) ||
+        pool[0]
+      );
+    }
+
     if (eng === 'piper') {
       if (/pt/i.test(lang)) {
         return (
@@ -224,21 +244,30 @@ export class VoiceManager {
   }
 
   /**
-   * Language-aware fallback: Piper (lang) → platform (lang) → undefined.
+   * Language-aware default for a preferred engine (when known).
+   * Prefer matching engine voice; fall back piper → kokoro → platform.
    * Never returns a voice from a different language family.
    */
-  getDefaultVoiceForLanguage(language: string): UnifiedVoice | undefined {
+  getDefaultVoiceForLanguage(
+    language: string,
+    preferredEngine?: 'piper' | 'platform' | 'kokoro',
+  ): UnifiedVoice | undefined {
     const lang = language || 'en';
-    try {
-      if (this.resolveEngineSafe() === 'piper' || isPiperAvailable().available) {
-        const piper = this.defaultVoice('piper', lang);
-        if (piper && this.voiceMatchesLanguage(piper, lang)) return piper;
-      }
-    } catch {
-      /* fall through */
+    const order: Array<'piper' | 'platform' | 'kokoro'> = preferredEngine
+      ? [
+          preferredEngine,
+          ...(['kokoro', 'piper', 'platform'] as const).filter(
+            (e) => e !== preferredEngine,
+          ),
+        ]
+      : ['kokoro', 'piper', 'platform'];
+    for (const eng of order) {
+      if (eng === 'kokoro' && !isKokoroAvailable()) continue;
+      if (eng === 'piper' && !isPiperAvailable().available) continue;
+      if (eng === 'platform' && !ttsEngineAvailable().available) continue;
+      const v = this.defaultVoice(eng, lang);
+      if (v && this.voiceMatchesLanguage(v, lang)) return v;
     }
-    const platform = this.defaultVoice('platform', lang);
-    if (platform && this.voiceMatchesLanguage(platform, lang)) return platform;
     return undefined;
   }
 
@@ -251,7 +280,7 @@ export class VoiceManager {
       ) && !/pt-pt|pt_pt|joana|catarina/i.test(`${vl} ${voice.id}`);
     }
     if (lang.startsWith('en')) {
-      return /en|lessac|amy|ryan|alba|samantha|alex|daniel/i.test(
+      return /en|lessac|amy|ryan|alba|samantha|alex|daniel|af_|am_|bf_|bm_|kokoro/i.test(
         `${vl} ${voice.id} ${voice.name}`,
       );
     }

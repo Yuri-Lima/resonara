@@ -89,6 +89,8 @@ export interface TtsJobMetadata {
   author?: string;
   /** Resume playback position (ms). */
   resumePositionMs?: number;
+  /** Directory with EPUB3 Media Overlays export (SMIL + XHTML + OPF). */
+  epubOverlayDir?: string;
 }
 
 @Entity('tts_jobs')

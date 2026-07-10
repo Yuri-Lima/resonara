@@ -551,14 +551,66 @@ export class TtsService implements OnModuleInit {
       throw new BadRequestException('Job not completed');
     }
     let words = job.metadata?.wordTimestamps;
+    let method: 'forced' | 'proportional' | 'cached' = words?.length
+      ? 'cached'
+      : 'proportional';
+
+    // Prefer forced alignment via Whisper base when available and not cached
+    if (
+      !words?.length &&
+      job.outputKey &&
+      fssync.existsSync(job.outputKey) &&
+      this.synthesisQa?.isAvailable()
+    ) {
+      try {
+        const { WhisperService } = await import('../stt/whisper.service');
+        const { forcedAlign } = await import('./alignment/forced-aligner');
+        const whisper = new WhisperService();
+        if (whisper.isAvailable()) {
+          const tr = await whisper.transcribe(job.outputKey, {
+            model: 'base',
+            language: job.metadata?.language?.startsWith('pt') ? 'pt' : 'en',
+            timeoutMs: 180_000,
+          });
+          const whWords = tr.segments.flatMap((s) => s.words || []);
+          const aligned = forcedAlign(job.text, whWords);
+          words = aligned.map((w) => ({
+            word: w.word,
+            startMs: w.startMs,
+            endMs: w.endMs,
+          }));
+          method = 'forced';
+          job.metadata = {
+            ...(job.metadata || {}),
+            wordTimestamps: words,
+            alignmentMethod: 'forced',
+          };
+          await this.jobsRepo.save(job);
+        }
+      } catch (e) {
+        this.logger.warn(`Forced alignment failed: ${(e as Error).message}`);
+      }
+    }
+
     if (!words?.length) {
       const durationMs = (job.metadata?.duration || 0) * 1000 || 60_000;
       words = estimateWordTimestamps(job.text, durationMs);
+      method = 'proportional';
+      job.metadata = {
+        ...(job.metadata || {}),
+        alignmentMethod: 'proportional',
+      };
     }
-    if (format === 'json') return { words };
+    if (format === 'json') return { words, method };
     const cues = groupSubtitles(words);
-    if (format === 'srt') return { content: toSrt(cues), contentType: 'application/x-subrip' };
-    return { content: toWebVtt(cues), contentType: 'text/vtt' };
+    if (format === 'srt') {
+      return {
+        content: toSrt(cues),
+        contentType: 'application/x-subrip',
+        method,
+      };
+    }
+    return { content: toWebVtt(cues), contentType: 'text/vtt', method };
   }
 
   async resynthesizeChunk(
@@ -1318,8 +1370,8 @@ export class TtsService implements OnModuleInit {
     }
     if (language) {
       return (
-        this.voiceManager.getDefaultVoiceForLanguage(language) ||
-        this.voiceManager.defaultVoice(engine, language)
+        this.voiceManager.defaultVoice(engine, language) ||
+        this.voiceManager.getDefaultVoiceForLanguage(language, engine)
       );
     }
     return this.voiceManager.defaultVoice(engine);
@@ -1391,6 +1443,93 @@ export class TtsService implements OnModuleInit {
       metadata: job.metadata,
       createdAt: job.createdAt,
       completedAt: job.completedAt,
+    };
+  }
+
+  /**
+   * Export EPUB 3 Media Overlays package for a completed job.
+   */
+  async exportEpubOverlay(jobId: string) {
+    const job = await this.getJob(jobId);
+    if (job.status !== TtsJobStatus.COMPLETED) {
+      throw new BadRequestException('Job not completed');
+    }
+    const { writeOverlayPackage, validateSmilMonotonic } = await import(
+      './export/epub-overlay-exporter'
+    );
+    const sub = await this.getSubtitles(jobId, 'json');
+    const words =
+      'words' in sub && Array.isArray(sub.words)
+        ? (sub.words as { word: string; startMs: number; endMs: number }[])
+        : [];
+    const sentences: {
+      id: string;
+      text: string;
+      clipBeginSec: number;
+      clipEndSec: number;
+    }[] = [];
+    let buf: typeof words = [];
+    let si = 0;
+    const flush = () => {
+      if (!buf.length) return;
+      si++;
+      sentences.push({
+        id: `s${String(si).padStart(4, '0')}`,
+        text: buf.map((w) => w.word).join(' '),
+        clipBeginSec: (buf[0].startMs || 0) / 1000,
+        clipEndSec: (buf[buf.length - 1].endMs || 0) / 1000,
+      });
+      buf = [];
+    };
+    for (const w of words) {
+      buf.push(w);
+      if (/[.!?]["']?$/.test(w.word)) flush();
+    }
+    flush();
+    if (!sentences.length) {
+      sentences.push({
+        id: 's0001',
+        text: job.text.slice(0, 500),
+        clipBeginSec: 0,
+        clipEndSec: job.metadata?.duration || 1,
+      });
+    }
+    if (!validateSmilMonotonic(sentences)) {
+      this.logger.warn(`SMIL timestamps non-monotonic for job ${jobId}; clamping`);
+      let prev = 0;
+      for (const s of sentences) {
+        s.clipBeginSec = Math.max(s.clipBeginSec, prev);
+        s.clipEndSec = Math.max(s.clipEndSec, s.clipBeginSec + 0.05);
+        prev = s.clipEndSec;
+      }
+    }
+    const outDir = path.join(
+      path.dirname(job.outputKey || path.join(this.dataDir, 'tts', job.id)),
+      'epub-overlay',
+    );
+    const audioName = job.outputKey
+      ? path.basename(job.outputKey)
+      : 'speech.wav';
+    if (job.outputKey && fssync.existsSync(job.outputKey)) {
+      fssync.mkdirSync(outDir, { recursive: true });
+      fssync.copyFileSync(job.outputKey, path.join(outDir, audioName));
+    }
+    const paths = writeOverlayPackage(outDir, {
+      title: job.metadata?.title || 'Resonara Audiobook',
+      sentences,
+      audioFileName: audioName,
+      xhtmlBody: `<p>${job.text.slice(0, 8000)}</p>`,
+    });
+    job.metadata = {
+      ...(job.metadata || {}),
+      epubOverlayDir: outDir,
+    };
+    await this.jobsRepo.save(job);
+    return {
+      outDir,
+      ...paths,
+      sentenceCount: sentences.length,
+      method: 'method' in sub ? sub.method : 'unknown',
     };
   }
 

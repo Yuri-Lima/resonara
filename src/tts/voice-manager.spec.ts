@@ -1,6 +1,7 @@
 import { VoiceManager } from './voice-manager';
 import * as piper from './piper-tts';
 import * as platform from './platform-tts';
+import * as kokoro from './kokoro-tts';
 
 describe('VoiceManager', () => {
   beforeEach(() => {
@@ -25,6 +26,7 @@ describe('VoiceManager', () => {
   });
 
   it('aggregates piper and platform voices', () => {
+    jest.spyOn(kokoro, 'isKokoroAvailable').mockReturnValue(false);
     jest.spyOn(piper, 'listPiperVoices').mockReturnValue([
       {
         id: 'piper:en_US-lessac-medium',
@@ -51,7 +53,8 @@ describe('VoiceManager', () => {
     expect(vm.getPiperPaths()).toBeDefined();
   });
 
-  it('resolveEngine prefers piper when available', () => {
+  it('resolveEngine prefers piper when kokoro unavailable', () => {
+    jest.spyOn(kokoro, 'isKokoroAvailable').mockReturnValue(false);
     jest.spyOn(piper, 'isPiperAvailable').mockReturnValue({
       available: true,
       voiceCount: 1,
@@ -67,6 +70,18 @@ describe('VoiceManager', () => {
     expect(vm.resolveEngine('platform')).toBe('platform');
   });
 
+  it('resolveEngine prefers kokoro when available', () => {
+    jest.spyOn(kokoro, 'isKokoroAvailable').mockReturnValue(true);
+    jest.spyOn(piper, 'isPiperAvailable').mockReturnValue({
+      available: true,
+      voiceCount: 1,
+      detail: 'ok',
+    });
+    const vm = new VoiceManager();
+    expect(vm.resolveEngine('auto')).toBe('kokoro');
+    expect(vm.resolveEngine('kokoro')).toBe('kokoro');
+  });
+
   it('resolveEngine throws when none available', () => {
     jest.spyOn(piper, 'isPiperAvailable').mockReturnValue({
       available: false,
@@ -78,6 +93,7 @@ describe('VoiceManager', () => {
       engine: 'none',
       detail: 'no',
     });
+    jest.spyOn(kokoro, 'isKokoroAvailable').mockReturnValue(false);
     const vm = new VoiceManager();
     expect(() => vm.resolveEngine('auto')).toThrow(/No TTS engine/);
   });
