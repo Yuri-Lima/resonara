@@ -2,40 +2,66 @@
 
 **Shape sound. Speak the long form. Play freely.**
 
-[![Website](https://img.shields.io/badge/website-yuri--lima.github.io%2Fresonara-2dd4bf?style=flat-square)](https://yuri-lima.github.io/resonara/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-0f766e?style=flat-square)](./LICENSE)
-[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-1e293b?style=flat-square)](#install)
-[![Stack](https://img.shields.io/badge/stack-Electron%20%7C%20NestJS%20%7C%20ffmpeg-334155?style=flat-square)](#architecture)
-[![Mode](https://img.shields.io/badge/desktop-offline%20lite-0ea5e9?style=flat-square)](#desktop-lite-mode)
+Offline-first desktop audio studio — production tools, a hybrid piano, and long-form neural TTS that runs entirely on your machine.
 
-**Site:** [yuri-lima.github.io/resonara](https://yuri-lima.github.io/resonara/) · **Docs:** [Get started](https://yuri-lima.github.io/resonara/get-started.html)
+[![Website](https://img.shields.io/badge/website-yuri--lima.github.io%2Fresonara-0d9488?style=for-the-badge&logo=github)](https://yuri-lima.github.io/resonara/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-334155?style=for-the-badge)](./LICENSE)
+[![Platform](https://img.shields.io/badge/macOS%20%7C%20Windows-1e293b?style=for-the-badge&logo=apple&logoColor=white)](#install)
+[![Stack](https://img.shields.io/badge/Electron%20·%20NestJS%20·%20ffmpeg-0f172a?style=for-the-badge)](#architecture)
 
-Resonara is a cross-platform **desktop audio studio** for creators, producers, and anyone who needs local control over sound and speech. One installable app unifies:
-
-| Studio | What you can do |
-|--------|------------------|
-| **Audio lab** | Import, transcode, two-pass EBU R128 loudnorm, trim, silence detect, waveform, stream & export |
-| **Piano** | Play a hybrid sample piano, record takes, analyze and export |
-| **Voice** | Offline multi-engine TTS (**Kokoro** + **Piper** + platform): **English + Brazilian Portuguese (pt-BR)**, Whisper WER QA, forced-alignment read-along, library/bookmarks, podcast RSS, CLI/watch, SSML, document import, chaptered export |
-
-End users get a normal **macOS** or **Windows** installer — no Docker, no Node, no terminal setup.
+| | |
+|:--|:--|
+| **Product** | [yuri-lima.github.io/resonara](https://yuri-lima.github.io/resonara/) |
+| **Get started** | [Install guide](https://yuri-lima.github.io/resonara/get-started.html) |
+| **Releases** | [GitHub Releases](https://github.com/Yuri-Lima/resonara/releases) |
+| **API docs** | `/docs` when the engine is running |
+| **License** | [MIT](./LICENSE) |
 
 ---
 
-## Highlights
+## Why Resonara
 
-- **Offline-first desktop** — local engine, filesystem storage, no cloud account required for core flows  
-- **Production audio path** — two-pass loudnorm (not single-pass), soxr-aware processing via ffmpeg  
-- **Long-form speech** — **Kokoro-82M** + **Piper** neural voices (offline ONNX, **en + pt-BR**) with **macOS `say` / Windows SAPI** fallback; SSML, dictionary, EPUB/PDF/DOCX/MD import, chaptered jobs  
-- **Synthesis QA** — offline **faster-whisper** round-trip WER per chunk (sample/full) with auto-retry — catches silent drops listening alone misses  
-- **Read-along** — forced alignment → word timestamps, karaoke UI, EPUB 3 Media Overlays export  
-- **Library & distribution** — bookshelf UI, resume/bookmarks/sleep/speed, deterministic covers, optional LAN podcast RSS (`RESONARA_FEEDS=1`)  
-- **Automation** — real CLI (`npm run cli`) with `synth` / `voices` / `engines` / `jobs` / `watch`  
-- **Multilingual TTS** — auto language detection, Portuguese number/date/currency expansion, mixed-language documents, never cross-language voice fallback  
-- **Competitive positioning** — see [COMPETITIVE_ANALYSIS.md](./COMPETITIVE_ANALYSIS.md) and [IMPROVEMENT_ROADMAP.md](./IMPROVEMENT_ROADMAP.md); phase evidence in [reports/INDEX.md](./reports/INDEX.md)  
-- **Hybrid piano** — sample-pack playback, take capture, and export wired into the same job model  
-- **Live job progress** — normalize, export, and TTS report progress without freezing the UI  
-- **Health checks** — first-run / on-demand status for **ffmpeg** and **TTS** engines (with path resolution for GUI apps)
+Most “AI audio” tools push speech and processing to the cloud. Resonara keeps the full loop local: import and normalize audio, play and record piano, synthesize long-form speech with offline neural engines, verify quality with Whisper, and ship chaptered files — without an account, API key, or always-on network.
+
+| Studio | Capabilities |
+|--------|----------------|
+| **Audio Lab** | Import · transcode · two-pass EBU R128 loudnorm · trim · silence detect · waveform · stream & export |
+| **Hybrid Piano** | Sample-pack piano · take recording · analyze & export into the same job model |
+| **Voice** | Long-form TTS with **Kokoro**, **Piper**, and platform voices · **English + pt-BR** · document import · read-along · library · CLI |
+
+End users install a normal **macOS** or **Windows** app. No Docker, no Node, no terminal required.
+
+---
+
+## Features
+
+### Audio production
+- Two-pass **EBU R128** loudness normalization (not single-pass)
+- Transcode, trim, silence detection, waveform peaks, HTTP Range streaming
+- ffmpeg path resolution for GUI apps that strip `PATH`
+
+### Voice / long-form TTS
+- **Three engines** behind one interface: **Kokoro-82M** · **Piper** · platform (`say` / SAPI)
+- Language-aware routing: English prefers Kokoro when available; **pt-BR never falls back to English Kokoro**
+- SSML subset, pronunciation dictionary, dialogue multi-speaker, seamless chunk concat
+- Document import: EPUB, PDF, DOCX, Markdown, plain text with configurable preprocessing
+- **Synthesis QA**: offline **faster-whisper** round-trip **WER** per chunk (`sample` / `full`) with one auto-retry
+- **Read-along**: forced alignment, karaoke UI, EPUB 3 Media Overlays export
+- **Library**: bookshelf, resume, bookmarks, sleep timer, 0.5×–3.0× pitch-preserving speed
+- Cover art + metadata embed; optional LAN **podcast RSS** (`RESONARA_FEEDS=1`)
+- Real **CLI** + watch-folder automation
+
+### Multilingual (en · pt-BR)
+- Auto language detection and mixed-language documents
+- Portuguese number, date, currency, and ID expansion
+- Bundled offline voices: `en_US-lessac-medium` · `pt_BR-faber-medium`
+
+### Product
+- Dual mode: **lite** (desktop, zero Docker) and **full** (Postgres · Redis · MinIO)
+- Live job progress over Socket.IO
+- Health checks for ffmpeg and TTS engines
+
+Competitive research and roadmap: [COMPETITIVE_ANALYSIS.md](./COMPETITIVE_ANALYSIS.md) · [IMPROVEMENT_ROADMAP.md](./IMPROVEMENT_ROADMAP.md) · [reports/INDEX.md](./reports/INDEX.md)
 
 ---
 
@@ -44,199 +70,177 @@ End users get a normal **macOS** or **Windows** installer — no Docker, no Node
 ### macOS
 
 1. Download the latest **Resonara** `.dmg` from [Releases](https://github.com/Yuri-Lima/resonara/releases)  
-   *(or build locally with `npm run dist:mac`)*  
-2. Open the disk image and drag **Resonara** into **Applications**  
+   *(or build with `npm run dist:mac`)*
+2. Open the disk image and drag **Resonara** into **Applications**
 3. Launch from Applications  
-   - First launch of an unsigned build: right-click → **Open**  
-4. The app starts a local engine and opens the studio UI  
+   - Unsigned builds: right-click → **Open** on first launch
+4. The app starts a local engine and opens the studio UI
 
-**Supported:** macOS 12+ · Apple Silicon and Intel targets via electron-builder  
+**Requirements:** macOS 12+ · Apple Silicon or Intel (via electron-builder targets)
 
 ### Windows
 
-1. Download the **Resonara Setup** `.exe` (NSIS) from [Releases](https://github.com/Yuri-Lima/resonara/releases)  
-   *(or build on Windows/CI with `npm run dist:win`)*  
-2. Run the installer (optional custom install directory)  
-3. Launch from the Start Menu or desktop shortcut  
+1. Download **Resonara Setup** (NSIS `.exe`) from [Releases](https://github.com/Yuri-Lima/resonara/releases)  
+   *(or build with `npm run dist:win`)*
+2. Run the installer
+3. Launch from the Start Menu or desktop shortcut
 
-**Supported:** Windows 10 / 11 · x64  
+**Requirements:** Windows 10 / 11 · x64
 
-### Prerequisites (host)
+### Host dependencies
 
-| Dependency | Why |
-|------------|-----|
+| Dependency | Purpose |
+|------------|---------|
 | **[ffmpeg](https://ffmpeg.org/)** on `PATH` | Transcode, loudnorm, waveform, TTS concat |
-| **System voices** | macOS Speech / Windows SAPI voices for TTS |
+| **System voices** (optional) | Platform TTS fallback when neural engines are offline |
 
 ```bash
 # macOS
 brew install ffmpeg
 
-# Windows (example)
+# Windows
 winget install Gyan.FFmpeg
-# or chocolatey: choco install ffmpeg
+# or: choco install ffmpeg
 ```
 
-Resonara resolves common install locations (`/opt/homebrew/bin`, `/usr/local/bin`, Windows ffmpeg folders) when GUI apps strip `PATH`.
+Resonara also probes common install locations (`/opt/homebrew/bin`, `/usr/local/bin`, typical Windows ffmpeg folders) when the GUI environment has a minimal `PATH`.
 
 ---
 
-
-
-## Voice / TTS
-
-Primary engine is **Piper** (offline neural). Platform voices remain as automatic fallback.
-
-```bash
-# Optional: download Piper binary + default English voice
-npm run download:piper
-export PIPER_PATH=./resources/piper/piper
-export PIPER_MODELS_DIR=./resources/piper/models
-```
-
-| Endpoint | Description |
-|----------|-------------|
-| `GET /tts/voices` | Unified Piper + platform voices (`?language=pt-BR`) |
-| `GET /tts/engines` | Engine availability |
-| `POST /tts/synthesize` | Long-form job (`language`, `engine`, `ssml`, post-process) |
-| `POST /tts/detect-language` | Paragraph-level en / pt-BR detection |
-| `POST /tts/import` | Multipart document → chapters → synthesize |
-| `GET /tts/jobs` | Paginated persisted jobs |
-| `GET /tts/jobs/:id/chapters` | Chapter timestamps |
-| `GET/POST /tts/dictionary` | Pronunciation CRUD (per-language entries) |
-| `GET /tts/ssml` | Supported SSML subset |
-
-See [IMPROVEMENT_PLAN.md](./IMPROVEMENT_PLAN.md), [MULTILINGUAL_PLAN.md](./MULTILINGUAL_PLAN.md), and [G25_AUDIT_REPORT.md](./G25_AUDIT_REPORT.md).
-Dashboard: `ui/deliverable/` (`make ui`). Windows runtime checklist: [WINDOWS_TESTING.md](./WINDOWS_TESTING.md).
-
-### Multilingual demos
-
-```bash
-npm run download:piper     # en_US-lessac-medium + pt_BR-faber-medium
-npm run demo:quick         # English smoke
-npm run demo:pt:rapida     # Portuguese smoke
-npm run demo:pt:numeros    # R$, dates, CPF expansion
-npm run demo:pt:misturado  # Mixed en+pt-BR document
-npm run demo:all-languages # Full bilingual suite
-npm run benchmark:pt
-```
-
-Bundled offline voices: **en_US-lessac-medium** · **pt_BR-faber-medium**. Platform fallbacks stay language-safe (e.g. macOS Luciana for pt-BR — never English for Portuguese text).
-
-## Screenshots & UI surfaces
-
-| Surface | URL (local) | Purpose |
-|---------|-------------|---------|
-| Audio lab | `/ui/` | Pipeline dashboard, codecs, loudness, jobs |
-| Piano | `/ui/piano/` | Sample piano + takes |
-| Voice | `/ui/voice/` | Long-form TTS paste → speak → download |
-
-Swagger (API mode): `/docs`
-
----
-
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  Resonara Desktop (Electron)                            │
-│  · Shell + preload                                      │
-│  · Spawns local lite API (Electron as Node)             │
-└───────────────────────────┬─────────────────────────────┘
-                            │  http://127.0.0.1:<port>
-┌───────────────────────────▼─────────────────────────────┐
-│  NestJS engine                                          │
-│  · Tracks / jobs / piano / TTS / health                 │
-│  · Socket.IO job progress                               │
-│  · fluent-ffmpeg                                        │
-├──────────────── lite ────────────────┬── full ──────────┤
-│  sql.js · filesystem · inline jobs   │  Postgres        │
-│  (no Docker for end users)           │  Redis / BullMQ  │
-│                                      │  MinIO           │
-└──────────────────────────────────────┴──────────────────┘
-```
-
-### Desktop lite mode
-
-When `RESONARA_LITE=1` / `RESONARA_DESKTOP=1`:
-
-- **Database:** sql.js (portable column types)  
-- **Storage:** local filesystem under the app data directory  
-- **Queue:** inline `JobRunnerService` (no Redis)  
-- **TTS:** platform adapters + ffmpeg concat  
-
-Full stack (Docker Compose) remains available for server-style deployments.
-
-Deep dives: [AUDIO_ARCHITECTURE.md](./AUDIO_ARCHITECTURE.md) · [PIANO_ARCHITECTURE.md](./PIANO_ARCHITECTURE.md)
-
----
-
-## Developer quick start
-
-### Requirements
-
-- Node.js 20+  
-- npm  
-- ffmpeg / ffprobe on `PATH`  
-- (Full stack only) Docker Compose  
-
-### Desktop (recommended)
+## Quick start (developers)
 
 ```bash
 git clone https://github.com/Yuri-Lima/resonara.git
 cd resonara
 npm install
 npm run build
-npm run desktop:dev    # Electron + lite API on :3847
-```
 
-API-only lite mode:
+# Desktop app (recommended) — Electron + lite API on :3847
+npm run desktop:dev
 
-```bash
+# Or API-only lite mode
 RESONARA_LITE=1 PORT=3000 npm run start:lite
 ```
 
-Then open:
-
-- http://127.0.0.1:3000/ui/  
-- http://127.0.0.1:3000/ui/piano/  
-- http://127.0.0.1:3000/ui/voice/  
-- http://127.0.0.1:3000/docs  
-
-### Full stack (Postgres · Redis · MinIO)
+| Surface | URL |
+|---------|-----|
+| Audio Lab | http://127.0.0.1:3000/ui/ |
+| Piano | http://127.0.0.1:3000/ui/piano/ |
+| Voice | http://127.0.0.1:3000/ui/voice/ |
+| Deliverable dashboard | http://127.0.0.1:3000/ui/deliverable/ |
+| OpenAPI | http://127.0.0.1:3000/docs |
 
 ```bash
-cp .env.example .env   # if present
+make ui          # open the competitive-parity / multilingual dashboard
+npm test         # unit suite
+npm run test:e2e # multilingual + lite e2e (when configured)
+```
+
+### Neural models (optional, offline)
+
+```bash
+npm run download:piper    # Piper binary/venv + en + pt-BR voices
+npm run download:kokoro   # Kokoro ONNX + voices
+npm run download:whisper  # faster-whisper venv + tiny/base (QA & alignment)
+```
+
+Models are gitignored and cached under `tools/` / `resources/`. Re-running download scripts is idempotent.
+
+### Full stack (server mode)
+
+```bash
+cp .env.example .env
 docker compose up -d postgres redis minio minio-init
-npm install
-npm run build
-npm run start:dev      # API :3000
+npm install && npm run build
+npm run start:dev    # API :3000 + workers as needed
 ```
 
 ---
 
-## Packaging
+## Voice engines
+
+| Engine | Role | Notes |
+|--------|------|--------|
+| **Kokoro-82M** | Default for English when available | High naturalness, CPU ONNX, ~real-time |
+| **Piper** | Default for pt-BR; strong EN fallback | Offline ONNX, packaged with installers |
+| **Platform** | Last-resort fallback | macOS `say` / Windows SAPI — language-safe selection |
+
+Auto selection is **language-aware**: Portuguese jobs never route to English-only Kokoro voices.
+
+### Demos & QA
 
 ```bash
-npm run dist:mac    # → release/*.dmg , *.zip
-npm run dist:win    # → release/*Setup*.exe (NSIS) — Windows host or CI
-npm run dist:all    # mac + win targets
-npm run pack        # unpacked dir only (debug)
+# English
+npm run demo:quick
+npm run demo:all
+npm run demo:compare      # side-by-side engines (when available)
+
+# Portuguese
+npm run demo:pt:rapida
+npm run demo:pt:numeros
+npm run demo:pt:misturado
+npm run demo:all-languages
+
+# Synthesis quality (requires Whisper models)
+npm run qa:sample         # one sample, full WER
+npm run qa:all            # suite + demo-output/qa-report.{json,md}
+npm run benchmark
 ```
 
-| Target | Format | Notes |
-|--------|--------|--------|
-| macOS | DMG + ZIP | arm64 / x64 via electron-builder |
-| Windows | NSIS | Start Menu + desktop shortcuts |
+---
 
-Config: `package.json` → `"build"` (`appId`: `app.resonara.desktop`).  
-Artifacts land in `release/` (gitignored).
+## CLI & automation
 
-Packaged builds run the Nest engine with **`ELECTRON_RUN_AS_NODE`** so end users do not install Node.js.
+```bash
+npm run cli -- --help
+
+# Synthesize a file
+npm run cli -- synth path/to/chapter.txt --engine piper --out ./out --qa sample
+
+# Inspect
+npm run cli -- engines
+npm run cli -- voices --language pt-BR
+npm run cli -- jobs
+
+# Watch folder — drop .txt / .md / .epub / .docx
+npm run cli -- watch ./inbox --out ./out --engine auto
+```
+
+The CLI boots a lite server if none is running, polls job progress, and writes audio (plus `.done` / `.failed` markers in watch mode).
+
+---
+
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  Resonara Desktop (Electron)                             │
+│  Shell · preload · spawns local lite API as Node         │
+└────────────────────────────┬─────────────────────────────┘
+                             │  http://127.0.0.1:<port>
+┌────────────────────────────▼─────────────────────────────┐
+│  NestJS engine                                           │
+│  Tracks · Piano · TTS · STT · Library · Feeds · Health   │
+│  Socket.IO job progress · fluent-ffmpeg                  │
+├──────────────── lite ─────────────────┬── full ──────────┤
+│  sql.js · filesystem · inline jobs    │  Postgres        │
+│  Zero Docker for end users            │  Redis / BullMQ  │
+│                                       │  MinIO           │
+└───────────────────────────────────────┴──────────────────┘
+```
+
+| Mode | When | Storage | Queue |
+|------|------|---------|-------|
+| **Lite** | `RESONARA_LITE=1` / desktop | Filesystem + sql.js | Inline runner |
+| **Full** | Server / Compose | MinIO + Postgres | BullMQ + Redis |
+
+Deep dives: [AUDIO_ARCHITECTURE.md](./AUDIO_ARCHITECTURE.md) · [PIANO_ARCHITECTURE.md](./PIANO_ARCHITECTURE.md)
 
 ---
 
 ## API overview
+
+OpenAPI UI: **`/docs`**.
 
 ### Health
 
@@ -244,61 +248,63 @@ Packaged builds run the Nest engine with **`ELECTRON_RUN_AS_NODE`** so end users
 GET /health
 ```
 
-Returns product metadata, mode (`lite` | `full`), checks for database / ffmpeg / TTS, and resolved ffmpeg paths.
+Product metadata, mode (`lite` | `full`), and checks for database, ffmpeg, and TTS.
 
-### Voice (system TTS)
+### Voice (selected)
 
-```http
-GET  /tts/voices
-GET  /tts/engine
-POST /tts/synthesize
-     { "text": "...", "voice": "Samantha", "format": "wav" }
-GET  /tts/jobs/:id
-GET  /tts/jobs/:id/download
-```
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/tts/voices` | Unified voice list (`?language=pt-BR`) |
+| `GET` | `/tts/engines` | Kokoro / Piper / platform availability |
+| `POST` | `/tts/synthesize` | Long-form job (`text`, `engine`, `language`, `qa`, …) |
+| `POST` | `/tts/detect-language` | en / pt-BR detection |
+| `POST` | `/tts/import` | Multipart document → chapters → synthesize |
+| `POST` | `/tts/preprocess-preview` | Show preprocessing removals before synth |
+| `GET` | `/tts/jobs` · `/tts/jobs/:id` | Job list & detail |
+| `GET` | `/tts/jobs/:id/download` | Audio / chapter / EPUB3-MO export |
+| `GET` | `/tts/jobs/:id/qa` | Per-chunk WER table |
+| `GET` | `/tts/library` | Bookshelf aggregation |
+| `GET` | `/feeds/:jobId/rss.xml` | Podcast RSS (when feeds enabled) |
+| `POST` | `/stt/transcribe` | Offline Whisper transcription |
 
-Long text is split at paragraph/sentence boundaries, synthesized per platform, concatenated with ffmpeg. Progress via job polling and Socket.IO (`/jobs` → `job:progress`).
-
-### Audio lab
+### Audio Lab (selected)
 
 | Method | Path | Description |
 |--------|------|-------------|
 | `POST` | `/tracks/upload` | Upload with magic-byte validation |
-| `POST` | `/tracks/:id/transcode` | Enqueue format conversion |
-| `POST` | `/tracks/:id/normalize` | Two-pass EBU R128 loudnorm |
-| `GET` | `/tracks/:id/waveform` | Peaks + RMS JSON |
-| `GET` | `/tracks/:id/metadata` | ffprobe + tags |
-| `GET` | `/tracks/:id/silence` | Silence regions |
-| `POST` | `/tracks/:id/trim` | Trim + fade |
+| `POST` | `/tracks/:id/transcode` | Format conversion job |
+| `POST` | `/tracks/:id/normalize` | Two-pass EBU R128 |
+| `GET` | `/tracks/:id/waveform` | Peaks + RMS |
 | `GET` | `/tracks/:id/stream` | HTTP Range / 206 |
-| `GET` | `/jobs/:id` | Job status / result |
 | `WS` | `/jobs` | `subscribe` → progress events |
 
 ### Piano
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/piano/packs` | List sample packs |
-| `GET` | `/piano/packs/:id/samples/:note` | Sample URL |
+| `GET` | `/piano/packs` | Sample packs |
 | `POST` | `/piano/takes` | Create take |
 | `POST` | `/piano/takes/:id/export` | Export take |
 
-OpenAPI: `/docs` when the API is running.
-
 ---
 
-## Scripts
+## Packaging
 
-| Command | Purpose |
-|---------|---------|
-| `npm run build` | Compile Nest to `dist/` |
-| `npm run desktop:dev` | Build + Electron desktop (lite) |
-| `npm run start:lite` | Lite API only |
-| `npm run start:dev` | Full Nest watch mode |
-| `npm test` | Unit tests (chunker, TTS adapters, ffmpeg, …) |
-| `npm run smoke:tts` | Live Mac TTS chunk → concat smoke |
-| `npm run smoke:service` | Boot lite API + UI surface checks |
-| `npm run dist:mac` / `dist:win` | Installers |
+```bash
+npm run dist:mac    # → release/*.dmg , *.zip
+npm run dist:win    # → release/*Setup*.exe (NSIS)
+npm run dist:all    # mac + win targets
+npm run pack        # unpacked directory (debug)
+```
+
+| Target | Artifact | Notes |
+|--------|----------|--------|
+| macOS | DMG + ZIP | arm64 / x64 via electron-builder |
+| Windows | NSIS | Start Menu + desktop shortcuts |
+
+Config: `package.json` → `"build"` (`appId`: `app.resonara.desktop`).  
+Packaged builds run the Nest engine with **`ELECTRON_RUN_AS_NODE`** so end users do not install Node.js.  
+Windows checklist: [WINDOWS_TESTING.md](./WINDOWS_TESTING.md).
 
 ---
 
@@ -306,40 +312,85 @@ OpenAPI: `/docs` when the API is running.
 
 ```
 resonara/
-├── desktop/           # Electron main + preload
+├── desktop/              # Electron main + preload
 ├── src/
-│   ├── ffmpeg/        # Processing + path resolution
-│   ├── tracks/        # Audio lab API
-│   ├── jobs/          # Queue workers + inline runner
-│   ├── piano/         # Sample piano + takes
-│   ├── tts/           # Chunker, platform adapters, API
-│   ├── storage/       # MinIO or filesystem (lite)
-│   └── health/        # /health
-├── ui/                # Audio lab, piano, voice UIs
-├── samples/           # Seed upright sample pack
-├── scripts/           # Smoke + helper scripts
-└── package.json       # App + electron-builder config
+│   ├── ffmpeg/           # Processing + path resolution
+│   ├── tracks/           # Audio Lab API
+│   ├── piano/            # Sample piano + takes
+│   ├── tts/              # Engines, chunker, QA, library, feeds, export
+│   ├── stt/              # Offline Whisper service
+│   ├── jobs/ · queue/    # Workers + inline runner
+│   ├── storage/          # MinIO or filesystem (lite)
+│   └── health/           # /health
+├── ui/                   # Lab · piano · voice · deliverable dashboard
+├── scripts/              # CLI, demos, model downloads, smoke tests
+├── samples/              # Demo texts + piano pack seeds
+├── tools/                # Local venvs & models (gitignored binaries)
+├── reports/              # Phase evidence & audits
+└── docs/                 # Marketing / product site sources
 ```
+
+---
+
+## Scripts reference
+
+| Command | Purpose |
+|---------|---------|
+| `npm run build` | Compile Nest → `dist/` |
+| `npm run desktop:dev` | Electron + lite API |
+| `npm run start:lite` | Lite API only |
+| `npm run start:dev` | Full Nest watch mode |
+| `npm test` / `test:cov` / `test:e2e` | Unit, coverage, e2e |
+| `npm run cli` | Resonara CLI |
+| `npm run qa:sample` / `qa:all` | WER QA runners |
+| `npm run demo:*` / `demo:pt:*` | Synthesis demos |
+| `npm run download:piper` / `kokoro` / `whisper` | Offline model setup |
+| `npm run dist:mac` / `dist:win` | Installers |
+| `npm run smoke:tts` / `smoke:service` | Live smoke checks |
+| `make ui` | Open deliverable dashboard |
+
+---
+
+## Documentation
+
+| Document | Topic |
+|----------|--------|
+| [COMPETITIVE_ANALYSIS.md](./COMPETITIVE_ANALYSIS.md) | Landscape vs ebook2audiobook, Storyteller, Audiobookshelf, Kokoro, Whisper |
+| [IMPROVEMENT_ROADMAP.md](./IMPROVEMENT_ROADMAP.md) | Pillars A–F and phase map |
+| [IMPROVEMENT_PLAN.md](./IMPROVEMENT_PLAN.md) | Earlier TTS improvement plan |
+| [MULTILINGUAL_PLAN.md](./MULTILINGUAL_PLAN.md) | en / pt-BR design |
+| [AUDIO_ARCHITECTURE.md](./AUDIO_ARCHITECTURE.md) | Lab pipeline |
+| [PIANO_ARCHITECTURE.md](./PIANO_ARCHITECTURE.md) | Piano module |
+| [reports/INDEX.md](./reports/INDEX.md) | Session / phase evidence index |
+| [WINDOWS_TESTING.md](./WINDOWS_TESTING.md) | Windows packaging verification |
+
+---
+
+## Security notes
+
+- **Podcast feeds** (`RESONARA_FEEDS`) are unauthenticated by design for LAN podcast apps. Keep them off on public interfaces; bind to localhost or a trusted network when enabled.
+- Desktop lite binds the API to **localhost** by default.
+- No cloud TTS/STT is required for core features; model downloads are explicit opt-in.
 
 ---
 
 ## Known limits (v1)
 
-- Installers ship **unsigned** (no Apple notarization / Authenticode) unless you add certificates  
-- TTS quality and languages depend on **OS-installed voices**  
-- **ffmpeg** is not bundled yet — must be on the host `PATH`  
-- No Linux installer in v1  
-- Not a multi-user cloud SaaS; desktop lite is the default offline path  
+- Installers ship **unsigned** unless you add Apple notarization / Authenticode certificates  
+- **ffmpeg** is not bundled — must be available on the host  
+- No Linux desktop installer in v1  
+- Voice cloning and OCR are **out of scope** (CPU offline-first product constraints)  
+- Not a multi-tenant cloud SaaS; lite desktop is the default path  
 
 ---
 
 ## Contributing
 
-1. Fork and clone the repo  
+1. Fork and clone the repository  
 2. `npm install && npm run build`  
-3. Prefer lite mode (`npm run desktop:dev`) for UI/API work  
-4. Add or extend unit tests next to the module you change  
-5. Open a PR with a clear description of behavior and test notes  
+3. Prefer lite mode (`npm run desktop:dev`) for UI and API work  
+4. Add or extend unit tests beside the module you change  
+5. Open a PR with behavior notes and how you verified (tests, demos, QA)
 
 ---
 
@@ -351,5 +402,10 @@ resonara/
 
 <p align="center">
   <strong>Resonara</strong><br/>
-  <em>Shape sound. Speak the long form. Play freely.</em>
+  <em>Shape sound. Speak the long form. Play freely.</em><br/>
+  <a href="https://yuri-lima.github.io/resonara/">Product site</a>
+  ·
+  <a href="https://github.com/Yuri-Lima/resonara/releases">Releases</a>
+  ·
+  <a href="./LICENSE">MIT License</a>
 </p>
