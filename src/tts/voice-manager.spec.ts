@@ -83,11 +83,11 @@ describe('VoiceManager', () => {
     expect(vm.resolveEngine('kokoro')).toBe('kokoro');
   });
 
-  it('resolveEngine skips kokoro for Portuguese (English-only engine)', () => {
+  it('resolveEngine skips kokoro for pt-BR (English-only engine)', () => {
     jest.spyOn(kokoro, 'isKokoroAvailable').mockReturnValue(true);
     jest.spyOn(piper, 'isPiperAvailable').mockReturnValue({
       available: true,
-      voiceCount: 2,
+      voiceCount: 1,
       detail: 'ok',
     });
     jest.spyOn(platform, 'ttsEngineAvailable').mockReturnValue({
@@ -102,6 +102,15 @@ describe('VoiceManager', () => {
 
   it('getDefaultVoiceForLanguage never returns kokoro for pt-BR', () => {
     jest.spyOn(kokoro, 'isKokoroAvailable').mockReturnValue(true);
+    jest.spyOn(kokoro, 'listKokoroVoices').mockReturnValue([
+      {
+        id: 'kokoro:af_sarah',
+        name: 'af sarah',
+        language: 'en-US',
+        engine: 'kokoro',
+        nativeId: 'af_sarah',
+      },
+    ]);
     jest.spyOn(piper, 'isPiperAvailable').mockReturnValue({
       available: true,
       voiceCount: 1,
@@ -111,7 +120,7 @@ describe('VoiceManager', () => {
       {
         id: 'piper:pt_BR-faber-medium',
         name: 'faber',
-        language: 'pt_BR',
+        language: 'pt-BR',
         quality: 'medium',
         sampleRate: 22050,
         gender: 'male',
@@ -125,10 +134,8 @@ describe('VoiceManager', () => {
     ]);
     const vm = new VoiceManager();
     const v = vm.getDefaultVoiceForLanguage('pt-BR');
-    expect(v).toBeDefined();
-    expect(v!.engine).not.toBe('kokoro');
-    expect(v!.engine).toBe('piper');
-    expect(/pt/i.test(v!.language || v!.id)).toBe(true);
+    expect(v?.engine).toBe('piper');
+    expect(v?.id).toMatch(/faber|pt_BR/i);
   });
 
   it('resolveEngine throws when none available', () => {

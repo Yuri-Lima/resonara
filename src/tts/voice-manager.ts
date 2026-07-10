@@ -113,7 +113,7 @@ export class VoiceManager {
    * Prefer Kokoro (when available) > Piper high > platform for English.
    * For pt-BR (and other non-English), Kokoro is English-only and must be
    * skipped — otherwise auto mode tries kokoro:af_sarah on Portuguese text.
-   * Evidence-based default refined in Phase 9 shootout + multilingual.
+   * Evidence-based default refined in Phase 9 shootout + G26/G27 multilingual.
    */
   resolveEngine(
     requested: 'auto' | 'piper' | 'platform' | 'kokoro' = 'auto',
