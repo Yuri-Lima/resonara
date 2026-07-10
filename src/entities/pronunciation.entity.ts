@@ -10,7 +10,7 @@ import {
 export type PronunciationEngineScope = 'all' | 'piper' | 'platform';
 
 @Entity('pronunciations')
-@Index(['word'], { unique: true })
+@Index(['word', 'language'], { unique: true })
 export class PronunciationEntry {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

@@ -9,11 +9,25 @@ describe('PronunciationService', () => {
   const repo = {
     count: jest.fn(async () => store.length),
     find: jest.fn(async () => [...store].sort((a, b) => a.word.localeCompare(b.word))),
-    findOne: jest.fn(async ({ where }: { where: { id?: string; word?: string } }) => {
-      if (where.id) return store.find((s) => s.id === where.id) || null;
-      if (where.word) return store.find((s) => s.word === where.word) || null;
-      return null;
-    }),
+    findOne: jest.fn(
+      async ({
+        where,
+      }: {
+        where: { id?: string; word?: string; language?: string };
+      }) => {
+        if (where.id) return store.find((s) => s.id === where.id) || null;
+        if (where.word != null) {
+          return (
+            store.find(
+              (s) =>
+                s.word === where.word &&
+                (where.language == null || s.language === where.language),
+            ) || null
+          );
+        }
+        return null;
+      },
+    ),
     create: jest.fn((x: Partial<PronunciationEntry>) => ({
       id: x.id || `id-${store.length + 1}`,
       word: x.word || '',
@@ -94,5 +108,16 @@ describe('PronunciationService', () => {
   it('seeds on empty module init', async () => {
     await service.onModuleInit();
     expect(store.length).toBeGreaterThan(5);
+  });
+
+  it('filters dictionary by language (no cross-contamination)', async () => {
+    await service.create({ word: 'sql', alias: 'sequel', language: 'en' });
+    await service.create({ word: 'cpf', alias: 'C P F', language: 'pt-BR' });
+    const en = await service.applyDictionary('Learn SQL and CPF', 'all', 'en');
+    expect(en).toMatch(/sequel/i);
+    expect(en).not.toMatch(/C P F/);
+    const pt = await service.applyDictionary('Informe o CPF', 'all', 'pt-BR');
+    expect(pt).toMatch(/C P F/);
+    expect(pt).not.toMatch(/sequel/i);
   });
 });

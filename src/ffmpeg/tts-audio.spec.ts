@@ -5,6 +5,11 @@ import * as os from 'os';
 import * as path from 'path';
 import { FfmpegService } from './ffmpeg.service';
 
+/** crossfadeChunks ignores parts with size <= 44 (WAV header threshold). */
+function writeFakeWav(filePath: string, tag = 'wav'): void {
+  fs.writeFileSync(filePath, Buffer.alloc(64, tag.charCodeAt(0) || 0x41));
+}
+
 describe('FfmpegService TTS helpers', () => {
   let service: FfmpegService;
   let runRaw: jest.SpyInstance;
@@ -52,7 +57,7 @@ describe('FfmpegService TTS helpers', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tts-ff-'));
     const input = path.join(dir, 'in.wav');
     const output = path.join(dir, 'out.wav');
-    fs.writeFileSync(input, 'x');
+    writeFakeWav(input);
     await service.trimChunkSilence(input, output);
     expect(runRaw).toHaveBeenCalled();
     const args = runRaw.mock.calls[0][0] as string[];
@@ -64,7 +69,7 @@ describe('FfmpegService TTS helpers', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'tts-ff-'));
     const a = path.join(dir, 'a.wav');
     const out = path.join(dir, 'out.wav');
-    fs.writeFileSync(a, 'data');
+    writeFakeWav(a, 'A');
     await service.crossfadeChunks([a], out, { format: 'wav' });
     expect(fs.existsSync(out)).toBe(true);
     fs.rmSync(dir, { recursive: true, force: true });
@@ -75,8 +80,8 @@ describe('FfmpegService TTS helpers', () => {
     const a = path.join(dir, 'a.wav');
     const b = path.join(dir, 'b.wav');
     const out = path.join(dir, 'out.wav');
-    fs.writeFileSync(a, 'a');
-    fs.writeFileSync(b, 'b');
+    writeFakeWav(a, 'A');
+    writeFakeWav(b, 'B');
     await service.crossfadeChunks([a, b], out, { format: 'wav' });
     const joined = runRaw.mock.calls.map((c) => (c[0] as string[]).join(' ')).join(' | ');
     expect(joined).toMatch(/acrossfade|concat/);

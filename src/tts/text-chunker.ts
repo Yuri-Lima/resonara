@@ -2,7 +2,14 @@
  * Split long documents into TTS-safe chunks at sentence/paragraph boundaries.
  * Pure functions — unit-testable without platform APIs.
  * Engine-aware: Piper uses larger chunks for cross-sentence prosody.
+ * Language-aware: abbreviation protection + Brazilian number format + em-dash dialogue.
  */
+
+import {
+  getLanguageConfig,
+  tryGetLanguageConfig,
+} from './language/language-registry';
+import { LanguageCode } from './language/language.types';
 
 export type ChunkEngine = 'piper' | 'platform';
 
@@ -13,6 +20,8 @@ export interface ChunkOptions {
   hardMaxChars?: number;
   /** Engine selects defaults when max not provided. */
   engine?: ChunkEngine;
+  /** Language for abbreviation / number / dialogue rules. */
+  language?: LanguageCode;
 }
 
 export interface TextChunk {
@@ -48,6 +57,7 @@ export function chunkTextForTts(
   const defaults = defaultChunkLimits(engine);
   const maxChars = options.maxChars ?? defaults.maxChars;
   const hardMax = options.hardMaxChars ?? defaults.hardMaxChars;
+  const language = options.language || 'en';
   const text = normalizeWhitespace(input);
   if (!text) return [];
 
@@ -68,7 +78,7 @@ export function chunkTextForTts(
       pieces.push(para);
       continue;
     }
-    pieces.push(...splitBySentences(para, maxChars, hardMax));
+    pieces.push(...splitBySentences(para, maxChars, hardMax, language));
   }
 
   // Greedy pack small pieces into maxChars windows
@@ -233,8 +243,9 @@ function splitBySentences(
   para: string,
   maxChars: number,
   hardMax: number,
+  language: LanguageCode = 'en',
 ): string[] {
-  const sentences = para.match(/[^.!?]+[.!?]+|\S+$/g) || [para];
+  const sentences = splitSentencesLanguageAware(para, language);
   const out: string[] = [];
   let buf = '';
 
@@ -259,6 +270,61 @@ function splitBySentences(
   }
   if (buf) out.push(buf);
   return out;
+}
+
+/**
+ * Sentence split with abbreviation protection, Brazilian thousands separators,
+ * and Portuguese em-dash dialogue awareness.
+ */
+export function splitSentencesLanguageAware(
+  text: string,
+  language: LanguageCode = 'en',
+): string[] {
+  if (!text.trim()) return [];
+  const cfg = tryGetLanguageConfig(language) || getLanguageConfig('en');
+  let protectedText = text;
+  const placeholders: string[] = [];
+  const protect = (m: string): string => {
+    const token = `\uE000${placeholders.length}\uE001`;
+    placeholders.push(m);
+    return token;
+  };
+
+  for (const abbr of cfg.abbreviations) {
+    const escaped = abbr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(escaped, 'gi');
+    protectedText = protectedText.replace(re, (m) => protect(m));
+  }
+
+  // Protect Brazilian numbers 1.234,56 (periods as thousands)
+  if (cfg.code === 'pt-BR' || cfg.numberFormat.thousands === '.') {
+    protectedText = protectedText.replace(
+      /\d{1,3}(?:\.\d{3})+(?:,\d+)?/g,
+      (m) => protect(m),
+    );
+  }
+
+  // Protect English thousands 1,234.56
+  if (cfg.numberFormat.thousands === ',') {
+    protectedText = protectedText.replace(
+      /\d{1,3}(?:,\d{3})+(?:\.\d+)?/g,
+      (m) => protect(m),
+    );
+  }
+
+  // Split on sentence terminators; keep delimiter with lookbehind
+  const parts = protectedText.split(/(?<=[.!?…])(?=\s+|$)/);
+  const restored = parts
+    .map((p) => {
+      let s = p;
+      for (let i = 0; i < placeholders.length; i++) {
+        s = s.split(`\uE000${i}\uE001`).join(placeholders[i]);
+      }
+      return s.trim();
+    })
+    .filter(Boolean);
+
+  return restored.length ? restored : [text];
 }
 
 function splitByWords(text: string, maxChars: number): string[] {

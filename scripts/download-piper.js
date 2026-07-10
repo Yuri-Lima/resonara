@@ -26,13 +26,28 @@ const ASSETS = {
   'win32-x64': `piper_windows_amd64.zip`,
 };
 
-const DEFAULT_VOICE = {
-  onnx:
-    'https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx?download=true',
-  json:
-    'https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json?download=true',
-  name: 'en_US-lessac-medium',
-};
+const DEFAULT_VOICES = [
+  {
+    onnx:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx?download=true',
+    json:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json?download=true',
+    name: 'en_US-lessac-medium',
+    language: 'en-US',
+  },
+  {
+    // Brazilian Portuguese medium male — primary offline pt-BR voice
+    onnx:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx?download=true',
+    json:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx.json?download=true',
+    name: 'pt_BR-faber-medium',
+    language: 'pt-BR',
+  },
+];
+
+// Back-compat alias
+const DEFAULT_VOICE = DEFAULT_VOICES[0];
 
 function download(url, dest, redirects = 0) {
   return new Promise((resolve, reject) => {
@@ -105,18 +120,20 @@ async function main() {
   const key = `${process.platform}-${process.arch}`;
   const asset = ASSETS[key] || ASSETS[`${process.platform}-x64`];
 
-  // Always ensure default model
-  const onnxPath = path.join(MODELS, `${DEFAULT_VOICE.name}.onnx`);
-  const jsonPath = onnxPath + '.json';
-  if (!fs.existsSync(onnxPath) || fs.statSync(onnxPath).size < 1_000_000) {
-    console.log('Downloading default voice', DEFAULT_VOICE.name);
-    await download(DEFAULT_VOICE.onnx, onnxPath);
-    await download(DEFAULT_VOICE.json, jsonPath);
-  } else if (!fs.existsSync(jsonPath) || fs.statSync(jsonPath).size < 100) {
-    console.log('Downloading voice config JSON');
-    await download(DEFAULT_VOICE.json, jsonPath);
-  } else {
-    console.log('Voice model already present:', onnxPath);
+  // Always ensure default multilingual models (en + pt-BR)
+  for (const voice of DEFAULT_VOICES) {
+    const onnxPath = path.join(MODELS, `${voice.name}.onnx`);
+    const jsonPath = onnxPath + '.json';
+    if (!fs.existsSync(onnxPath) || fs.statSync(onnxPath).size < 1_000_000) {
+      console.log('Downloading voice', voice.name, `(${voice.language})`);
+      await download(voice.onnx, onnxPath);
+      await download(voice.json, jsonPath);
+    } else if (!fs.existsSync(jsonPath) || fs.statSync(jsonPath).size < 100) {
+      console.log('Downloading voice config JSON for', voice.name);
+      await download(voice.json, jsonPath);
+    } else {
+      console.log('Voice model already present:', onnxPath);
+    }
   }
 
   // Prefer python wheel on darwin-arm64 or when native fails
@@ -132,20 +149,30 @@ async function main() {
     }
   }
 
-  if (asset && !preferPython) {
-    const url = `https://github.com/rhasspy/piper/releases/download/${RELEASE}/${asset}`;
-    const archive = path.join(os.tmpdir(), asset);
+  async function extractNative(assetName) {
+    const url = `https://github.com/rhasspy/piper/releases/download/${RELEASE}/${assetName}`;
+    const archive = path.join(os.tmpdir(), assetName);
     console.log('Downloading native binary', url);
+    await download(url, archive);
+    console.log('Extracting to', OUT);
+    if (assetName.endsWith('.zip')) {
+      // Windows zip has a top-level piper/ folder — merge into OUT
+      const tmp = path.join(os.tmpdir(), `piper-extract-${Date.now()}`);
+      fs.mkdirSync(tmp, { recursive: true });
+      execSync(`unzip -o "${archive}" -d "${tmp}"`, { stdio: 'inherit' });
+      const nested = path.join(tmp, 'piper');
+      const src = fs.existsSync(nested) ? nested : tmp;
+      execSync(`cp -R "${src}/." "${OUT}/"`, { stdio: 'inherit' });
+    } else {
+      execSync(`tar -xzf "${archive}" -C "${OUT}" --strip-components=1`, {
+        stdio: 'inherit',
+      });
+    }
+  }
+
+  if (asset && !preferPython) {
     try {
-      await download(url, archive);
-      console.log('Extracting to', OUT);
-      if (asset.endsWith('.zip')) {
-        execSync(`unzip -o "${archive}" -d "${OUT}"`, { stdio: 'inherit' });
-      } else {
-        execSync(`tar -xzf "${archive}" -C "${OUT}" --strip-components=1`, {
-          stdio: 'inherit',
-        });
-      }
+      await extractNative(asset);
       const bin = path.join(OUT, process.platform === 'win32' ? 'piper.exe' : 'piper');
       if (fs.existsSync(bin)) {
         fs.chmodSync(bin, 0o755);
@@ -160,12 +187,30 @@ async function main() {
     }
   }
 
+  // Always stage Windows amd64 binary for cross-packaging from macOS/Linux
+  const winExe = path.join(OUT, 'piper.exe');
+  if (!fs.existsSync(winExe) || fs.statSync(winExe).size < 100_000) {
+    try {
+      console.log('Staging Windows piper.exe for NSIS packaging…');
+      await extractNative(ASSETS['win32-x64']);
+      if (fs.existsSync(winExe)) {
+        console.log('Windows piper.exe ready:', winExe);
+      }
+    } catch (e) {
+      console.warn('Windows binary staging failed:', e.message);
+    }
+  } else {
+    console.log('Windows piper.exe already present:', winExe);
+  }
+
   // Write version stamp
+  const voiceNames = DEFAULT_VOICES.map((v) => v.name).join(',');
   fs.writeFileSync(
     path.join(OUT, 'VERSION'),
-    `release=${RELEASE}\nvoice=${DEFAULT_VOICE.name}\npython_venv=${VENV}\n`,
+    `release=${RELEASE}\nvoices=${voiceNames}\npython_venv=${VENV}\nlanguages=en-US,pt-BR\n`,
   );
-  console.log('Done. Resonara resolves tools/piper-venv/bin/piper first when runnable.');
+  console.log('Done. Bundled models:', voiceNames);
+  console.log('Resonara resolves tools/piper-venv/bin/piper first when runnable.');
   console.log('Optional: export PIPER_PATH and PIPER_MODELS_DIR');
 }
 

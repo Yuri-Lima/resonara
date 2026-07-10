@@ -1,0 +1,9 @@
+O novo framework da startup de São Paulo utiliza machine learning para otimizar a user experience. Segundo o CTO, a equipe local prefere documentar tudo em português claro.
+
+Our approach leverages state-of-the-art NLP models, explained the visiting engineer during the meetup in English.
+
+A API REST do backend, desenvolvida em Node.js com TypeScript, processa mais de 10 mil requests por segundo. O time de product design revisa cada fluxo com usuários brasileiros antes do deploy.
+
+In the afternoon workshop, participants discussed latency budgets and offline-first caching strategies for mobile apps.
+
+No encerramento, o fundador agradeceu em português: «Obrigado a todos que acreditaram no projeto desde o primeiro sprint.»

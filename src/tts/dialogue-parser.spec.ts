@@ -41,5 +41,17 @@ describe('dialogue-parser', () => {
   it('detects markup', () => {
     expect(hasDialogueMarkup('[alice]: hi')).toBe(true);
     expect(hasDialogueMarkup('plain')).toBe(false);
+    expect(hasDialogueMarkup('— Você vem?')).toBe(true);
+  });
+
+  it('parses Portuguese em-dash dialogue with attribution', () => {
+    const text = `— Você acha que vai chover? — perguntou Maria.
+— Acho que sim — respondeu João.
+O silêncio tomou conta da sala.`;
+    const r = parseDialogue(text, { emDash: true });
+    expect(r.blocks.length).toBeGreaterThanOrEqual(2);
+    expect(r.speakers.some((s) => s.includes('maria') || s.includes('speaker'))).toBe(
+      true,
+    );
   });
 });

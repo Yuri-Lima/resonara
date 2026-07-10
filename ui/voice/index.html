@@ -34,6 +34,14 @@
 
       <div class="voice-toolbar">
         <label>
+          Language
+          <select id="language-select" aria-label="Synthesis language">
+            <option value="auto">Auto-detect</option>
+            <option value="en">English</option>
+            <option value="pt-BR">Português (Brasil)</option>
+          </select>
+        </label>
+        <label>
           Voice
           <select id="voice-select" aria-label="Voice selector">
             <option value="">Auto (prefer Piper)</option>
@@ -58,6 +66,9 @@
         <button type="button" id="btn-preview" class="ghost">Preview voice</button>
         <button type="button" id="btn-engine" class="ghost">Engine status</button>
       </div>
+      <p id="lang-detect" class="meta lang-detect" role="status" aria-live="polite">
+        Language: auto — type text to detect
+      </p>
 
       <div class="mode-toggle" role="group" aria-label="Input mode">
         <button type="button" id="mode-plain" class="mode active" aria-pressed="true">Plain Text</button>

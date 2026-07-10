@@ -1,0 +1,14 @@
+<speak>
+  Bem-vindo ao <emphasis level="strong">Resonara</emphasis>.
+  <break time="500ms"/>
+  Versão <say-as interpret-as="cardinal">2</say-as> ponto
+  <say-as interpret-as="cardinal">0</say-as>.
+  <prosody rate="slow">Esta parte é falada devagar.</prosody>
+  <prosody rate="fast">E esta parte é falada rapidamente.</prosody>
+  A palavra <phoneme alphabet="ipa" ph="ʁe.ˈsi.fi">Recife</phoneme>
+  é frequentemente mal pronunciada.
+  <sub alias="Imposto sobre Circulação de Mercadorias">ICMS</sub>
+  é um imposto estadual.
+  <break time="1s"/>
+  Obrigado por ouvir.
+</speak>

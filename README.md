@@ -16,7 +16,7 @@ Resonara is a cross-platform **desktop audio studio** for creators, producers, a
 |--------|------------------|
 | **Audio lab** | Import, transcode, two-pass EBU R128 loudnorm, trim, silence detect, waveform, stream & export |
 | **Piano** | Play a hybrid sample piano, record takes, analyze and export |
-| **Voice** | Offline **Piper neural TTS** (primary) + platform fallback: SSML, pronunciation dict, document import, chapter markers, seam-free concat |
+| **Voice** | Offline **Piper neural TTS** (primary) + platform fallback: **English + Brazilian Portuguese (pt-BR)**, SSML, pronunciation dict, document import, chapter markers, seam-free concat |
 
 End users get a normal **macOS** or **Windows** installer — no Docker, no Node, no terminal setup.
 
@@ -26,7 +26,8 @@ End users get a normal **macOS** or **Windows** installer — no Docker, no Node
 
 - **Offline-first desktop** — local engine, filesystem storage, no cloud account required for core flows  
 - **Production audio path** — two-pass loudnorm (not single-pass), soxr-aware processing via ffmpeg  
-- **Long-form speech** — **Piper** neural voices (offline ONNX) with **macOS `say` / Windows SAPI** fallback; SSML, dictionary, EPUB/PDF/DOCX/MD import, persisted jobs  
+- **Long-form speech** — **Piper** neural voices (offline ONNX, **en + pt-BR** bundled) with **macOS `say` / Windows SAPI** language-matched fallback; SSML, dictionary, EPUB/PDF/DOCX/MD import, persisted jobs  
+- **Multilingual TTS** — auto language detection, Portuguese number/date/currency expansion, mixed-language documents, never cross-language voice fallback  
 - **Hybrid piano** — sample-pack playback, take capture, and export wired into the same job model  
 - **Live job progress** — normalize, export, and TTS report progress without freezing the UI  
 - **Health checks** — first-run / on-demand status for **ffmpeg** and **TTS** engines (with path resolution for GUI apps)
@@ -90,17 +91,32 @@ export PIPER_MODELS_DIR=./resources/piper/models
 
 | Endpoint | Description |
 |----------|-------------|
-| `GET /tts/voices` | Unified Piper + platform voices |
+| `GET /tts/voices` | Unified Piper + platform voices (`?language=pt-BR`) |
 | `GET /tts/engines` | Engine availability |
-| `POST /tts/synthesize` | Long-form job (`engine`, `ssml`, post-process flags) |
+| `POST /tts/synthesize` | Long-form job (`language`, `engine`, `ssml`, post-process) |
+| `POST /tts/detect-language` | Paragraph-level en / pt-BR detection |
 | `POST /tts/import` | Multipart document → chapters → synthesize |
 | `GET /tts/jobs` | Paginated persisted jobs |
 | `GET /tts/jobs/:id/chapters` | Chapter timestamps |
-| `GET/POST /tts/dictionary` | Pronunciation CRUD |
+| `GET/POST /tts/dictionary` | Pronunciation CRUD (per-language entries) |
 | `GET /tts/ssml` | Supported SSML subset |
 
-See [IMPROVEMENT_PLAN.md](./IMPROVEMENT_PLAN.md) for architecture and phase plan.
-Dashboard: `ui/deliverable/` (`make ui`).
+See [IMPROVEMENT_PLAN.md](./IMPROVEMENT_PLAN.md), [MULTILINGUAL_PLAN.md](./MULTILINGUAL_PLAN.md), and [G25_AUDIT_REPORT.md](./G25_AUDIT_REPORT.md).
+Dashboard: `ui/deliverable/` (`make ui`). Windows runtime checklist: [WINDOWS_TESTING.md](./WINDOWS_TESTING.md).
+
+### Multilingual demos
+
+```bash
+npm run download:piper     # en_US-lessac-medium + pt_BR-faber-medium
+npm run demo:quick         # English smoke
+npm run demo:pt:rapida     # Portuguese smoke
+npm run demo:pt:numeros    # R$, dates, CPF expansion
+npm run demo:pt:misturado  # Mixed en+pt-BR document
+npm run demo:all-languages # Full bilingual suite
+npm run benchmark:pt
+```
+
+Bundled offline voices: **en_US-lessac-medium** · **pt_BR-faber-medium**. Platform fallbacks stay language-safe (e.g. macOS Luciana for pt-BR — never English for Portuguese text).
 
 ## Screenshots & UI surfaces
 

@@ -3,6 +3,7 @@ import {
   defaultChunkLimits,
   detectChapters,
   estimateWordCount,
+  splitSentencesLanguageAware,
 } from './text-chunker';
 
 describe('chunkTextForTts', () => {
@@ -60,9 +61,38 @@ describe('estimateWordCount', () => {
 });
 
 describe('detectChapters', () => {
-  it('finds markdown headings', () => {
-    const text = '# Intro\n\nHello\n\n## Chapter Two\n\nWorld';
+  it('finds substantial H1 / Chapter markers', () => {
+    const body = (n: string) =>
+      `This is a substantial body for ${n}. `.repeat(50);
+    const text = `# Introduction\n\n${body('intro')}\n\n# Chapter Two\n\n${body('two')}`;
     const ch = detectChapters(text);
     expect(ch.length).toBeGreaterThanOrEqual(2);
+    expect(ch[0].title).toMatch(/Introduction/i);
+  });
+
+  it('collapses tiny micro-sections into a single body', () => {
+    const text = '# Intro\n\nHello\n\n## Chapter Two\n\nWorld';
+    const ch = detectChapters(text);
+    expect(ch).toHaveLength(1);
+    expect(ch[0].title).toBe('Body');
+  });
+});
+
+describe('Portuguese chunking rules', () => {
+  it('does not split on Sr. abbreviation', () => {
+    const parts = splitSentencesLanguageAware(
+      'O Sr. Silva e a Dra. Costa chegaram às 14h30. Depois foram embora.',
+      'pt-BR',
+    );
+    expect(parts[0]).toMatch(/Sr\. Silva/);
+    expect(parts.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('does not split Brazilian thousands separator', () => {
+    const parts = splitSentencesLanguageAware(
+      'O valor é R$ 1.234,56 por unidade. O total é maior.',
+      'pt-BR',
+    );
+    expect(parts[0]).toMatch(/1\.234,56/);
   });
 });

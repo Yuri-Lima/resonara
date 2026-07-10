@@ -24,8 +24,8 @@
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
     "dist:mac": "npm run build && electron-builder --mac dmg zip",
-    "dist:win": "npm run build && electron-builder --win nsis",
-    "dist:all": "npm run build && electron-builder --mac dmg zip --win nsis",
+    "dist:win": "npm run build && electron-builder --win nsis --x64",
+    "dist:all": "npm run build && electron-builder --mac dmg zip --arm64 --win nsis --x64",
     "smoke:tts": "node scripts/smoke-tts.js",
     "smoke:service": "node scripts/smoke-service.js",
     "download:piper": "node scripts/download-piper.js",
@@ -42,7 +42,22 @@
     "demo:numbers": "node scripts/demo/run-demo.js numbers-and-dates",
     "demo:all": "node scripts/demo/run-demo.js --all --no-open",
     "demo:compare": "node scripts/demo/run-demo.js --compare paragraph",
-    "benchmark": "node scripts/benchmark.js"
+    "demo:pt:rapida": "node scripts/demo/run-demo.js --lang pt-BR frase-rapida --no-open",
+    "demo:pt:paragrafo": "node scripts/demo/run-demo.js --lang pt-BR paragrafo --no-open",
+    "demo:pt:artigo": "node scripts/demo/run-demo.js --lang pt-BR artigo-curto --no-open",
+    "demo:pt:noticia": "node scripts/demo/run-demo.js --lang pt-BR noticia --no-open",
+    "demo:pt:capitulo": "node scripts/demo/run-demo.js --lang pt-BR capitulo-livro --no-open",
+    "demo:pt:tecnico": "node scripts/demo/run-demo.js --lang pt-BR documento-tecnico --no-open",
+    "demo:pt:dialogo": "node scripts/demo/run-demo.js --lang pt-BR dialogo-roteiro --no-open",
+    "demo:pt:pronuncia": "node scripts/demo/run-demo.js --lang pt-BR desafio-pronuncia --no-open",
+    "demo:pt:numeros": "node scripts/demo/run-demo.js --lang pt-BR numeros-e-datas --no-open",
+    "demo:pt:misturado": "node scripts/demo/run-demo.js --lang pt-BR misturado-en-pt --no-open",
+    "demo:pt:ssml": "node scripts/demo/run-demo.js --lang pt-BR ssml-demonstracao --no-open",
+    "demo:pt:all": "node scripts/demo/run-demo.js --lang pt-BR --all --no-open",
+    "demo:pt:compare": "node scripts/demo/run-demo.js --lang pt-BR --compare paragrafo --no-open",
+    "demo:all-languages": "node scripts/demo/run-demo.js --all-languages --no-open",
+    "benchmark": "node scripts/benchmark.js",
+    "benchmark:pt": "node scripts/benchmark.js --lang pt-BR"
   },
   "dependencies": {
     "@nestjs/bullmq": "^10.2.3",
@@ -160,6 +175,8 @@
       "!test/**/*",
       "!release/**/*"
     ],
+    "npmRebuild": false,
+    "afterPack": "scripts/afterPack.js",
     "extraResources": [
       {
         "from": "dist",
@@ -191,21 +208,31 @@
         {
           "target": "dmg",
           "arch": [
-            "arm64",
-            "x64"
+            "arm64"
           ]
         },
         {
           "target": "zip",
           "arch": [
-            "arm64",
-            "x64"
+            "arm64"
           ]
         }
       ],
       "identity": null,
       "hardenedRuntime": false,
-      "gatekeeperAssess": false
+      "gatekeeperAssess": false,
+      "extraResources": [
+        {
+          "from": "tools/piper-venv",
+          "to": "piper-venv",
+          "filter": [
+            "**/*",
+            "!**/__pycache__/**",
+            "!**/*.pyc",
+            "!**/.git/**"
+          ]
+        }
+      ]
     },
     "dmg": {
       "title": "Resonara"

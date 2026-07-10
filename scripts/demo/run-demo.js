@@ -16,12 +16,14 @@ const path = require('path');
 const { spawn, execSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..', '..');
-const SAMPLES = path.join(ROOT, 'samples', 'texts');
-const OUT_DIR = path.join(ROOT, 'demo-output');
+const SAMPLES_EN = path.join(ROOT, 'samples', 'texts');
+const SAMPLES_PT = path.join(ROOT, 'samples', 'texts', 'pt-br');
+const OUT_DIR_EN = path.join(ROOT, 'demo-output');
+const OUT_DIR_PT = path.join(ROOT, 'demo-output', 'pt-br');
 const PORT = Number(process.env.DEMO_PORT || 3855);
 const BASE = `http://127.0.0.1:${PORT}`;
 
-const SAMPLE_MAP = {
+const SAMPLE_MAP_EN = {
   'quick-sentence': 'quick-sentence.txt',
   paragraph: 'paragraph.txt',
   'short-article': 'short-article.txt',
@@ -42,7 +44,29 @@ const SAMPLE_MAP = {
   numbers: 'numbers-and-dates.txt',
 };
 
-const ALL = [
+const SAMPLE_MAP_PT = {
+  'frase-rapida': 'frase-rapida.txt',
+  paragrafo: 'paragrafo.txt',
+  'artigo-curto': 'artigo-curto.txt',
+  artigo: 'artigo-curto.txt',
+  noticia: 'noticia.txt',
+  'capitulo-livro': 'capitulo-livro.txt',
+  capitulo: 'capitulo-livro.txt',
+  'documento-tecnico': 'documento-tecnico.txt',
+  tecnico: 'documento-tecnico.txt',
+  'dialogo-roteiro': 'dialogo-roteiro.txt',
+  dialogo: 'dialogo-roteiro.txt',
+  'desafio-pronuncia': 'desafio-pronuncia.txt',
+  pronuncia: 'desafio-pronuncia.txt',
+  'numeros-e-datas': 'numeros-e-datas.txt',
+  numeros: 'numeros-e-datas.txt',
+  'misturado-en-pt': 'misturado-en-pt.txt',
+  misturado: 'misturado-en-pt.txt',
+  'ssml-demonstracao': 'ssml-demonstracao.txt',
+  ssml: 'ssml-demonstracao.txt',
+};
+
+const ALL_EN = [
   'quick-sentence',
   'paragraph',
   'short-article',
@@ -54,6 +78,25 @@ const ALL = [
   'pronunciation-challenge',
   'numbers-and-dates',
 ];
+
+const ALL_PT = [
+  'frase-rapida',
+  'paragrafo',
+  'artigo-curto',
+  'noticia',
+  'capitulo-livro',
+  'documento-tecnico',
+  'dialogo-roteiro',
+  'desafio-pronuncia',
+  'numeros-e-datas',
+  'misturado-en-pt',
+];
+
+// Back-compat aliases used by rest of file
+const SAMPLE_MAP = SAMPLE_MAP_EN;
+const ALL = ALL_EN;
+const SAMPLES = SAMPLES_EN;
+const OUT_DIR = OUT_DIR_EN;
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
@@ -227,19 +270,40 @@ function startServer() {
   };
 }
 
+function resolveSample(name, lang) {
+  const isPt = /^pt/i.test(lang || 'en');
+  const map = isPt ? SAMPLE_MAP_PT : SAMPLE_MAP_EN;
+  const dir = isPt ? SAMPLES_PT : SAMPLES_EN;
+  const outDir = isPt ? OUT_DIR_PT : OUT_DIR_EN;
+  const file = map[name];
+  if (!file) {
+    throw new Error(
+      `Unknown sample "${name}" for lang=${lang}. Known: ${Object.keys(map).join(', ')}`,
+    );
+  }
+  return {
+    textPath: path.join(dir, file),
+    outDir,
+    language: isPt ? 'pt-BR' : lang === 'auto' ? 'auto' : 'en',
+  };
+}
+
 async function synthesizeSample(name, opts = {}) {
-  const file = SAMPLE_MAP[name];
-  if (!file) throw new Error(`Unknown sample: ${name}`);
-  const textPath = path.join(SAMPLES, file);
+  const lang = opts.lang || opts.language || 'en';
+  const { textPath, outDir, language } = resolveSample(name, lang);
   if (!fs.existsSync(textPath)) throw new Error(`Missing sample file ${textPath}`);
   let text = fs.readFileSync(textPath, 'utf8');
   const isSsml = name.includes('ssml') || /<speak[\s>]/i.test(text);
-  const isDialogue = name.includes('dialogue') || opts.dialogue;
+  const isDialogue =
+    name.includes('dialogue') ||
+    name.includes('dialogo') ||
+    opts.dialogue;
 
   const body = {
     text,
     engine: opts.engine || 'auto',
     format: opts.format || 'wav',
+    language: opts.languageHint || language,
     ssml: isSsml || undefined,
     dialogue: isDialogue || undefined,
     normalize: true,
@@ -266,9 +330,9 @@ async function synthesizeSample(name, opts = {}) {
   }
   const elapsedMs = Date.now() - t0;
 
-  fs.mkdirSync(OUT_DIR, { recursive: true });
+  fs.mkdirSync(outDir, { recursive: true });
   const suffix = opts.suffix ? `-${opts.suffix}` : '';
-  const outPath = path.join(OUT_DIR, `${name}${suffix}.wav`);
+  const outPath = path.join(outDir, `${name}${suffix}.wav`);
   const dl = await request('GET', `/tts/jobs/${jobId}/download`);
   if (dl.status >= 400) throw new Error(`download failed ${dl.status}`);
   fs.writeFileSync(outPath, dl.raw);
@@ -277,8 +341,10 @@ async function synthesizeSample(name, opts = {}) {
   const chars = text.length;
   const stats = {
     name,
+    language: job.metadata?.language || language,
     jobId,
     engine: job.engine || opts.engine || 'auto',
+    voiceId: job.voice || job.voiceId || job.voice_id || null,
     words,
     chars,
     elapsedMs,
@@ -303,10 +369,19 @@ async function main() {
   const args = process.argv.slice(2);
   const noOpen = args.includes('--no-open');
   const all = args.includes('--all');
+  const allLanguages = args.includes('--all-languages');
   const compareIdx = args.indexOf('--compare');
   const engineIdx = args.indexOf('--engine');
+  const langIdx = args.indexOf('--lang');
   const engine = engineIdx >= 0 ? args[engineIdx + 1] : undefined;
-  const nameArg = args.find((a) => !a.startsWith('--') && a !== engine);
+  const langRaw = langIdx >= 0 ? args[langIdx + 1] : 'en';
+  const lang = /^pt/i.test(langRaw || '') ? 'pt-BR' : langRaw || 'en';
+  const reserved = new Set(
+    [engine, langRaw].filter(Boolean),
+  );
+  const nameArg = args.find(
+    (a) => !a.startsWith('--') && !reserved.has(a),
+  );
 
   // Ensure build
   if (!fs.existsSync(path.join(ROOT, 'dist', 'main.js'))) {
@@ -325,12 +400,61 @@ async function main() {
     }
     console.log('Health OK', typeof health === 'object' ? JSON.stringify(health).slice(0, 200) : health);
 
+    async function runSuite(suiteLang, names) {
+      const report = [];
+      const outBase = /^pt/i.test(suiteLang) ? OUT_DIR_PT : OUT_DIR_EN;
+      for (const name of names) {
+        console.log(`\n=== demo [${suiteLang}]: ${name} ===`);
+        try {
+          const stats = await synthesizeSample(name, {
+            engine,
+            lang: suiteLang,
+            noOpen: true,
+          });
+          printStats(stats);
+          report.push(stats);
+        } catch (e) {
+          console.error(`FAILED ${name}:`, e.message);
+          report.push({ name, error: e.message, language: suiteLang });
+        }
+      }
+      fs.mkdirSync(outBase, { recursive: true });
+      const reportPath = path.join(outBase, 'report.json');
+      fs.writeFileSync(
+        reportPath,
+        JSON.stringify(
+          { generatedAt: new Date().toISOString(), language: suiteLang, results: report },
+          null,
+          2,
+        ),
+      );
+      console.log('Wrote', reportPath);
+      return report;
+    }
+
+    if (allLanguages) {
+      const en = await runSuite('en', ALL_EN);
+      const pt = await runSuite('pt-BR', ALL_PT);
+      const failed = [...en, ...pt].filter((r) => r.error);
+      if (failed.length) {
+        console.error(`\n${failed.length} demo(s) failed`);
+        process.exitCode = 1;
+      }
+      return;
+    }
+
     if (compareIdx >= 0) {
-      const sample = args[compareIdx + 1] || 'paragraph';
-      console.log(`A/B compare for ${sample}`);
+      const sample =
+        args[compareIdx + 1] && !args[compareIdx + 1].startsWith('--')
+          ? args[compareIdx + 1]
+          : /^pt/i.test(lang)
+            ? 'paragrafo'
+            : 'paragraph';
+      console.log(`A/B compare for ${sample} lang=${lang}`);
       const platform = await synthesizeSample(sample, {
         engine: 'platform',
         suffix: 'platform',
+        lang,
         noOpen: true,
       });
       let piper;
@@ -338,15 +462,18 @@ async function main() {
         piper = await synthesizeSample(sample, {
           engine: 'piper',
           suffix: 'piper',
+          lang,
           noOpen: true,
         });
       } catch (e) {
         console.warn('Piper compare failed:', e.message);
       }
-      printStats({ platform, piper });
-      const report = { platform, piper, at: new Date().toISOString() };
+      printStats({ platform, piper, language: lang });
+      const outBase = /^pt/i.test(lang) ? OUT_DIR_PT : OUT_DIR_EN;
+      fs.mkdirSync(outBase, { recursive: true });
+      const report = { platform, piper, language: lang, at: new Date().toISOString() };
       fs.writeFileSync(
-        path.join(OUT_DIR, 'compare-report.json'),
+        path.join(outBase, 'compare-report.json'),
         JSON.stringify(report, null, 2),
       );
       if (!noOpen) {
@@ -357,24 +484,8 @@ async function main() {
     }
 
     if (all) {
-      const report = [];
-      for (const name of ALL) {
-        console.log(`\n=== demo: ${name} ===`);
-        try {
-          const stats = await synthesizeSample(name, { engine, noOpen: true });
-          printStats(stats);
-          report.push(stats);
-          if (!noOpen && name === 'quick-sentence') openAudio(stats.output);
-        } catch (e) {
-          console.error(`FAILED ${name}:`, e.message);
-          report.push({ name, error: e.message });
-        }
-      }
-      fs.writeFileSync(
-        path.join(OUT_DIR, 'report.json'),
-        JSON.stringify({ generatedAt: new Date().toISOString(), results: report }, null, 2),
-      );
-      console.log('Wrote', path.join(OUT_DIR, 'report.json'));
+      const names = /^pt/i.test(lang) ? ALL_PT : ALL_EN;
+      const report = await runSuite(lang, names);
       const failed = report.filter((r) => r.error);
       if (failed.length) {
         console.error(
@@ -386,9 +497,11 @@ async function main() {
       return;
     }
 
-    const name = nameArg || 'quick-sentence';
-    console.log(`Demo: ${name}`);
-    const stats = await synthesizeSample(name, { engine });
+    const name =
+      nameArg ||
+      (/^pt/i.test(lang) ? 'frase-rapida' : 'quick-sentence');
+    console.log(`Demo: ${name} lang=${lang}`);
+    const stats = await synthesizeSample(name, { engine, lang });
     printStats(stats);
     if (!noOpen) openAudio(stats.output);
   } finally {

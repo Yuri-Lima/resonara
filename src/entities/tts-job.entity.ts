@@ -55,6 +55,15 @@ export interface TtsJobMetadata {
     compress?: boolean;
     preset?: string;
   };
+  /** Resolved primary language (en | pt-BR | …). */
+  language?: string;
+  /** Mixed-language block map when language=auto detects both. */
+  languageBlocks?: Array<{
+    language: string;
+    startOffset: number;
+    endOffset: number;
+    wordCount: number;
+  }>;
 }
 
 @Entity('tts_jobs')
