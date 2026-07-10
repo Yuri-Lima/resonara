@@ -1,12 +1,15 @@
 # G25 Forensic Audit Report
 
-**Branch audited:** `feat/tts-neural-longform` (preferred over `feat/tts-neural-overhaul` — 3 commits ahead of main with the most recent Piper long-form work; overhaul has 10 older commits)  
+**Branch audited:** `feat/tts-neural-longform` (checked out as `feat/tts-multilingual-ptbr`)  
+**Preferred over:** `feat/tts-neural-overhaul` — longform has the fuller Piper + multilingual stack  
 **Audit date:** 2026-07-10  
-**Auditor:** G26 session (Phase 0/1)  
-**Machine:** macOS arm64  
-**Constraint:** Offline-first Resonara TTS — no cloud APIs
+**Auditor:** G28 session (Phase 0 / Phase 1)  
+**Machine:** macOS arm64 (Darwin, Node v22.14.0)  
+**Constraint:** Offline-first Resonara TTS — no cloud APIs for synthesis
 
-This report is the **source of truth** for what G25 actually shipped. Do not trust prior session claims without cross-checking here.
+This report is the **source of truth** for what actually works on disk right now.
+Prior session claims (G25 “phases 1–21 done”) are treated as untrusted until
+verified here.
 
 ---
 
@@ -16,10 +19,11 @@ This report is the **source of truth** for what G25 actually shipped. Do not tru
 
 | Metric | Result |
 |--------|--------|
-| Status | ✅ Success (`up to date, audited 1067 packages in 2s`) |
-| Peer dependency failures | None reported |
+| Status | ✅ Success (`added 1066 packages, audited 1067 packages in 5s`) |
+| Peer dependency failures | None |
 | Funding notices | 187 packages |
 | Vulnerabilities | 31 (3 low, 21 moderate, 7 high) — pre-existing; not fixed in audit |
+| Deprecations | inflight, rimraf@2/3, eslint@8, glob@7/10, multer@1, fluent-ffmpeg, uuid@9, boolean@3, @humanwhocodes/* |
 | Postinstall | Empty string in package.json (no auto Piper download) |
 
 ### 1.2 `npm run build`
@@ -34,23 +38,15 @@ This report is the **source of truth** for what G25 actually shipped. Do not tru
 
 | Metric | Result |
 |--------|--------|
-| Test suites | 2 failed, 25 passed, **27 total** |
-| Tests | **3 failed**, 113 passed, **116 total** |
-| Time | ~6.4s |
+| Test suites | **39 passed**, 39 total |
+| Tests | **187 passed**, 1 skipped, **0 failed**, 188 total |
+| Time | ~6.6s |
 
-#### Failing tests (exact messages)
+#### Failing tests
 
-1. **`tts/text-chunker.spec.ts` — `detectChapters › finds markdown headings`**
-   - Expected: `ch.length >= 2`
-   - Received: `1`
-   - Cause: `detectChapters()` was deliberately made conservative (H1 / "Chapter N" only; `##` headings only when avg body ≥ 40 words). Fixture `# Intro\n\nHello\n\n## Chapter Two\n\nWorld` has tiny bodies → collapses to single `Body` chapter. **Test outdated vs intentional product fix.**
+**None.** (An older G26 audit listed 3 failures in `text-chunker` / `tts-audio`; those are fixed on this branch.)
 
-2. **`ffmpeg/tts-audio.spec.ts` — `crossfadeChunks copies single part`**
-   - `BadRequestException: No valid audio parts to crossfade`
-   - Cause: `crossfadeChunks` requires `stat.size > 44` (real WAV header size). Test writes `fs.writeFileSync(a, 'data')` (4 bytes) → filtered out.
-
-3. **`ffmpeg/tts-audio.spec.ts` — `crossfadeChunks uses acrossfade for two parts`**
-   - Same root cause: stub files `'a'` / `'b'` are below 44-byte threshold.
+Skipped: 1 (environment-gated integration-style unit).
 
 ### 1.4 `npx eslint src/ --ext .ts`
 
@@ -60,16 +56,18 @@ This report is the **source of truth** for what G25 actually shipped. Do not tru
 | Warnings | **8** (all `@typescript-eslint/no-unused-vars`) |
 | Files | `ffmpeg.service.ts` (2), `create-take.dto.ts` (1), `queue.module.ts` (1), `tracks.controller.ts` (2), `tracks.service.ts` (2) |
 
+No G25-introduced lint errors. Warnings are pre-existing Audio Lab / Piano leftovers.
+
 ### 1.5 `npm run test:cov`
 
-| Metric | % |
-|--------|---|
-| Statements | **75.76%** (threshold 80% — **FAIL**) |
-| Branches | **57.51%** |
-| Functions | **71.79%** |
-| Lines | **78.24%** (threshold 80% — **FAIL**) |
+| Metric | % | Threshold |
+|--------|---|-----------|
+| Statements | **75.68%** | 80% — **FAIL** |
+| Branches | **53.65%** | (no hard fail reported for branch) |
+| Functions | **63.94%** | — |
+| Lines | **77.48%** | 80% — **FAIL** |
 
-Coverage collection is **narrow** (only selected TTS/gateway/jobs files in `package.json` `collectCoverageFrom`). Threshold failure is real against configured scope.
+Coverage collection is **narrow** (`collectCoverageFrom` limited to selected TTS/gateway/jobs files). Threshold failure is real against configured scope. Multilingual modules under `src/tts/language/` are **not** all in the coverage collect set.
 
 ---
 
@@ -79,159 +77,127 @@ Status legend: ✅ WORKING · ⚠️ PARTIAL · ❌ MISSING · 🔴 BROKEN
 
 | Feature | Status | Evidence |
 |---------|--------|----------|
-| **IMPROVEMENT_PLAN.md** | ✅ WORKING | Comprehensive plan at repo root (~15KB). Architecture analysis, Piper strategy, phases. Slightly stale vs current LOC (e.g. still mentions in-memory jobs as weakness W4 while code now uses TypeORM). |
-| **Sample texts (10)** | ✅ WORKING | All 10 present under `samples/texts/`: quick-sentence, paragraph, short-article, news-article, book-chapter, technical-doc, ssml-showcase, dialogue-script, pronunciation-challenge, numbers-and-dates (+ extras mini-book.md, sample.md, comparison-notes.md). |
-| **Demo scripts** | ⚠️ PARTIAL | Scripts exist (`demo:quick` … `demo:all`, `demo:compare`). Prior `demo-output/report.json` shows all 10 demos completed 2026-07-09 with valid WAV sizes. **Not re-run in this audit phase** (build/test only per Phase 0c). Infrastructure looks sound. |
-| **Piper TTS engine** | ⚠️ PARTIAL | `src/tts/piper-tts.ts` is real (resolve, list voices, synthesize). **Native binary broken:** `resources/piper/piper` is **x86_64** Mach-O, fails with missing `@rpath/libespeak-ng.1.dylib`. **Python venv fallback WORKS:** `tools/piper-venv/bin/piper` resolves first, synthesizes valid 22.05kHz WAV. `isPiperAvailable()` → available, 1 voice. |
-| **Voice Manager** | ⚠️ PARTIAL | Lists Piper + platform voices; language filter exists. Default voice prefers English (`/en/i`). No language-aware fallback chain for pt-BR. No pt-BR models installed. |
-| **TTS Job Persistence** | ✅ WORKING (code) | `tts-job.entity.ts` + TypeORM `jobsRepo`. `onModuleInit` marks in-flight jobs FAILED on restart. Dual-mode (sql.js lite / Postgres). Runtime kill/restart not re-verified in audit. |
-| **SSML Parser** | ✅ WORKING | `ssml-parser.ts` + specs; engine transforms present. English-centric. |
-| **Pronunciation Dictionary** | ⚠️ PARTIAL | Entity + service + CRUD paths + seed (13 English entries). `applyDictionary()` works. **No language filter at apply time for mixed docs; no pt-BR seeds.** |
-| **Dialogue Parser** | ⚠️ PARTIAL | `dialogue-parser.ts` parses `[speaker]:` tags. **No Portuguese em-dash (—) convention.** |
-| **Text Chunker** | ⚠️ PARTIAL | Engine-aware sizes (Piper 4000/6000). English abbreviation handling only. No pt-BR number/em-dash rules. |
-| **Silence Trimming** | ✅ WORKING | `ffmpeg.service.ts` `trimChunkSilence()` + unit test (invokes silenceremove). |
-| **Crossfade** | 🔴 BROKEN (tests) / ✅ WORKING (impl) | Implementation present with empty-part guards + hard concat fallback. Unit tests fail due to undersized fixtures (see bugs). |
+| **IMPROVEMENT_PLAN.md** | ✅ WORKING | ~400 lines at repo root; architecture + Piper strategy. Slightly stale vs current G27/G28 stack. |
+| **Sample texts (EN 10)** | ✅ WORKING | All 10 under `samples/texts/`: quick-sentence, paragraph, short-article, news-article, book-chapter, technical-doc, ssml-showcase, dialogue-script, pronunciation-challenge, numbers-and-dates. |
+| **Sample texts (pt-BR)** | ⚠️ PARTIAL | 11 files under `samples/texts/pt-br/` including frase-rapida, paragrafo, noticia, capitulo-livro, misturado-en-pt, ssml-demonstracao. Content is shorter than the phase-8 word-count targets (e.g. noticia ~876 bytes vs ~2000 words; documento-tecnico ~738 bytes vs ~3000 words). Usable for demos but not full stress fixtures. |
+| **Demo scripts** | ⚠️ PARTIAL | EN + pt-BR npm scripts present (`demo:quick` … `demo:pt:all`, `demo:all-languages`). **Cannot fully smoke-test Piper path until binary + ONNX models are installed** (see Piper). Platform `say` voices exist for fallback. |
+| **Piper TTS engine** | 🔴 BROKEN (runtime) | `src/tts/piper-tts.ts` compiles and unit-tests pass. **Runtime:** `isPiperAvailable()` → `{ available: false, detail: "Piper binary not found" }`. `resources/piper/` has Windows DLLs only + model **JSON** sidecars; **no** `piper` macOS binary, **no** `.onnx` weights, **no** `tools/piper-venv`. |
+| **Voice Manager** | ⚠️ PARTIAL | Lists Piper + platform + Kokoro; language filter + `getDefaultVoiceForLanguage` exist. **Bug:** `resolveEngine('auto')` prefers Kokoro even for pt-BR (Kokoro is English-only) — fixed on `feat/tts-multilingual-completion` but **not** on this longform tip. |
+| **TTS Job Persistence** | ✅ WORKING (code) | `tts-job.entity.ts` + TypeORM. `onModuleInit` marks in-flight jobs FAILED. Dual-mode sql.js / Postgres. Kill/restart not re-run this session (code path present). |
+| **SSML Parser** | ✅ WORKING | `ssml-parser.ts` + specs; engine transforms. pt-BR SSML sample exists. |
+| **Pronunciation Dictionary** | ✅ WORKING (code) | Entity + service + EN + pt-BR seed entries (Sr., CPF, software→sóftuer, etc.). `applyDictionary(text, engine, language)` filters by language. |
+| **Dialogue Parser** | ✅ WORKING (code) | `[speaker]:` tags + Portuguese em-dash (`—`) convention + attribution verbs (perguntou, disse, …). Specs present. |
+| **Text Chunker** | ✅ WORKING (code) | Engine-aware sizes (Piper 4000). Language config abbreviations + number-format protection. Specs pass. |
+| **Silence Trimming** | ✅ WORKING | `ffmpeg.service.ts` `trimChunkSilence()` at L966. |
+| **Crossfade** | ✅ WORKING | `crossfadeChunks()` at L1106; empty-part guards + hard-concat fallback. Unit tests pass. |
 | **Streaming Preview** | ✅ WORKING (code) | `jobs.gateway.ts` emits `tts:chunk:ready`. |
-| **Timestamp Aligner** | ✅ WORKING (code) | `timestamp-aligner.ts` + specs for WebVTT/SRT. |
-| **Batch Synthesis** | ✅ WORKING (code) | `tts-batch.entity.ts` + service batch APIs. |
-| **Model Manager** | ⚠️ PARTIAL | list/download registry works for **English only** (lessac, amy, ryan, alba). No pt-BR registry entries. File + DEFAULT_REGISTRY in code. |
-| **Post-processing Pipeline** | ✅ WORKING (code) | Presets `podcast` / `audiobook` / `raw` / `custom` in `tts.service.ts` + ffmpeg postProcess. |
-| **Document Import** | ⚠️ PARTIAL | `document-extractor.ts`: Markdown, HTML, DOCX (mammoth), PDF (pdf-parse), plain. EPUB path present but lighter. Specs cover MD/HTML/plain. |
-| **Chapter Markers + M4B** | ⚠️ PARTIAL | Chapter-aware synthesis + M4B metadata path in ffmpeg/tts.service. Chapter detection conservative (intentional). Tests lag implementation. |
-| **Re-synthesis** | ✅ WORKING (code) | `POST jobs/:id/chunks/:index/resynthesize` implemented. |
-| **E2E Tests** | ❌ MISSING | `test/` has `ffmpeg.integration.spec.ts` + `jest-e2e.json` only — **no `test/e2e/` suite** with TTS HTTP flows. |
-| **TypeScript Strict** | ✅ WORKING | `noImplicitAny: true`, `strictNullChecks: true` in tsconfig.json. |
-| **UI Overhaul** | ⚠️ PARTIAL | `ui/voice/` has voice selector, SSML toggle, document upload zone, dict table, ARIA labels. No language selector / pt-BR panel / live detection. |
-| **Accessibility** | ⚠️ PARTIAL | Substantial ARIA on voice + deliverable UI; not a full WCAG audit. Keyboard roles on upload zone, mode toggle, live status. |
-| **Electron Packaging** | 🔴 BROKEN (packaged Piper) | `package.json` extraResources includes `resources/piper`. **Bundled binary is wrong arch / missing dylibs.** Desktop `main.js` sets `PIPER_PATH` to native path first — **does not prefer Python venv**. afterPack chmod/codesign **not configured**. Windows NSIS target declared; not verified. |
-| **Performance Benchmarks** | ⚠️ PARTIAL | `scripts/benchmark.js` exists; npm script `benchmark`. English-only; not re-run. |
-| **UI Deliverable** | ⚠️ PARTIAL | `ui/deliverable/` exists with TTS showcase sections (English-centric). `make ui` + `scripts/open-ui.sh` present. No multilingual sections. |
+| **Timestamp Aligner** | ✅ WORKING (code) | `timestamp-aligner.ts` + WebVTT/SRT specs. |
+| **Batch Synthesis** | ✅ WORKING (code) | `tts-batch.entity.ts` + controller batch routes. |
+| **Model Manager** | ⚠️ PARTIAL | Registry lists en + pt-BR models (faber, jeff, cadu, edresson). list/download APIs present. **No models downloaded on disk** (JSON only). |
+| **Post-processing Pipeline** | ✅ WORKING (code) | Presets podcast / audiobook / raw / custom. |
+| **Document Import** | ✅ WORKING (code) | Markdown, HTML, DOCX, PDF, plain; EPUB lighter path. Specs cover MD/HTML/plain. |
+| **Chapter Markers + M4B** | ⚠️ PARTIAL | Chapter-aware synthesis present; M4B path exists. Chapter detection intentionally conservative. |
+| **Re-synthesis** | ✅ WORKING (code) | Per-chunk resynth endpoint in controller/service. |
+| **E2E Tests** | ❌ MISSING | `test/e2e/` **does not exist** on longform tip. Multilingual e2e only on `feat/tts-multilingual-completion`. `test/jest-e2e.json` + integration specs exist. |
+| **TypeScript Strict** | ✅ WORKING | `noImplicitAny: true`, `strictNullChecks: true` in `tsconfig.json`. |
+| **UI Overhaul** | ⚠️ PARTIAL | `ui/voice/` has voice UI; language selector partially present from prior multilingual work. Needs verification after Piper install. |
+| **Accessibility** | ⚠️ PARTIAL | Deliverable claims WCAG AA; not fully audited this phase. |
+| **Electron Packaging** | ⚠️ PARTIAL | `desktop/`, electron-builder config, `dist:mac` / `dist:win`, `afterPack.js`, `WINDOWS_TESTING.md` present. **Not runtime-verified this session** (needs models + binary). |
+| **Performance Benchmarks** | ⚠️ PARTIAL | `scripts/benchmark.js` + `benchmark:pt` script exist. Not run this audit (needs Piper). |
+| **UI Deliverable** | ⚠️ PARTIAL | `ui/deliverable/` exists (app.js, index.html, styles). Multilingual showcase upgrades live on `feat/tts-multilingual-completion` (~1.6k LOC delta) — **not fully merged** here. |
+| **Language abstraction** | ✅ WORKING (code) | `src/tts/language/*`: types, en/pt-BR config, formatters, detector, registry, mixed-language synthesizer. Specs pass. |
+| **pt-BR formatters** | ✅ WORKING (code) | Currency R$, DD/MM dates, CPF/CNPJ, ordinals — unit tests pass. |
+| **Platform pt-BR voices** | ✅ WORKING (host) | This machine has Luciana, Eddy, Flo, Grandma, Grandpa, Reed, Rocko, Sandy, Shelley (`pt_BR`); Joana is `pt_PT`. |
+| **Kokoro engine** | ⚠️ PARTIAL | Code present; English-only. Dangerous if auto-selected for pt-BR (see bugs). |
 
 ---
 
-## 3. Bugs Found (with file:line and reproduction)
+## 3. Bugs Found
 
-| # | Severity | Bug | Location | Reproduction |
-|---|----------|-----|----------|--------------|
-| B1 | **Critical** | Native Piper binary is x86_64 and missing espeak dylib | `resources/piper/piper` | `file resources/piper/piper` → x86_64; `./resources/piper/piper --version` → dyld `libespeak-ng.1.dylib` not loaded |
-| B2 | **Critical (packaging)** | Desktop always points `PIPER_PATH` at native binary, not runnable venv | `desktop/main.js:49-63` | Package/run desktop: may set broken PIPER_PATH; venv not under extraResources |
-| B3 | **High** | 3 unit tests fail | `text-chunker.spec.ts:64-66`, `tts-audio.spec.ts:63-84` | `npm test` |
-| B4 | **High** | Coverage below threshold | `package.json` jest coverageThreshold | `npm run test:cov` fails global 80% lines/statements |
-| B5 | **Medium** | `crossfadeChunks` rejects files ≤ 44 bytes | `ffmpeg.service.ts:1125` | Write tiny stub WAV → "No valid audio parts" (tests break; real empty clips also skipped — OK for prod, bad for tests) |
-| B6 | **Medium** | Official macOS aarch64 tarball historically broken / wrong arch landed in resources | `scripts/download-piper.js` + resources | Prior download left x86_64 binary on arm64 machine |
-| B7 | **Low** | 8 eslint unused-var warnings | see §1.4 | `npx eslint src/ --ext .ts` |
-| B8 | **Medium** | No formal E2E TTS suite | `test/` | `npm run test:e2e` has no multilingual/long-form coverage |
-| B9 | **Low** | IMPROVEMENT_PLAN stale on W4/W8 | `IMPROVEMENT_PLAN.md` | Docs claim in-memory jobs / noImplicitAny false — both fixed in code |
+| # | Severity | Location | Issue | Reproduction |
+|---|----------|----------|-------|--------------|
+| B1 | **Critical** | `resources/piper/` | No Piper binary / venv / ONNX models on clean checkout | `node -e "require('./dist/tts/piper-tts').isPiperAvailable()"` → available:false |
+| B2 | **Critical** | `src/tts/voice-manager.ts` `resolveEngine` | Auto engine prefers Kokoro for **all** languages; Kokoro cannot speak pt-BR | `resolveEngine('auto')` without language → kokoro when available; synthesize Portuguese → wrong/English phonemes or failure |
+| B3 | **High** | `src/tts/tts.service.ts` synthesize path | Engine resolved **before** language (on longform tip) | Request language=pt-BR with engine=auto → may bind Kokoro |
+| B4 | **Medium** | Coverage config | Statement/line coverage below 80% threshold | `npm run test:cov` exits non-zero |
+| B5 | **Medium** | `samples/texts/pt-br/*` | Several fixtures far below specified word counts | `wc -l` / file sizes vs Phase 8 targets |
+| B6 | **Low** | ESLint | 8 unused-var warnings (non-TTS modules) | `npx eslint src/ --ext .ts` |
+| B7 | **Low** | npm audit | 31 known vulnerabilities in deps | `npm install` summary |
 
 ---
 
 ## 4. Stubs / Incomplete Implementations
 
-| Item | Notes |
-|------|-------|
-| pt-BR Piper models | **None** in registry or on disk |
-| Language abstraction | **None** — English-centric pipeline |
-| Language detection | **None** |
-| Mixed-language synthesis | **None** |
-| pt-BR formatters (R$, dates, CPF) | **None** |
-| pt-BR pronunciation seeds | **None** |
-| Em-dash dialogue (pt-BR) | **None** |
-| Language-aware fallback chain | Default voice is English-biased |
-| E2E suite under `test/e2e/` | Missing |
-| electron-builder afterPack | No chmod/codesign for arm64 Gatekeeper |
-| Packaged Python piper-tts | Dev-only under `tools/piper-venv` — not shippable as-is without bundling strategy |
-| Multi-speaker pt-BR models | HF registry: all pt_BR voices are single-speaker |
+1. **Piper packaging assets** — Windows DLL stubs in `resources/piper/` without matching macOS binary; models are JSON-only placeholders.
+2. **`test/e2e/` multilingual suite** — planned; missing on this branch tip.
+3. **Deliverable multilingual showcase** — base UI exists; full A/B / packaging matrix from multilingual-completion not fully present.
+4. **Coverage gates** — language modules not fully included in `collectCoverageFrom`.
+5. **pt-BR sample depth** — short fixtures stand in for multi-thousand-word stress tests.
 
 ---
 
-## 5. Claimed Done by G25 vs Reality
+## 5. Features Prior Sessions Claimed Done But Are NOT Runtime-Ready
 
-G25 commits (`feat(tts): neural Piper…`, dialogue/model manager, demos, UI dashboard) imply phases 1–21 of the original Piper plan were largely implemented. **Verified truth:**
-
-| Claim area | Reality |
-|------------|---------|
-| Piper integration | **Works via Python venv**, not via bundled native binary |
-| Long-form pipeline (chunk → trim → crossfade → post) | **Implemented** |
-| Job persistence | **Implemented** (not in-memory) |
-| SSML / pronunciation / dialogue / batch / timestamps / model manager | **Implemented (English)** |
-| Document import / chapters / M4B / resynth | **Implemented** |
-| Demo suite | **Previously green** (report.json); needs re-verify after fixes |
-| Unit tests all green | **FALSE** — 3 failures |
-| Coverage ≥ 80% | **FALSE** |
-| E2E complete | **FALSE** — no real e2e suite |
-| Electron packaged Piper works OOTB | **FALSE** — broken binary + no afterPack |
-| Multilingual / pt-BR | **Never started** (out of G25 scope) |
+| Claim | Reality |
+|-------|---------|
+| “Piper TTS integration complete” | Code yes; **binary + models not on disk** → cannot synthesize |
+| “pt-BR models bundled” | Registry + JSON config only; **no `.onnx` weights** |
+| “Desktop apps with both languages OOTB” | Packaging scripts exist; **not verified packaged runtime this audit** |
+| “E2E multilingual tests” | **Absent** on longform tip |
+| “Language-aware engine selection” | Partially implemented; **Kokoro still wins auto for pt-BR** |
+| G25 “phases 1–21 done” | Much code landed (chunker, SSML, jobs, demos, language layer) but **runtime path broken without download:piper** |
 
 ---
 
 ## 6. Recommended Fix Priority
 
-### Critical (block pt-BR and packaging)
-1. Stabilize tests (B3) so CI/review loops are trustworthy  
-2. Fix Piper resolution for packaging: prefer runnable binary; ship working runtime on arm64 (venv or fixed binary + dylibs + codesign)  
-3. Add pt-BR models to registry + download path (depends on model manager)
+### Critical (block all demos / packaging)
+1. Run/fix `npm run download:piper` — install arm64-native binary or Python venv + en_US-lessac-medium + pt_BR-faber-medium ONNX.
+2. Port language-aware `resolveEngine(language)` + synthesize-order fix from `feat/tts-multilingual-completion`.
+3. Stabilize `demo:quick` and `demo:pt:rapida` end-to-end.
 
-### High (pt-BR foundation)
-4. Language abstraction layer (configs, registry)  
-5. Language detection (paragraph-level)  
-6. pt-BR formatters + pronunciation + chunker rules  
-7. Language-aware voice default / no cross-language fallback  
+### High (pt-BR expansion depends on these)
+4. Expand thin pt-BR fixtures toward phase targets (at least noticia / capitulo / tecnico).
+5. Multilingual e2e suite + deliverable showcase merge.
+6. Verify platform fallback chain never crosses languages (pt-BR → never English).
 
 ### Medium
-8. Raise coverage; add multilingual unit + e2e tests  
-9. Demo suite reliability re-run (`demo:all`)  
-10. UI language selector + deliverable multilingual sections  
+7. Coverage: include `src/tts/language/**` and raise toward 80%.
+8. Desktop `dist:mac` runtime listen test; `dist:win` structure verify + WINDOWS_TESTING.md.
+9. Clear unused-import lint warnings if touching those files.
 
-### Nice-to-have / later
-11. M4B polish, EPUB depth  
-12. eslint unused-vars cleanup  
-13. npm audit vulnerabilities  
+### Nice-to-have
+10. Extra pt-BR Piper voices (jeff/cadu female/male variety).
+11. Full M4B polish; Kokoro optional for EN only.
 
 ---
 
 ## 7. Dependency of pt-BR Expansion on G25 Features
 
-| G25 feature | Required for pt-BR? | Why |
-|-------------|---------------------|-----|
-| Piper engine + model manager | **Yes** | Download/load pt_BR-*.onnx |
-| Runnable Piper on target arch | **Yes** | Synthesis |
-| Text chunker | **Yes** | Extend for abbreviations / R$ / em-dash |
-| Pronunciation service | **Yes** | Language-scoped dictionary |
-| FFmpeg trim/crossfade | **Yes** | Mixed-language block joins |
-| Job persistence | **Yes** | Long-form pt-BR chapters |
-| Dialogue parser | **Yes** | Em-dash convention |
-| SSML parser | **Yes** | Accented chars + IPA |
-| Voice manager | **Yes** | Language filter + fallback chain |
-| Document import | **Yes** | pt-BR markdown fixtures |
-| Demo runner | **Yes** | `demo:pt:*` verification backbone |
-| Electron packaging | **Yes (phases 24–26)** | Bundle en + pt-BR models OOTB |
-| Timestamp / batch / M4B | Optional | Not blockers for core multilingual |
+| pt-BR need | G25 dependency | Status |
+|------------|----------------|--------|
+| Download voice models | Model manager + download-piper | Code ✅ / assets 🔴 |
+| Synthesize offline | Piper engine resolve + binary | Code ✅ / binary 🔴 |
+| Sentence chunking | Text chunker + language config | ✅ |
+| Numbers/currency | pt-br.formatter | ✅ |
+| Pronunciation | Dictionary language filter | ✅ |
+| Dialogue | Em-dash parser | ✅ |
+| Mixed docs | mixed-language-synthesizer + detector | ✅ code |
+| Demo verification | demo scripts + samples | ⚠️ scripts ok, runtime blocked |
+| Desktop OOTB | electron-builder + afterPack + bundled models | ⚠️ scripts ok, needs assets |
+| UI language picker | ui/voice + deliverable | ⚠️ partial |
+
+**Bottom line:** The longform branch already contains **most multilingual code**. The G28 job is primarily: **(1) make Piper runtime real**, **(2) fix language-aware engine selection**, **(3) verify demos by listening**, **(4) package desktop with both languages**, **(5) ship e2e + deliverable + PR**.
 
 ---
 
-## 8. Environment Notes (this machine)
+## 8. Host Environment Notes
 
-| Item | Value |
-|------|-------|
-| Piper native | BROKEN x86_64, missing dylib |
-| Piper Python venv | **OK** — synthesizes English lessac |
-| Installed EN model | `en_US-lessac-medium` (~63MB) |
-| macOS pt_BR voices | Luciana, Eddy, Flo, Grandma, Grandpa, Reed, Rocko, Sandy, Shelley |
-| macOS pt_PT voice | Joana (must **not** be offered as pt-BR) |
-| HF pt_BR models available | cadu-medium, edresson-low, faber-medium, jeff-medium (~63MB each, 1 speaker) |
+- **macOS say pt-BR voices installed:** Luciana, Eddy, Flo, Grandma, Grandpa, Reed, Rocko, Sandy, Shelley.
+- **pt_PT present:** Joana (must not be offered as pt-BR).
+- **Piper system binary:** not on PATH.
+- **Related remote branch:** `origin/feat/tts-multilingual-completion` is 3 commits ahead with engine-selection fix, e2e suite, deliverable showcase, desktop verification docs — cherry-pick candidates.
 
 ---
 
-## 9. G26 Resolution (filled as work completes)
-
-| Gap | Status | Notes |
-|-----|--------|-------|
-| Test failures B3 | pending | Phase 2 |
-| Piper packaging B1/B2 | pending | Phases 2, 24 |
-| Coverage threshold | pending | Phase 21 |
-| pt-BR expansion | pending | Phases 6–23 |
-| Desktop DMG/NSIS | pending | Phases 24–26 |
-
----
-
-*End of Phase 0 forensic audit. No product code was changed for this document.*
+*End of Phase 0 forensic audit. No implementation changes in this commit.*
