@@ -103,23 +103,62 @@ function psQuote(s: string): string {
   return `'${s.replace(/'/g, "''")}'`;
 }
 
+/**
+ * Parse a single `say -v '?'` line into name + locale.
+ * Handles multi-word names: "Eddy (Portuguese (Brazil)) pt_BR    # ..."
+ * and simple: "Luciana             pt_BR    # ..."
+ */
+export function parseMacSayVoiceLine(line: string): VoiceInfo | null {
+  if (!line || !line.trim()) return null;
+  // Locale is typically xx_YY before optional # comment
+  const m = line.match(
+    /^(.+?)\s+([a-z]{2}[_-][A-Z]{2})\s*(?:#.*)?$/i,
+  );
+  if (!m) {
+    const simple = line.match(/^(\S+)\s+(\S+)/);
+    if (!simple) return null;
+    return {
+      id: simple[1],
+      name: simple[1],
+      language: normalizeLocaleTag(simple[2]),
+    };
+  }
+  const name = m[1].trim();
+  const locale = normalizeLocaleTag(m[2]);
+  return { id: name, name, language: locale };
+}
+
+/** Map macOS/Windows locale tags to product LanguageCode-ish strings. */
+export function normalizeLocaleTag(tag: string): string {
+  if (!tag) return tag;
+  const t = tag.replace(/_/g, '-');
+  // Keep region: pt-BR, en-US, pt-PT
+  if (/^[a-z]{2}-[a-z]{2}$/i.test(t)) {
+    const [lang, region] = t.split('-');
+    return `${lang.toLowerCase()}-${region.toUpperCase()}`;
+  }
+  return t;
+}
+
 export function listMacVoices(): VoiceInfo[] {
   const r = spawnSync('say', ['-v', '?'], { encoding: 'utf8' });
   if (r.status !== 0 || !r.stdout) return [];
   const voices: VoiceInfo[] = [];
   for (const line of r.stdout.split('\n')) {
-    // e.g. "Alex                en_US    # ..."
-    const m = line.match(/^(\S+)\s+(\S+)/);
-    if (m) voices.push({ id: m[1], name: m[1], language: m[2] });
+    const v = parseMacSayVoiceLine(line);
+    if (v) voices.push(v);
   }
   return voices;
 }
 
 export function listWindowsVoices(): VoiceInfo[] {
+  // Enumerate via Culture.Name — never parse localized display strings
   const script =
     `Add-Type -AssemblyName System.Speech; ` +
     `$s = New-Object System.Speech.Synthesis.SpeechSynthesizer; ` +
-    `$s.GetInstalledVoices() | ForEach-Object { $_.VoiceInfo.Name }`;
+    `$s.GetInstalledVoices() | ForEach-Object { ` +
+    `$_.VoiceInfo.Name + [char]9 + $_.VoiceInfo.Culture.Name ` +
+    `}`;
   const r = spawnSync(
     'powershell.exe',
     ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', script],
@@ -130,7 +169,14 @@ export function listWindowsVoices(): VoiceInfo[] {
     .split(/\r?\n/)
     .map((l) => l.trim())
     .filter(Boolean)
-    .map((name) => ({ id: name, name }));
+    .map((line) => {
+      const [name, culture] = line.split('\t');
+      return {
+        id: name,
+        name,
+        language: culture ? normalizeLocaleTag(culture) : undefined,
+      };
+    });
 }
 
 export function listVoices(

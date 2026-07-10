@@ -31,5 +31,49 @@
     "sizeBytes": 63200000,
     "onnxUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/medium/en_US-ryan-medium.onnx?download=true",
     "jsonUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/medium/en_US-ryan-medium.onnx.json?download=true"
+  },
+  {
+    "key": "pt_BR-faber-medium",
+    "name": "Faber (Portugu\u00eas Brasil, medium)",
+    "language": "pt-BR",
+    "quality": "medium",
+    "gender": "male",
+    "sampleRate": 22050,
+    "sizeBytes": 63201294,
+    "onnxUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx?download=true",
+    "jsonUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx.json?download=true"
+  },
+  {
+    "key": "pt_BR-jeff-medium",
+    "name": "Jeff (Portugu\u00eas Brasil, medium)",
+    "language": "pt-BR",
+    "quality": "medium",
+    "gender": "male",
+    "sampleRate": 22050,
+    "sizeBytes": 62950044,
+    "onnxUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/jeff/medium/pt_BR-jeff-medium.onnx?download=true",
+    "jsonUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/jeff/medium/pt_BR-jeff-medium.onnx.json?download=true"
+  },
+  {
+    "key": "pt_BR-cadu-medium",
+    "name": "Cadu (Portugu\u00eas Brasil, medium)",
+    "language": "pt-BR",
+    "quality": "medium",
+    "gender": "male",
+    "sampleRate": 22050,
+    "sizeBytes": 62950044,
+    "onnxUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/cadu/medium/pt_BR-cadu-medium.onnx?download=true",
+    "jsonUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/cadu/medium/pt_BR-cadu-medium.onnx.json?download=true"
+  },
+  {
+    "key": "pt_BR-edresson-low",
+    "name": "Edresson (Portugu\u00eas Brasil, low)",
+    "language": "pt-BR",
+    "quality": "low",
+    "gender": "male",
+    "sampleRate": 16000,
+    "sizeBytes": 63104526,
+    "onnxUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/edresson/low/pt_BR-edresson-low.onnx?download=true",
+    "jsonUrl": "https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/edresson/low/pt_BR-edresson-low.onnx.json?download=true"
   }
 ]

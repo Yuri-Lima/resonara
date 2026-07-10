@@ -70,13 +70,23 @@ export class VoiceManager {
 
     let result = out;
     if (filter?.language) {
-      const lang = filter.language.toLowerCase();
-      result = result.filter(
-        (v) =>
-          !v.language ||
-          v.language.toLowerCase().startsWith(lang) ||
-          v.language.toLowerCase().includes(lang),
-      );
+      const lang = filter.language.toLowerCase().replace(/_/g, '-');
+      const langBase = lang.split('-')[0];
+      result = result.filter((v) => {
+        if (!v.language && !v.id) return false;
+        const vl = `${v.language || ''} ${v.id} ${v.name || ''}`
+          .toLowerCase()
+          .replace(/_/g, '-');
+        if (lang.startsWith('pt')) {
+          // pt-BR only — exclude pt-PT
+          if (/pt-pt/.test(vl)) return false;
+          return /pt-br|pt\b|faber|jeff|cadu|edresson|luciana/.test(vl);
+        }
+        if (lang.startsWith('en')) {
+          return /en-|\ben\b|lessac|amy|ryan|alba|samantha|alex/.test(vl);
+        }
+        return vl.includes(lang) || vl.includes(langBase);
+      });
     }
     return result;
   }
@@ -136,19 +146,82 @@ export class VoiceManager {
     ];
   }
 
-  defaultVoice(engine?: 'piper' | 'platform'): UnifiedVoice | undefined {
+  defaultVoice(
+    engine?: 'piper' | 'platform',
+    language?: string,
+  ): UnifiedVoice | undefined {
     const eng = engine || this.resolveEngineSafe();
     if (!eng) return undefined;
-    const voices = this.listVoices({ engine: eng });
+    const lang = language || 'en';
+    const voices = this.listVoices({ engine: eng, language: lang });
+    const pool =
+      voices.length > 0 ? voices : this.listVoices({ engine: eng });
+
     if (eng === 'piper') {
-      // Prefer lessac medium / medium quality english
+      if (/pt/i.test(lang)) {
+        return (
+          pool.find((v) => /faber.*medium/i.test(v.id)) ||
+          pool.find((v) => /pt[_-]br/i.test(v.language || v.id)) ||
+          pool.find((v) => v.quality === 'medium') ||
+          pool[0]
+        );
+      }
       return (
-        voices.find((v) => /lessac.*medium/i.test(v.id)) ||
-        voices.find((v) => v.quality === 'medium') ||
-        voices[0]
+        pool.find((v) => /lessac.*medium/i.test(v.id)) ||
+        pool.find((v) => v.quality === 'medium' && /en/i.test(v.language || '')) ||
+        pool.find((v) => /en/i.test(v.language || v.id)) ||
+        pool[0]
       );
     }
-    return voices.find((v) => /en/i.test(v.language || '')) || voices[0];
+
+    // Platform: never cross languages
+    if (/pt/i.test(lang)) {
+      return (
+        pool.find((v) => /pt_br|pt-br/i.test(v.language || '')) ||
+        pool.find((v) => /luciana/i.test(v.name || v.id)) ||
+        undefined
+      );
+    }
+    return (
+      pool.find((v) => /^en/i.test(v.language || '')) ||
+      pool.find((v) => /en/i.test(v.language || '')) ||
+      pool[0]
+    );
+  }
+
+  /**
+   * Language-aware fallback: Piper (lang) → platform (lang) → undefined.
+   * Never returns a voice from a different language family.
+   */
+  getDefaultVoiceForLanguage(language: string): UnifiedVoice | undefined {
+    const lang = language || 'en';
+    try {
+      if (this.resolveEngineSafe() === 'piper' || isPiperAvailable().available) {
+        const piper = this.defaultVoice('piper', lang);
+        if (piper && this.voiceMatchesLanguage(piper, lang)) return piper;
+      }
+    } catch {
+      /* fall through */
+    }
+    const platform = this.defaultVoice('platform', lang);
+    if (platform && this.voiceMatchesLanguage(platform, lang)) return platform;
+    return undefined;
+  }
+
+  voiceMatchesLanguage(voice: UnifiedVoice, language: string): boolean {
+    const lang = language.toLowerCase().replace(/_/g, '-');
+    const vl = (voice.language || voice.id || '').toLowerCase().replace(/_/g, '-');
+    if (lang.startsWith('pt-br') || lang === 'pt') {
+      return /pt-br|pt_br|pt-br|faber|jeff|cadu|edresson|luciana/i.test(
+        `${vl} ${voice.id} ${voice.name}`,
+      ) && !/pt-pt|pt_pt|joana|catarina/i.test(`${vl} ${voice.id}`);
+    }
+    if (lang.startsWith('en')) {
+      return /en|lessac|amy|ryan|alba|samantha|alex|daniel/i.test(
+        `${vl} ${voice.id} ${voice.name}`,
+      );
+    }
+    return vl.includes(lang) || voice.id.toLowerCase().includes(lang);
   }
 
   private resolveEngineSafe(): 'piper' | 'platform' | undefined {

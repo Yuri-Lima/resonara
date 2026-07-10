@@ -3,6 +3,7 @@ import {
   defaultChunkLimits,
   detectChapters,
   estimateWordCount,
+  splitSentencesLanguageAware,
 } from './text-chunker';
 
 describe('chunkTextForTts', () => {
@@ -74,5 +75,24 @@ describe('detectChapters', () => {
     const ch = detectChapters(text);
     expect(ch).toHaveLength(1);
     expect(ch[0].title).toBe('Body');
+  });
+});
+
+describe('Portuguese chunking rules', () => {
+  it('does not split on Sr. abbreviation', () => {
+    const parts = splitSentencesLanguageAware(
+      'O Sr. Silva e a Dra. Costa chegaram às 14h30. Depois foram embora.',
+      'pt-BR',
+    );
+    expect(parts[0]).toMatch(/Sr\. Silva/);
+    expect(parts.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('does not split Brazilian thousands separator', () => {
+    const parts = splitSentencesLanguageAware(
+      'O valor é R$ 1.234,56 por unidade. O total é maior.',
+      'pt-BR',
+    );
+    expect(parts[0]).toMatch(/1\.234,56/);
   });
 });

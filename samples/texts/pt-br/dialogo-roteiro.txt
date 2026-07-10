@@ -1,0 +1,8 @@
+[narrador]: O café estava quase vazio àquela hora.
+[maria]: Você acha que a apresentação foi bem?
+[joão]: Sinceramente? Acho que perdemos eles no slide sete.
+[maria]: Aquele com as projeções de receita?
+[joão]: Não, aquele onde você mostrou o meme do gato sem querer.
+[narrador]: Maria escondeu o rosto nas mãos.
+[maria]: Era para ser um momento de integração da equipe.
+[joão]: E foi. O time nunca esteve tão unido na risada.

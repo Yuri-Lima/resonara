@@ -45,6 +45,12 @@ import {
   toWebVtt,
 } from './timestamp-aligner';
 import { TtsBatch, TtsBatchStatus } from '../entities/tts-batch.entity';
+import {
+  detectLanguage,
+  expandTextForLanguage,
+  normalizeLanguageCode,
+  planMixedLanguageSynthesis,
+} from './language';
 
 export interface SynthesizeLongOptions {
   text: string;
@@ -52,6 +58,8 @@ export interface SynthesizeLongOptions {
   rate?: number;
   format?: 'wav' | 'mp3' | 'm4b';
   engine?: TtsEngineName;
+  /** 'en' | 'pt-BR' | 'auto' (detect). */
+  language?: string;
   ssml?: boolean;
   dialogue?: boolean;
   speakers?: Record<string, string>;
@@ -62,6 +70,8 @@ export interface SynthesizeLongOptions {
   chapters?: { title: string; text: string }[];
   title?: string;
   batchId?: string;
+  /** Per-language voice ids for mixed documents. */
+  voiceMap?: { en?: string; 'pt-BR'?: string };
 }
 
 export interface JobListQuery {
@@ -124,9 +134,25 @@ export class TtsService implements OnModuleInit {
   }
 
   engineStatus() {
+    const engines = this.voiceManager.engines();
+    const allVoices = this.voiceManager.listVoices();
+    const countByLang = (engineId: string) => {
+      const subset = allVoices.filter((v) => v.engine === engineId);
+      const en = subset.filter((v) => /en/i.test(v.language || v.id)).length;
+      const pt = subset.filter((v) => /pt/i.test(v.language || v.id)).length;
+      return { en, 'pt-BR': pt };
+    };
     return {
-      engines: this.voiceManager.engines(),
+      engines: engines.map((e) => ({
+        ...e,
+        languages: ['en', 'pt-BR'],
+        voiceCountByLanguage: countByLang(e.id),
+      })),
       piper: this.voiceManager.getPiperPaths(),
+      languages: [
+        { code: 'en', name: 'English' },
+        { code: 'pt-BR', name: 'Português (Brasil)' },
+      ],
     };
   }
 
@@ -186,26 +212,74 @@ export class TtsService implements OnModuleInit {
       throw new BadRequestException((e as Error).message);
     }
 
+    // Resolve language: explicit | auto-detect
+    const langHint = opts.language || 'auto';
+    const plan = planMixedLanguageSynthesis(text, {
+      language: langHint === 'auto' ? 'auto' : langHint,
+    });
+    const primaryLang =
+      plan.mode === 'single'
+        ? plan.language
+        : detectLanguage(text).code;
+
+    // Auto-select voice for language when not provided
+    let voice = opts.voice;
+    if (!voice && plan.mode === 'single') {
+      const def = this.voiceManager.getDefaultVoiceForLanguage(primaryLang);
+      if (def) voice = def.id;
+    }
+    if (!voice && plan.mode === 'single' && /pt/i.test(primaryLang)) {
+      // Fail clearly rather than speak Portuguese with English voice
+      const any = this.voiceManager.listVoices({ language: 'pt-BR' });
+      if (!any.length) {
+        throw new BadRequestException(
+          'No pt-BR voice available. Download a Piper pt-BR model or install a system Portuguese (Brazil) voice.',
+        );
+      }
+      voice = any[0].id;
+    }
+
     const dialogue =
       opts.dialogue === true ||
       (opts.dialogue !== false && hasDialogueMarkup(text));
 
-    // Pronunciation dictionary (skip raw SSML tags inside markup carefully)
-    if (this.pronunciation && !dialogue) {
+    // Number/date/currency expansion + pronunciation (language-scoped)
+    if (!dialogue && plan.mode === 'single') {
       try {
-        text = await this.pronunciation.applyDictionary(text, engine);
+        text = expandTextForLanguage(text, primaryLang);
       } catch (e) {
-        this.logger.warn(`Dictionary apply failed: ${(e as Error).message}`);
+        this.logger.warn(`Formatter failed: ${(e as Error).message}`);
+      }
+      if (this.pronunciation) {
+        try {
+          text = await this.pronunciation.applyDictionary(
+            text,
+            engine,
+            primaryLang,
+          );
+        } catch (e) {
+          this.logger.warn(`Dictionary apply failed: ${(e as Error).message}`);
+        }
       }
     }
 
     const preset = opts.postProcessing || 'podcast';
     const post = this.resolvePostProcess(preset, opts);
 
+    const languageBlocks =
+      plan.mode === 'mixed'
+        ? plan.blocks.map((b) => ({
+            language: b.language,
+            startOffset: b.startOffset,
+            endOffset: b.endOffset,
+            wordCount: estimateWordCount(b.text),
+          }))
+        : undefined;
+
     const job = this.jobsRepo.create({
       status: TtsJobStatus.QUEUED,
       text,
-      voiceId: opts.voice ?? null,
+      voiceId: voice ?? null,
       engine: opts.engine || 'auto',
       format: opts.format || 'wav',
       rate: opts.rate ?? null,
@@ -220,12 +294,24 @@ export class TtsService implements OnModuleInit {
         dialogue,
         speakers: opts.speakers,
         postProcess: { ...post, preset },
+        language: primaryLang,
+        languageBlocks,
+      } as TtsJobMetadata & {
+        language?: string;
+        languageBlocks?: Array<{
+          language: string;
+          startOffset: number;
+          endOffset: number;
+          wordCount: number;
+        }>;
       },
     });
     await this.jobsRepo.save(job);
 
     const runOpts: SynthesizeLongOptions = {
       ...opts,
+      voice,
+      language: primaryLang,
       normalize: post.normalize,
       highpass: post.highpass,
       compress: post.compress,
@@ -492,11 +578,18 @@ export class TtsService implements OnModuleInit {
     let text = (opts.text || '').trim();
     if (!text) throw new BadRequestException('text is required');
     const engine = this.voiceManager.resolveEngine(opts.engine || 'auto');
+    const lang =
+      opts.language && opts.language !== 'auto'
+        ? normalizeLanguageCode(opts.language)
+        : detectLanguage(text).code;
+    text = expandTextForLanguage(text, lang);
     if (this.pronunciation) {
-      text = await this.pronunciation.applyDictionary(text, engine);
+      text = await this.pronunciation.applyDictionary(text, engine, lang);
     }
-    const voice = this.resolveVoice(opts.voice, engine);
-    const chunks = chunkTextForTts(text, { engine });
+    const voice =
+      this.resolveVoice(opts.voice, engine) ||
+      this.voiceManager.getDefaultVoiceForLanguage(lang);
+    const chunks = chunkTextForTts(text, { engine, language: lang });
     const outDir =
       opts.outDir || path.join(this.dataDir, `sync-${Date.now()}`);
     await fs.mkdir(outDir, { recursive: true });
@@ -544,7 +637,11 @@ export class TtsService implements OnModuleInit {
       await this.jobsRepo.save(job);
       this.gateway.emitProgress(job.id, job.progress, 'tts');
 
-      const voice = this.resolveVoice(opts.voice, engine);
+      const voice = this.resolveVoice(
+        opts.voice,
+        engine,
+        opts.language || job.metadata?.language,
+      );
       const chaptersSrc =
         opts.chapters ||
         (detectChapters(job.text).length > 1
@@ -585,7 +682,14 @@ export class TtsService implements OnModuleInit {
           },
         );
       } else {
-        const chunks = chunkTextForTts(job.text, { engine });
+        const lang =
+          opts.language ||
+          job.metadata?.language ||
+          detectLanguage(job.text).code;
+        const chunks = chunkTextForTts(job.text, {
+          engine,
+          language: lang,
+        });
         job.totalChunks = chunks.length;
         job.status = TtsJobStatus.SYNTHESIZING;
         await this.jobsRepo.save(job);
@@ -1023,6 +1127,7 @@ export class TtsService implements OnModuleInit {
   private resolveVoice(
     voiceId: string | undefined,
     engine: 'piper' | 'platform',
+    language?: string,
   ): UnifiedVoice | undefined {
     if (voiceId) {
       const v = this.voiceManager.getVoice(voiceId);
@@ -1038,6 +1143,12 @@ export class TtsService implements OnModuleInit {
             ? this.findModelById(voiceId)
             : undefined,
       };
+    }
+    if (language) {
+      return (
+        this.voiceManager.getDefaultVoiceForLanguage(language) ||
+        this.voiceManager.defaultVoice(engine, language)
+      );
     }
     return this.voiceManager.defaultVoice(engine);
   }

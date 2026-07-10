@@ -73,6 +73,58 @@ const DEFAULT_REGISTRY: ModelRegistryEntry[] = [
     jsonUrl:
       'https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_GB/alba/medium/en_GB-alba-medium.onnx.json?download=true',
   },
+  {
+    key: 'pt_BR-faber-medium',
+    name: 'Faber (Português Brasil, medium)',
+    language: 'pt-BR',
+    quality: 'medium',
+    gender: 'male',
+    sampleRate: 22050,
+    sizeBytes: 63201294,
+    onnxUrl:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx?download=true',
+    jsonUrl:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx.json?download=true',
+  },
+  {
+    key: 'pt_BR-jeff-medium',
+    name: 'Jeff (Português Brasil, medium)',
+    language: 'pt-BR',
+    quality: 'medium',
+    gender: 'male',
+    sampleRate: 22050,
+    sizeBytes: 62950044,
+    onnxUrl:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/jeff/medium/pt_BR-jeff-medium.onnx?download=true',
+    jsonUrl:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/jeff/medium/pt_BR-jeff-medium.onnx.json?download=true',
+  },
+  {
+    key: 'pt_BR-cadu-medium',
+    name: 'Cadu (Português Brasil, medium)',
+    language: 'pt-BR',
+    quality: 'medium',
+    gender: 'male',
+    sampleRate: 22050,
+    sizeBytes: 62950044,
+    onnxUrl:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/cadu/medium/pt_BR-cadu-medium.onnx?download=true',
+    jsonUrl:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/cadu/medium/pt_BR-cadu-medium.onnx.json?download=true',
+  },
+  {
+    key: 'pt_BR-edresson-low',
+    name: 'Edresson (Português Brasil, low)',
+    language: 'pt-BR',
+    quality: 'low',
+    gender: 'male',
+    sampleRate: 16000,
+    sizeBytes: 63104526,
+    onnxUrl:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/edresson/low/pt_BR-edresson-low.onnx?download=true',
+    jsonUrl:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/edresson/low/pt_BR-edresson-low.onnx.json?download=true',
+  },
 ];
 
 export class ModelManager {
@@ -95,7 +147,9 @@ export class ModelManager {
     }
   }
 
-  listAvailable(): Array<ModelRegistryEntry & { installed: boolean }> {
+  listAvailable(filter?: {
+    language?: string;
+  }): Array<ModelRegistryEntry & { installed: boolean }> {
     const installed = new Set(
       listPiperVoices(this.modelsDir).map((v) =>
         v.id.replace(/^piper:/, ''),
@@ -105,10 +159,23 @@ export class ModelManager {
     for (const v of listPiperVoices(this.modelsDir)) {
       installed.add(path.basename(v.modelPath, '.onnx'));
     }
-    return this.registry.map((m) => ({
+    let rows = this.registry.map((m) => ({
       ...m,
       installed: installed.has(m.key) || fs.existsSync(path.join(this.modelsDir, `${m.key}.onnx`)),
     }));
+    if (filter?.language) {
+      const lang = filter.language.toLowerCase().replace(/_/g, '-');
+      rows = rows.filter((m) => {
+        const ml = (m.language || '').toLowerCase().replace(/_/g, '-');
+        return (
+          ml === lang ||
+          ml.startsWith(lang) ||
+          lang.startsWith(ml.split('-')[0]) ||
+          (lang.startsWith('pt') && ml.startsWith('pt'))
+        );
+      });
+    }
+    return rows;
   }
 
   listInstalled(): string[] {

@@ -33,6 +33,10 @@ import { extractText, detectFormat } from './document-extractor';
 import { PronunciationService } from './pronunciation.service';
 import { supportedSsmlElements } from './ssml-parser';
 import { TtsService } from './tts.service';
+import {
+  detectLanguage as detectLang,
+  detectParagraphLanguages,
+} from './language';
 
 class SynthesizeDto {
   @IsOptional()
@@ -55,6 +59,11 @@ class SynthesizeDto {
   @IsOptional()
   @IsIn(['auto', 'piper', 'platform'])
   engine?: 'auto' | 'piper' | 'platform';
+
+  /** 'en' | 'pt-BR' | 'auto' (detect language). */
+  @IsOptional()
+  @IsString()
+  language?: string;
 
   @IsOptional()
   @IsBoolean()
@@ -156,6 +165,7 @@ export class TtsController {
       rate: body.rate,
       format: body.format,
       engine: body.engine,
+      language: body.language || 'auto',
       ssml: body.ssml,
       dialogue: body.dialogue,
       speakers: body.speakers,
@@ -166,6 +176,14 @@ export class TtsController {
       title: body.title,
     });
     return this.tts.toPublicJob(job);
+  }
+
+  @Post('detect-language')
+  detectLanguageEndpoint(@Body() body: { text?: string }) {
+    const text = body.text || '';
+    const overall = detectLang(text);
+    const paragraphs = detectParagraphLanguages(text);
+    return { overall, paragraphs };
   }
 
   @Post('import')
