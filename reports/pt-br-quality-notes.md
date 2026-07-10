@@ -1,9 +1,11 @@
-# pt-BR quality notes — G28
+# pt-BR quality notes
 
-| Demo | Engine | Voice | Duration | RTF | Quality | Notes |
-|------|--------|-------|----------|-----|---------|-------|
-| frase-rapida | piper | pt_BR-faber-medium | 4.66s | 1.50x | 8 | Natural BR cadence; nasal vowels OK |
-| paragrafo | piper | pt_BR-faber-medium | 17.27s | 4.33x | 8 | Smooth paragraph flow |
-| numeros-e-datas | piper | pt_BR-faber-medium | 50.66s | 8.98x | 7 | Long expansion of R$/CPF; spoken PT words (formatter) |
+Date: 2026-07-10 · Voice: Piper `pt_BR-faber-medium` · Engine auto → piper (Kokoro skipped)
 
-Host platform pt-BR voices available for fallback/compare: Luciana, Eddy, Flo, …
+| Demo | Duration | RTF | Quality (1–10) | Notes |
+|------|----------|-----|----------------|-------|
+| frase-rapida | ~4.8s | ~0.77× | 7 | Natural Brazilian cadence; nasal vowels OK |
+| paragrafo | ~17s | ~2.1× | 7 | Flow good; medium model slightly robotic on long clauses |
+| numeros-e-datas | ~51s | ~4.1× | 7 | Formatter expands R$/dates before synth; listen for reais not dollars |
+
+Critical fix verified: without language-aware engine selection, auto mode crashed via Kokoro on pt-BR.

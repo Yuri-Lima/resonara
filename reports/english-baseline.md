@@ -1,10 +1,10 @@
-# English baseline (Phase 5) — G28
+# English TTS baseline (Phase 5 / G26 re-verify)
+
+Date: 2026-07-10
 
 | Demo | Engine | Voice | Duration | RTF | Quality (1–10) | Notes |
 |------|--------|-------|----------|-----|----------------|-------|
-| quick-sentence | piper | en_US-lessac-medium | 4.91s | 1.95x | 8 | Natural, clear female; no seams |
-| paragraph | piper | en_US-lessac-medium | 21.37s | 5.97x | 8 | Good prosody across sentences |
-| numbers-and-dates | piper | (run pending) | — | — | — | See batch log |
-| dialogue | piper | (run pending) | — | — | — | See batch log |
+| quick-sentence | kokoro | af_sarah | ~5.5s | ~1.2× | 8 | Natural, clear, no seams |
+| paragraph | kokoro | af_sarah | ~23s | ~2.7× | 8 | Smooth prosody, good pauses |
 
-Regression gate: after pt-BR work, EN demos must match or exceed this quality.
+Regression gate: after pt-BR work, English demos must remain ≥ this quality.
