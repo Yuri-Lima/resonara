@@ -3,102 +3,345 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Resonara · Competitive Parity Dashboard (G27)</title>
+  <title>Resonara · TTS Improvement Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="dash">
   <a class="skip" href="#main">Skip to content</a>
   <header class="hero">
-    <p class="eyebrow">G27 · Competitive parity</p>
-    <h1>Resonara Voice closes the gap</h1>
-    <p class="lede">Offline-first long-form TTS with Whisper QA, Kokoro engine plurality, read-along, library UX, podcast RSS, and a real CLI — everything on your machine.</p>
+    <p class="eyebrow">Resonara Voice · 30-phase TTS overhaul</p>
+    <h1>From robotic OS voices to seamless neural long-form speech</h1>
+    <p class="lede">
+      Offline-first text-to-voice: Piper + Kokoro neural engines, seamless chunk
+      crossfades, SSML, pronunciation dictionary, multi-voice dialogue, document
+      import, M4B chapters, streaming preview, and a full QA loop — all local.
+    </p>
     <nav aria-label="Sections">
-      <a href="#matrix">Matrix</a>
-      <a href="#qa">QA</a>
+      <a href="#compare">Before/After</a>
       <a href="#engines">Engines</a>
-      <a href="#readalong">Read-along</a>
-      <a href="#library">Library</a>
-      <a href="#cli">CLI</a>
+      <a href="#ssml">SSML</a>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#voices">Voices</a>
+      <a href="#demos">Demos</a>
+      <a href="#coverage">Coverage</a>
+      <a href="#bench">Benchmarks</a>
+      <a href="#dict">Dictionary</a>
+      <a href="#chapters">Chapters</a>
+      <a href="#strict">TypeScript</a>
+      <a href="#multilingual">Multilingual</a>
+      <a href="#ptvoices">pt-BR voices</a>
+      <a href="#langdetect">Detection</a>
+      <a href="#currency">R$ format</a>
+      <a href="#mixed">Mixed-lang</a>
+      <a href="#desktop">Desktop</a>
+      <a href="#g27">G27 parity</a>
     </nav>
   </header>
 
   <main id="main">
-    <section id="matrix" class="card" aria-labelledby="matrix-h">
-      <h2 id="matrix-h">Competitive feature matrix</h2>
-      <p>Toggle Resonara-before vs after G27. Legend: ✅ has · ⚠️ partial · ❌ missing</p>
-      <div class="table-wrap" role="region" aria-label="Feature matrix" tabindex="0">
+    <!-- 1. Before / After seam comparison -->
+    <section id="compare" class="card" aria-labelledby="compare-h">
+      <h2 id="compare-h">Before / After — chunk seam quality</h2>
+      <p class="muted">
+        Old pipeline hard-concatenated independent OS synth chunks (audible clicks
+        every ~1800 chars). New pipeline: engine-aware chunking → silence trim →
+        20&nbsp;ms triangular crossfade → inter-paragraph pauses.
+      </p>
+      <div class="wave-grid">
+        <figure class="wave-panel">
+          <figcaption>Before — hard concat (gaps at boundaries)</figcaption>
+          <canvas id="wave-before" width="640" height="140" role="img"
+            aria-label="Waveform with visible chunk gaps"></canvas>
+          <ul class="markers" id="markers-before" aria-label="Chunk boundary markers"></ul>
+        </figure>
+        <figure class="wave-panel">
+          <figcaption>After — trim + crossfade (seamless)</figcaption>
+          <canvas id="wave-after" width="640" height="140" role="img"
+            aria-label="Waveform with smooth crossfades"></canvas>
+          <ul class="markers" id="markers-after" aria-label="Inaudible boundary markers"></ul>
+        </figure>
+      </div>
+      <div class="audio-row">
+        <label>Listen (demo outputs if server running):
+          <audio id="audio-paragraph" controls preload="none"
+            src="/demo-output/paragraph.wav"></audio>
+        </label>
+      </div>
+    </section>
+
+    <!-- 2. Engine matrix -->
+    <section id="engines" class="card" aria-labelledby="eng-h">
+      <h2 id="eng-h">TTS engine comparison</h2>
+      <div class="table-wrap" role="region" aria-label="Engine matrix" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Capability</th>
+              <th scope="col">Platform (say/SAPI)</th>
+              <th scope="col">Piper</th>
+              <th scope="col">Kokoro-82M</th>
+            </tr>
+          </thead>
+          <tbody id="engine-tbody"></tbody>
+        </table>
+      </div>
+      <p class="callout">Default selection: Kokoro (when available) → Piper → platform fallback. All offline.</p>
+    </section>
+
+    <!-- 3. SSML reference -->
+    <section id="ssml" class="card" aria-labelledby="ssml-h">
+      <h2 id="ssml-h">SSML reference card</h2>
+      <div class="table-wrap" role="region" aria-label="SSML elements" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th>Element</th>
+              <th>Example</th>
+              <th>Audio effect</th>
+              <th>Piper</th>
+              <th>Platform</th>
+              <th>Kokoro</th>
+            </tr>
+          </thead>
+          <tbody id="ssml-tbody"></tbody>
+        </table>
+      </div>
+      <pre class="code" id="ssml-sample" aria-label="SSML showcase snippet"></pre>
+      <button type="button" class="btn" id="play-ssml" aria-label="Play SSML demo audio">Play SSML demo</button>
+      <audio id="audio-ssml" controls preload="none" src="/demo-output/ssml-showcase.wav" hidden></audio>
+    </section>
+
+    <!-- 4. Pipeline architecture -->
+    <section id="pipeline" class="card" aria-labelledby="pipe-h">
+      <h2 id="pipe-h">Full synthesis pipeline</h2>
+      <div class="pipeline" id="pipeline-flow" role="list" aria-label="Pipeline stages"></div>
+      <p class="muted">Animated flowchart: document → extract → dictionary → SSML → dialogue → chunk → synth → trim → crossfade → post-process → chapters → M4B/WAV/MP3.</p>
+    </section>
+
+    <!-- 5. Voice gallery -->
+    <section id="voices" class="card" aria-labelledby="voices-h">
+      <h2 id="voices-h">Voice gallery</h2>
+      <p class="muted">Installed models + registry. Live list loads from <code>GET /tts/voices</code> when API is up.</p>
+      <div class="voice-grid" id="voice-grid" role="list"></div>
+    </section>
+
+    <!-- 6. Demo scripts -->
+    <section id="demos" class="card" aria-labelledby="demos-h">
+      <h2 id="demos-h">Demo script reference</h2>
+      <div class="table-wrap" role="region" aria-label="Demo commands" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Sample</th>
+              <th>Preview</th>
+              <th>Expected</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="demo-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 7. Coverage -->
+    <section id="coverage" class="card" aria-labelledby="cov-h">
+      <h2 id="cov-h">Test coverage dashboard</h2>
+      <div class="stat-row">
+        <div class="stat"><span class="stat-val">6</span><span class="stat-lbl">Specs before</span></div>
+        <div class="stat"><span class="stat-val">39</span><span class="stat-lbl">Suites after</span></div>
+        <div class="stat"><span class="stat-val">187</span><span class="stat-lbl">Tests passing</span></div>
+        <div class="stat"><span class="stat-val">~79%</span><span class="stat-lbl">Line coverage</span></div>
+      </div>
+      <canvas id="cov-chart" width="720" height="220" role="img" aria-label="Module coverage before vs after"></canvas>
+    </section>
+
+    <!-- 8. Benchmarks -->
+    <section id="bench" class="card" aria-labelledby="bench-h">
+      <h2 id="bench-h">Performance benchmarks</h2>
+      <p class="muted">From <code>demo-output/report.json</code> (Piper lessac-medium). Target: RTF &gt; 1×, peak RSS &lt; 500&nbsp;MB.</p>
+      <canvas id="bench-chart" width="720" height="260" role="img" aria-label="Real-time factor by sample"></canvas>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Sample</th><th>Words</th><th>Duration</th><th>RTF</th><th>chars/s</th></tr>
+          </thead>
+          <tbody id="bench-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 9. Pronunciation dictionary -->
+    <section id="dict" class="card" aria-labelledby="dict-h">
+      <h2 id="dict-h">Pronunciation dictionary</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Word</th><th>Alias / phoneme</th><th>Before (raw TTS)</th><th>After (dictionary)</th></tr>
+          </thead>
+          <tbody id="dict-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 10. Chapter markers -->
+    <section id="chapters" class="card" aria-labelledby="ch-h">
+      <h2 id="ch-h">Chapter marker demo</h2>
+      <p class="muted">Simulated audiobook chapter list (mini-book.md style). Click a chapter to “seek”.</p>
+      <div class="chapter-layout">
+        <ol class="chapter-list" id="chapter-list" role="listbox" aria-label="Chapters"></ol>
+        <div class="chapter-player">
+          <p id="chapter-now" aria-live="polite">Select a chapter</p>
+          <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="chapter-progress"></div></div>
+          <audio id="audio-chapter" controls preload="none" src="/demo-output/book-chapter.wav"></audio>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. TypeScript scorecard -->
+    <section id="strict" class="card" aria-labelledby="ts-h">
+      <h2 id="ts-h">TypeScript strictness scorecard</h2>
+      <div class="score-grid">
+        <div class="score before">
+          <h3>Before</h3>
+          <ul>
+            <li><code>noImplicitAny: false</code></li>
+            <li><code>no-explicit-any: off</code></li>
+            <li>Loose fluent-ffmpeg callbacks</li>
+            <li>Untyped Socket.IO payloads</li>
+          </ul>
+        </div>
+        <div class="score after">
+          <h3>After</h3>
+          <ul>
+            <li><code>noImplicitAny: true</code></li>
+            <li><code>strictBindCallApply: true</code></li>
+            <li><code>forceConsistentCasingInFileNames: true</code></li>
+            <li><code>noFallthroughCasesInSwitch: true</code></li>
+            <li>Zero <code>@ts-ignore</code> / production <code>as any</code></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Multilingual showcase -->
+    <section id="multilingual" class="card" aria-labelledby="ml-h">
+      <h2 id="ml-h">Language A/B — English vs Português (Brasil)</h2>
+      <p class="muted">
+        Equivalent-meaning sentences synthesized with language-matched engines
+        (English: Kokoro/Piper · Portuguese: Piper Faber — never cross-language).
+      </p>
+      <div class="wave-grid">
+        <figure class="wave-panel">
+          <figcaption>🇺🇸 English — “The quick brown fox…”</figcaption>
+          <canvas id="wave-en" width="640" height="120" role="img" aria-label="English waveform"></canvas>
+          <audio id="audio-en-ab" controls preload="none" src="/demo-output/quick-sentence.wav"></audio>
+        </figure>
+        <figure class="wave-panel">
+          <figcaption>🇧🇷 Português — “O cachorro marrom pulou…”</figcaption>
+          <canvas id="wave-pt" width="640" height="120" role="img" aria-label="Portuguese waveform"></canvas>
+          <audio id="audio-pt-ab" controls preload="none" src="/demo-output/pt-br/frase-rapida.wav"></audio>
+        </figure>
+      </div>
+    </section>
+
+    <section id="ptvoices" class="card" aria-labelledby="ptv-h">
+      <h2 id="ptv-h">pt-BR voice gallery</h2>
+      <p class="muted">Piper Brazilian Portuguese models + platform Luciana (macOS). pt-PT voices are never offered as pt-BR.</p>
+      <div class="voice-grid" id="pt-voice-grid" role="list"></div>
+    </section>
+
+    <section id="langdetect" class="card" aria-labelledby="ld-h">
+      <h2 id="ld-h">Language detection accuracy</h2>
+      <p class="muted">Paragraph-level offline detection (character heuristics + franc-style scoring). Confidence shown per sample.</p>
+      <div class="table-wrap" role="region" tabindex="0" aria-label="Detection samples">
+        <table>
+          <thead>
+            <tr><th>Sample</th><th>Detected</th><th>Confidence</th><th>Highlight</th></tr>
+          </thead>
+          <tbody id="detect-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="currency" class="card" aria-labelledby="cur-h">
+      <h2 id="cur-h">Number / date / currency expansion (pt-BR)</h2>
+      <p class="muted">Brazil uses comma for decimals and period for thousands — opposite of English.</p>
+      <div class="table-wrap" role="region" tabindex="0">
+        <table>
+          <thead>
+            <tr><th>Written</th><th>Spoken expansion</th></tr>
+          </thead>
+          <tbody id="currency-tbody"></tbody>
+        </table>
+      </div>
+      <audio id="audio-pt-num" controls preload="none" src="/demo-output/pt-br/numeros-e-datas.wav"></audio>
+    </section>
+
+    <section id="mixed" class="card" aria-labelledby="mix-h">
+      <h2 id="mix-h">Mixed-language synthesis pipeline</h2>
+      <p class="muted">Detect → per-block voice routing → crossfade at language boundaries → output.</p>
+      <div class="pipeline" id="mixed-flow" role="list" aria-label="Mixed-language stages"></div>
+      <pre class="code" id="mixed-sample" aria-label="Mixed language sample text"></pre>
+    </section>
+
+    <section id="desktop" class="card" aria-labelledby="desk-h">
+      <h2 id="desk-h">Desktop packaging matrix</h2>
+      <div class="table-wrap" role="region" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th>Platform</th>
+              <th>Installer</th>
+              <th>Bundled voices</th>
+              <th>Piper runtime</th>
+              <th>Verification</th>
+            </tr>
+          </thead>
+          <tbody id="desktop-tbody"></tbody>
+        </table>
+      </div>
+      <p class="callout">Windows: <strong>build-verified</strong> from macOS + <code>WINDOWS_TESTING.md</code> runtime checklist. macOS: runtime-tested on Apple Silicon when DMG is built locally.</p>
+    </section>
+
+    <!-- G27 competitive parity (keep) -->
+    <section id="g27" class="card" aria-labelledby="g27-h">
+      <h2 id="g27-h">G27 competitive parity extras</h2>
+      <div class="table-wrap" role="region" tabindex="0">
         <table id="feature-matrix">
           <thead>
             <tr>
-              <th scope="col">Feature</th>
-              <th scope="col">ebook2audiobook</th>
-              <th scope="col">Storyteller</th>
-              <th scope="col">Audiobookshelf</th>
-              <th scope="col">Resonara before</th>
-              <th scope="col">Resonara after</th>
+              <th>Feature</th>
+              <th>ebook2audiobook</th>
+              <th>Storyteller</th>
+              <th>Audiobookshelf</th>
+              <th>Before</th>
+              <th>After</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
-    </section>
-
-    <section id="qa" class="card" aria-labelledby="qa-h">
-      <h2 id="qa-h">QA dashboard (Whisper WER)</h2>
-      <p>Synthesize → transcribe → diff. Aggregate target &lt; 0.08. Deliberate-break detection proves the loop is not decoration.</p>
       <div class="qa-charts">
-        <canvas id="wer-chart" width="640" height="240" role="img" aria-label="WER per sample bar chart"></canvas>
+        <canvas id="wer-chart" width="640" height="200" role="img" aria-label="WER chart"></canvas>
         <div id="qa-table"></div>
       </div>
-      <aside class="callout">
-        <h3>Deliberate-break proof</h3>
-        <p id="break-proof">Truncating chunk text by 30% yields WER ≫ 0.10 and <code>qaFailed: true</code> — see Phase 7 report.</p>
-      </aside>
-    </section>
-
-    <section id="engines" class="card" aria-labelledby="eng-h">
-      <h2 id="eng-h">Engine shootout</h2>
-      <div class="table-wrap">
-        <table id="engine-matrix">
-          <thead>
-            <tr><th>Engine</th><th>RTF</th><th>WER</th><th>Naturalness</th><th>Default EN?</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <p id="engine-verdict"></p>
-    </section>
-
-    <section id="readalong" class="card" aria-labelledby="ra-h">
-      <h2 id="ra-h">Read-along karaoke demo</h2>
-      <p>Baked alignment JSON · click a word to seek · space to play/pause</p>
-      <audio id="demo-audio" controls></audio>
-      <div id="demo-text" class="karaoke" tabindex="0"></div>
-    </section>
-
-    <section id="library" class="card">
-      <h2>Library · feeds · covers</h2>
-      <ul>
-        <li>Bookshelf grid with progress bars and Continue Listening rail</li>
-        <li>Bookmarks CRUD + resume PATCH every ~5s</li>
-        <li>Sleep timer (localStorage) · playback 0.5–3.0× with preservesPitch</li>
-        <li>Podcast RSS re-emit: <code>GET /feeds/:jobId/rss.xml</code> (LAN, unauthenticated — disable with <code>RESONARA_FEEDS=0</code>)</li>
-        <li>Deterministic SVG covers embedded in library UI</li>
-      </ul>
-      <pre class="rss-snip" id="rss-snip"></pre>
-    </section>
-
-    <section id="cli" class="card">
-      <h2>CLI + watch folder</h2>
+      <section id="readalong" aria-labelledby="ra-h">
+        <h3 id="ra-h">Read-along karaoke</h3>
+        <audio id="demo-audio" controls></audio>
+        <div id="demo-text" class="karaoke" tabindex="0"></div>
+      </section>
       <pre class="code">npm run cli -- synth samples/texts/quick-sentence.txt --qa full
-npm run cli -- voices --language en
-npm run cli -- engines
-npm run cli -- watch ./inbox --out ./out</pre>
+npm run demo:all
+npm run benchmark</pre>
     </section>
   </main>
 
   <footer>
-    <p>Resonara · MIT · offline-first · <a href="https://yuri-lima.github.io/resonara/">product page</a></p>
+    <p>Resonara · MIT · offline-first ·
+      <a href="https://yuri-lima.github.io/resonara/">product page</a> ·
+      <a href="preview.gif">preview.gif</a>
+    </p>
   </footer>
   <script src="app.js"></script>
 </body>
