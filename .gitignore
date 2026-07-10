@@ -40,5 +40,11 @@ resources/piper/libtashkeel_model.ort
 resources/piper/*.dylib
 resources/piper/**/*.dSYM/
 tools/piper-venv/
+tools/whisper-venv/
+tools/whisper/models/
+tools/kokoro-venv/
+tools/kokoro/models/
+resources/whisper/
+resources/kokoro/
 demo-output/*
 !demo-output/.gitkeep
