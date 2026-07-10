@@ -184,7 +184,7 @@ export class PronunciationService implements OnModuleInit {
    */
   async applyDictionary(
     text: string,
-    engine: 'piper' | 'platform' | 'all' = 'all',
+    engine: 'piper' | 'platform' | 'kokoro' | 'all' = 'all',
     language?: string,
   ): Promise<string> {
     if (!text) return text;

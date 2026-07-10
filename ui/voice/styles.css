@@ -222,3 +222,19 @@
   margin: 0.5rem 0 0.25rem;
   font-size: 0.9rem;
 }
+
+.library-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:1rem; }
+.library-card { border:1px solid var(--border,#334155); border-radius:12px; padding:.75rem; cursor:pointer; background:#0f172a; color:#e2e8f0; }
+.library-card:focus { outline:2px solid #2dd4bf; outline-offset:2px; }
+.library-card .progress { height:4px; background:#1e293b; border-radius:2px; margin-top:.5rem; }
+.library-card .progress > i { display:block; height:100%; background:#2dd4bf; border-radius:2px; }
+.readalong-text { line-height:1.8; max-height:50vh; overflow:auto; padding:1rem; background:#0b1220; border-radius:8px; }
+.readalong-text .w { border-radius:3px; padding:0 1px; }
+.readalong-text .w.active { background:#2dd4bf; color:#0f172a; }
+.readalong-text .w.active.sweep { transition: background .08s linear; }
+.readalong-text .sent-active { text-decoration: underline; text-decoration-color: #64748b; }
+.badge { font-size:.75rem; background:#334155; padding:.15rem .4rem; border-radius:4px; }
+.continue-rail { display:flex; gap:.75rem; overflow-x:auto; margin-bottom:1rem; }
+@media (prefers-reduced-motion: reduce) {
+  .readalong-text .w.active.sweep { transition: none; }
+}

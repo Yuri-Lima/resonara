@@ -16,7 +16,7 @@ Resonara is a cross-platform **desktop audio studio** for creators, producers, a
 |--------|------------------|
 | **Audio lab** | Import, transcode, two-pass EBU R128 loudnorm, trim, silence detect, waveform, stream & export |
 | **Piano** | Play a hybrid sample piano, record takes, analyze and export |
-| **Voice** | Offline **Piper neural TTS** (primary) + platform fallback: **English + Brazilian Portuguese (pt-BR)**, SSML, pronunciation dict, document import, chapter markers, seam-free concat |
+| **Voice** | Offline multi-engine TTS (**Kokoro** + **Piper** + platform): **English + Brazilian Portuguese (pt-BR)**, Whisper WER QA, forced-alignment read-along, library/bookmarks, podcast RSS, CLI/watch, SSML, document import, chaptered export |
 
 End users get a normal **macOS** or **Windows** installer — no Docker, no Node, no terminal setup.
 
@@ -26,8 +26,13 @@ End users get a normal **macOS** or **Windows** installer — no Docker, no Node
 
 - **Offline-first desktop** — local engine, filesystem storage, no cloud account required for core flows  
 - **Production audio path** — two-pass loudnorm (not single-pass), soxr-aware processing via ffmpeg  
-- **Long-form speech** — **Piper** neural voices (offline ONNX, **en + pt-BR** bundled) with **macOS `say` / Windows SAPI** language-matched fallback; SSML, dictionary, EPUB/PDF/DOCX/MD import, persisted jobs  
+- **Long-form speech** — **Kokoro-82M** + **Piper** neural voices (offline ONNX, **en + pt-BR**) with **macOS `say` / Windows SAPI** fallback; SSML, dictionary, EPUB/PDF/DOCX/MD import, chaptered jobs  
+- **Synthesis QA** — offline **faster-whisper** round-trip WER per chunk (sample/full) with auto-retry — catches silent drops listening alone misses  
+- **Read-along** — forced alignment → word timestamps, karaoke UI, EPUB 3 Media Overlays export  
+- **Library & distribution** — bookshelf UI, resume/bookmarks/sleep/speed, deterministic covers, optional LAN podcast RSS (`RESONARA_FEEDS=1`)  
+- **Automation** — real CLI (`npm run cli`) with `synth` / `voices` / `engines` / `jobs` / `watch`  
 - **Multilingual TTS** — auto language detection, Portuguese number/date/currency expansion, mixed-language documents, never cross-language voice fallback  
+- **Competitive positioning** — see [COMPETITIVE_ANALYSIS.md](./COMPETITIVE_ANALYSIS.md) and [IMPROVEMENT_ROADMAP.md](./IMPROVEMENT_ROADMAP.md); phase evidence in [reports/INDEX.md](./reports/INDEX.md)  
 - **Hybrid piano** — sample-pack playback, take capture, and export wired into the same job model  
 - **Live job progress** — normalize, export, and TTS report progress without freezing the UI  
 - **Health checks** — first-run / on-demand status for **ffmpeg** and **TTS** engines (with path resolution for GUI apps)

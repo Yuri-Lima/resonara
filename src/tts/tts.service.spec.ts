@@ -256,6 +256,6 @@ describe('TtsService', () => {
 
   it('voices and engineStatus work', () => {
     expect(Array.isArray(service.voices())).toBe(true);
-    expect(service.engineStatus().engines.length).toBe(2);
+    expect(service.engineStatus().engines.length).toBeGreaterThanOrEqual(2);
   });
 });
