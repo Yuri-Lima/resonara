@@ -1,4 +1,4 @@
 release=2023.11.14-2
 voices=en_US-lessac-medium,pt_BR-faber-medium
-python_venv=/private/tmp/trace-swe19-20260710-100350/tools/piper-venv
+python_venv=/private/tmp/trace-swe20-20260710-235715/tools/piper-venv
 languages=en-US,pt-BR
