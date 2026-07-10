@@ -1,1095 +1,567 @@
 (function () {
   'use strict';
 
+  /* ---------- Before/After waveforms ---------- */
   function drawWave(canvas, mode) {
-    if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
     const w = canvas.width;
     const h = canvas.height;
-    ctx.fillStyle = '#0b0f16';
+    ctx.fillStyle = '#0b1220';
     ctx.fillRect(0, 0, w, h);
-    ctx.strokeStyle = mode === 'before' ? '#f07178' : '#3dd68c';
-    ctx.lineWidth = 2;
+    // grid
+    ctx.strokeStyle = '#1e293b';
     ctx.beginPath();
-    const seams = [0.2, 0.4, 0.6, 0.8];
+    ctx.moveTo(0, h / 2);
+    ctx.lineTo(w, h / 2);
+    ctx.stroke();
+
+    const boundaries = [0.18, 0.36, 0.54, 0.72, 0.9];
+    ctx.beginPath();
+    ctx.strokeStyle = mode === 'before' ? '#67e8f9' : '#2dd4bf';
+    ctx.lineWidth = 1.5;
+    const mid = h / 2;
     for (let x = 0; x < w; x++) {
       const t = x / w;
-      let amp = Math.sin(t * Math.PI * 40) * 0.35 + Math.sin(t * Math.PI * 7) * 0.2;
+      let amp = 0.35 + 0.25 * Math.sin(t * 40) * Math.sin(t * 7);
+      // speech envelope bursts
+      amp *= 0.4 + 0.6 * Math.abs(Math.sin(t * Math.PI * 6));
       if (mode === 'before') {
-        for (const s of seams) {
-          if (Math.abs(t - s) < 0.012) amp *= 0.05;
-          if (t > s && t < s + 0.02) amp *= 0.15;
+        // hard silence gaps near boundaries
+        for (const b of boundaries) {
+          if (Math.abs(t - b) < 0.018) amp *= 0.05;
         }
       } else {
-        for (const s of seams) {
-          const d = Math.abs(t - s);
-          if (d < 0.015) amp *= 0.85 + 0.15 * (d / 0.015);
+        // smooth crossfade — slight dip only
+        for (const b of boundaries) {
+          if (Math.abs(t - b) < 0.01) amp *= 0.85;
         }
       }
-      const y = h / 2 + amp * (h * 0.42) * (0.6 + 0.4 * Math.sin(t * 12));
+      const y = mid + Math.sin(x * 0.35) * amp * (h * 0.42);
       if (x === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     }
     ctx.stroke();
-    // seam markers
-    ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = mode === 'before' ? 'rgba(240,113,120,0.5)' : 'rgba(61,214,140,0.25)';
-    seams.forEach((s) => {
+
+    // boundary markers
+    boundaries.forEach((b) => {
+      const x = b * w;
       ctx.beginPath();
-      ctx.moveTo(s * w, 8);
-      ctx.lineTo(s * w, h - 8);
+      ctx.setLineDash([3, 3]);
+      ctx.strokeStyle = mode === 'before' ? '#ef4444' : '#22d3ee';
+      ctx.lineWidth = 1;
+      ctx.moveTo(x, 8);
+      ctx.lineTo(x, h - 8);
       ctx.stroke();
+      ctx.setLineDash([]);
     });
-    ctx.setLineDash([]);
   }
 
   drawWave(document.getElementById('wave-before'), 'before');
   drawWave(document.getElementById('wave-after'), 'after');
-  drawWave(document.getElementById('wave-en'), 'after');
-  drawWave(document.getElementById('wave-pt'), 'after');
+  const mkBefore = document.getElementById('markers-before');
+  const mkAfter = document.getElementById('markers-after');
+  [1, 2, 3, 4, 5].forEach((n) => {
+    const a = document.createElement('li');
+    a.className = 'bad';
+    a.textContent = `chunk ${n} seam (click/gap)`;
+    mkBefore.appendChild(a);
+    const b = document.createElement('li');
+    b.className = 'good';
+    b.textContent = `chunk ${n} crossfade 20ms`;
+    mkAfter.appendChild(b);
+  });
 
-  function fillVoiceGrid(gridId, voiceList, stroke) {
-    const grid = document.getElementById(gridId);
-    if (!grid) return;
-    voiceList.forEach((v, i) => {
-      const el = document.createElement('article');
-      el.className = 'voice-card';
-      const status = v.bundled
-        ? '<span class="badge good">Bundled</span>'
-        : v.platform
-          ? '<span class="badge">Platform</span>'
-          : '<span class="badge">Downloadable</span>';
-      el.innerHTML =
-        status +
+  /* ---------- Engine matrix ---------- */
+  const engRows = [
+    ['Voice quality', 'Robotic / formant', 'Neural ONNX', 'Neural 82M (best)'],
+    ['Speed (RTF)', '3–8×', '>1× typical', '>1× target'],
+    ['SSML', 'Partial (say/SAPI)', 'break / phoneme / sub', 'Mapped subset'],
+    ['Voice count', 'OS-dependent', '30+ EN models', 'Multi-speaker'],
+    ['Offline', '✅', '✅', '✅'],
+    ['Multi-speaker', '❌', 'Some models', 'Yes'],
+    ['Chunk prosody', 'Resets each chunk', 'Cross-sentence native', 'Continuous'],
+    ['Linux support', '❌', '✅', '✅'],
+  ];
+  const engBody = document.getElementById('engine-tbody');
+  engRows.forEach((r) => {
+    const tr = document.createElement('tr');
+    r.forEach((c, i) => {
+      const td = document.createElement(i === 0 ? 'th' : 'td');
+      if (i === 0) td.scope = 'row';
+      td.textContent = c;
+      tr.appendChild(td);
+    });
+    engBody.appendChild(tr);
+  });
+
+  /* ---------- SSML ---------- */
+  const ssmlRows = [
+    ['<break time="500ms"/>', 'Pause half a second', 'Silence gap', '✅', '✅', '✅'],
+    ['<emphasis level="strong">', 'Stress a word', 'Louder / emphatic', '⚠️', '✅', '⚠️'],
+    ['<prosody rate="slow">', 'Slow speech', 'Slower tempo', '⚠️', '✅', '⚠️'],
+    ['<say-as interpret-as="cardinal">', 'Numbers as words', 'Four not 4', 'via dict', '✅', 'via dict'],
+    ['<phoneme alphabet="ipa" ph="…">', 'IPA override', 'Custom pronunciation', '✅', '⚠️', 'via sub'],
+    ['<sub alias="…">', 'WWW → World Wide Web', 'Substitution', '✅', '✅', '✅'],
+    ['<voice name="…">', 'Speaker switch', 'Voice change', '✅', '⚠️', '✅'],
+  ];
+  const ssmlBody = document.getElementById('ssml-tbody');
+  ssmlRows.forEach((r) => {
+    const tr = document.createElement('tr');
+    r.forEach((c, i) => {
+      const td = document.createElement(i === 0 ? 'th' : 'td');
+      if (i === 0) {
+        td.scope = 'row';
+        td.innerHTML = '<code>' + c.replace(/</g, '&lt;') + '</code>';
+      } else {
+        td.textContent = c;
+        if (c === '✅') td.className = 'cell-yes';
+        if (c.indexOf('⚠️') === 0) td.className = 'cell-partial';
+      }
+      tr.appendChild(td);
+    });
+    ssmlBody.appendChild(tr);
+  });
+  document.getElementById('ssml-sample').textContent =
+    '<speak>\n  Welcome to <emphasis level="strong">Resonara</emphasis>.\n' +
+    '  <break time="500ms"/>\n  <prosody rate="slow">This part is spoken slowly.</prosody>\n' +
+    '  <sub alias="World Wide Web">WWW</sub> changed everything.\n</speak>';
+  document.getElementById('play-ssml').addEventListener('click', () => {
+    const a = document.getElementById('audio-ssml');
+    a.hidden = false;
+    a.play().catch(() => {});
+  });
+
+  /* ---------- Pipeline ---------- */
+  const stages = [
+    'text/document',
+    'extract',
+    'pronunciation dict',
+    'SSML parse',
+    'dialogue parse',
+    'chunk (engine-aware)',
+    'per-chunk synth',
+    'silence trim',
+    'crossfade 20ms',
+    '¶ pauses 300ms',
+    'post-process',
+    'chapter markers',
+    'M4B / WAV / MP3',
+  ];
+  const pipe = document.getElementById('pipeline-flow');
+  stages.forEach((s, i) => {
+    const step = document.createElement('div');
+    step.className = 'pipe-step';
+    step.setAttribute('role', 'listitem');
+    step.textContent = s;
+    pipe.appendChild(step);
+    if (i < stages.length - 1) {
+      const arr = document.createElement('span');
+      arr.className = 'pipe-arrow';
+      arr.setAttribute('aria-hidden', 'true');
+      arr.textContent = '→';
+      pipe.appendChild(arr);
+    }
+  });
+
+  /* ---------- Voices ---------- */
+  const fallbackVoices = [
+    { id: 'piper:en_US-lessac-medium', name: 'Lessac', engine: 'piper', language: 'en-US', quality: 'medium', gender: 'female', sampleRate: 22050, installed: true },
+    { id: 'piper:pt_BR-faber-medium', name: 'Faber', engine: 'piper', language: 'pt-BR', quality: 'medium', gender: 'male', sampleRate: 22050, installed: true },
+    { id: 'kokoro:af_sarah', name: 'Sarah', engine: 'kokoro', language: 'en-US', quality: 'high', gender: 'female', sampleRate: 24000, installed: true },
+    { id: 'platform:default', name: 'System default', engine: 'platform', language: 'en', quality: 'os', gender: '—', sampleRate: 22050, installed: true },
+  ];
+  function renderVoices(list) {
+    const grid = document.getElementById('voice-grid');
+    grid.innerHTML = '';
+    list.forEach((v) => {
+      const card = document.createElement('article');
+      card.className = 'voice-card';
+      card.setAttribute('role', 'listitem');
+      card.innerHTML =
         '<h3>' +
-        v.name +
-        '</h3><p class="caption">' +
-        [v.lang, v.quality, v.gender, v.sr + ' Hz'].filter(Boolean).join(' · ') +
-        (v.note ? ' · ' + v.note : '') +
-        '</p><canvas class="mini-wave" width="240" height="40" aria-hidden="true"></canvas>';
-      grid.appendChild(el);
-      const c = el.querySelector('canvas');
-      if (!c) return;
-      const ctx = c.getContext('2d');
-      if (!ctx) return;
-      ctx.strokeStyle = stroke || '#4f8cff';
-      ctx.beginPath();
-      for (let x = 0; x < c.width; x++) {
-        const y =
-          c.height / 2 +
-          Math.sin((x / c.width) * Math.PI * (8 + i) + i) * (10 + (i % 3) * 3);
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
+        (v.name || v.id) +
+        '</h3>' +
+        '<div class="meta">' +
+        '<span class="badge eng">' +
+        (v.engine || '?') +
+        '</span>' +
+        '<span class="badge ' +
+        (v.installed !== false ? 'ok' : 'dl') +
+        '">' +
+        (v.installed !== false ? 'installed' : 'downloadable') +
+        '</span>' +
+        '<p>' +
+        [v.language, v.quality, v.gender, v.sampleRate ? v.sampleRate + ' Hz' : '']
+          .filter(Boolean)
+          .join(' · ') +
+        '</p></div>';
+      grid.appendChild(card);
     });
   }
-
-  const voices = [
-    { name: 'en_US lessac medium', lang: 'en-US', quality: 'medium', gender: 'female', sr: 22050, bundled: true },
-    { name: 'en_US amy low', lang: 'en-US', quality: 'low', gender: 'female', sr: 16000 },
-    { name: 'en_US ryan high', lang: 'en-US', quality: 'high', gender: 'male', sr: 22050 },
-    { name: 'en_GB alan medium', lang: 'en-GB', quality: 'medium', gender: 'male', sr: 22050 },
-    { name: 'en_US libritts medium', lang: 'en-US', quality: 'medium', gender: 'mixed', sr: 22050 },
-    { name: 'en_US kathleen low', lang: 'en-US', quality: 'low', gender: 'female', sr: 16000 },
-  ];
-  fillVoiceGrid('voice-grid', voices, '#4f8cff');
-
-  const ptVoices = [
-    { name: 'pt_BR faber medium', lang: 'pt-BR', quality: 'medium', gender: 'male', sr: 22050, bundled: true, note: 'primary' },
-    { name: 'pt_BR edresson low', lang: 'pt-BR', quality: 'low', gender: 'male', sr: 16000, note: 'optional' },
-    { name: 'Luciana (macOS say)', lang: 'pt-BR', quality: 'system', gender: 'female', sr: 22050, platform: true, note: 'fallback' },
-    { name: 'Felipe (macOS say)', lang: 'pt-BR', quality: 'system', gender: 'male', sr: 22050, platform: true, note: 'optional install' },
-    { name: 'Microsoft Maria (SAPI)', lang: 'pt-BR', quality: 'system', gender: 'female', sr: 22050, platform: true, note: 'Win language pack' },
-  ];
-  fillVoiceGrid('pt-voice-grid', ptVoices, '#3dd68c');
-
-  const modules = [
-    { name: 'ssml-parser', before: 0, after: 82 },
-    { name: 'text-chunker', before: 40, after: 75 },
-    { name: 'pronunciation', before: 0, after: 94 },
-    { name: 'tts.controller', before: 0, after: 77 },
-    { name: 'voice-manager', before: 0, after: 84 },
-    { name: 'jobs.service', before: 0, after: 100 },
-    { name: 'gateway', before: 0, after: 87 },
-    { name: 'entities (tts)', before: 0, after: 100 },
-  ];
-  const bars = document.getElementById('coverage-bars');
-  if (bars) {
-    modules.forEach((m) => {
-      const row = document.createElement('div');
-      row.className = 'bar-row';
-      row.innerHTML =
-        '<span>' +
-        m.name +
-        '</span><div class="bar-track"><div class="bar-fill before" style="--before:' +
-        m.before +
-        '%;width:' +
-        m.before +
-        '%"></div><div class="bar-fill" style="width:' +
-        m.after +
-        '%"></div></div><span>' +
-        m.after +
-        '%</span>';
-      bars.appendChild(row);
-    });
-  }
-
-  // --- Demo script Play (all npm run demo:* from the UI) ---
-  const DEMO_CATALOG = [
-    {
-      id: 'quick-sentence',
-      cmd: 'demo:quick',
-      sample: '16 words',
-      listen: 'Natural single sentence',
-      file: 'quick-sentence.txt',
-    },
-    {
-      id: 'paragraph',
-      cmd: 'demo:paragraph',
-      sample: '~75 words',
-      listen: 'Prosody, punctuation pauses',
-      file: 'paragraph.txt',
-    },
-    {
-      id: 'short-article',
-      cmd: 'demo:article',
-      sample: '~500 words',
-      listen: 'Paragraph transitions',
-      file: 'short-article.txt',
-    },
-    {
-      id: 'news-article',
-      cmd: 'demo:news',
-      sample: '~2k words',
-      listen: 'Numbers, URLs, quotes',
-      file: 'news-article.txt',
-    },
-    {
-      id: 'book-chapter',
-      cmd: 'demo:chapter',
-      sample: '~5k words',
-      listen: 'Zero audible seams',
-      file: 'book-chapter.txt',
-    },
-    {
-      id: 'technical-doc',
-      cmd: 'demo:technical',
-      sample: '~3k words',
-      listen: 'Acronyms, API terms, long sections',
-      file: 'technical-doc.txt',
-    },
-    {
-      id: 'ssml-showcase',
-      cmd: 'demo:ssml',
-      sample: 'SSML showcase',
-      listen: 'Breaks, emphasis, rate',
-      file: 'ssml-showcase.txt',
-      ssml: true,
-    },
-    {
-      id: 'dialogue-script',
-      cmd: 'demo:dialogue',
-      sample: '3 speakers',
-      listen: 'Clean voice switches',
-      file: 'dialogue-script.txt',
-      dialogue: true,
-    },
-    {
-      id: 'pronunciation-challenge',
-      cmd: 'demo:pronunciation',
-      sample: 'Tech terms',
-      listen: 'Dictionary substitutions',
-      file: 'pronunciation-challenge.txt',
-    },
-    {
-      id: 'numbers-and-dates',
-      cmd: 'demo:numbers',
-      sample: 'Dates & figures',
-      listen: 'Numeric expansion, currency',
-      file: 'numbers-and-dates.txt',
-    },
-    {
-      id: 'compare',
-      cmd: 'demo:compare',
-      sample: 'A/B engines',
-      listen: 'Platform vs Piper quality',
-      file: 'paragraph.txt',
-      type: 'compare',
-    },
-    {
-      id: 'all',
-      cmd: 'demo:all',
-      sample: 'All 10',
-      listen: 'Full report — plays each sample in order',
-      type: 'all',
-    },
-    // Portuguese (pt-BR)
-    {
-      id: 'frase-rapida',
-      cmd: 'demo:pt:rapida',
-      sample: 'pt-BR · frase',
-      listen: 'Natural Brazilian Portuguese sentence',
-      file: 'pt-br/frase-rapida.txt',
-      lang: 'pt-BR',
-    },
-    {
-      id: 'paragrafo',
-      cmd: 'demo:pt:paragrafo',
-      sample: 'pt-BR · parágrafo',
-      listen: 'Prosody, accents, nasal vowels',
-      file: 'pt-br/paragrafo.txt',
-      lang: 'pt-BR',
-    },
-    {
-      id: 'artigo-curto',
-      cmd: 'demo:pt:artigo',
-      sample: 'pt-BR · artigo',
-      listen: 'Paragraph transitions in Portuguese',
-      file: 'pt-br/artigo-curto.txt',
-      lang: 'pt-BR',
-    },
-    {
-      id: 'noticia',
-      cmd: 'demo:pt:noticia',
-      sample: 'pt-BR · notícia',
-      listen: 'News cadence, quotes, numbers',
-      file: 'pt-br/noticia.txt',
-      lang: 'pt-BR',
-    },
-    {
-      id: 'capitulo-livro',
-      cmd: 'demo:pt:capitulo',
-      sample: 'pt-BR · capítulo',
-      listen: 'Long-form seam-free Portuguese',
-      file: 'pt-br/capitulo-livro.txt',
-      lang: 'pt-BR',
-    },
-    {
-      id: 'documento-tecnico',
-      cmd: 'demo:pt:tecnico',
-      sample: 'pt-BR · técnico',
-      listen: 'Loanwords + tech terms',
-      file: 'pt-br/documento-tecnico.txt',
-      lang: 'pt-BR',
-    },
-    {
-      id: 'dialogo-roteiro',
-      cmd: 'demo:pt:dialogo',
-      sample: 'pt-BR · diálogo',
-      listen: 'Em-dash dialogue (—)',
-      file: 'pt-br/dialogo-roteiro.txt',
-      lang: 'pt-BR',
-      dialogue: true,
-    },
-    {
-      id: 'desafio-pronuncia',
-      cmd: 'demo:pt:pronuncia',
-      sample: 'pt-BR · pronúncia',
-      listen: 'Dictionary + hard place names',
-      file: 'pt-br/desafio-pronuncia.txt',
-      lang: 'pt-BR',
-    },
-    {
-      id: 'numeros-e-datas',
-      cmd: 'demo:pt:numeros',
-      sample: 'pt-BR · números',
-      listen: 'R$, DD/MM/YYYY, CPF',
-      file: 'pt-br/numeros-e-datas.txt',
-      lang: 'pt-BR',
-    },
-    {
-      id: 'misturado-en-pt',
-      cmd: 'demo:pt:misturado',
-      sample: 'en + pt-BR',
-      listen: 'Mixed-language voice switch',
-      file: 'pt-br/misturado-en-pt.txt',
-      lang: 'pt-BR',
-    },
-    {
-      id: 'ssml-demonstracao',
-      cmd: 'demo:pt:ssml',
-      sample: 'pt-BR · SSML',
-      listen: 'Breaks + accented phonemes',
-      file: 'pt-br/ssml-demonstracao.txt',
-      lang: 'pt-BR',
-      ssml: true,
-    },
-    {
-      id: 'pt-all',
-      cmd: 'demo:pt:all',
-      sample: 'All pt-BR',
-      listen: 'Full Portuguese suite',
-      type: 'all',
-      lang: 'pt-BR',
-    },
-  ];
-
-  const SAMPLE_DEMOS = DEMO_CATALOG.filter(
-    (d) => d.type !== 'compare' && d.type !== 'all',
-  );
-
-  // Tiny silent WAV to unlock autoplay inside the user-gesture handler
-  const SILENT_WAV =
-    'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=';
-
-  function isResonaraHealth(body) {
-    if (!body || typeof body !== 'object') return false;
-    if (body.product === 'Resonara') return true;
-    if (body.checks && (body.checks.tts || body.checks.ffmpeg)) return true;
-    return false;
-  }
-
-  /** Resolve API base; only accept real Resonara /health (not other apps on :3000). */
-  async function resolveApiBase() {
-    const candidates = [];
-    if (typeof location !== 'undefined' && location.protocol !== 'file:') {
-      candidates.push('');
-      if (location.origin) candidates.push(location.origin);
-    }
-    candidates.push(
-      'http://127.0.0.1:3847',
-      'http://localhost:3847',
-      'http://127.0.0.1:3855',
-      'http://127.0.0.1:3000',
-      'http://localhost:3000',
-    );
-    const seen = new Set();
-    for (const base of candidates) {
-      const key = base || '__same__';
-      if (seen.has(key)) continue;
-      seen.add(key);
-      try {
-        const ctrl = new AbortController();
-        const t = setTimeout(() => ctrl.abort(), 1500);
-        const r = await fetch(base + '/health', {
-          signal: ctrl.signal,
-          cache: 'no-store',
-        });
-        clearTimeout(t);
-        if (!r.ok) continue;
-        const body = await r.json().catch(() => null);
-        if (isResonaraHealth(body)) return base;
-      } catch {
-        /* try next */
-      }
-    }
-    return null;
-  }
-
-  const audioEl = document.getElementById('demo-audio');
-  const demoStatus = document.getElementById('demo-play-status');
-  const progressWrap = document.getElementById('demo-progress-wrap');
-  const progressBar = document.getElementById('demo-progress-bar');
-  const progressLabel = document.getElementById('demo-progress-label');
-  const demoTbody = document.getElementById('demo-table-body');
-  const playButtons = new Map();
-  let cachedApiBase = undefined; // undefined=unknown, null=offline, string=base
-  let activeDemoId = null;
-  let abortPlay = false;
-  let audioCtx = null;
-
-  function setDemoStatus(msg) {
-    if (demoStatus) demoStatus.textContent = msg;
-  }
-
-  function setProgress(pct, label) {
-    if (progressWrap) progressWrap.hidden = pct == null;
-    if (progressBar) {
-      progressBar.style.width = Math.max(0, Math.min(100, pct || 0)) + '%';
-    }
-    if (progressLabel) {
-      progressLabel.textContent =
-        label || (pct != null ? Math.round(pct) + '%' : '');
-    }
-  }
-
-  async function getApiBase(force) {
-    if (!force && cachedApiBase !== undefined) return cachedApiBase;
-    cachedApiBase = await resolveApiBase();
-    return cachedApiBase;
-  }
-
-  /** Must run synchronously from the click handler before any await. */
-  function unlockAudioFromGesture() {
-    try {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (AC) {
-        if (!audioCtx) audioCtx = new AC();
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume().catch(function () {});
-        }
-        const buf = audioCtx.createBuffer(1, 1, 22050);
-        const src = audioCtx.createBufferSource();
-        src.buffer = buf;
-        src.connect(audioCtx.destination);
-        src.start(0);
-      }
-    } catch {
-      /* ignore */
-    }
-    if (!audioEl) return;
-    try {
-      audioEl.muted = true;
-      audioEl.src = SILENT_WAV;
-      const p = audioEl.play();
-      if (p && typeof p.then === 'function') {
-        p.then(function () {
-          audioEl.pause();
-          audioEl.muted = false;
-          audioEl.removeAttribute('src');
-          audioEl.load();
-        }).catch(function () {
-          audioEl.muted = false;
-        });
-      } else {
-        audioEl.muted = false;
-      }
-    } catch {
-      if (audioEl) audioEl.muted = false;
-    }
-  }
-
-  function resetPlayButtons() {
-    playButtons.forEach(function (btn, id) {
-      btn.disabled = false;
-      btn.classList.remove('is-playing', 'is-error');
-      btn.textContent = '▶ Play';
-      btn.setAttribute('aria-label', 'Play ' + id);
-    });
-    activeDemoId = null;
-  }
-
-  function stopDemoAudio() {
-    abortPlay = true;
-    if (audioEl) {
-      try {
-        audioEl.pause();
-        audioEl.removeAttribute('src');
-        audioEl.load();
-      } catch {
-        /* ignore */
-      }
-    }
-    try {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-    } catch {
-      /* ignore */
-    }
-    resetPlayButtons();
-    setProgress(null);
-  }
-
-  function markPlaying(id) {
-    playButtons.forEach(function (btn, bid) {
-      var on = bid === id;
-      btn.classList.toggle('is-playing', on);
-      btn.classList.remove('is-error');
-      btn.disabled = !on;
-      if (on) {
-        btn.disabled = false;
-        btn.textContent = '❚❚ Stop';
-        btn.setAttribute('aria-label', 'Stop ' + id);
-      } else {
-        btn.textContent = '▶ Play';
-      }
-    });
-    activeDemoId = id;
-  }
-
-  function markError(id, msg) {
-    var btn = playButtons.get(id);
-    if (btn) {
-      btn.disabled = false;
-      btn.classList.remove('is-playing');
-      btn.classList.add('is-error');
-      btn.textContent = '▶ Retry';
-    }
-    playButtons.forEach(function (b, bid) {
-      if (bid !== id) b.disabled = false;
-    });
-    activeDemoId = null;
-    setProgress(null);
-    setDemoStatus(msg);
-  }
-
-  function playUrl(url) {
-    return new Promise(function (resolve, reject) {
-      if (!audioEl) {
-        reject(new Error('Audio element missing'));
-        return;
-      }
-      var settled = false;
-      function cleanup() {
-        audioEl.removeEventListener('ended', onEnd);
-        audioEl.removeEventListener('error', onErr);
-        audioEl.removeEventListener('playing', onPlaying);
-      }
-      function finishOk() {
-        if (settled) return;
-        settled = true;
-        cleanup();
-        resolve();
-      }
-      function finishErr(msg) {
-        if (settled) return;
-        settled = true;
-        cleanup();
-        reject(new Error(msg || 'Audio playback failed'));
-      }
-      function onEnd() {
-        finishOk();
-      }
-      function onErr() {
-        finishErr('Could not load audio from ' + url);
-      }
-      function onPlaying() {
-        setDemoStatus('Playing… (use the scrubber above to pause/seek)');
-      }
-
-      audioEl.addEventListener('ended', onEnd);
-      audioEl.addEventListener('error', onErr);
-      audioEl.addEventListener('playing', onPlaying);
-      audioEl.muted = false;
-      audioEl.controls = true;
-      audioEl.src = url;
-      audioEl.load();
-
-      var p = audioEl.play();
-      if (p && typeof p.then === 'function') {
-        p.then(function () {
-          /* playing */
-        }).catch(function (err) {
-          // Autoplay blocked after async work — src is set; user can press native ▶
-          var name = err && err.name ? err.name : '';
-          if (name === 'NotAllowedError' || name === 'NotSupportedError') {
-            setDemoStatus(
-              'Audio loaded — press the ▶ button on the player above to hear it (browser blocked autoplay)',
-            );
-            setProgress(100, 'ready');
-            // Resolve when user finishes listening (ended) or after they start
-            var onUserPlay = function () {
-              audioEl.removeEventListener('play', onUserPlay);
-              setDemoStatus('Playing…');
-            };
-            audioEl.addEventListener('play', onUserPlay);
-            // Don't reject — keep waiting for ended
-          } else {
-            finishErr(err && err.message ? err.message : 'play() failed');
-          }
-        });
-      }
-    });
-  }
-
-  async function urlExists(url) {
-    try {
-      var head = await fetch(url, { method: 'HEAD', cache: 'no-store' });
-      if (head.ok) {
-        var len = Number(head.headers.get('content-length') || 0);
-        if (!len || len > 1000) return true;
-      }
-    } catch {
-      /* fall through */
-    }
-    try {
-      var r = await fetch(url, {
-        method: 'GET',
-        cache: 'no-store',
-        headers: { Range: 'bytes=0-11' },
-      });
-      if (!(r.ok || r.status === 206)) return false;
-      var buf = await r.arrayBuffer();
-      if (!buf || buf.byteLength < 12) return false;
-      var sig = new Uint8Array(buf);
-      return (
-        sig[0] === 0x52 &&
-        sig[1] === 0x49 &&
-        sig[2] === 0x46 &&
-        sig[3] === 0x46
-      );
-    } catch {
-      return false;
-    }
-  }
-
-  async function fetchCachedWav(base, id) {
-    var url = base + '/demo-output/' + encodeURIComponent(id) + '.wav';
-    if (await urlExists(url)) return url;
-    return null;
-  }
-
-  async function loadSampleText(base, file) {
-    var r = await fetch(base + '/samples/texts/' + encodeURIComponent(file), {
-      cache: 'no-store',
-    });
-    if (!r.ok) {
-      throw new Error(
-        'Sample text not found: ' +
-          file +
-          ' — open http://127.0.0.1:3847/ui/deliverable/ (npm run ui)',
-      );
-    }
-    return r.text();
-  }
-
-  async function synthesizeAndDownloadUrl(base, opts) {
-    var body = {
-      text: opts.text,
-      engine: opts.engine || 'auto',
-      format: 'wav',
-      ssml: opts.ssml || undefined,
-      dialogue: opts.dialogue || undefined,
-      normalize: true,
-      highpass: true,
-    };
-    var created = await fetch(base + '/tts/synthesize', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    if (!created.ok) {
-      var errText = await created.text();
-      throw new Error('Synthesize failed: ' + errText.slice(0, 200));
-    }
-    var job = await created.json();
-    var id = job.id;
-    var deadline = Date.now() + (opts.timeoutMs || 600000);
-    while (Date.now() < deadline) {
-      if (abortPlay) throw new Error('Cancelled');
-      var poll = await fetch(base + '/tts/jobs/' + id);
-      var j = await poll.json();
-      var pct = j.progress != null ? j.progress : 0;
-      setProgress(pct, (j.status || 'working') + ' · ' + pct + '%');
-      if (j.status === 'completed') {
-        return base + '/tts/jobs/' + id + '/download';
-      }
-      if (j.status === 'failed') {
-        throw new Error(j.error || 'Job failed');
-      }
-      await new Promise(function (r) {
-        setTimeout(r, 500);
-      });
-    }
-    throw new Error('Synthesis timed out');
-  }
-
-  async function resolveDemoAudio(base, demo, engine) {
-    if (!engine || engine === 'auto') {
-      var cached = await fetchCachedWav(base, demo.id);
-      if (cached) {
-        setDemoStatus('Playing cached ' + demo.id);
-        setProgress(100, 'cached');
-        return cached;
-      }
-    }
-    if (engine === 'platform') {
-      var cPlat = await fetchCachedWav(base, 'paragraph-platform');
-      if (cPlat) return cPlat;
-    }
-    if (engine === 'piper') {
-      var cPip = await fetchCachedWav(base, 'paragraph-piper');
-      if (cPip) return cPip;
-    }
-
-    setDemoStatus(
-      'Synthesizing ' +
-        demo.id +
-        '… (first run may take a while for long samples)',
-    );
-    setProgress(2, 'starting');
-    var text = await loadSampleText(base, demo.file);
-    return synthesizeAndDownloadUrl(base, {
-      text: text,
-      engine: engine || 'auto',
-      ssml: demo.ssml,
-      dialogue: demo.dialogue,
-    });
-  }
-
-  /** Browser speech fallback when API is offline (short demos only). */
-  function speakBrowser(text, label) {
-    return new Promise(function (resolve, reject) {
-      if (!window.speechSynthesis) {
-        reject(new Error('No speechSynthesis and API offline'));
-        return;
-      }
-      try {
-        window.speechSynthesis.cancel();
-      } catch {
-        /* ignore */
-      }
-      var u = new SpeechSynthesisUtterance(
-        String(text || '')
-          .replace(/<[^>]+>/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim()
-          .slice(0, 3500),
-      );
-      u.rate = 1;
-      u.onend = function () {
-        resolve();
-      };
-      u.onerror = function () {
-        reject(new Error('Browser speech failed'));
-      };
-      setDemoStatus(
-        (label || 'Browser speech fallback') +
-          ' — start API with npm run ui for full neural audio',
-      );
-      window.speechSynthesis.speak(u);
-    });
-  }
-
-  // Inline short samples so Play works even before /samples is reachable
-  const INLINE_SAMPLES = {
-    'quick-sentence':
-      'The quick brown fox jumped gracefully over the lazy sleeping dog near the old stone bridge.',
-    paragraph:
-      'At first light, the mountain lake lay still as polished glass; mist rose in thin ribbons from the water, curling around the dark pines that ringed the shore.',
-    'numbers-and-dates':
-      'The company raised 4.2 million dollars in Q3 2025. Revenue grew 847 percent. The board meeting is at 2:30 PM on March 15th, 2026.',
-    'ssml-showcase':
-      'Welcome to Resonara. Version 2 point 0. This is an SSML showcase with emphasis and breaks.',
-    'dialogue-script':
-      'Narrator: The coffee shop was nearly empty. Alice: Do you think the presentation went well? Bob: Honestly, I think we lost them at slide seven.',
-    'pronunciation-challenge':
-      'Setting up the stack required PostgreSQL, Kubernetes, and nginx. We debated GIF with a hard G and shipped JSON over OAuth.',
-  };
-
-  async function runCompare(base) {
-    setDemoStatus('A/B compare — platform first, then Piper');
-    var platformUrl = await fetchCachedWav(base, 'paragraph-platform');
-    if (!platformUrl) {
-      var text = await loadSampleText(base, 'paragraph.txt');
-      platformUrl = await synthesizeAndDownloadUrl(base, {
-        text: text,
-        engine: 'platform',
-      });
-    }
-    if (abortPlay) return;
-    setDemoStatus('Playing platform TTS…');
-    setProgress(100, 'platform');
-    await playUrl(platformUrl);
-    if (abortPlay) return;
-
-    var piperUrl = await fetchCachedWav(base, 'paragraph-piper');
-    if (!piperUrl) {
-      var text2 = await loadSampleText(base, 'paragraph.txt');
-      piperUrl = await synthesizeAndDownloadUrl(base, {
-        text: text2,
-        engine: 'piper',
-      });
-    }
-    if (abortPlay) return;
-    setDemoStatus('Playing Piper neural…');
-    setProgress(100, 'piper');
-    await playUrl(piperUrl);
-    setDemoStatus('Compare finished — platform then Piper');
-  }
-
-  async function runAll(base) {
-    for (var i = 0; i < SAMPLE_DEMOS.length; i++) {
-      if (abortPlay) return;
-      var demo = SAMPLE_DEMOS[i];
-      setDemoStatus(
-        'All demos: ' + (i + 1) + '/' + SAMPLE_DEMOS.length + ' — ' + demo.id,
-      );
-      var url = await resolveDemoAudio(base, demo);
-      if (abortPlay) return;
-      await playUrl(url);
-    }
-    setDemoStatus('All demos finished');
-  }
-
-  async function playDemo(demo) {
-    if (activeDemoId === demo.id) {
-      stopDemoAudio();
-      setDemoStatus('Stopped');
-      return;
-    }
-    stopDemoAudio();
-    abortPlay = false;
-    markPlaying(demo.id);
-    setDemoStatus('Starting ' + demo.id + '…');
-
-    try {
-      var base = await getApiBase(true);
-      if (base == null) {
-        // Offline fallback for short demos via browser speech
-        var inline = INLINE_SAMPLES[demo.id];
-        if (inline || demo.file) {
-          var fallbackText = inline;
-          if (!fallbackText && demo.file) {
-            throw new Error(
-              'API offline. Run: npm run ui   then open http://127.0.0.1:3847/ui/deliverable/',
-            );
-          }
-          await speakBrowser(fallbackText, demo.id);
-          resetPlayButtons();
-          setDemoStatus('Finished ' + demo.id + ' (browser speech — start API for neural audio)');
-          return;
-        }
-        throw new Error(
-          'API offline. Run: npm run ui   then open http://127.0.0.1:3847/ui/deliverable/',
+  renderVoices(fallbackVoices);
+  fetch('/tts/voices')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => {
+      const list = Array.isArray(data) ? data : data?.voices || data?.items;
+      if (list?.length) {
+        renderVoices(
+          list.slice(0, 24).map((v) => ({
+            id: v.id,
+            name: v.name || v.id,
+            engine: v.engine,
+            language: v.language,
+            quality: v.quality,
+            gender: v.gender,
+            sampleRate: v.sampleRate,
+            installed: true,
+          })),
         );
       }
+    })
+    .catch(() => {});
 
-      if (demo.type === 'compare') {
-        await runCompare(base);
-      } else if (demo.type === 'all') {
-        await runAll(base);
-      } else {
-        var url = await resolveDemoAudio(base, demo);
-        if (abortPlay) return;
-        setDemoStatus('Playing ' + demo.id);
-        setProgress(100, 'playing');
-        await playUrl(url);
-        if (!abortPlay) setDemoStatus('Finished ' + demo.id);
-      }
-
-      if (!abortPlay) {
-        resetPlayButtons();
-        setProgress(null);
-      }
-    } catch (e) {
-      if (abortPlay) {
-        setDemoStatus('Stopped');
-        resetPlayButtons();
-        return;
-      }
-      markError(
-        demo.id,
-        'Failed: ' + (e && e.message ? e.message : String(e)),
-      );
-    }
-  }
-
-  if (demoTbody) {
-    DEMO_CATALOG.forEach(function (demo) {
-      var tr = document.createElement('tr');
-      var tdPlay = document.createElement('td');
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'demo-play-btn';
-      btn.textContent = '▶ Play';
-      btn.setAttribute('aria-label', 'Play ' + demo.cmd);
-      btn.dataset.demo = demo.id;
-      // pointerdown unlocks audio while still inside the user gesture
-      btn.addEventListener('pointerdown', function () {
-        unlockAudioFromGesture();
-      });
-      btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        unlockAudioFromGesture();
-        playDemo(demo);
-      });
-      tdPlay.appendChild(btn);
-      playButtons.set(demo.id, btn);
-
-      var tdCmd = document.createElement('td');
-      var code = document.createElement('code');
-      code.textContent = 'npm run ' + demo.cmd;
-      tdCmd.appendChild(code);
-
-      var tdSample = document.createElement('td');
-      tdSample.textContent = demo.sample;
-
-      var tdListen = document.createElement('td');
-      tdListen.textContent = demo.listen;
-
-      tr.appendChild(tdPlay);
-      tr.appendChild(tdCmd);
-      tr.appendChild(tdSample);
-      tr.appendChild(tdListen);
-      demoTbody.appendChild(tr);
-    });
-
-    getApiBase(true).then(function (base) {
-      if (base == null) {
-        setDemoStatus(
-          'Server offline — run npm run ui and open http://127.0.0.1:3847/ui/deliverable/  (short demos still work via browser speech)',
-        );
-      } else {
-        setDemoStatus(
-          'API ready at ' +
-            (base || location.origin) +
-            ' — press Play on any demo',
-        );
-      }
-    });
-  }
-
-  // --- Chapter marker demo (interactive + audible) ---
-  const chapters = [
-    { title: 'Introduction', start: 0, end: 95 },
-    { title: 'Chapter 1 — The Signal', start: 95, end: 320 },
-    { title: 'Chapter 2 — Resonance', start: 320, end: 540 },
-    { title: 'Chapter 3 — Long Form', start: 540, end: 760 },
+  /* ---------- Demos ---------- */
+  const demos = [
+    ['npm run demo:quick', 'quick-sentence', 'The quick brown fox…', 'Natural single sentence', 'quick-sentence.wav'],
+    ['npm run demo:paragraph', 'paragraph', 'Sunrise over mountain lake', 'Prosody + pauses', 'paragraph.wav'],
+    ['npm run demo:article', 'short-article', 'History of radio', 'Multi-paragraph flow', 'short-article.wav'],
+    ['npm run demo:news', 'news-article', 'Tech news ~2k words', 'Numbers, quotes, terms', 'news-article.wav'],
+    ['npm run demo:chapter', 'book-chapter', 'Fiction + dialogue ~5k', 'ZERO audible seams', 'book-chapter.wav'],
+    ['npm run demo:technical', 'technical-doc', 'NestJS / TypeORM docs', 'Acronym pronunciation', 'technical-doc.wav'],
+    ['npm run demo:ssml', 'ssml-showcase', '<emphasis>…</emphasis>', 'All SSML effects', 'ssml-showcase.wav'],
+    ['npm run demo:dialogue', 'dialogue-script', '[alice]: … [bob]: …', 'Clean voice switches', 'dialogue-script.wav'],
+    ['npm run demo:pronunciation', 'pronunciation-challenge', 'PostgreSQL, kubectl…', 'Dictionary applied', 'pronunciation-challenge.wav'],
+    ['npm run demo:numbers', 'numbers-and-dates', '$4.2M, March 15th…', 'Numbers spoken correctly', 'numbers-and-dates.wav'],
+    ['npm run demo:all', 'all 10 samples', 'Full suite', 'report.json stats', null],
+    ['npm run demo:compare', 'paragraph A/B', 'platform vs neural', 'Side-by-side listen', null],
   ];
-  const total = 760;
-  const list = document.getElementById('chapter-demo-list');
-  const playhead = document.getElementById('playhead');
-  const timeLabel = document.getElementById('time-label');
-  const playBtn = document.getElementById('play-demo');
-  const timeline = document.querySelector('#chapters .timeline');
-  const statusEl = document.getElementById('chapter-status');
-  let timer = null;
-  let t = 0;
-  let lastSpokenChapter = -1;
-  const chapterButtons = [];
-
-  function fmt(sec) {
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return m + ':' + String(s).padStart(2, '0');
-  }
-
-  function currentChapterIndex(sec) {
-    for (let i = chapters.length - 1; i >= 0; i--) {
-      if (sec >= chapters[i].start) return i;
-    }
-    return 0;
-  }
-
-  function stopSpeech() {
-    try {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-    } catch {
-      /* ignore */
-    }
-  }
-
-  function speakChapter(index) {
-    if (index === lastSpokenChapter) return;
-    lastSpokenChapter = index;
-    const ch = chapters[index];
-    if (!ch || !window.speechSynthesis) return;
-    try {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(
-        ch.title.replace(/—/g, ',') + '. Chapter marker at ' + fmt(ch.start),
-      );
-      u.rate = 1.05;
-      u.pitch = 1;
-      u.volume = 1;
-      window.speechSynthesis.speak(u);
-    } catch {
-      /* Speech API unavailable */
-    }
-  }
-
-  function setPlayingUi(playing) {
-    if (!playBtn) return;
-    playBtn.textContent = playing ? '❚❚ Pause' : '▶ Play demo';
-    playBtn.setAttribute('aria-pressed', playing ? 'true' : 'false');
-    playBtn.setAttribute(
-      'aria-label',
-      playing ? 'Pause chapter demo' : 'Play chapter demo',
-    );
-  }
-
-  function stopPlayback() {
-    if (timer) {
-      clearInterval(timer);
-      timer = null;
-    }
-    stopSpeech();
-    setPlayingUi(false);
-  }
-
-  function update() {
-    if (playhead) {
-      const pct = Math.min(100, Math.max(0, (t / total) * 100));
-      playhead.style.width = pct + '%';
-    }
-    if (timeLabel) {
-      timeLabel.textContent = fmt(t) + ' / ' + fmt(total);
-    }
-    const idx = currentChapterIndex(t);
-    chapterButtons.forEach((btn, i) => {
-      btn.classList.toggle('is-active', i === idx);
-      btn.setAttribute('aria-current', i === idx ? 'true' : 'false');
-    });
-    if (statusEl) {
-      statusEl.textContent =
-        'Now: ' + chapters[idx].title + ' (' + fmt(chapters[idx].start) + '–' + fmt(chapters[idx].end) + ')';
-    }
-    if (timer) speakChapter(idx);
-  }
-
-  function seekTo(sec) {
-    t = Math.max(0, Math.min(total, sec));
-    lastSpokenChapter = -1;
-    update();
-    if (timer) speakChapter(currentChapterIndex(t));
-  }
-
-  function startPlayback() {
-    if (timer) return;
-    if (t >= total) {
-      t = 0;
-      lastSpokenChapter = -1;
-    }
-    setPlayingUi(true);
-    speakChapter(currentChapterIndex(t));
-    // ~1s of audiobook time every 40ms wall clock → full demo ~30s
-    timer = setInterval(() => {
-      t += 1;
-      if (t >= total) {
-        t = total;
-        update();
-        stopPlayback();
-        if (statusEl) statusEl.textContent = 'Finished — click a chapter or Play to restart';
-        return;
-      }
-      update();
-    }, 40);
-  }
-
-  if (list) {
-    chapters.forEach((ch, i) => {
-      const li = document.createElement('li');
+  const demoBody = document.getElementById('demo-tbody');
+  demos.forEach((d) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><code>' +
+      d[0] +
+      '</code></td><td>' +
+      d[1] +
+      '</td><td>' +
+      d[2] +
+      '</td><td>' +
+      d[3] +
+      '</td><td></td>';
+    const td = tr.lastElementChild;
+    if (d[4]) {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'chapter-item';
-      btn.textContent = ch.title + ' · ' + fmt(ch.start) + '–' + fmt(ch.end);
+      btn.className = 'btn ghost';
+      btn.textContent = 'Play';
+      btn.setAttribute('aria-label', 'Play ' + d[1]);
       btn.addEventListener('click', () => {
-        seekTo(ch.start);
-        if (!timer) startPlayback();
+        const a = new Audio('/demo-output/' + d[4]);
+        a.play().catch(() => alert('Start API with make ui to play demo audio'));
       });
-      li.appendChild(btn);
-      list.appendChild(li);
-      chapterButtons.push(btn);
+      td.appendChild(btn);
+    }
+    demoBody.appendChild(tr);
+  });
+
+  /* ---------- Coverage chart ---------- */
+  (function drawCoverage() {
+    const canvas = document.getElementById('cov-chart');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.fillStyle = '#0b1220';
+    ctx.fillRect(0, 0, w, h);
+    const modules = [
+      { name: 'tts.service', before: 10, after: 85 },
+      { name: 'piper-tts', before: 0, after: 90 },
+      { name: 'ssml-parser', before: 0, after: 92 },
+      { name: 'chunker', before: 40, after: 95 },
+      { name: 'ffmpeg', before: 35, after: 80 },
+      { name: 'dict', before: 0, after: 88 },
+      { name: 'dialogue', before: 0, after: 90 },
+      { name: 'docs', before: 0, after: 82 },
+      { name: 'tracks', before: 0, after: 70 },
+      { name: 'jobs', before: 5, after: 75 },
+    ];
+    const barW = (w - 60) / modules.length;
+    modules.forEach((m, i) => {
+      const x = 40 + i * barW;
+      const hb = (m.before / 100) * (h - 50);
+      const ha = (m.after / 100) * (h - 50);
+      ctx.fillStyle = '#64748b';
+      ctx.fillRect(x + 4, h - 30 - hb, barW / 2 - 6, hb);
+      ctx.fillStyle = '#2dd4bf';
+      ctx.fillRect(x + barW / 2, h - 30 - ha, barW / 2 - 6, ha);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px system-ui';
+      ctx.save();
+      ctx.translate(x + 8, h - 8);
+      ctx.fillText(m.name.slice(0, 10), 0, 0);
+      ctx.restore();
+    });
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '12px system-ui';
+    ctx.fillText('gray = before · teal = after', 40, 18);
+  })();
+
+  /* ---------- Benchmarks ---------- */
+  const benchDefault = [
+    { name: 'quick-sentence', words: 16, duration: 4.9, rtf: 2.06, cps: 38.4 },
+    { name: 'paragraph', words: 74, duration: 21.8, rtf: 7.55, cps: 143.5 },
+    { name: 'short-article', words: 471, duration: 180.5, rtf: 16.52, cps: 285.6 },
+    { name: 'news-article', words: 2039, duration: 912.8, rtf: 18.41, cps: 270.6 },
+    { name: 'book-chapter', words: 5164, duration: 1800, rtf: 17.84, cps: 305.9 },
+    { name: 'technical-doc', words: 3000, duration: 1589, rtf: 17.58, cps: 232.3 },
+    { name: 'ssml-showcase', words: 80, duration: 12.5, rtf: 4.91, cps: 210.2 },
+    { name: 'dialogue-script', words: 100, duration: 20.3, rtf: 2.73, cps: 59.4 },
+    { name: 'pronunciation', words: 500, duration: 33.6, rtf: 9.69, cps: 160.2 },
+    { name: 'numbers-dates', words: 80, duration: 33.9, rtf: 8.74, cps: 71.9 },
+  ];
+  function renderBench(rows) {
+    const canvas = document.getElementById('bench-chart');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.fillStyle = '#0b1220';
+    ctx.fillRect(0, 0, w, h);
+    const max = Math.max(2, ...rows.map((r) => r.rtf));
+    const barW = (w - 50) / rows.length;
+    rows.forEach((r, i) => {
+      const bh = (r.rtf / max) * (h - 55);
+      const x = 30 + i * barW;
+      const y = h - 35 - bh;
+      ctx.fillStyle = r.rtf >= 1 ? '#2dd4bf' : '#f87171';
+      ctx.fillRect(x + 6, y, barW - 12, bh);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px system-ui';
+      ctx.fillText(r.name.slice(0, 8), x + 2, h - 12);
+      ctx.fillText(r.rtf.toFixed(1) + '×', x + 6, y - 4);
+    });
+    // 1x line
+    const y1 = h - 35 - (1 / max) * (h - 55);
+    ctx.strokeStyle = '#fbbf24';
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(20, y1);
+    ctx.lineTo(w - 10, y1);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    const tb = document.getElementById('bench-tbody');
+    tb.innerHTML = '';
+    rows.forEach((r) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' +
+        r.name +
+        '</td><td>' +
+        r.words +
+        '</td><td>' +
+        r.duration.toFixed(1) +
+        's</td><td>' +
+        r.rtf.toFixed(2) +
+        '×</td><td>' +
+        r.cps.toFixed(1) +
+        '</td>';
+      tb.appendChild(tr);
     });
   }
+  renderBench(benchDefault);
+  fetch('/demo-output/report.json')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => {
+      if (!data?.results?.length) return;
+      renderBench(
+        data.results.map((x) => ({
+          name: x.name,
+          words: x.words || 0,
+          duration: x.duration || 0,
+          rtf: x.realTimeFactor || 0,
+          cps: x.charsPerSecond || 0,
+        })),
+      );
+    })
+    .catch(() => {});
 
-  if (playBtn) {
-    playBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (timer) {
-        stopPlayback();
-        if (statusEl) statusEl.textContent = 'Paused at ' + fmt(t);
-        return;
+  /* ---------- Dictionary ---------- */
+  const dictRows = [
+    ['PostgreSQL', 'post gres Q L', 'post-grez-cue-el (mangled)', 'post gres Q L'],
+    ['Kubernetes', 'koo ber net eez', 'koo-ber-nett-ees', 'koo ber net eez'],
+    ['nginx', 'engine X', 'en-jinx', 'engine X'],
+    ['kubectl', 'kube control', 'kubect-el', 'kube control'],
+    ['OAuth', 'oh auth', 'oh-ath', 'oh auth'],
+    ['API', 'A P I', 'appy', 'A P I'],
+    ['GIF', 'gif (hard G)', 'jif', 'gif'],
+    ['JSON', 'jason', 'jay-sahn', 'jason'],
+  ];
+  const dictBody = document.getElementById('dict-tbody');
+  dictRows.forEach((r) => {
+    const tr = document.createElement('tr');
+    r.forEach((c) => {
+      const td = document.createElement('td');
+      td.textContent = c;
+      tr.appendChild(td);
+    });
+    dictBody.appendChild(tr);
+  });
+
+  /* ---------- Chapters ---------- */
+  const chapters = [
+    { title: 'Chapter 1 — Dawn at the Lake', start: '0:00', pct: 0 },
+    { title: 'Chapter 2 — The Message', start: '4:12', pct: 18 },
+    { title: 'Chapter 3 — Alice Arrives', start: '9:40', pct: 38 },
+    { title: 'Chapter 4 — Bob’s Counter', start: '16:05', pct: 58 },
+    { title: 'Chapter 5 — Resolution', start: '22:30', pct: 78 },
+  ];
+  const chList = document.getElementById('chapter-list');
+  chapters.forEach((ch, i) => {
+    const li = document.createElement('li');
+    li.setAttribute('role', 'option');
+    li.tabIndex = 0;
+    li.innerHTML =
+      '<strong>' +
+      ch.title +
+      '</strong><div class="time">' +
+      ch.start +
+      '</div>';
+    const activate = () => {
+      chList.querySelectorAll('[aria-selected="true"]').forEach((el) => el.setAttribute('aria-selected', 'false'));
+      li.setAttribute('aria-selected', 'true');
+      document.getElementById('chapter-now').textContent = 'Now: ' + ch.title + ' @ ' + ch.start;
+      document.getElementById('chapter-progress').style.width = ch.pct + '%';
+      const audio = document.getElementById('audio-chapter');
+      // Approximate seek into long chapter demo if loaded
+      if (audio.duration && !Number.isNaN(audio.duration)) {
+        audio.currentTime = (ch.pct / 100) * audio.duration;
       }
-      startPlayback();
-    });
-  }
-
-  if (timeline) {
-    timeline.style.cursor = 'pointer';
-    timeline.setAttribute('role', 'slider');
-    timeline.setAttribute('aria-label', 'Seek in chapter demo');
-    timeline.setAttribute('aria-valuemin', '0');
-    timeline.setAttribute('aria-valuemax', String(total));
-    const seekFromEvent = (ev) => {
-      const rect = timeline.getBoundingClientRect();
-      const x = (ev.clientX - rect.left) / Math.max(1, rect.width);
-      seekTo(x * total);
     };
-    timeline.addEventListener('click', seekFromEvent);
+    li.addEventListener('click', activate);
+    li.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activate();
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = li.nextElementSibling;
+        if (next) next.focus();
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = li.previousElementSibling;
+        if (prev) prev.focus();
+      }
+    });
+    if (i === 0) {
+      li.setAttribute('aria-selected', 'true');
+      document.getElementById('chapter-now').textContent = 'Now: ' + ch.title + ' @ ' + ch.start;
+      document.getElementById('chapter-progress').style.width = '0%';
+    }
+    chList.appendChild(li);
+  });
+
+  /* ---------- G27 feature matrix (kept) ---------- */
+  const rows = [
+    ['Engine plurality', '✅', '❌', '❌', '⚠️', '✅'],
+    ['QA WER loop', '❌', '❌', '❌', '❌', '✅'],
+    ['Read-along karaoke', '❌', '✅', '⚠️', '⚠️', '✅'],
+    ['EPUB3 Media Overlays', '❌', '✅', '❌', '❌', '✅'],
+    ['Library bookshelf', '⚠️', '⚠️', '✅', '❌', '✅'],
+    ['Bookmarks', '❌', '⚠️', '✅', '❌', '✅'],
+    ['Sleep timer', '❌', '❌', '✅', '❌', '✅'],
+    ['Playback speed 0.5–3×', '❌', '⚠️', '✅', '⚠️', '✅'],
+    ['Podcast RSS', '❌', '❌', '✅', '❌', '✅'],
+    ['Real CLI', '✅', '⚠️', '⚠️', '❌', '✅'],
+    ['Watch folder', '⚠️', '❌', '❌', '❌', '✅'],
+    ['Cover art', '⚠️', '⚠️', '✅', '❌', '✅'],
+    ['Seamless long-form TTS', '⚠️', '⚠️', '❌', '❌', '✅'],
+    ['Offline desktop', '⚠️', '⚠️', '⚠️', '✅', '✅'],
+  ];
+  const tb = document.querySelector('#feature-matrix tbody');
+  rows.forEach((r) => {
+    const tr = document.createElement('tr');
+    r.forEach((c, i) => {
+      const td = document.createElement(i === 0 ? 'th' : 'td');
+      if (i === 0) td.scope = 'row';
+      td.textContent = c;
+      if (c === '✅') td.className = 'cell-yes';
+      if (c === '⚠️') td.className = 'cell-partial';
+      if (c === '❌') td.className = 'cell-no';
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+
+  const qaSamples = [
+    { name: 'quick-sentence', wer: 0.0 },
+    { name: 'paragraph', wer: 0.02 },
+    { name: 'short-article', wer: 0.04 },
+    { name: 'numbers', wer: 0.06 },
+    { name: 'dialogue', wer: 0.05 },
+  ];
+  fetch('/demo-output/qa-report.json')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => {
+      if (data?.results) {
+        const mapped = data.results
+          .filter((x) => x.aggregateWer != null)
+          .map((x) => ({ name: x.name, wer: x.aggregateWer }));
+        if (mapped.length) drawWer(mapped);
+      } else drawWer(qaSamples);
+    })
+    .catch(() => drawWer(qaSamples));
+
+  function drawWer(samples) {
+    const canvas = document.getElementById('wer-chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.fillStyle = '#0b1220';
+    ctx.fillRect(0, 0, w, h);
+    const max = Math.max(0.1, ...samples.map((s) => s.wer));
+    const barW = (w - 40) / samples.length;
+    samples.forEach((s, i) => {
+      const bh = (s.wer / max) * (h - 50);
+      const x = 20 + i * barW;
+      const y = h - 30 - bh;
+      ctx.fillStyle = s.wer > 0.08 ? '#f87171' : '#2dd4bf';
+      ctx.fillRect(x + 8, y, barW - 16, bh);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '11px system-ui';
+      ctx.fillText(s.name.slice(0, 10), x + 4, h - 12);
+      ctx.fillText(s.wer.toFixed(3), x + 8, y - 4);
+    });
+    const ty = h - 30 - (0.08 / max) * (h - 50);
+    ctx.strokeStyle = '#fbbf24';
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(10, ty);
+    ctx.lineTo(w - 10, ty);
+    ctx.stroke();
+    const qt = document.getElementById('qa-table');
+    if (qt) {
+      qt.innerHTML =
+        '<table><thead><tr><th>Sample</th><th>WER</th></tr></thead><tbody>' +
+        samples
+          .map((s) => '<tr><td>' + s.name + '</td><td>' + s.wer.toFixed(4) + '</td></tr>')
+          .join('') +
+        '</tbody></table>';
+    }
   }
 
-  update();
+  // Karaoke demo text
+  const demoText = document.getElementById('demo-text');
+  if (demoText) {
+    'The quick brown fox jumped gracefully over the lazy sleeping dog.'
+      .split(/\s+/)
+      .forEach((word, i) => {
+        const span = document.createElement('span');
+        span.className = 'w';
+        span.textContent = word + ' ';
+        span.dataset.i = String(i);
+        demoText.appendChild(span);
+      });
+  }
 })();

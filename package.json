@@ -1,7 +1,7 @@
 {
   "name": "resonara",
   "version": "1.0.0",
-  "description": "Resonara — Shape sound. Speak the long form. Play freely. Desktop audio lab, piano, and long-form system TTS.",
+  "description": "Resonara \u2014 Shape sound. Speak the long form. Play freely. Desktop audio lab, piano, and long-form system TTS.",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -29,6 +29,8 @@
     "smoke:tts": "node scripts/smoke-tts.js",
     "smoke:service": "node scripts/smoke-service.js",
     "download:piper": "node scripts/download-piper.js",
+    "download:whisper": "node scripts/download-whisper.js",
+    "download:kokoro": "node scripts/download-kokoro.js",
     "postinstall": "",
     "demo:quick": "node scripts/demo/run-demo.js quick-sentence",
     "demo:paragraph": "node scripts/demo/run-demo.js paragraph",
@@ -57,7 +59,10 @@
     "demo:pt:compare": "node scripts/demo/run-demo.js --lang pt-BR --compare paragrafo --no-open",
     "demo:all-languages": "node scripts/demo/run-demo.js --all-languages --no-open",
     "benchmark": "node scripts/benchmark.js",
-    "benchmark:pt": "node scripts/benchmark.js --lang pt-BR"
+    "benchmark:pt": "node scripts/benchmark.js --lang pt-BR",
+    "qa:sample": "node scripts/qa-run.js sample",
+    "qa:all": "node scripts/qa-run.js all",
+    "cli": "node scripts/resonara-cli.js"
   },
   "dependencies": {
     "@nestjs/bullmq": "^10.2.3",
@@ -157,7 +162,7 @@
   "build": {
     "appId": "app.resonara.desktop",
     "productName": "Resonara",
-    "copyright": "Copyright © Resonara",
+    "copyright": "Copyright \u00a9 Resonara",
     "directories": {
       "output": "release",
       "buildResources": "build"

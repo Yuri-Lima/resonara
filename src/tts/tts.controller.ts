@@ -57,8 +57,12 @@ class SynthesizeDto {
   format?: 'wav' | 'mp3' | 'm4b';
 
   @IsOptional()
-  @IsIn(['auto', 'piper', 'platform'])
-  engine?: 'auto' | 'piper' | 'platform';
+  @IsIn(['auto', 'piper', 'platform', 'kokoro'])
+  engine?: 'auto' | 'piper' | 'platform' | 'kokoro';
+
+  @IsOptional()
+  @IsIn(['off', 'sample', 'full'])
+  qa?: 'off' | 'sample' | 'full';
 
   /** 'en' | 'pt-BR' | 'auto' (detect language). */
   @IsOptional()
@@ -95,6 +99,33 @@ class SynthesizeDto {
   @IsOptional()
   @IsIn(['podcast', 'audiobook', 'raw', 'custom'])
   postProcessing?: 'podcast' | 'audiobook' | 'raw' | 'custom';
+
+  /**
+   * Optional preprocessing config. Raw paste: off unless enabled.
+   * Document import applies document defaults unless enabled === false.
+   */
+  @IsOptional()
+  preprocessing?: {
+    enabled?: boolean;
+    documentMode?: boolean;
+    rules?: Record<string, boolean | string>;
+  };
+}
+
+class PreprocessPreviewDto {
+  @IsString()
+  text!: string;
+
+  @IsOptional()
+  @IsBoolean()
+  documentMode?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  enabled?: boolean;
+
+  @IsOptional()
+  rules?: Record<string, boolean | string>;
 }
 
 class PronunciationBody {
@@ -153,6 +184,19 @@ export class TtsController {
     return { elements: supportedSsmlElements() };
   }
 
+  @Post('preprocess-preview')
+  @ApiBody({ type: PreprocessPreviewDto })
+  preprocessPreview(@Body() body: PreprocessPreviewDto) {
+    if (body.text == null) {
+      throw new BadRequestException('text is required');
+    }
+    return this.tts.previewPreprocess(body.text, {
+      documentMode: body.documentMode,
+      enabled: body.enabled ?? body.documentMode === true,
+      rules: body.rules as import('./text-preprocessor').PreprocessRules | undefined,
+    });
+  }
+
   @Post('synthesize')
   @ApiBody({ type: SynthesizeDto })
   async synthesize(@Body() body: SynthesizeDto) {
@@ -174,6 +218,14 @@ export class TtsController {
       compress: body.compress,
       postProcessing: body.postProcessing,
       title: body.title,
+      preprocessing: body.preprocessing as
+        | {
+            enabled?: boolean;
+            documentMode?: boolean;
+            rules?: import('./text-preprocessor').PreprocessRules;
+          }
+        | undefined,
+      qa: body.qa,
     });
     return this.tts.toPublicJob(job);
   }
@@ -218,6 +270,14 @@ export class TtsController {
         highpass: body.highpass,
         compress: body.compress,
         title: body.title || doc.title,
+        // Document imports: preprocessing ON by default (documentMode)
+        preprocessing: body.preprocessing
+          ? (body.preprocessing as {
+              enabled?: boolean;
+              documentMode?: boolean;
+              rules?: import('./text-preprocessor').PreprocessRules;
+            })
+          : { enabled: true, documentMode: true },
       });
       return { document: { title: doc.title, chapters: doc.chapters.length, totalWords: doc.totalWords, format: doc.format }, job: this.tts.toPublicJob(job) };
     } finally {
@@ -288,6 +348,24 @@ export class TtsController {
   @Get('jobs/:id/timestamps')
   async timestamps(@Param('id') id: string) {
     return this.tts.getSubtitles(id, 'json');
+  }
+
+  @Get('jobs/:id/qa')
+  async jobQa(@Param('id') id: string) {
+    const job = await this.tts.getJob(id);
+    return (
+      job.metadata?.qa || {
+        mode: 'off',
+        aggregateWer: null,
+        chunks: [],
+        message: 'No QA data for this job',
+      }
+    );
+  }
+
+  @Post('jobs/:id/qa/rerun')
+  async jobQaRerun(@Param('id') id: string) {
+    return this.tts.rerunQa(id);
   }
 
   @Get('models')
@@ -439,5 +517,11 @@ export class TtsController {
       highpass: true,
     });
     return this.tts.toPublicJob(job);
+  }
+
+  /** EPUB 3 Media Overlays package for a completed job. */
+  @Post('jobs/:id/export/epub-overlay')
+  async exportEpubOverlay(@Param('id') id: string) {
+    return this.tts.exportEpubOverlay(id);
   }
 }

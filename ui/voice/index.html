@@ -138,6 +138,45 @@
         <tbody id="dict-body"></tbody>
       </table>
     </section>
+  
+    <section class="panel" id="library-panel">
+      <h2>Audiobook library</h2>
+      <p class="lede">Completed syntheses with resume progress. Click a card to open player + read-along.</p>
+      <div class="library-toolbar">
+        <input type="search" id="library-search" placeholder="Search titles…" aria-label="Search library" />
+        <select id="library-engine" aria-label="Filter engine">
+          <option value="">All engines</option>
+          <option value="piper">Piper</option>
+          <option value="kokoro">Kokoro</option>
+          <option value="platform">Platform</option>
+        </select>
+      </div>
+      <div id="continue-rail" class="continue-rail" aria-label="Continue listening"></div>
+      <div id="library-grid" class="library-grid" role="list"></div>
+    </section>
+
+    <section class="panel" id="readalong-panel" hidden>
+      <h2>Read-along <span id="sync-badge" class="badge">approximate sync</span></h2>
+      <div class="readalong-controls">
+        <button type="button" id="ra-play" aria-label="Play or pause">Play</button>
+        <label>Speed <input type="range" id="ra-speed" min="0.5" max="3" step="0.1" value="1" /> <span id="ra-speed-val">1.0×</span></label>
+        <label>Sleep
+          <select id="ra-sleep" aria-label="Sleep timer">
+            <option value="0">Off</option>
+            <option value="15">15 min</option>
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+            <option value="60">60 min</option>
+            <option value="chapter">End of chapter</option>
+          </select>
+        </label>
+        <button type="button" id="ra-bookmark">Bookmark</button>
+      </div>
+      <audio id="ra-audio" controls style="width:100%"></audio>
+      <div id="readalong-text" class="readalong-text" tabindex="0" aria-live="polite"></div>
+      <ul id="bookmark-list" class="bookmark-list"></ul>
+    </section>
+
   </main>
   <script src="app.js"></script>
 </body>
