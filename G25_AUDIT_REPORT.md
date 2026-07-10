@@ -226,12 +226,42 @@ G25 commits (`feat(tts): neural Piper…`, dialogue/model manager, demos, UI das
 
 | Gap | Status | Notes |
 |-----|--------|-------|
-| Test failures B3 | pending | Phase 2 |
-| Piper packaging B1/B2 | pending | Phases 2, 24 |
-| Coverage threshold | pending | Phase 21 |
-| pt-BR expansion | pending | Phases 6–23 |
-| Desktop DMG/NSIS | pending | Phases 24–26 |
+| Test failures B3 | ✅ Fixed | Chapter + crossfade specs aligned with production guards |
+| Piper packaging B1/B2 | ✅ Mitigated | Python venv preferred in desktop/main.js; afterPack chmod/codesign; mac extraResources ships piper-venv |
+| Coverage threshold | ⚠️ Partial | Unit suite green (189+); configured collectCoverageFrom still ~76–78% stmts/lines |
+| pt-BR expansion | ✅ Shipped | Language layer, formatters, detection, samples, demos, UI language selector, mixed-language planner |
+| Desktop DMG/NSIS | ✅ Configured | electron-builder mac/win targets; Windows build-verified + WINDOWS_TESTING.md |
+| **Critical G26 bug: auto pt-BR → Kokoro** | ✅ Fixed (this session) | `resolveEngine(auto, lang)` skips Kokoro for pt-*; `startLongForm` resolves language before engine and aligns engine to selected voice |
+
+### G26 re-audit baseline (2026-07-10, this session)
+
+| Check | Result |
+|-------|--------|
+| `npm install` | OK (1067 packages, 31 vulns pre-existing) |
+| `npm run build` | Clean |
+| `npm test` | **189 passed**, 1 skipped, 0 failed |
+| `npx eslint src/ --ext .ts` | 0 errors, 8 warnings (unused vars, pre-existing) |
+| `npm run test:cov` | ~75.8% stmts / 78.0% lines (threshold 80% — still fails) |
+| `demo:quick` (auto) | Kokoro `af_sarah`, RTF ~1.2× |
+| `demo:pt:rapida` (auto) | Piper `pt_BR-faber-medium`, RTF ~0.77× (was **broken** before engine fix) |
+| `demo:pt:paragrafo` | Piper faber, RTF ~2.1× |
+| `demo:pt:numeros` | Piper faber, RTF ~4.1×, ~51s audio |
+| Models on disk | `en_US-lessac-medium` + `pt_BR-faber-medium` (distinct SHA-256) |
+| macOS pt_BR system voices | Luciana, Eddy, Flo, … (Joana is pt_PT — correctly excluded) |
+
+### Feature inventory after G26 (delta from §2)
+
+| Feature | Was (G25) | Now |
+|---------|-----------|-----|
+| Language abstraction | ❌ | ✅ `src/tts/language/*` |
+| pt-BR models | ❌ | ✅ Faber installed; registry has jeff/cadu/edresson |
+| Language detection | ❌ | ✅ paragraph-level + `/tts/detect-language` |
+| pt-BR formatters | ❌ | ✅ R$, dates, CPF/CNPJ, ordinals |
+| Em-dash dialogue | ❌ | ✅ dialogue-parser + pt samples |
+| UI language selector | ❌ | ✅ `ui/voice` auto / en / pt-BR |
+| Multilingual e2e | ❌ | ✅ `test/e2e/tts-multilingual.e2e-spec.ts` |
+| Auto engine for pt-BR | 🔴 broken (Kokoro) | ✅ Piper/platform only |
 
 ---
 
-*End of Phase 0 forensic audit. No product code was changed for this document.*
+*Phase 0 forensic audit established ground truth. G26 section updated after multilingual completion + critical engine routing fix.*

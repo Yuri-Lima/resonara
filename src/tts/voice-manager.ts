@@ -110,11 +110,14 @@ export class VoiceManager {
   }
 
   /**
-   * Prefer Kokoro (when available) > Piper high > platform.
-   * Evidence-based default refined in Phase 9 shootout.
+   * Prefer Kokoro (when available) > Piper high > platform for English.
+   * For pt-BR (and other non-English), Kokoro is English-only and must be
+   * skipped — otherwise auto mode tries kokoro:af_sarah on Portuguese text.
+   * Evidence-based default refined in Phase 9 shootout + G26 multilingual.
    */
   resolveEngine(
     requested: 'auto' | 'piper' | 'platform' | 'kokoro' = 'auto',
+    language?: string,
   ): 'piper' | 'platform' | 'kokoro' {
     const piper = isPiperAvailable(this.piperBinary, this.piperModelsDir);
     const kokoro = isKokoroAvailable();
@@ -137,13 +140,16 @@ export class VoiceManager {
       }
       return 'platform';
     }
-    // auto: kokoro > piper > platform (Phase 9 may re-order per language)
-    if (kokoro) return 'kokoro';
+    // auto: language-aware order. Kokoro has no pt-BR voices.
+    const lang = (language || 'en').toLowerCase().replace(/_/g, '-');
+    const isPortuguese = lang.startsWith('pt');
+    if (!isPortuguese && kokoro) return 'kokoro';
     if (piper.available) return 'piper';
+    if (!isPortuguese && kokoro) return 'kokoro';
     const p = ttsEngineAvailable();
     if (p.available) return 'platform';
     throw new Error(
-      `No TTS engine available. Kokoro: ${kokoro}; Piper: ${piper.detail}; Platform: ${p.detail}`,
+      `No TTS engine available for language=${language || 'en'}. Kokoro: ${kokoro}; Piper: ${piper.detail}; Platform: ${p.detail}`,
     );
   }
 
@@ -245,7 +251,8 @@ export class VoiceManager {
 
   /**
    * Language-aware default for a preferred engine (when known).
-   * Prefer matching engine voice; fall back piper → kokoro → platform.
+   * English: kokoro → piper → platform.
+   * Portuguese: piper → platform (never kokoro — English-only models).
    * Never returns a voice from a different language family.
    */
   getDefaultVoiceForLanguage(
@@ -253,16 +260,18 @@ export class VoiceManager {
     preferredEngine?: 'piper' | 'platform' | 'kokoro',
   ): UnifiedVoice | undefined {
     const lang = language || 'en';
+    const isPt = /^pt/i.test(lang);
+    const defaultOrder: Array<'piper' | 'platform' | 'kokoro'> = isPt
+      ? ['piper', 'platform']
+      : ['kokoro', 'piper', 'platform'];
     const order: Array<'piper' | 'platform' | 'kokoro'> = preferredEngine
       ? [
           preferredEngine,
-          ...(['kokoro', 'piper', 'platform'] as const).filter(
-            (e) => e !== preferredEngine,
-          ),
+          ...defaultOrder.filter((e) => e !== preferredEngine),
         ]
-      : ['kokoro', 'piper', 'platform'];
+      : defaultOrder;
     for (const eng of order) {
-      if (eng === 'kokoro' && !isKokoroAvailable()) continue;
+      if (eng === 'kokoro' && (isPt || !isKokoroAvailable())) continue;
       if (eng === 'piper' && !isPiperAvailable().available) continue;
       if (eng === 'platform' && !ttsEngineAvailable().available) continue;
       const v = this.defaultVoice(eng, lang);

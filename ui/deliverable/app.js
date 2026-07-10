@@ -234,6 +234,13 @@
     ['npm run demo:numbers', 'numbers-and-dates', '$4.2M, March 15th…', 'Numbers spoken correctly', 'numbers-and-dates.wav'],
     ['npm run demo:all', 'all 10 samples', 'Full suite', 'report.json stats', null],
     ['npm run demo:compare', 'paragraph A/B', 'platform vs neural', 'Side-by-side listen', null],
+    ['npm run demo:pt:rapida', 'frase-rapida', 'O cachorro marrom…', 'Natural pt-BR sentence', 'pt-br/frase-rapida.wav'],
+    ['npm run demo:pt:paragrafo', 'paragrafo', 'Amanhecer em MG', 'pt-BR prosody', 'pt-br/paragrafo.wav'],
+    ['npm run demo:pt:numeros', 'numeros-e-datas', 'R$ 4,2 milhões…', 'Currency/dates/CPF', 'pt-br/numeros-e-datas.wav'],
+    ['npm run demo:pt:dialogo', 'dialogo-roteiro', '— Você vem?', 'Em-dash dialogue', null],
+    ['npm run demo:pt:misturado', 'misturado-en-pt', 'startup + API', 'Mixed language blocks', null],
+    ['npm run demo:pt:all', 'all pt-BR samples', 'Full Portuguese suite', 'demo-output/pt-br/', null],
+    ['npm run demo:all-languages', 'en + pt-BR', 'Both suites', 'No cross-lang regression', null],
   ];
   const demoBody = document.getElementById('demo-tbody');
   demos.forEach((d) => {
@@ -263,6 +270,160 @@
     }
     demoBody.appendChild(tr);
   });
+
+  /* ---------- Multilingual A/B waveforms ---------- */
+  (function drawLangWaves() {
+    function paint(id, color, gaps) {
+      const c = document.getElementById(id);
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      const w = c.width;
+      const h = c.height;
+      ctx.fillStyle = '#0b1220';
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      for (let x = 0; x < w; x++) {
+        const t = x / w;
+        let amp = Math.sin(t * Math.PI * 28) * 0.35 + Math.sin(t * Math.PI * 7) * 0.2;
+        if (gaps && gaps.some((g) => Math.abs(t - g) < 0.012)) amp *= 0.05;
+        const y = h / 2 + amp * (h * 0.4) * (0.6 + 0.4 * Math.sin(t * 9));
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    paint('wave-en', '#818cf8', null);
+    paint('wave-pt', '#2dd4bf', null);
+  })();
+
+  /* ---------- pt-BR voice gallery ---------- */
+  (function ptVoices() {
+    const grid = document.getElementById('pt-voice-grid');
+    if (!grid) return;
+    const voices = [
+      { name: 'Faber', engine: 'piper', language: 'pt-BR', quality: 'medium', gender: 'male', sampleRate: 22050, installed: true },
+      { name: 'Jeff', engine: 'piper', language: 'pt-BR', quality: 'medium', gender: 'male', sampleRate: 22050, installed: false },
+      { name: 'Cadu', engine: 'piper', language: 'pt-BR', quality: 'medium', gender: 'male', sampleRate: 22050, installed: false },
+      { name: 'Edresson', engine: 'piper', language: 'pt-BR', quality: 'low', gender: 'male', sampleRate: 16000, installed: false },
+      { name: 'Luciana', engine: 'platform', language: 'pt-BR', quality: 'system', gender: 'female', sampleRate: 22050, installed: true },
+    ];
+    voices.forEach((v) => {
+      const card = document.createElement('article');
+      card.className = 'voice-card';
+      card.setAttribute('role', 'listitem');
+      card.innerHTML =
+        '<h3>🇧🇷 ' +
+        v.name +
+        '</h3><div class="meta"><span class="badge eng">' +
+        v.engine +
+        '</span><span class="badge ' +
+        (v.installed ? 'ok' : 'dl') +
+        '">' +
+        (v.installed ? 'installed' : 'downloadable') +
+        '</span><p>' +
+        [v.language, v.quality, v.gender, v.sampleRate + ' Hz'].join(' · ') +
+        '</p></div>';
+      grid.appendChild(card);
+    });
+  })();
+
+  /* ---------- Language detection table ---------- */
+  (function detectTable() {
+    const body = document.getElementById('detect-tbody');
+    if (!body) return;
+    const rows = [
+      ['The quick brown fox jumps over the lazy dog near the river.', 'en', '0.96', '🇺🇸 English'],
+      ['O cachorro marrom pulou graciosamente sobre a cerca do jardim.', 'pt-BR', '0.97', '🇧🇷 Portuguese'],
+      ['A startup de São Paulo uses machine learning for UX.', 'mixed', '0.72', '🇧🇷+🇺🇸 Mixed'],
+      ['R$ 1.234,56', 'pt-BR*', '0.55', 'Short → default/hint'],
+    ];
+    rows.forEach((r) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' +
+        r[0] +
+        '</td><td><strong>' +
+        r[1] +
+        '</strong></td><td>' +
+        r[2] +
+        '</td><td>' +
+        r[3] +
+        '</td>';
+      body.appendChild(tr);
+    });
+  })();
+
+  /* ---------- Currency expansion ---------- */
+  (function currencyTable() {
+    const body = document.getElementById('currency-tbody');
+    if (!body) return;
+    const rows = [
+      ['R$ 1.234,56', 'mil duzentos e trinta e quatro reais e cinquenta e seis centavos'],
+      ['R$ 4,2 milhões', 'quatro vírgula dois milhões de reais'],
+      ['25/12/2025', 'vinte e cinco de dezembro de dois mil e vinte e cinco'],
+      ['123.456.789-00 (CPF)', 'um dois três, quatro cinco seis, sete oito nove, zero zero'],
+      ['3° trimestre', 'terceiro trimestre'],
+      ['+55 (11) 98765-4321', 'mais cinquenta e cinco, onze, … (digit groups)'],
+    ];
+    rows.forEach((r) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td><code>' + r[0] + '</code></td><td>' + r[1] + '</td>';
+      body.appendChild(tr);
+    });
+  })();
+
+  /* ---------- Mixed-language flowchart ---------- */
+  (function mixedFlow() {
+    const el = document.getElementById('mixed-flow');
+    const sample = document.getElementById('mixed-sample');
+    if (!el) return;
+    const stages = [
+      'Input text',
+      'Paragraph detect',
+      'Group language blocks',
+      'pt-BR Piper / en Kokoro',
+      'Format + dictionary',
+      'Crossfade 300ms pause',
+      'WAV output',
+    ];
+    stages.forEach((s, i) => {
+      const step = document.createElement('div');
+      step.className = 'pipe-step';
+      step.setAttribute('role', 'listitem');
+      step.textContent = s;
+      el.appendChild(step);
+      if (i < stages.length - 1) {
+        const arr = document.createElement('span');
+        arr.className = 'pipe-arrow';
+        arr.setAttribute('aria-hidden', 'true');
+        arr.textContent = '→';
+        el.appendChild(arr);
+      }
+    });
+    if (sample) {
+      sample.textContent =
+        "O novo framework da startup de São Paulo utiliza machine learning…\\n" +
+        "'Our approach leverages state-of-the-art NLP models,' explicou o CTO.\\n" +
+        'A API REST processa mais de 10 mil requests por segundo.';
+    }
+  })();
+
+  /* ---------- Desktop packaging matrix ---------- */
+  (function desktopMatrix() {
+    const body = document.getElementById('desktop-tbody');
+    if (!body) return;
+    const rows = [
+      ['macOS (arm64)', 'DMG + ZIP', 'en lessac + pt-BR faber', 'Python piper-venv (preferred) + afterPack codesign', 'Runtime-tested when built'],
+      ['Windows (x64)', 'NSIS Setup.exe', 'Shared .onnx models + piper.exe', 'piper.exe + ONNX DLLs + espeak-ng-data', 'Build-verified; see WINDOWS_TESTING.md'],
+    ];
+    rows.forEach((r) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = r.map((c) => '<td>' + c + '</td>').join('');
+      body.appendChild(tr);
+    });
+  })();
 
   /* ---------- Coverage chart ---------- */
   (function drawCoverage() {
