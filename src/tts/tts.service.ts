@@ -51,6 +51,17 @@ import {
   normalizeLanguageCode,
   planMixedLanguageSynthesis,
 } from './language';
+import {
+  preprocessText,
+  PreprocessResult,
+  PreprocessRules,
+} from './text-preprocessor';
+import {
+  SynthesisQaService,
+  QaMode,
+  ChunkQaResult,
+  JobQaSummary,
+} from './qa/synthesis-qa.service';
 
 export interface SynthesizeLongOptions {
   text: string;
@@ -72,6 +83,18 @@ export interface SynthesizeLongOptions {
   batchId?: string;
   /** Per-language voice ids for mixed documents. */
   voiceMap?: { en?: string; 'pt-BR'?: string };
+  /**
+   * Text preprocessing before chunking.
+   * - document imports default ON (documentMode)
+   * - raw text paste defaults OFF unless preprocessing.enabled or rules set
+   */
+  preprocessing?: {
+    enabled?: boolean;
+    documentMode?: boolean;
+    rules?: import('./text-preprocessor').PreprocessRules;
+  };
+  /** Whisper QA mode: off | sample (every 3rd) | full. Default sample when available. */
+  qa?: QaMode;
 }
 
 export interface JobListQuery {
@@ -97,6 +120,7 @@ export class TtsService implements OnModuleInit {
     @InjectRepository(TtsBatch)
     private readonly batchRepo: Repository<TtsBatch>,
     @Optional() private readonly pronunciation?: PronunciationService,
+    @Optional() private readonly synthesisQa?: SynthesisQaService,
   ) {
     this.dataDir =
       this.config.get<string>('resonara.dataDir') ||
@@ -199,13 +223,57 @@ export class TtsService implements OnModuleInit {
   }
 
   /**
+   * Preview preprocessing without synthesizing.
+   */
+  previewPreprocess(
+    text: string,
+    opts?: {
+      documentMode?: boolean;
+      rules?: PreprocessRules;
+      enabled?: boolean;
+    },
+  ): PreprocessResult {
+    const documentMode = opts?.documentMode === true;
+    const enabled =
+      opts?.enabled === true ||
+      documentMode ||
+      (opts?.rules != null && Object.keys(opts.rules).length > 0);
+    if (!enabled) {
+      return { original: text || '', cleaned: text || '', removals: [] };
+    }
+    return preprocessText(text || '', {
+      documentMode,
+      rules: opts?.rules,
+    });
+  }
+
+  /**
    * Start long-form TTS: persist job → chunk → synthesize → trim → crossfade → post-process.
    */
   async startLongForm(opts: SynthesizeLongOptions): Promise<TtsJob> {
     let text = (opts.text || '').trim();
     if (!text) throw new BadRequestException('text is required');
 
-    let engine: 'piper' | 'platform';
+    // Preprocessing: document path opts in documentMode; raw paste only if enabled
+    const prep = opts.preprocessing;
+    const wantPrep =
+      prep?.enabled === true ||
+      prep?.documentMode === true ||
+      (prep?.rules != null && Object.keys(prep.rules).length > 0);
+    if (wantPrep) {
+      const result = preprocessText(text, {
+        documentMode: prep?.documentMode === true,
+        rules: prep?.rules,
+      });
+      text = result.cleaned.trim();
+      if (!text) {
+        throw new BadRequestException(
+          'text is empty after preprocessing (all content removed by rules)',
+        );
+      }
+    }
+
+    let engine: 'piper' | 'platform' | 'kokoro';
     try {
       engine = this.voiceManager.resolveEngine(opts.engine || 'auto');
     } catch (e) {
@@ -483,14 +551,66 @@ export class TtsService implements OnModuleInit {
       throw new BadRequestException('Job not completed');
     }
     let words = job.metadata?.wordTimestamps;
+    let method: 'forced' | 'proportional' | 'cached' = words?.length
+      ? 'cached'
+      : 'proportional';
+
+    // Prefer forced alignment via Whisper base when available and not cached
+    if (
+      !words?.length &&
+      job.outputKey &&
+      fssync.existsSync(job.outputKey) &&
+      this.synthesisQa?.isAvailable()
+    ) {
+      try {
+        const { WhisperService } = await import('../stt/whisper.service');
+        const { forcedAlign } = await import('./alignment/forced-aligner');
+        const whisper = new WhisperService();
+        if (whisper.isAvailable()) {
+          const tr = await whisper.transcribe(job.outputKey, {
+            model: 'base',
+            language: job.metadata?.language?.startsWith('pt') ? 'pt' : 'en',
+            timeoutMs: 180_000,
+          });
+          const whWords = tr.segments.flatMap((s) => s.words || []);
+          const aligned = forcedAlign(job.text, whWords);
+          words = aligned.map((w) => ({
+            word: w.word,
+            startMs: w.startMs,
+            endMs: w.endMs,
+          }));
+          method = 'forced';
+          job.metadata = {
+            ...(job.metadata || {}),
+            wordTimestamps: words,
+            alignmentMethod: 'forced',
+          };
+          await this.jobsRepo.save(job);
+        }
+      } catch (e) {
+        this.logger.warn(`Forced alignment failed: ${(e as Error).message}`);
+      }
+    }
+
     if (!words?.length) {
       const durationMs = (job.metadata?.duration || 0) * 1000 || 60_000;
       words = estimateWordTimestamps(job.text, durationMs);
+      method = 'proportional';
+      job.metadata = {
+        ...(job.metadata || {}),
+        alignmentMethod: 'proportional',
+      };
     }
-    if (format === 'json') return { words };
+    if (format === 'json') return { words, method };
     const cues = groupSubtitles(words);
-    if (format === 'srt') return { content: toSrt(cues), contentType: 'application/x-subrip' };
-    return { content: toWebVtt(cues), contentType: 'text/vtt' };
+    if (format === 'srt') {
+      return {
+        content: toSrt(cues),
+        contentType: 'application/x-subrip',
+        method,
+      };
+    }
+    return { content: toWebVtt(cues), contentType: 'text/vtt', method };
   }
 
   async resynthesizeChunk(
@@ -552,14 +672,38 @@ export class TtsService implements OnModuleInit {
     doc: ExtractedDocument,
     opts: Omit<SynthesizeLongOptions, 'text' | 'chapters'>,
   ): Promise<TtsJob> {
-    const fullText = doc.chapters
+    // Document imports: preprocess each chapter with document defaults ON
+    // unless caller explicitly disables preprocessing.enabled === false.
+    const prepDisabled = opts.preprocessing?.enabled === false;
+    const chapters = doc.chapters.map((c) => {
+      if (prepDisabled) return c;
+      const cleaned = preprocessText(c.text, {
+        documentMode: true,
+        rules: opts.preprocessing?.rules,
+      }).cleaned;
+      const title = preprocessText(c.title || '', {
+        documentMode: true,
+        rules: {
+          ...opts.preprocessing?.rules,
+          // Titles: keep caps transform + whitespace; skip aggressive header strip on short titles
+          headers: false,
+          pageNumbers: true,
+        },
+      }).cleaned;
+      return { title: title || c.title, text: cleaned };
+    });
+    const fullText = chapters
       .map((c) => `### ${c.title}\n\n${c.text}`)
       .join('\n\n');
     return this.startLongForm({
       ...opts,
+      // Already cleaned per-chapter; avoid double-processing chapter markers
+      preprocessing: prepDisabled
+        ? { enabled: false }
+        : { enabled: false, documentMode: true, rules: opts.preprocessing?.rules },
       text: fullText,
       title: doc.title,
-      chapters: doc.chapters,
+      chapters,
     });
   }
 
@@ -620,7 +764,7 @@ export class TtsService implements OnModuleInit {
   private async runJob(
     jobId: string,
     opts: SynthesizeLongOptions,
-    engine: 'piper' | 'platform',
+    engine: 'piper' | 'platform' | 'kokoro',
   ) {
     const job = await this.getJob(jobId);
     const workDir = path.join(this.dataDir, job.id);
@@ -706,6 +850,7 @@ export class TtsService implements OnModuleInit {
           highpass: opts.highpass,
           compress: opts.compress,
           jobId: job.id,
+          qaMode: opts.qa,
           onProgress: async (pct, chunksDone) => {
             job.progress = Math.round(pct);
             job.completedChunks = chunksDone;
@@ -717,6 +862,20 @@ export class TtsService implements OnModuleInit {
           },
           onChunkMap: async (chunkMap) => {
             job.metadata = { ...(job.metadata || {}), chunkMap };
+            await this.jobsRepo.save(job);
+          },
+          onQa: async (summary) => {
+            job.metadata = {
+              ...(job.metadata || {}),
+              qa: {
+                mode: summary.mode,
+                aggregateWer: summary.aggregateWer,
+                failedCount: summary.failedCount,
+                sampledCount: summary.sampledCount,
+                threshold: summary.threshold,
+                chunks: summary.chunks,
+              },
+            };
             await this.jobsRepo.save(job);
           },
         });
@@ -778,7 +937,7 @@ export class TtsService implements OnModuleInit {
   private async synthesizeDialogue(
     job: TtsJob,
     opts: {
-      engine: 'piper' | 'platform';
+      engine: 'piper' | 'platform' | 'kokoro';
       rate?: number;
       format: 'wav' | 'mp3';
       workDir: string;
@@ -882,7 +1041,7 @@ export class TtsService implements OnModuleInit {
     chapters: { title: string; text: string }[],
     opts: {
       voice?: UnifiedVoice;
-      engine: 'piper' | 'platform';
+      engine: 'piper' | 'platform' | 'kokoro';
       rate?: number;
       format: 'wav' | 'mp3';
       workDir: string;
@@ -982,7 +1141,7 @@ export class TtsService implements OnModuleInit {
     chunks: TextChunk[],
     opts: {
       voice?: UnifiedVoice;
-      engine: 'piper' | 'platform';
+      engine: 'piper' | 'platform' | 'kokoro';
       rate?: number;
       format: 'wav' | 'mp3';
       outputPath: string;
@@ -992,15 +1151,21 @@ export class TtsService implements OnModuleInit {
       highpass?: boolean;
       compress?: boolean;
       jobId?: string;
+      qaMode?: QaMode;
       onProgress: (pct: number, chunksDone: number) => Promise<void>;
       onChunkMap?: (
         map: NonNullable<TtsJobMetadata['chunkMap']>,
       ) => Promise<void>;
+      onQa?: (summary: JobQaSummary) => Promise<void>;
     },
   ) {
     const partPaths: string[] = [];
     const chunkMap: NonNullable<TtsJobMetadata['chunkMap']> = [];
+    const qaResults: ChunkQaResult[] = [];
     const n = chunks.length || 1;
+    const qaMode: QaMode =
+      opts.qaMode ||
+      (this.synthesisQa?.isAvailable() ? 'sample' : 'off');
     const ssmlEngine: SsmlEngine =
       opts.engine === 'piper'
         ? 'piper'
@@ -1039,6 +1204,49 @@ export class TtsService implements OnModuleInit {
         partPaths.push(rawPart);
       }
 
+      // Per-chunk Whisper QA (sample/full)
+      if (
+        this.synthesisQa?.isAvailable() &&
+        this.synthesisQa.shouldSample(i, qaMode)
+      ) {
+        try {
+          const engine = opts.engine;
+          const voice = opts.voice;
+          const rate = opts.rate;
+          const qa = await this.synthesisQa.qaWithRetry(i, pieceText, used, {
+            resynthesize: async () => {
+              const retryRaw = path.join(
+                opts.workDir,
+                `part-${String(i).padStart(4, '0')}-retry-raw.wav`,
+              );
+              await this.synthesizeOne(pieceText, retryRaw, engine, voice, rate);
+              const retryTrim = path.join(
+                opts.workDir,
+                `part-${String(i).padStart(4, '0')}-retry-trim.wav`,
+              );
+              try {
+                await this.ffmpeg.trimChunkSilence(retryRaw, retryTrim);
+                // replace part path
+                const idx = partPaths.length - 1;
+                if (idx >= 0) partPaths[idx] = retryTrim;
+                used = retryTrim;
+                return retryTrim;
+              } catch {
+                const idx = partPaths.length - 1;
+                if (idx >= 0) partPaths[idx] = retryRaw;
+                used = retryRaw;
+                return retryRaw;
+              }
+            },
+          });
+          qaResults.push(qa);
+        } catch (e) {
+          this.logger.warn(
+            `QA skipped for chunk ${i}: ${(e as Error).message}`,
+          );
+        }
+      }
+
       chunkMap.push({
         index: i,
         startOffset: 0,
@@ -1057,6 +1265,11 @@ export class TtsService implements OnModuleInit {
 
       const pct = ((i + 1) / n) * 80;
       await opts.onProgress(pct, i + 1);
+    }
+
+    if (qaResults.length && opts.onQa) {
+      const summary = this.synthesisQa!.aggregate(qaResults, qaMode);
+      await opts.onQa(summary);
     }
 
     if (partPaths.length === 0) {
@@ -1085,10 +1298,21 @@ export class TtsService implements OnModuleInit {
   private async synthesizeOne(
     text: string,
     outPath: string,
-    engine: 'piper' | 'platform',
+    engine: 'piper' | 'platform' | 'kokoro',
     voice?: UnifiedVoice,
     rate?: number,
   ): Promise<void> {
+    if (engine === 'kokoro') {
+      // Lazy require to keep Phase 5 green before Phase 8 lands fully
+      const { synthesizeWithKokoro } = await import('./kokoro-tts');
+      await synthesizeWithKokoro({
+        text,
+        outputPath: outPath,
+        voiceId: voice?.nativeId,
+        rate,
+      });
+      return;
+    }
     if (engine === 'piper') {
       const modelPath =
         voice?.modelPath ||
@@ -1126,7 +1350,7 @@ export class TtsService implements OnModuleInit {
 
   private resolveVoice(
     voiceId: string | undefined,
-    engine: 'piper' | 'platform',
+    engine: 'piper' | 'platform' | 'kokoro',
     language?: string,
   ): UnifiedVoice | undefined {
     if (voiceId) {
@@ -1146,8 +1370,8 @@ export class TtsService implements OnModuleInit {
     }
     if (language) {
       return (
-        this.voiceManager.getDefaultVoiceForLanguage(language) ||
-        this.voiceManager.defaultVoice(engine, language)
+        this.voiceManager.defaultVoice(engine, language) ||
+        this.voiceManager.getDefaultVoiceForLanguage(language, engine)
       );
     }
     return this.voiceManager.defaultVoice(engine);
@@ -1220,6 +1444,150 @@ export class TtsService implements OnModuleInit {
       createdAt: job.createdAt,
       completedAt: job.completedAt,
     };
+  }
+
+  /**
+   * Export EPUB 3 Media Overlays package for a completed job.
+   */
+  async exportEpubOverlay(jobId: string) {
+    const job = await this.getJob(jobId);
+    if (job.status !== TtsJobStatus.COMPLETED) {
+      throw new BadRequestException('Job not completed');
+    }
+    const { writeOverlayPackage, validateSmilMonotonic } = await import(
+      './export/epub-overlay-exporter'
+    );
+    const sub = await this.getSubtitles(jobId, 'json');
+    const words =
+      'words' in sub && Array.isArray(sub.words)
+        ? (sub.words as { word: string; startMs: number; endMs: number }[])
+        : [];
+    const sentences: {
+      id: string;
+      text: string;
+      clipBeginSec: number;
+      clipEndSec: number;
+    }[] = [];
+    let buf: typeof words = [];
+    let si = 0;
+    const flush = () => {
+      if (!buf.length) return;
+      si++;
+      sentences.push({
+        id: `s${String(si).padStart(4, '0')}`,
+        text: buf.map((w) => w.word).join(' '),
+        clipBeginSec: (buf[0].startMs || 0) / 1000,
+        clipEndSec: (buf[buf.length - 1].endMs || 0) / 1000,
+      });
+      buf = [];
+    };
+    for (const w of words) {
+      buf.push(w);
+      if (/[.!?]["']?$/.test(w.word)) flush();
+    }
+    flush();
+    if (!sentences.length) {
+      sentences.push({
+        id: 's0001',
+        text: job.text.slice(0, 500),
+        clipBeginSec: 0,
+        clipEndSec: job.metadata?.duration || 1,
+      });
+    }
+    if (!validateSmilMonotonic(sentences)) {
+      this.logger.warn(`SMIL timestamps non-monotonic for job ${jobId}; clamping`);
+      let prev = 0;
+      for (const s of sentences) {
+        s.clipBeginSec = Math.max(s.clipBeginSec, prev);
+        s.clipEndSec = Math.max(s.clipEndSec, s.clipBeginSec + 0.05);
+        prev = s.clipEndSec;
+      }
+    }
+    const outDir = path.join(
+      path.dirname(job.outputKey || path.join(this.dataDir, 'tts', job.id)),
+      'epub-overlay',
+    );
+    const audioName = job.outputKey
+      ? path.basename(job.outputKey)
+      : 'speech.wav';
+    if (job.outputKey && fssync.existsSync(job.outputKey)) {
+      fssync.mkdirSync(outDir, { recursive: true });
+      fssync.copyFileSync(job.outputKey, path.join(outDir, audioName));
+    }
+    const paths = writeOverlayPackage(outDir, {
+      title: job.metadata?.title || 'Resonara Audiobook',
+      sentences,
+      audioFileName: audioName,
+      xhtmlBody: `<p>${job.text.slice(0, 8000)}</p>`,
+    });
+    job.metadata = {
+      ...(job.metadata || {}),
+      epubOverlayDir: outDir,
+    };
+    await this.jobsRepo.save(job);
+    return {
+      outDir,
+      ...paths,
+      sentenceCount: sentences.length,
+      method: 'method' in sub ? sub.method : 'unknown',
+    };
+  }
+
+  /**
+   * Re-run Whisper QA on a completed job using persisted chunk audio paths.
+   */
+  async rerunQa(jobId: string) {
+    const job = await this.getJob(jobId);
+    if (!this.synthesisQa?.isAvailable()) {
+      throw new BadRequestException(
+        'Whisper QA unavailable. Run: node scripts/download-whisper.js',
+      );
+    }
+    const map = job.metadata?.chunkMap || [];
+    if (!map.length) {
+      throw new BadRequestException('Job has no chunk map for QA');
+    }
+    const results: ChunkQaResult[] = [];
+    for (const entry of map) {
+      const audio = entry.audioKey;
+      if (!audio || !fssync.existsSync(audio)) continue;
+      const chunkText = entry.textPreview || '';
+      let text = chunkText;
+      if (
+        typeof entry.startOffset === 'number' &&
+        typeof entry.endOffset === 'number' &&
+        entry.endOffset > entry.startOffset
+      ) {
+        text =
+          job.text.slice(
+            entry.startOffset,
+            entry.startOffset + Math.max(entry.endOffset, chunkText.length),
+          ) || chunkText;
+      }
+      if (!text.trim()) text = chunkText;
+      try {
+        const r = await this.synthesisQa.qaWithRetry(entry.index, text, audio);
+        results.push(r);
+      } catch (e) {
+        this.logger.warn(
+          `QA rerun chunk ${entry.index}: ${(e as Error).message}`,
+        );
+      }
+    }
+    const summary = this.synthesisQa.aggregate(results, 'full');
+    job.metadata = {
+      ...(job.metadata || {}),
+      qa: {
+        mode: 'full',
+        aggregateWer: summary.aggregateWer,
+        failedCount: summary.failedCount,
+        sampledCount: summary.sampledCount,
+        threshold: summary.threshold,
+        chunks: summary.chunks,
+      },
+    };
+    await this.jobsRepo.save(job);
+    return job.metadata.qa;
   }
 }
 
