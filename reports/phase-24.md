@@ -29,7 +29,7 @@ Watch → sample.wav + sample.md.done
 
 ## Process hygiene
 
-Watch PID terminated after proof. CLI server on 3866 stopped at end of session.
+Killed leftover PIDs 52240 (lite server) and 55979 (watch CLI). Re-check showed no remaining resonara node workers.
 
 ## Adversarial self-review (Pass B)
 
