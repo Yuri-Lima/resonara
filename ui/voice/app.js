@@ -466,3 +466,244 @@
   loadJobs();
   loadDict();
 })();
+
+
+  /* —— Library + Read-along (G27) —— */
+  const libraryGrid = document.getElementById('library-grid');
+  const continueRail = document.getElementById('continue-rail');
+  const readalongPanel = document.getElementById('readalong-panel');
+  const readalongText = document.getElementById('readalong-text');
+  const raAudio = document.getElementById('ra-audio');
+  const syncBadge = document.getElementById('sync-badge');
+  let raWords = [];
+  let raSentences = [];
+  let raJobId = null;
+  let sleepTimer = null;
+  let lastResumeSend = 0;
+
+  async function loadLibrary() {
+    if (!libraryGrid) return;
+    const q = document.getElementById('library-search')?.value || '';
+    const engine = document.getElementById('library-engine')?.value || '';
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (engine) params.set('engine', engine);
+    const res = await fetch(API + '/tts/library?' + params.toString());
+    if (!res.ok) return;
+    const data = await res.json();
+    if (continueRail) {
+      continueRail.innerHTML = (data.continueListening || [])
+        .map(
+          (c) =>
+            `<button type="button" class="library-card" data-id="${c.id}">${escapeHtml(c.title)} · ${Math.round(c.progressPct)}%</button>`,
+        )
+        .join('');
+    }
+    if (!data.items?.length) {
+      libraryGrid.innerHTML =
+        '<p>No books yet — synthesize something to fill the shelf.</p>';
+      return;
+    }
+    libraryGrid.innerHTML = data.items
+      .map((c) => {
+        return `<article class="library-card" role="listitem" tabindex="0" data-id="${c.id}">
+          <strong>${escapeHtml(c.title)}</strong>
+          <div class="meta">${escapeHtml(c.engine)} · ${escapeHtml(c.language || '')}${c.audioMissing ? ' · audio missing' : ''}</div>
+          <div class="progress" aria-hidden="true"><i style="width:${c.progressPct || 0}%"></i></div>
+        </article>`;
+      })
+      .join('');
+  }
+
+  function escapeHtml(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  libraryGrid?.addEventListener('click', (e) => {
+    const card = e.target.closest('[data-id]');
+    if (card) openReadAlong(card.getAttribute('data-id'));
+  });
+  continueRail?.addEventListener('click', (e) => {
+    const card = e.target.closest('[data-id]');
+    if (card) openReadAlong(card.getAttribute('data-id'));
+  });
+  document.getElementById('library-search')?.addEventListener('input', () => loadLibrary());
+  document.getElementById('library-engine')?.addEventListener('change', () => loadLibrary());
+
+  async function openReadAlong(jobId) {
+    raJobId = jobId;
+    if (readalongPanel) readalongPanel.hidden = false;
+    const jobRes = await fetch(API + '/tts/jobs/' + jobId);
+    const job = await jobRes.json();
+    raAudio.src = API + '/tts/jobs/' + jobId + '/download';
+    const ts = await fetch(API + '/tts/jobs/' + jobId + '/timestamps').then((r) => r.json());
+    const method = ts.method || job.metadata?.alignmentMethod || 'proportional';
+    if (syncBadge) {
+      syncBadge.textContent =
+        method === 'forced' ? 'aligned sync' : 'approximate sync';
+    }
+    raWords = (ts.words || ts.wordTimestamps || job.metadata?.wordTimestamps || []).map((w) => ({
+      word: w.word,
+      startMs: w.startMs,
+      endMs: w.endMs,
+    }));
+    if (!raWords.length && job.text) {
+      // proportional fallback client-side
+      const words = job.text.trim().split(/\s+/);
+      const dur = (job.metadata?.duration || 60) * 1000;
+      const step = dur / Math.max(1, words.length);
+      raWords = words.map((word, i) => ({
+        word,
+        startMs: Math.round(i * step),
+        endMs: Math.round((i + 1) * step),
+      }));
+    }
+    renderReadAlong();
+    const resume = job.metadata?.resumePositionMs || 0;
+    if (resume > 0) {
+      raAudio.currentTime = resume / 1000;
+    }
+    loadBookmarks(jobId);
+    raAudio.play().catch(() => undefined);
+  }
+
+  function renderReadAlong() {
+    if (!readalongText) return;
+    readalongText.innerHTML = raWords
+      .map(
+        (w, i) =>
+          `<span class="w" data-i="${i}" data-start="${w.startMs}">${escapeHtml(w.word)} </span>`,
+      )
+      .join('');
+    readalongText.querySelectorAll('.w').forEach((el) => {
+      el.addEventListener('click', () => {
+        const ms = Number(el.getAttribute('data-start') || 0);
+        raAudio.currentTime = ms / 1000;
+        raAudio.play();
+      });
+    });
+  }
+
+  function wordIndexAt(timeMs) {
+    let lo = 0,
+      hi = raWords.length - 1,
+      ans = 0;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      if (raWords[mid].startMs <= timeMs) {
+        ans = mid;
+        lo = mid + 1;
+      } else hi = mid - 1;
+    }
+    return ans;
+  }
+
+  function tickReadAlong() {
+    if (!raWords.length || !readalongText) return;
+    const t = raAudio.currentTime * 1000;
+    const idx = wordIndexAt(t);
+    const nodes = readalongText.querySelectorAll('.w');
+    nodes.forEach((n, i) => {
+      n.classList.toggle('active', i === idx);
+      n.classList.toggle('sweep', i === idx);
+    });
+    const active = nodes[idx];
+    if (active) {
+      const rect = active.getBoundingClientRect();
+      const parent = readalongText.getBoundingClientRect();
+      if (rect.top < parent.top + parent.height / 3 || rect.bottom > parent.bottom) {
+        active.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+    }
+    // resume throttle
+    const now = Date.now();
+    if (raJobId && now - lastResumeSend > 5000 && !raAudio.paused) {
+      lastResumeSend = now;
+      fetch(API + '/tts/jobs/' + raJobId + '/resume', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ positionMs: Math.round(t) }),
+      }).catch(() => undefined);
+    }
+    if (!raAudio.paused) requestAnimationFrame(tickReadAlong);
+  }
+
+  raAudio?.addEventListener('play', () => requestAnimationFrame(tickReadAlong));
+  document.getElementById('ra-play')?.addEventListener('click', () => {
+    if (raAudio.paused) raAudio.play();
+    else raAudio.pause();
+  });
+  document.getElementById('ra-speed')?.addEventListener('input', (e) => {
+    const v = parseFloat(e.target.value);
+    raAudio.playbackRate = v;
+    raAudio.preservesPitch = true;
+    const lab = document.getElementById('ra-speed-val');
+    if (lab) lab.textContent = v.toFixed(1) + '×';
+  });
+  document.getElementById('ra-sleep')?.addEventListener('change', (e) => {
+    if (sleepTimer) clearTimeout(sleepTimer);
+    const v = e.target.value;
+    localStorage.setItem('resonara-sleep', v);
+    if (v === '0' || v === 'chapter') return;
+    const ms = parseInt(v, 10) * 60 * 1000;
+    sleepTimer = setTimeout(() => {
+      raAudio.pause();
+    }, ms);
+  });
+  const savedSleep = localStorage.getItem('resonara-sleep');
+  if (savedSleep && document.getElementById('ra-sleep')) {
+    document.getElementById('ra-sleep').value = savedSleep;
+  }
+
+  async function loadBookmarks(jobId) {
+    const ul = document.getElementById('bookmark-list');
+    if (!ul) return;
+    const res = await fetch(API + '/tts/jobs/' + jobId + '/bookmarks');
+    if (!res.ok) return;
+    const list = await res.json();
+    ul.innerHTML = (list || [])
+      .map(
+        (b) =>
+          `<li><button type="button" data-ms="${b.positionMs}">${(b.positionMs / 1000).toFixed(1)}s</button> ${escapeHtml(b.note || '')} <button type="button" data-del="${b.id}">×</button></li>`,
+      )
+      .join('');
+    ul.onclick = async (ev) => {
+      const t = ev.target;
+      if (t.dataset.ms) {
+        raAudio.currentTime = Number(t.dataset.ms) / 1000;
+        raAudio.play();
+      }
+      if (t.dataset.del) {
+        await fetch(API + '/tts/bookmarks/' + t.dataset.del, { method: 'DELETE' });
+        loadBookmarks(jobId);
+      }
+    };
+  }
+
+  document.getElementById('ra-bookmark')?.addEventListener('click', async () => {
+    if (!raJobId) return;
+    await fetch(API + '/tts/jobs/' + raJobId + '/bookmarks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        positionMs: Math.round(raAudio.currentTime * 1000),
+        note: '',
+      }),
+    });
+    loadBookmarks(raJobId);
+  });
+
+  // Keyboard: space play/pause when focus in readalong
+  readalongText?.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (raAudio.paused) raAudio.play();
+      else raAudio.pause();
+    } else if (e.code === 'ArrowLeft') raAudio.currentTime = Math.max(0, raAudio.currentTime - 5);
+    else if (e.code === 'ArrowRight') raAudio.currentTime += 5;
+  });
+
+  loadLibrary();
