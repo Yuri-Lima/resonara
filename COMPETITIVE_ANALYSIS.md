@@ -1,6 +1,6 @@
 # Competitive Analysis — Resonara Voice vs Landscape (G27)
 
-**Date:** 2026-07-11  
+**Date:** 2026-07-10  
 **Branch baseline:** `feat/tts-neural-longform` @ `5bc2c81`  
 **Scope:** Voice / long-form TTS competitive parity research (no implementation in this document)
 
