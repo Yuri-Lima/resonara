@@ -121,6 +121,16 @@ export function normalizeForWer(text: string): string[] {
   t = t.replace(/<[^>]+>/g, ' ');
   // dialogue tags
   t = t.replace(/\[([a-z][a-z0-9_\- ]{1,40})\]/gi, ' ');
+  // URLs → spoken-ish tokens (both sides of WER)
+  t = t.replace(/https?:\/\/(www\.)?/gi, ' ');
+  t = t.replace(/www\./gi, ' ');
+  t = t.replace(/\.(com|org|net|io|dev|ai|example)\b/gi, ' dot $1 ');
+  t = t.replace(/[/_]/g, ' ');
+  // percentages / currency
+  t = t.replace(/(\d+(?:\.\d+)?)\s*%/g, '$1 percent');
+  t = t.replace(/\$(\d+(?:\.\d+)?)/g, '$1 dollars');
+  // ordinals 1st 2nd 3rd 4th → spoken
+  t = t.replace(/\b(\d+)(st|nd|rd|th)\b/g, '$1');
   // punctuation → space (keep apostrophes inside words)
   t = t.replace(/[^\w\s'.]/g, ' ');
   t = t.replace(/'/g, '');

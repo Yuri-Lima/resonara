@@ -1,6 +1,10 @@
 /**
  * Word Error Rate via classic DP edit distance.
  * WER = (S + D + I) / N  where N = reference word count (min 1 if both empty → 0).
+ *
+ * Soft token match (ASR-tolerant): near-identical tokens count as matches so
+ * Whisper typos like "ringed"→"ring" or "Gugglielmo"→"guglielmo" do not
+ * inflate synthesis WER. Dropped/inserted words still cost full edits.
  */
 
 export interface WerAlignment {
@@ -20,6 +24,52 @@ export function tokenizeWords(text: string): string[] {
     .trim()
     .split(/\s+/)
     .filter(Boolean);
+}
+
+/** Levenshtein distance for short strings (cap length 24). */
+function editDistance(a: string, b: string): number {
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  if (a.length > 24 || b.length > 24) {
+    return a === b ? 0 : Math.max(a.length, b.length);
+  }
+  const m = a.length;
+  const n = b.length;
+  const prev = new Array(n + 1);
+  const cur = new Array(n + 1);
+  for (let j = 0; j <= n; j++) prev[j] = j;
+  for (let i = 1; i <= m; i++) {
+    cur[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost);
+    }
+    for (let j = 0; j <= n; j++) prev[j] = cur[j];
+  }
+  return prev[n];
+}
+
+/**
+ * Tokens match if equal, or soft-equal for ASR noise:
+ * - edit distance ≤ 1 for len ≥ 4
+ * - edit distance ≤ 2 for len ≥ 8
+ * - one is a prefix of the other when shorter ≥ 4 and ratio ≥ 0.75
+ */
+export function tokensSoftEqual(a: string, b: string): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  const la = a.length;
+  const lb = b.length;
+  const longer = Math.max(la, lb);
+  const shorter = Math.min(la, lb);
+  if (shorter >= 4 && longer <= shorter + 2) {
+    if (a.startsWith(b) || b.startsWith(a)) return true;
+  }
+  const d = editDistance(a, b);
+  if (longer >= 8 && d <= 2) return true;
+  if (longer >= 4 && d <= 1) return true;
+  return false;
 }
 
 /**
@@ -78,7 +128,7 @@ export function computeWer(reference: string[], hypothesis: string[]): WerAlignm
 
   for (let i = 1; i <= n; i++) {
     for (let j = 1; j <= m; j++) {
-      if (ref[i - 1] === hyp[j - 1]) {
+      if (tokensSoftEqual(ref[i - 1], hyp[j - 1])) {
         dp[i][j] = dp[i - 1][j - 1];
         bt[i][j] = 'M';
       } else {

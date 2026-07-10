@@ -122,11 +122,16 @@ async function runSample(name) {
   const maxChars = Number(process.env.QA_MAX_CHARS || 2500);
   const bodyText = text.length > maxChars ? text.slice(0, maxChars) : text;
   const started = Date.now();
+  const extra = {};
+  if (name === 'dialogue-script') extra.dialogue = true;
+  if (name === 'ssml-showcase') extra.ssml = true;
   const syn = await request('POST', '/tts/synthesize', {
     text: bodyText,
     title: `qa-${name}`,
     qa: 'full',
-    engine: process.env.QA_ENGINE || 'auto',
+    // Default piper for stable WER baseline; set QA_ENGINE=kokoro for shootout.
+    engine: process.env.QA_ENGINE || 'piper',
+    ...extra,
   });
   if (syn.status >= 400) throw new Error(`synthesize failed: ${JSON.stringify(syn.body)}`);
   const id = syn.body.id;
@@ -185,11 +190,24 @@ async function main() {
     ok.length > 0
       ? ok.reduce((s, r) => s + r.aggregateWer, 0) / ok.length
       : null;
+  // Primary gate: narrative/prose samples (ASR-hostile number/SSML/pronunciation reported separately)
+  const PROSE = new Set([
+    'quick-sentence',
+    'paragraph',
+    'short-article',
+    'book-chapter',
+  ]);
+  const proseOk = ok.filter((r) => PROSE.has(r.name));
+  const proseAgg =
+    proseOk.length > 0
+      ? proseOk.reduce((s, r) => s + r.aggregateWer, 0) / proseOk.length
+      : null;
 
   const report = {
     generatedAt: new Date().toISOString(),
     mode,
     aggregateWerMean: agg,
+    aggregateWerProse: proseAgg,
     results,
   };
   fs.writeFileSync(path.join(OUT, 'qa-report.json'), JSON.stringify(report, null, 2));
@@ -198,7 +216,8 @@ async function main() {
     '# QA Report',
     '',
     `Generated: ${report.generatedAt}`,
-    `Mean aggregate WER: ${agg != null ? agg.toFixed(4) : 'n/a'}`,
+    `Mean aggregate WER (all): ${agg != null ? agg.toFixed(4) : 'n/a'}`,
+    `Mean aggregate WER (prose gate): ${proseAgg != null ? proseAgg.toFixed(4) : 'n/a'}`,
     '',
     '| Sample | WER | Failed chunks | Sampled |',
     '|--------|-----|---------------|---------|',
@@ -212,6 +231,7 @@ async function main() {
   console.log('Wrote', path.join(OUT, 'qa-report.json'));
   console.log('Wrote', path.join(OUT, 'qa-report.md'));
   if (agg != null) console.log('MEAN_AGGREGATE_WER', agg.toFixed(4));
+  if (proseAgg != null) console.log('MEAN_PROSE_WER', proseAgg.toFixed(4));
 }
 
 main().catch((e) => {

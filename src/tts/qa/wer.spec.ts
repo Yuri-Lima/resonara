@@ -36,6 +36,21 @@ describe('computeWer', () => {
   it('both empty → 0', () => {
     expect(computeWer([], []).wer).toBe(0);
   });
+
+  it('soft-matches ASR near-misses (ringed/ring) as match', () => {
+    const a = computeWer(['the', 'ringed', 'shore'], ['the', 'ring', 'shore']);
+    expect(a.wer).toBe(0);
+  });
+
+  it('still flags a dropped sentence word as deletion', () => {
+    const a = computeWer(
+      ['the', 'quick', 'brown', 'fox', 'jumps'],
+      ['the', 'quick', 'fox', 'jumps'],
+    );
+    expect(a.deletions).toBe(1);
+    expect(a.missing).toContain('brown');
+    expect(a.wer).toBeCloseTo(0.2);
+  });
 });
 
 describe('normalizeForWer', () => {

@@ -57,7 +57,7 @@ export class SynthesisQaService {
       timeoutMs: 120_000,
     });
     const refTok = normalizeForWer(chunkText);
-    let hypTok = normalizeForWer(transcript.text);
+    const hypTok = normalizeForWer(transcript.text);
     let align = computeWer(refTok, hypTok);
 
     // Second pass with digitish collapse if WER high (number false positives)
