@@ -57,8 +57,12 @@ class SynthesizeDto {
   format?: 'wav' | 'mp3' | 'm4b';
 
   @IsOptional()
-  @IsIn(['auto', 'piper', 'platform'])
-  engine?: 'auto' | 'piper' | 'platform';
+  @IsIn(['auto', 'piper', 'platform', 'kokoro'])
+  engine?: 'auto' | 'piper' | 'platform' | 'kokoro';
+
+  @IsOptional()
+  @IsIn(['off', 'sample', 'full'])
+  qa?: 'off' | 'sample' | 'full';
 
   /** 'en' | 'pt-BR' | 'auto' (detect language). */
   @IsOptional()
@@ -221,6 +225,7 @@ export class TtsController {
             rules?: import('./text-preprocessor').PreprocessRules;
           }
         | undefined,
+      qa: body.qa,
     });
     return this.tts.toPublicJob(job);
   }
@@ -343,6 +348,24 @@ export class TtsController {
   @Get('jobs/:id/timestamps')
   async timestamps(@Param('id') id: string) {
     return this.tts.getSubtitles(id, 'json');
+  }
+
+  @Get('jobs/:id/qa')
+  async jobQa(@Param('id') id: string) {
+    const job = await this.tts.getJob(id);
+    return (
+      job.metadata?.qa || {
+        mode: 'off',
+        aggregateWer: null,
+        chunks: [],
+        message: 'No QA data for this job',
+      }
+    );
+  }
+
+  @Post('jobs/:id/qa/rerun')
+  async jobQaRerun(@Param('id') id: string) {
+    return this.tts.rerunQa(id);
   }
 
   @Get('models')

@@ -16,7 +16,7 @@ export enum TtsJobStatus {
   FAILED = 'failed',
 }
 
-export type TtsEngineName = 'piper' | 'platform' | 'auto';
+export type TtsEngineName = 'piper' | 'platform' | 'kokoro' | 'auto';
 
 export interface TtsChapterMeta {
   index: number;
@@ -64,6 +64,31 @@ export interface TtsJobMetadata {
     endOffset: number;
     wordCount: number;
   }>;
+  /** Whisper round-trip QA summary (Phase 6). */
+  qa?: {
+    mode?: 'off' | 'sample' | 'full';
+    aggregateWer?: number;
+    failedCount?: number;
+    sampledCount?: number;
+    threshold?: number;
+    chunks?: Array<{
+      chunkIndex: number;
+      wer: number;
+      transcript?: string;
+      missing?: string[];
+      inserted?: string[];
+      qaFailed?: boolean;
+      retried?: boolean;
+      referenceTokens?: number;
+    }>;
+  };
+  /** Forced-alignment method used for timestamps. */
+  alignmentMethod?: 'proportional' | 'forced' | 'none';
+  /** Cover art relative key/path. */
+  coverKey?: string;
+  author?: string;
+  /** Resume playback position (ms). */
+  resumePositionMs?: number;
 }
 
 @Entity('tts_jobs')

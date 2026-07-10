@@ -20,6 +20,7 @@ import { QueueModule } from './queue/queue.module';
 import { StorageModule } from './storage/storage.module';
 import { TracksModule } from './tracks/tracks.module';
 import { TtsModule } from './tts/tts.module';
+import { SttModule } from './stt/stt.module';
 
 const isLite =
   process.env.RESONARA_LITE === '1' || process.env.RESONARA_DESKTOP === '1';
@@ -84,6 +85,7 @@ const isLite =
     PianoModule,
     HealthModule,
     TtsModule,
+    SttModule,
   ],
 })
 export class AppModule {}

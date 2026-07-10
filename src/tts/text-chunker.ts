@@ -11,7 +11,7 @@ import {
 } from './language/language-registry';
 import { LanguageCode } from './language/language.types';
 
-export type ChunkEngine = 'piper' | 'platform';
+export type ChunkEngine = 'piper' | 'platform' | 'kokoro';
 
 export interface ChunkOptions {
   /** Soft max characters per chunk. Default engine-aware. */
@@ -39,6 +39,10 @@ export function defaultChunkLimits(engine: ChunkEngine = 'platform'): {
   maxChars: number;
   hardMaxChars: number;
 } {
+  if (engine === 'kokoro') {
+    // Kokoro practical max ~400 chars; hard cap a bit higher
+    return { maxChars: 400, hardMaxChars: 600 };
+  }
   if (engine === 'piper') {
     return { maxChars: PIPER_MAX, hardMaxChars: PIPER_HARD };
   }

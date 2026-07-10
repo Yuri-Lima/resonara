@@ -56,6 +56,12 @@ import {
   PreprocessResult,
   PreprocessRules,
 } from './text-preprocessor';
+import {
+  SynthesisQaService,
+  QaMode,
+  ChunkQaResult,
+  JobQaSummary,
+} from './qa/synthesis-qa.service';
 
 export interface SynthesizeLongOptions {
   text: string;
@@ -87,6 +93,8 @@ export interface SynthesizeLongOptions {
     documentMode?: boolean;
     rules?: import('./text-preprocessor').PreprocessRules;
   };
+  /** Whisper QA mode: off | sample (every 3rd) | full. Default sample when available. */
+  qa?: QaMode;
 }
 
 export interface JobListQuery {
@@ -112,6 +120,7 @@ export class TtsService implements OnModuleInit {
     @InjectRepository(TtsBatch)
     private readonly batchRepo: Repository<TtsBatch>,
     @Optional() private readonly pronunciation?: PronunciationService,
+    @Optional() private readonly synthesisQa?: SynthesisQaService,
   ) {
     this.dataDir =
       this.config.get<string>('resonara.dataDir') ||
@@ -264,7 +273,7 @@ export class TtsService implements OnModuleInit {
       }
     }
 
-    let engine: 'piper' | 'platform';
+    let engine: 'piper' | 'platform' | 'kokoro';
     try {
       engine = this.voiceManager.resolveEngine(opts.engine || 'auto');
     } catch (e) {
@@ -703,7 +712,7 @@ export class TtsService implements OnModuleInit {
   private async runJob(
     jobId: string,
     opts: SynthesizeLongOptions,
-    engine: 'piper' | 'platform',
+    engine: 'piper' | 'platform' | 'kokoro',
   ) {
     const job = await this.getJob(jobId);
     const workDir = path.join(this.dataDir, job.id);
@@ -789,6 +798,7 @@ export class TtsService implements OnModuleInit {
           highpass: opts.highpass,
           compress: opts.compress,
           jobId: job.id,
+          qaMode: opts.qa,
           onProgress: async (pct, chunksDone) => {
             job.progress = Math.round(pct);
             job.completedChunks = chunksDone;
@@ -800,6 +810,20 @@ export class TtsService implements OnModuleInit {
           },
           onChunkMap: async (chunkMap) => {
             job.metadata = { ...(job.metadata || {}), chunkMap };
+            await this.jobsRepo.save(job);
+          },
+          onQa: async (summary) => {
+            job.metadata = {
+              ...(job.metadata || {}),
+              qa: {
+                mode: summary.mode,
+                aggregateWer: summary.aggregateWer,
+                failedCount: summary.failedCount,
+                sampledCount: summary.sampledCount,
+                threshold: summary.threshold,
+                chunks: summary.chunks,
+              },
+            };
             await this.jobsRepo.save(job);
           },
         });
@@ -861,7 +885,7 @@ export class TtsService implements OnModuleInit {
   private async synthesizeDialogue(
     job: TtsJob,
     opts: {
-      engine: 'piper' | 'platform';
+      engine: 'piper' | 'platform' | 'kokoro';
       rate?: number;
       format: 'wav' | 'mp3';
       workDir: string;
@@ -965,7 +989,7 @@ export class TtsService implements OnModuleInit {
     chapters: { title: string; text: string }[],
     opts: {
       voice?: UnifiedVoice;
-      engine: 'piper' | 'platform';
+      engine: 'piper' | 'platform' | 'kokoro';
       rate?: number;
       format: 'wav' | 'mp3';
       workDir: string;
@@ -1065,7 +1089,7 @@ export class TtsService implements OnModuleInit {
     chunks: TextChunk[],
     opts: {
       voice?: UnifiedVoice;
-      engine: 'piper' | 'platform';
+      engine: 'piper' | 'platform' | 'kokoro';
       rate?: number;
       format: 'wav' | 'mp3';
       outputPath: string;
@@ -1075,15 +1099,21 @@ export class TtsService implements OnModuleInit {
       highpass?: boolean;
       compress?: boolean;
       jobId?: string;
+      qaMode?: QaMode;
       onProgress: (pct: number, chunksDone: number) => Promise<void>;
       onChunkMap?: (
         map: NonNullable<TtsJobMetadata['chunkMap']>,
       ) => Promise<void>;
+      onQa?: (summary: JobQaSummary) => Promise<void>;
     },
   ) {
     const partPaths: string[] = [];
     const chunkMap: NonNullable<TtsJobMetadata['chunkMap']> = [];
+    const qaResults: ChunkQaResult[] = [];
     const n = chunks.length || 1;
+    const qaMode: QaMode =
+      opts.qaMode ||
+      (this.synthesisQa?.isAvailable() ? 'sample' : 'off');
     const ssmlEngine: SsmlEngine =
       opts.engine === 'piper'
         ? 'piper'
@@ -1122,6 +1152,49 @@ export class TtsService implements OnModuleInit {
         partPaths.push(rawPart);
       }
 
+      // Per-chunk Whisper QA (sample/full)
+      if (
+        this.synthesisQa?.isAvailable() &&
+        this.synthesisQa.shouldSample(i, qaMode)
+      ) {
+        try {
+          const engine = opts.engine;
+          const voice = opts.voice;
+          const rate = opts.rate;
+          const qa = await this.synthesisQa.qaWithRetry(i, pieceText, used, {
+            resynthesize: async () => {
+              const retryRaw = path.join(
+                opts.workDir,
+                `part-${String(i).padStart(4, '0')}-retry-raw.wav`,
+              );
+              await this.synthesizeOne(pieceText, retryRaw, engine, voice, rate);
+              const retryTrim = path.join(
+                opts.workDir,
+                `part-${String(i).padStart(4, '0')}-retry-trim.wav`,
+              );
+              try {
+                await this.ffmpeg.trimChunkSilence(retryRaw, retryTrim);
+                // replace part path
+                const idx = partPaths.length - 1;
+                if (idx >= 0) partPaths[idx] = retryTrim;
+                used = retryTrim;
+                return retryTrim;
+              } catch {
+                const idx = partPaths.length - 1;
+                if (idx >= 0) partPaths[idx] = retryRaw;
+                used = retryRaw;
+                return retryRaw;
+              }
+            },
+          });
+          qaResults.push(qa);
+        } catch (e) {
+          this.logger.warn(
+            `QA skipped for chunk ${i}: ${(e as Error).message}`,
+          );
+        }
+      }
+
       chunkMap.push({
         index: i,
         startOffset: 0,
@@ -1140,6 +1213,11 @@ export class TtsService implements OnModuleInit {
 
       const pct = ((i + 1) / n) * 80;
       await opts.onProgress(pct, i + 1);
+    }
+
+    if (qaResults.length && opts.onQa) {
+      const summary = this.synthesisQa!.aggregate(qaResults, qaMode);
+      await opts.onQa(summary);
     }
 
     if (partPaths.length === 0) {
@@ -1168,10 +1246,21 @@ export class TtsService implements OnModuleInit {
   private async synthesizeOne(
     text: string,
     outPath: string,
-    engine: 'piper' | 'platform',
+    engine: 'piper' | 'platform' | 'kokoro',
     voice?: UnifiedVoice,
     rate?: number,
   ): Promise<void> {
+    if (engine === 'kokoro') {
+      // Lazy require to keep Phase 5 green before Phase 8 lands fully
+      const { synthesizeWithKokoro } = await import('./kokoro-tts');
+      await synthesizeWithKokoro({
+        text,
+        outputPath: outPath,
+        voiceId: voice?.nativeId,
+        rate,
+      });
+      return;
+    }
     if (engine === 'piper') {
       const modelPath =
         voice?.modelPath ||
@@ -1209,7 +1298,7 @@ export class TtsService implements OnModuleInit {
 
   private resolveVoice(
     voiceId: string | undefined,
-    engine: 'piper' | 'platform',
+    engine: 'piper' | 'platform' | 'kokoro',
     language?: string,
   ): UnifiedVoice | undefined {
     if (voiceId) {
@@ -1303,6 +1392,63 @@ export class TtsService implements OnModuleInit {
       createdAt: job.createdAt,
       completedAt: job.completedAt,
     };
+  }
+
+  /**
+   * Re-run Whisper QA on a completed job using persisted chunk audio paths.
+   */
+  async rerunQa(jobId: string) {
+    const job = await this.getJob(jobId);
+    if (!this.synthesisQa?.isAvailable()) {
+      throw new BadRequestException(
+        'Whisper QA unavailable. Run: node scripts/download-whisper.js',
+      );
+    }
+    const map = job.metadata?.chunkMap || [];
+    if (!map.length) {
+      throw new BadRequestException('Job has no chunk map for QA');
+    }
+    const results: ChunkQaResult[] = [];
+    for (const entry of map) {
+      const audio = entry.audioKey;
+      if (!audio || !fssync.existsSync(audio)) continue;
+      const chunkText = entry.textPreview || '';
+      let text = chunkText;
+      if (
+        typeof entry.startOffset === 'number' &&
+        typeof entry.endOffset === 'number' &&
+        entry.endOffset > entry.startOffset
+      ) {
+        text =
+          job.text.slice(
+            entry.startOffset,
+            entry.startOffset + Math.max(entry.endOffset, chunkText.length),
+          ) || chunkText;
+      }
+      if (!text.trim()) text = chunkText;
+      try {
+        const r = await this.synthesisQa.qaWithRetry(entry.index, text, audio);
+        results.push(r);
+      } catch (e) {
+        this.logger.warn(
+          `QA rerun chunk ${entry.index}: ${(e as Error).message}`,
+        );
+      }
+    }
+    const summary = this.synthesisQa.aggregate(results, 'full');
+    job.metadata = {
+      ...(job.metadata || {}),
+      qa: {
+        mode: 'full',
+        aggregateWer: summary.aggregateWer,
+        failedCount: summary.failedCount,
+        sampledCount: summary.sampledCount,
+        threshold: summary.threshold,
+        chunks: summary.chunks,
+      },
+    };
+    await this.jobsRepo.save(job);
+    return job.metadata.qa;
   }
 }
 

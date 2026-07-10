@@ -1,5 +1,5 @@
 /**
- * Unified voice registry across Piper + platform engines.
+ * Unified voice registry across Piper + Kokoro + platform engines.
  */
 import {
   listVoices as listPlatformVoices,
@@ -13,8 +13,13 @@ import {
   resolvePiperBinary,
   resolvePiperModelsDir,
 } from './piper-tts';
+import {
+  isKokoroAvailable,
+  listKokoroVoices,
+  KokoroVoiceInfo,
+} from './kokoro-tts';
 
-export type VoiceEngine = 'piper' | 'platform';
+export type VoiceEngine = 'piper' | 'platform' | 'kokoro';
 
 export interface UnifiedVoice {
   id: string;
@@ -57,6 +62,13 @@ export class VoiceManager {
   }): UnifiedVoice[] {
     const out: UnifiedVoice[] = [];
 
+    if (!filter?.engine || filter.engine === 'kokoro') {
+      if (isKokoroAvailable()) {
+        for (const v of listKokoroVoices()) {
+          out.push(this.fromKokoro(v));
+        }
+      }
+    }
     if (!filter?.engine || filter.engine === 'piper') {
       for (const v of listPiperVoices(this.piperModelsDir)) {
         out.push(this.fromPiper(v));
@@ -97,11 +109,21 @@ export class VoiceManager {
     return all.find((v) => v.id === id || v.nativeId === id);
   }
 
-  /** Prefer Piper when available; else platform. */
+  /**
+   * Prefer Kokoro (when available) > Piper high > platform.
+   * Evidence-based default refined in Phase 9 shootout.
+   */
   resolveEngine(
-    requested: 'auto' | 'piper' | 'platform' = 'auto',
-  ): 'piper' | 'platform' {
+    requested: 'auto' | 'piper' | 'platform' | 'kokoro' = 'auto',
+  ): 'piper' | 'platform' | 'kokoro' {
     const piper = isPiperAvailable(this.piperBinary, this.piperModelsDir);
+    const kokoro = isKokoroAvailable();
+    if (requested === 'kokoro') {
+      if (!kokoro) {
+        throw new Error('Kokoro engine unavailable');
+      }
+      return 'kokoro';
+    }
     if (requested === 'piper') {
       if (!piper.available) {
         throw new Error(piper.detail || 'Piper engine unavailable');
@@ -115,12 +137,13 @@ export class VoiceManager {
       }
       return 'platform';
     }
-    // auto
+    // auto: kokoro > piper > platform (Phase 9 may re-order per language)
+    if (kokoro) return 'kokoro';
     if (piper.available) return 'piper';
     const p = ttsEngineAvailable();
     if (p.available) return 'platform';
     throw new Error(
-      `No TTS engine available. Piper: ${piper.detail}; Platform: ${p.detail}`,
+      `No TTS engine available. Kokoro: ${kokoro}; Piper: ${piper.detail}; Platform: ${p.detail}`,
     );
   }
 
@@ -128,26 +151,37 @@ export class VoiceManager {
     const piper = isPiperAvailable(this.piperBinary, this.piperModelsDir);
     const platform = ttsEngineAvailable();
     const platformVoices = platform.available ? listPlatformVoices().length : 0;
+    const kokoro = isKokoroAvailable();
+    const kokoroVoices = kokoro ? listKokoroVoices().length : 0;
     return [
+      {
+        id: 'kokoro',
+        available: kokoro,
+        detail: kokoro
+          ? 'kokoro-onnx'
+          : 'Kokoro not installed (node scripts/download-kokoro.js)',
+        voiceCount: kokoroVoices,
+        primary: kokoro,
+      },
       {
         id: 'piper',
         available: piper.available,
         detail: piper.detail,
         voiceCount: piper.voiceCount,
-        primary: piper.available,
+        primary: !kokoro && piper.available,
       },
       {
         id: 'platform',
         available: platform.available,
         detail: platform.detail || platform.engine,
         voiceCount: platformVoices,
-        primary: !piper.available && platform.available,
+        primary: !kokoro && !piper.available && platform.available,
       },
     ];
   }
 
   defaultVoice(
-    engine?: 'piper' | 'platform',
+    engine?: 'piper' | 'platform' | 'kokoro',
     language?: string,
   ): UnifiedVoice | undefined {
     const eng = engine || this.resolveEngineSafe();
@@ -224,7 +258,7 @@ export class VoiceManager {
     return vl.includes(lang) || voice.id.toLowerCase().includes(lang);
   }
 
-  private resolveEngineSafe(): 'piper' | 'platform' | undefined {
+  private resolveEngineSafe(): 'piper' | 'platform' | 'kokoro' | undefined {
     try {
       return this.resolveEngine('auto');
     } catch {
@@ -243,6 +277,18 @@ export class VoiceManager {
       gender: v.gender,
       nativeId: v.id.replace(/^piper:/, ''),
       modelPath: v.modelPath,
+    };
+  }
+
+  private fromKokoro(v: KokoroVoiceInfo): UnifiedVoice {
+    return {
+      id: v.id,
+      name: v.name,
+      engine: 'kokoro',
+      language: v.language,
+      quality: 'neural',
+      gender: v.gender,
+      nativeId: v.nativeId,
     };
   }
 
