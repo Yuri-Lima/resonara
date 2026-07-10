@@ -459,6 +459,21 @@ td.muted {
   color: var(--muted);
 }
 
+/* Release status under hero / docs */
+.release-status {
+  margin: 0.85rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.release-status a {
+  color: var(--accent, #2dd4bf);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.release-status strong {
+  color: var(--text);
+}
+
 /* Download strip */
 .download-strip {
   display: grid;
