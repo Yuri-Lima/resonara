@@ -141,11 +141,11 @@ export class VoiceManager {
       return 'platform';
     }
     // auto: language-aware order. Kokoro has no pt-BR voices.
+    // English: kokoro → piper → platform. Portuguese: piper → platform.
     const lang = (language || 'en').toLowerCase().replace(/_/g, '-');
     const isPortuguese = lang.startsWith('pt');
     if (!isPortuguese && kokoro) return 'kokoro';
     if (piper.available) return 'piper';
-    if (!isPortuguese && kokoro) return 'kokoro';
     const p = ttsEngineAvailable();
     if (p.available) return 'platform';
     throw new Error(
