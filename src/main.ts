@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import type { NextFunction, Request, Response } from 'express';
 import { join } from 'path';
 import { AppModule } from './app.module';
 
@@ -17,8 +18,38 @@ async function bootstrap() {
     }),
   );
 
+  // express.static can short-circuit before Nest CORS headers are applied.
+  // Demo Play from file:// or another origin needs ACAO on /demo-output and /samples.
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header(
+      'Access-Control-Allow-Methods',
+      'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    );
+    res.header(
+      'Access-Control-Allow-Headers',
+      req.header('Access-Control-Request-Headers') ||
+        'Content-Type, Accept, Range',
+    );
+    res.header(
+      'Access-Control-Expose-Headers',
+      'Content-Length, Content-Range, Accept-Ranges',
+    );
+    if (req.method === 'OPTIONS') {
+      res.status(204).end();
+      return;
+    }
+    next();
+  });
+
   // Serve dashboard + piano + voice UI same-origin
   app.useStaticAssets(join(process.cwd(), 'ui'), { prefix: '/ui' });
+  // Sample texts for in-UI demo Play buttons
+  app.useStaticAssets(join(process.cwd(), 'samples'), { prefix: '/samples' });
+  // Cached WAV outputs from npm run demo:* (instant Play when present)
+  app.useStaticAssets(join(process.cwd(), 'demo-output'), {
+    prefix: '/demo-output',
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Resonara')
@@ -34,7 +65,7 @@ async function bootstrap() {
   await app.listen(port);
   // eslint-disable-next-line no-console
   console.log(
-    `Resonara :${port} — Swagger /docs — Lab /ui/ — Piano /ui/piano/ — Voice /ui/voice/`,
+    `Resonara :${port} — Swagger /docs — Lab /ui/ — Piano /ui/piano/ — Voice /ui/voice/ — TTS dashboard /ui/deliverable/`,
   );
 }
 

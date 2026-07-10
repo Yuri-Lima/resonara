@@ -64,7 +64,8 @@ async function mapPool<T, R>(
         ]);
         c.on('close', (code) => {
           inFlight--;
-          code === 0 ? resolve() : reject(new Error(`ffmpeg ${i}`));
+          if (code === 0) resolve();
+          else reject(new Error(`ffmpeg ${i}`));
         });
       });
       return out;

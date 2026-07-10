@@ -8,6 +8,9 @@ import { Track } from './entities/track.entity';
 import { TranscodeJob } from './entities/transcode-job.entity';
 import { SamplePack } from './entities/sample-pack.entity';
 import { PianoTake } from './entities/piano-take.entity';
+import { TtsJob } from './entities/tts-job.entity';
+import { TtsBatch } from './entities/tts-batch.entity';
+import { PronunciationEntry } from './entities/pronunciation.entity';
 import { FfmpegModule } from './ffmpeg/ffmpeg.module';
 import { GatewayModule } from './gateway/gateway.module';
 import { HealthModule } from './health/health.module';
@@ -38,7 +41,15 @@ const isLite =
             type: 'sqljs',
             location: path.join(dataDir, 'resonara.db'),
             autoSave: true,
-            entities: [Track, TranscodeJob, SamplePack, PianoTake],
+            entities: [
+              Track,
+              TranscodeJob,
+              SamplePack,
+              PianoTake,
+              TtsJob,
+              TtsBatch,
+              PronunciationEntry,
+            ],
             synchronize: true,
             logging: false,
           };
@@ -50,7 +61,15 @@ const isLite =
           username: config.get<string>('database.username'),
           password: config.get<string>('database.password'),
           database: config.get<string>('database.name'),
-          entities: [Track, TranscodeJob, SamplePack, PianoTake],
+          entities: [
+            Track,
+            TranscodeJob,
+            SamplePack,
+            PianoTake,
+            TtsJob,
+            TtsBatch,
+            PronunciationEntry,
+          ],
           synchronize: true,
           logging: false,
         };

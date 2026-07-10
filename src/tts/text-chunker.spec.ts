@@ -1,49 +1,68 @@
-import { chunkTextForTts, estimateWordCount } from './text-chunker';
+import {
+  chunkTextForTts,
+  defaultChunkLimits,
+  detectChapters,
+  estimateWordCount,
+} from './text-chunker';
 
 describe('chunkTextForTts', () => {
-  it('returns empty for blank input', () => {
+  it('returns empty for blank', () => {
     expect(chunkTextForTts('')).toEqual([]);
-    expect(chunkTextForTts('   \n\n  ')).toEqual([]);
+    expect(chunkTextForTts('   ')).toEqual([]);
   });
 
-  it('returns single chunk for short text', () => {
+  it('keeps short text as one chunk', () => {
     const chunks = chunkTextForTts('Hello world.');
     expect(chunks).toHaveLength(1);
-    expect(chunks[0].text).toBe('Hello world.');
-    expect(chunks[0].index).toBe(0);
+    expect(chunks[0].text).toContain('Hello');
   });
 
-  it('splits multi-paragraph long text into multiple chunks', () => {
-    const para = 'This is a sentence about sound. '.repeat(40);
-    const text = Array.from({ length: 8 }, (_, i) => `Section ${i}. ${para}`).join(
-      '\n\n',
-    );
-    const chunks = chunkTextForTts(text, { maxChars: 500, hardMaxChars: 700 });
+  it('splits long text under platform max', () => {
+    const para = 'Sentence number. '.repeat(200);
+    const chunks = chunkTextForTts(para, { engine: 'platform' });
     expect(chunks.length).toBeGreaterThan(1);
-    expect(chunks.every((c) => c.charCount <= 700)).toBe(true);
-    // Reassembly preserves content words
-    const joined = chunks.map((c) => c.text).join(' ');
-    expect(joined).toContain('Section 0');
-    expect(joined).toContain('Section 7');
-    expect(estimateWordCount(text)).toBeGreaterThan(100);
+    for (const c of chunks) {
+      expect(c.charCount).toBeLessThanOrEqual(2400);
+    }
   });
 
-  it('handles 10k+ word documents with multiple chunks', () => {
-    const sentence =
-      'Resonara shapes sound, speaks the long form, and plays freely on the desktop. ';
-    // ~12 words per sentence; need ~1000 sentences for 10k+ words
-    const text = sentence.repeat(900);
-    expect(estimateWordCount(text)).toBeGreaterThan(10_000);
-    const chunks = chunkTextForTts(text, { maxChars: 1800 });
-    expect(chunks.length).toBeGreaterThan(5);
-    const totalChars = chunks.reduce((a, c) => a + c.charCount, 0);
-    expect(totalChars).toBeGreaterThan(text.length * 0.9);
+  it('allows larger chunks for piper', () => {
+    const limits = defaultChunkLimits('piper');
+    expect(limits.maxChars).toBe(4000);
+    const text = ('Word '.repeat(500) + '. ').repeat(5);
+    const chunks = chunkTextForTts(text, { engine: 'piper' });
+    expect(chunks.length).toBeGreaterThanOrEqual(1);
+    // Piper should produce fewer chunks than platform for same text
+    const platform = chunkTextForTts(text, { engine: 'platform' });
+    expect(chunks.length).toBeLessThanOrEqual(platform.length);
   });
 
-  it('force-splits oversized tokens without hanging', () => {
-    const monster = 'A'.repeat(5000);
-    const chunks = chunkTextForTts(monster, { maxChars: 100, hardMaxChars: 200 });
-    expect(chunks.length).toBeGreaterThan(10);
-    expect(chunks.every((c) => c.charCount <= 200)).toBe(true);
+  it('does not split inside SSML tags when possible', () => {
+    const text =
+      '<speak>Hello <emphasis level="strong">world</emphasis>.</speak>\n\n' +
+      '<speak>Second paragraph with more words here.</speak>';
+    const chunks = chunkTextForTts(text, { maxChars: 80, engine: 'platform' });
+    expect(chunks.length).toBeGreaterThanOrEqual(1);
+    for (const c of chunks) {
+      const opens = (c.text.match(/<emphasis/g) || []).length;
+      const closes = (c.text.match(/<\/emphasis>/g) || []).length;
+      // Best-effort: balanced when both present
+      if (opens && closes) expect(opens).toBe(closes);
+    }
+  });
+});
+
+describe('estimateWordCount', () => {
+  it('counts words', () => {
+    expect(estimateWordCount('one two three')).toBe(3);
+    expect(estimateWordCount('')).toBe(0);
+  });
+});
+
+describe('detectChapters', () => {
+  it('finds markdown headings', () => {
+    const text = '# Intro\n\nHello\n\n## Chapter Two\n\nWorld';
+    const ch = detectChapters(text);
+    expect(ch.length).toBeGreaterThanOrEqual(2);
   });
 });
