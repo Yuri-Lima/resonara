@@ -518,4 +518,10 @@ export class TtsController {
     });
     return this.tts.toPublicJob(job);
   }
+
+  /** EPUB 3 Media Overlays package for a completed job. */
+  @Post('jobs/:id/export/epub-overlay')
+  async exportEpubOverlay(@Param('id') id: string) {
+    return this.tts.exportEpubOverlay(id);
+  }
 }
