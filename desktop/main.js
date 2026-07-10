@@ -47,20 +47,25 @@ function startBackend() {
   ].filter((p) => fs.existsSync(p));
 
   const piperDir = path.join(root, isDev ? 'resources/piper' : 'piper');
-  const piperBin = path.join(
-    piperDir,
-    process.platform === 'win32' ? 'piper.exe' : 'piper',
+  const venvDir = isDev
+    ? path.join(root, 'tools', 'piper-venv')
+    : path.join(root, 'piper-venv');
+  const piperExe = process.platform === 'win32' ? 'piper.exe' : 'piper';
+  const venvPiper = path.join(
+    venvDir,
+    process.platform === 'win32' ? 'Scripts' : 'bin',
+    piperExe,
   );
-  const piperNested = path.join(
-    piperDir,
-    'piper',
-    process.platform === 'win32' ? 'piper.exe' : 'piper',
-  );
-  const piperPath = fs.existsSync(piperBin)
-    ? piperBin
-    : fs.existsSync(piperNested)
-      ? piperNested
-      : process.env.PIPER_PATH || '';
+  const piperBin = path.join(piperDir, piperExe);
+  const piperNested = path.join(piperDir, 'piper', piperExe);
+  // Prefer Python venv (reliable on macOS arm64), then native binary, then env.
+  const piperPath = fs.existsSync(venvPiper)
+    ? venvPiper
+    : fs.existsSync(piperBin)
+      ? piperBin
+      : fs.existsSync(piperNested)
+        ? piperNested
+        : process.env.PIPER_PATH || '';
   const piperModels = path.join(piperDir, 'models');
 
   const env = {

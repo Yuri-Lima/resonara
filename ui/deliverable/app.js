@@ -46,32 +46,34 @@
 
   drawWave(document.getElementById('wave-before'), 'before');
   drawWave(document.getElementById('wave-after'), 'after');
+  drawWave(document.getElementById('wave-en'), 'after');
+  drawWave(document.getElementById('wave-pt'), 'after');
 
-  const voices = [
-    { name: 'en_US lessac medium', lang: 'en-US', quality: 'medium', gender: 'female', sr: 22050 },
-    { name: 'en_US amy low', lang: 'en-US', quality: 'low', gender: 'female', sr: 16000 },
-    { name: 'en_US ryan high', lang: 'en-US', quality: 'high', gender: 'male', sr: 22050 },
-    { name: 'en_GB alan medium', lang: 'en-GB', quality: 'medium', gender: 'male', sr: 22050 },
-    { name: 'en_US libritts medium', lang: 'en-US', quality: 'medium', gender: 'mixed', sr: 22050 },
-    { name: 'en_US kathleen low', lang: 'en-US', quality: 'low', gender: 'female', sr: 16000 },
-  ];
-  const grid = document.getElementById('voice-grid');
-  if (grid) {
-    voices.forEach((v, i) => {
+  function fillVoiceGrid(gridId, voiceList, stroke) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    voiceList.forEach((v, i) => {
       const el = document.createElement('article');
       el.className = 'voice-card';
+      const status = v.bundled
+        ? '<span class="badge good">Bundled</span>'
+        : v.platform
+          ? '<span class="badge">Platform</span>'
+          : '<span class="badge">Downloadable</span>';
       el.innerHTML =
-        '<span class="badge">Neural</span><h3>' +
+        status +
+        '<h3>' +
         v.name +
         '</h3><p class="caption">' +
-        [v.lang, v.quality, v.gender, v.sr + ' Hz'].join(' · ') +
+        [v.lang, v.quality, v.gender, v.sr + ' Hz'].filter(Boolean).join(' · ') +
+        (v.note ? ' · ' + v.note : '') +
         '</p><canvas class="mini-wave" width="240" height="40" aria-hidden="true"></canvas>';
       grid.appendChild(el);
       const c = el.querySelector('canvas');
       if (!c) return;
       const ctx = c.getContext('2d');
       if (!ctx) return;
-      ctx.strokeStyle = '#4f8cff';
+      ctx.strokeStyle = stroke || '#4f8cff';
       ctx.beginPath();
       for (let x = 0; x < c.width; x++) {
         const y =
@@ -83,6 +85,25 @@
       ctx.stroke();
     });
   }
+
+  const voices = [
+    { name: 'en_US lessac medium', lang: 'en-US', quality: 'medium', gender: 'female', sr: 22050, bundled: true },
+    { name: 'en_US amy low', lang: 'en-US', quality: 'low', gender: 'female', sr: 16000 },
+    { name: 'en_US ryan high', lang: 'en-US', quality: 'high', gender: 'male', sr: 22050 },
+    { name: 'en_GB alan medium', lang: 'en-GB', quality: 'medium', gender: 'male', sr: 22050 },
+    { name: 'en_US libritts medium', lang: 'en-US', quality: 'medium', gender: 'mixed', sr: 22050 },
+    { name: 'en_US kathleen low', lang: 'en-US', quality: 'low', gender: 'female', sr: 16000 },
+  ];
+  fillVoiceGrid('voice-grid', voices, '#4f8cff');
+
+  const ptVoices = [
+    { name: 'pt_BR faber medium', lang: 'pt-BR', quality: 'medium', gender: 'male', sr: 22050, bundled: true, note: 'primary' },
+    { name: 'pt_BR edresson low', lang: 'pt-BR', quality: 'low', gender: 'male', sr: 16000, note: 'optional' },
+    { name: 'Luciana (macOS say)', lang: 'pt-BR', quality: 'system', gender: 'female', sr: 22050, platform: true, note: 'fallback' },
+    { name: 'Felipe (macOS say)', lang: 'pt-BR', quality: 'system', gender: 'male', sr: 22050, platform: true, note: 'optional install' },
+    { name: 'Microsoft Maria (SAPI)', lang: 'pt-BR', quality: 'system', gender: 'female', sr: 22050, platform: true, note: 'Win language pack' },
+  ];
+  fillVoiceGrid('pt-voice-grid', ptVoices, '#3dd68c');
 
   const modules = [
     { name: 'ssml-parser', before: 0, after: 82 },
@@ -203,6 +224,105 @@
       sample: 'All 10',
       listen: 'Full report — plays each sample in order',
       type: 'all',
+    },
+    // Portuguese (pt-BR)
+    {
+      id: 'frase-rapida',
+      cmd: 'demo:pt:rapida',
+      sample: 'pt-BR · frase',
+      listen: 'Natural Brazilian Portuguese sentence',
+      file: 'pt-br/frase-rapida.txt',
+      lang: 'pt-BR',
+    },
+    {
+      id: 'paragrafo',
+      cmd: 'demo:pt:paragrafo',
+      sample: 'pt-BR · parágrafo',
+      listen: 'Prosody, accents, nasal vowels',
+      file: 'pt-br/paragrafo.txt',
+      lang: 'pt-BR',
+    },
+    {
+      id: 'artigo-curto',
+      cmd: 'demo:pt:artigo',
+      sample: 'pt-BR · artigo',
+      listen: 'Paragraph transitions in Portuguese',
+      file: 'pt-br/artigo-curto.txt',
+      lang: 'pt-BR',
+    },
+    {
+      id: 'noticia',
+      cmd: 'demo:pt:noticia',
+      sample: 'pt-BR · notícia',
+      listen: 'News cadence, quotes, numbers',
+      file: 'pt-br/noticia.txt',
+      lang: 'pt-BR',
+    },
+    {
+      id: 'capitulo-livro',
+      cmd: 'demo:pt:capitulo',
+      sample: 'pt-BR · capítulo',
+      listen: 'Long-form seam-free Portuguese',
+      file: 'pt-br/capitulo-livro.txt',
+      lang: 'pt-BR',
+    },
+    {
+      id: 'documento-tecnico',
+      cmd: 'demo:pt:tecnico',
+      sample: 'pt-BR · técnico',
+      listen: 'Loanwords + tech terms',
+      file: 'pt-br/documento-tecnico.txt',
+      lang: 'pt-BR',
+    },
+    {
+      id: 'dialogo-roteiro',
+      cmd: 'demo:pt:dialogo',
+      sample: 'pt-BR · diálogo',
+      listen: 'Em-dash dialogue (—)',
+      file: 'pt-br/dialogo-roteiro.txt',
+      lang: 'pt-BR',
+      dialogue: true,
+    },
+    {
+      id: 'desafio-pronuncia',
+      cmd: 'demo:pt:pronuncia',
+      sample: 'pt-BR · pronúncia',
+      listen: 'Dictionary + hard place names',
+      file: 'pt-br/desafio-pronuncia.txt',
+      lang: 'pt-BR',
+    },
+    {
+      id: 'numeros-e-datas',
+      cmd: 'demo:pt:numeros',
+      sample: 'pt-BR · números',
+      listen: 'R$, DD/MM/YYYY, CPF',
+      file: 'pt-br/numeros-e-datas.txt',
+      lang: 'pt-BR',
+    },
+    {
+      id: 'misturado-en-pt',
+      cmd: 'demo:pt:misturado',
+      sample: 'en + pt-BR',
+      listen: 'Mixed-language voice switch',
+      file: 'pt-br/misturado-en-pt.txt',
+      lang: 'pt-BR',
+    },
+    {
+      id: 'ssml-demonstracao',
+      cmd: 'demo:pt:ssml',
+      sample: 'pt-BR · SSML',
+      listen: 'Breaks + accented phonemes',
+      file: 'pt-br/ssml-demonstracao.txt',
+      lang: 'pt-BR',
+      ssml: true,
+    },
+    {
+      id: 'pt-all',
+      cmd: 'demo:pt:all',
+      sample: 'All pt-BR',
+      listen: 'Full Portuguese suite',
+      type: 'all',
+      lang: 'pt-BR',
     },
   ];
 

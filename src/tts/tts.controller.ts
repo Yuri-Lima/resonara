@@ -422,14 +422,18 @@ export class TtsController {
 
   @Post('preview')
   async preview(@Body() body: SynthesizeDto) {
-    const sample =
-      body.text?.trim() ||
-      'Hello from Resonara. This is a short voice preview.';
+    const lang = body.language || 'auto';
+    const defaultSample =
+      lang === 'pt-BR'
+        ? 'Olá do Resonara. Esta é uma prévia curta da voz em português do Brasil.'
+        : 'Hello from Resonara. This is a short voice preview.';
+    const sample = body.text?.trim() || defaultSample;
     // short sync-ish job
     const job = await this.tts.startLongForm({
       text: sample.slice(0, 200),
       voice: body.voice,
       engine: body.engine,
+      language: lang,
       format: 'wav',
       normalize: true,
       highpass: true,

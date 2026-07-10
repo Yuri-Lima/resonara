@@ -4,9 +4,11 @@
   const textEl = document.getElementById('tts-text');
   const voiceEl = document.getElementById('voice-select');
   const engineEl = document.getElementById('engine-select');
+  const languageEl = document.getElementById('language-select');
   const formatEl = document.getElementById('format-select');
   const wordCount = document.getElementById('word-count');
   const statusEl = document.getElementById('status');
+  const langDetectEl = document.getElementById('lang-detect');
   const progressWrap = document.getElementById('progress-wrap');
   const progressBar = document.getElementById('progress-bar');
   const progressLabel = document.getElementById('progress-label');
@@ -19,6 +21,8 @@
   const dictBody = document.getElementById('dict-body');
   let ssmlMode = false;
   let importedChapters = null;
+  let detectTimer = null;
+  let allVoices = [];
 
   function words(t) {
     const s = (t || '').replace(/<[^>]+>/g, ' ').trim();
@@ -28,39 +32,111 @@
 
   textEl.addEventListener('input', () => {
     wordCount.textContent = words(textEl.value) + ' words';
+    scheduleLangDetect();
   });
+
+  function scheduleLangDetect() {
+    if (!langDetectEl) return;
+    clearTimeout(detectTimer);
+    detectTimer = setTimeout(runLangDetect, 400);
+  }
+
+  async function runLangDetect() {
+    if (!langDetectEl) return;
+    const text = textEl.value.trim();
+    if (!text) {
+      langDetectEl.textContent = 'Language: auto — type text to detect';
+      return;
+    }
+    if (languageEl && languageEl.value !== 'auto') {
+      langDetectEl.textContent =
+        'Language locked: ' + languageEl.value + ' (auto-detect off)';
+      return;
+    }
+    try {
+      const r = await fetch(API + '/tts/detect-language', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text.slice(0, 4000) }),
+      });
+      if (!r.ok) throw new Error(await r.text());
+      const data = await r.json();
+      const o = data.overall || {};
+      const conf = o.confidence != null ? Math.round(o.confidence * 100) : '?';
+      const paras = (data.paragraphs || [])
+        .filter((p) => p.code && p.code !== 'unknown')
+        .slice(0, 4)
+        .map((p) => p.code + ' ' + Math.round((p.confidence || 0) * 100) + '%')
+        .join(', ');
+      langDetectEl.textContent =
+        'Detected: ' +
+        (o.code || 'unknown') +
+        ' (' +
+        conf +
+        '% conf)' +
+        (paras ? ' · paragraphs: ' + paras : '');
+    } catch (e) {
+      langDetectEl.textContent = 'Language detect unavailable';
+    }
+  }
+
+  if (languageEl) {
+    languageEl.addEventListener('change', () => {
+      populateVoiceSelect();
+      scheduleLangDetect();
+    });
+  }
 
   function log(msg) {
     statusEl.textContent =
       typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
   }
 
+  function voiceMatchesLangFilter(v, lang) {
+    if (!lang || lang === 'auto') return true;
+    const hay = `${v.language || ''} ${v.id || ''} ${v.name || ''}`.toLowerCase();
+    if (lang === 'pt-BR') return /pt[_-]?br|portuguese|brasil|brazil|luciana|faber|edresson/i.test(hay);
+    if (lang === 'en') return /en[_-]|english|lessac|amy|ryan|alan|samantha|daniel|alex/i.test(hay) && !/pt[_-]?br/i.test(hay);
+    return true;
+  }
+
+  function populateVoiceSelect() {
+    const lang = languageEl ? languageEl.value : 'auto';
+    const groups = { piper: [], platform: [] };
+    allVoices.forEach((v) => {
+      if (!voiceMatchesLangFilter(v, lang)) return;
+      const eng = v.engine || 'platform';
+      (groups[eng] || (groups[eng] = [])).push(v);
+    });
+    const prev = voiceEl.value;
+    voiceEl.innerHTML = '<option value="">Auto (prefer Piper)</option>';
+    Object.keys(groups).forEach((eng) => {
+      if (!groups[eng].length) return;
+      const og = document.createElement('optgroup');
+      og.label = eng === 'piper' ? 'Piper Neural' : 'Platform System';
+      groups[eng].forEach((v) => {
+        const opt = document.createElement('option');
+        opt.value = v.id;
+        const badge = eng === 'piper' ? 'Neural' : 'System';
+        const meta = [v.language, v.quality, v.gender, v.sampleRate && v.sampleRate + 'Hz']
+          .filter(Boolean)
+          .join(' · ');
+        opt.textContent = `${v.name} [${badge}]${meta ? ' — ' + meta : ''}`;
+        og.appendChild(opt);
+      });
+      voiceEl.appendChild(og);
+    });
+    if (prev && Array.from(voiceEl.options).some((o) => o.value === prev)) {
+      voiceEl.value = prev;
+    }
+  }
+
   async function loadVoices() {
     try {
       const r = await fetch(API + '/tts/voices');
       const data = await r.json();
-      const groups = { piper: [], platform: [] };
-      (data.voices || []).forEach((v) => {
-        const eng = v.engine || 'platform';
-        (groups[eng] || (groups[eng] = [])).push(v);
-      });
-      voiceEl.innerHTML = '<option value="">Auto (prefer Piper)</option>';
-      Object.keys(groups).forEach((eng) => {
-        if (!groups[eng].length) return;
-        const og = document.createElement('optgroup');
-        og.label = eng === 'piper' ? 'Piper Neural' : 'Platform System';
-        groups[eng].forEach((v) => {
-          const opt = document.createElement('option');
-          opt.value = v.id;
-          const badge = eng === 'piper' ? 'Neural' : 'System';
-          const meta = [v.language, v.quality, v.gender, v.sampleRate && v.sampleRate + 'Hz']
-            .filter(Boolean)
-            .join(' · ');
-          opt.textContent = `${v.name} [${badge}]${meta ? ' — ' + meta : ''}`;
-          og.appendChild(opt);
-        });
-        voiceEl.appendChild(og);
-      });
+      allVoices = data.voices || [];
+      populateVoiceSelect();
       log(data.engines || data);
     } catch (e) {
       log('Could not load voices: ' + e.message);
@@ -109,13 +185,19 @@
 
   document.getElementById('btn-preview').addEventListener('click', async () => {
     try {
+      const lang = languageEl ? languageEl.value : 'auto';
+      const previewText =
+        lang === 'pt-BR'
+          ? 'Olá do Resonara. Esta é uma prévia curta da voz em português do Brasil.'
+          : 'Hello from Resonara. This is a short voice preview.';
       const r = await fetch(API + '/tts/preview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           voice: voiceEl.value || undefined,
           engine: engineEl.value || 'auto',
-          text: 'Hello from Resonara. This is a short voice preview.',
+          language: lang === 'auto' ? undefined : lang,
+          text: previewText,
         }),
       });
       if (!r.ok) throw new Error(await r.text());
@@ -137,6 +219,7 @@
       voice: voiceEl.value || undefined,
       format: formatEl.value || 'wav',
       engine: engineEl.value || 'auto',
+      language: languageEl ? languageEl.value || 'auto' : 'auto',
       ssml: ssmlMode || /<speak[\s>]/i.test(textEl.value),
       normalize: document.getElementById('opt-normalize').checked,
       highpass: document.getElementById('opt-highpass').checked,
@@ -335,10 +418,12 @@
 
   document.getElementById('dict-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const lang = languageEl && languageEl.value !== 'auto' ? languageEl.value : 'en';
     const body = {
       word: document.getElementById('dict-word').value,
       alias: document.getElementById('dict-alias').value || undefined,
       phoneme: document.getElementById('dict-phoneme').value || undefined,
+      language: lang,
     };
     await fetch(API + '/tts/dictionary', {
       method: 'POST',

@@ -175,6 +175,7 @@
       "!test/**/*",
       "!release/**/*"
     ],
+    "afterPack": "scripts/afterPack.js",
     "extraResources": [
       {
         "from": "dist",
@@ -197,6 +198,16 @@
         "to": "piper",
         "filter": [
           "**/*"
+        ]
+      },
+      {
+        "from": "tools/piper-venv",
+        "to": "piper-venv",
+        "filter": [
+          "**/*",
+          "!**/__pycache__/**",
+          "!**/*.pyc",
+          "!**/.git/**"
         ]
       }
     ],

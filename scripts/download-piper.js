@@ -26,13 +26,28 @@ const ASSETS = {
   'win32-x64': `piper_windows_amd64.zip`,
 };
 
-const DEFAULT_VOICE = {
-  onnx:
-    'https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx?download=true',
-  json:
-    'https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json?download=true',
-  name: 'en_US-lessac-medium',
-};
+const DEFAULT_VOICES = [
+  {
+    onnx:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx?download=true',
+    json:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json?download=true',
+    name: 'en_US-lessac-medium',
+    language: 'en-US',
+  },
+  {
+    // Brazilian Portuguese medium male — primary offline pt-BR voice
+    onnx:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx?download=true',
+    json:
+      'https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx.json?download=true',
+    name: 'pt_BR-faber-medium',
+    language: 'pt-BR',
+  },
+];
+
+// Back-compat alias
+const DEFAULT_VOICE = DEFAULT_VOICES[0];
 
 function download(url, dest, redirects = 0) {
   return new Promise((resolve, reject) => {
@@ -105,18 +120,20 @@ async function main() {
   const key = `${process.platform}-${process.arch}`;
   const asset = ASSETS[key] || ASSETS[`${process.platform}-x64`];
 
-  // Always ensure default model
-  const onnxPath = path.join(MODELS, `${DEFAULT_VOICE.name}.onnx`);
-  const jsonPath = onnxPath + '.json';
-  if (!fs.existsSync(onnxPath) || fs.statSync(onnxPath).size < 1_000_000) {
-    console.log('Downloading default voice', DEFAULT_VOICE.name);
-    await download(DEFAULT_VOICE.onnx, onnxPath);
-    await download(DEFAULT_VOICE.json, jsonPath);
-  } else if (!fs.existsSync(jsonPath) || fs.statSync(jsonPath).size < 100) {
-    console.log('Downloading voice config JSON');
-    await download(DEFAULT_VOICE.json, jsonPath);
-  } else {
-    console.log('Voice model already present:', onnxPath);
+  // Always ensure default multilingual models (en + pt-BR)
+  for (const voice of DEFAULT_VOICES) {
+    const onnxPath = path.join(MODELS, `${voice.name}.onnx`);
+    const jsonPath = onnxPath + '.json';
+    if (!fs.existsSync(onnxPath) || fs.statSync(onnxPath).size < 1_000_000) {
+      console.log('Downloading voice', voice.name, `(${voice.language})`);
+      await download(voice.onnx, onnxPath);
+      await download(voice.json, jsonPath);
+    } else if (!fs.existsSync(jsonPath) || fs.statSync(jsonPath).size < 100) {
+      console.log('Downloading voice config JSON for', voice.name);
+      await download(voice.json, jsonPath);
+    } else {
+      console.log('Voice model already present:', onnxPath);
+    }
   }
 
   // Prefer python wheel on darwin-arm64 or when native fails
@@ -161,11 +178,13 @@ async function main() {
   }
 
   // Write version stamp
+  const voiceNames = DEFAULT_VOICES.map((v) => v.name).join(',');
   fs.writeFileSync(
     path.join(OUT, 'VERSION'),
-    `release=${RELEASE}\nvoice=${DEFAULT_VOICE.name}\npython_venv=${VENV}\n`,
+    `release=${RELEASE}\nvoices=${voiceNames}\npython_venv=${VENV}\nlanguages=en-US,pt-BR\n`,
   );
-  console.log('Done. Resonara resolves tools/piper-venv/bin/piper first when runnable.');
+  console.log('Done. Bundled models:', voiceNames);
+  console.log('Resonara resolves tools/piper-venv/bin/piper first when runnable.');
   console.log('Optional: export PIPER_PATH and PIPER_MODELS_DIR');
 }
 
