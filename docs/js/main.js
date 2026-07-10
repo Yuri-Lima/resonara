@@ -24,7 +24,7 @@
       REPO +
       '/releases/download/' +
       FALLBACK_TAG +
-      '/Resonara%20Setup%201.0.0.exe',
+      '/Resonara.Setup.1.0.0.exe',
     page: RELEASES_URL + '/tag/' + FALLBACK_TAG,
   };
 
@@ -91,7 +91,8 @@
       page: (release && release.html_url) || FALLBACK.page,
       macDmg: byName(/\.dmg$/i) || FALLBACK.macDmg,
       macZip: byName(/arm64-mac\.zip$|\.zip$/i) || FALLBACK.macZip,
-      winSetup: byName(/Setup.*\.exe$|\.exe$/i) || FALLBACK.winSetup,
+      winSetup:
+        byName(/Setup.*\.exe$/i) || byName(/\.exe$/i) || FALLBACK.winSetup,
     };
   }
 
