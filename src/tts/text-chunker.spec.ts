@@ -60,9 +60,19 @@ describe('estimateWordCount', () => {
 });
 
 describe('detectChapters', () => {
-  it('finds markdown headings', () => {
-    const text = '# Intro\n\nHello\n\n## Chapter Two\n\nWorld';
+  it('finds substantial H1 / Chapter markers', () => {
+    const body = (n: string) =>
+      `This is a substantial body for ${n}. `.repeat(50);
+    const text = `# Introduction\n\n${body('intro')}\n\n# Chapter Two\n\n${body('two')}`;
     const ch = detectChapters(text);
     expect(ch.length).toBeGreaterThanOrEqual(2);
+    expect(ch[0].title).toMatch(/Introduction/i);
+  });
+
+  it('collapses tiny micro-sections into a single body', () => {
+    const text = '# Intro\n\nHello\n\n## Chapter Two\n\nWorld';
+    const ch = detectChapters(text);
+    expect(ch).toHaveLength(1);
+    expect(ch[0].title).toBe('Body');
   });
 });
