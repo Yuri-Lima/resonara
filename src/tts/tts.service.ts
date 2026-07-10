@@ -273,14 +273,8 @@ export class TtsService implements OnModuleInit {
       }
     }
 
-    let engine: 'piper' | 'platform' | 'kokoro';
-    try {
-      engine = this.voiceManager.resolveEngine(opts.engine || 'auto');
-    } catch (e) {
-      throw new BadRequestException((e as Error).message);
-    }
-
-    // Resolve language: explicit | auto-detect
+    // Resolve language FIRST so engine auto-selection is language-aware
+    // (Kokoro is English-only; pt-BR must use Piper or platform pt-BR).
     const langHint = opts.language || 'auto';
     const plan = planMixedLanguageSynthesis(text, {
       language: langHint === 'auto' ? 'auto' : langHint,
@@ -305,6 +299,25 @@ export class TtsService implements OnModuleInit {
         );
       }
       voice = any[0].id;
+    }
+
+    // Engine: honor explicit request; otherwise align to selected voice, then language-aware auto
+    let engine: 'piper' | 'platform' | 'kokoro';
+    try {
+      if (opts.engine && opts.engine !== 'auto') {
+        engine = this.voiceManager.resolveEngine(opts.engine, primaryLang);
+      } else if (voice) {
+        const resolved = this.voiceManager.getVoice(voice);
+        if (resolved?.engine) {
+          engine = resolved.engine;
+        } else {
+          engine = this.voiceManager.resolveEngine('auto', primaryLang);
+        }
+      } else {
+        engine = this.voiceManager.resolveEngine('auto', primaryLang);
+      }
+    } catch (e) {
+      throw new BadRequestException((e as Error).message);
     }
 
     const dialogue =
@@ -348,7 +361,8 @@ export class TtsService implements OnModuleInit {
       status: TtsJobStatus.QUEUED,
       text,
       voiceId: voice ?? null,
-      engine: opts.engine || 'auto',
+      // Persist resolved engine so resynth / restarts never re-pick English Kokoro for pt-BR
+      engine: engine,
       format: opts.format || 'wav',
       rate: opts.rate ?? null,
       totalChunks: 0,
@@ -627,11 +641,22 @@ export class TtsService implements OnModuleInit {
     if (!entry) {
       throw new NotFoundException(`Chunk ${index} not found in job metadata`);
     }
+    const lang =
+      (job.metadata as { language?: string } | undefined)?.language || 'en';
     const engine = this.voiceManager.resolveEngine(
-      job.engine === 'auto' ? 'auto' : job.engine,
+      (job.engine === 'auto' ? 'auto' : job.engine) as
+        | 'auto'
+        | 'piper'
+        | 'platform'
+        | 'kokoro',
+      lang,
     );
     const text = override?.text?.trim() || entry.textPreview;
-    const voice = this.resolveVoice(override?.voiceId || job.voiceId || undefined, engine);
+    const voice = this.resolveVoice(
+      override?.voiceId || job.voiceId || undefined,
+      engine,
+      lang,
+    );
     const workDir = path.join(this.dataDir, job.id, 'resynth');
     await fs.mkdir(workDir, { recursive: true });
     const chunkPath = path.join(workDir, `chunk-${index}.wav`);
@@ -721,18 +746,29 @@ export class TtsService implements OnModuleInit {
   }> {
     let text = (opts.text || '').trim();
     if (!text) throw new BadRequestException('text is required');
-    const engine = this.voiceManager.resolveEngine(opts.engine || 'auto');
     const lang =
       opts.language && opts.language !== 'auto'
         ? normalizeLanguageCode(opts.language)
         : detectLanguage(text).code;
+    const voiceHint =
+      opts.voice ||
+      this.voiceManager.getDefaultVoiceForLanguage(lang)?.id;
+    let engine: 'piper' | 'platform' | 'kokoro';
+    if (opts.engine && opts.engine !== 'auto') {
+      engine = this.voiceManager.resolveEngine(opts.engine, lang);
+    } else if (voiceHint) {
+      const rv = this.voiceManager.getVoice(voiceHint);
+      engine = rv?.engine || this.voiceManager.resolveEngine('auto', lang);
+    } else {
+      engine = this.voiceManager.resolveEngine('auto', lang);
+    }
     text = expandTextForLanguage(text, lang);
     if (this.pronunciation) {
       text = await this.pronunciation.applyDictionary(text, engine, lang);
     }
     const voice =
-      this.resolveVoice(opts.voice, engine) ||
-      this.voiceManager.getDefaultVoiceForLanguage(lang);
+      this.resolveVoice(opts.voice || voiceHint, engine, lang) ||
+      this.voiceManager.getDefaultVoiceForLanguage(lang, engine);
     const chunks = chunkTextForTts(text, { engine, language: lang });
     const outDir =
       opts.outDir || path.join(this.dataDir, `sync-${Date.now()}`);
