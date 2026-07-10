@@ -24,8 +24,8 @@
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder",
     "dist:mac": "npm run build && electron-builder --mac dmg zip",
-    "dist:win": "npm run build && electron-builder --win nsis",
-    "dist:all": "npm run build && electron-builder --mac dmg zip --win nsis",
+    "dist:win": "npm run build && electron-builder --win nsis --x64",
+    "dist:all": "npm run build && electron-builder --mac dmg zip --arm64 --win nsis --x64",
     "smoke:tts": "node scripts/smoke-tts.js",
     "smoke:service": "node scripts/smoke-service.js",
     "download:piper": "node scripts/download-piper.js",
@@ -175,6 +175,7 @@
       "!test/**/*",
       "!release/**/*"
     ],
+    "npmRebuild": false,
     "afterPack": "scripts/afterPack.js",
     "extraResources": [
       {
@@ -199,16 +200,6 @@
         "filter": [
           "**/*"
         ]
-      },
-      {
-        "from": "tools/piper-venv",
-        "to": "piper-venv",
-        "filter": [
-          "**/*",
-          "!**/__pycache__/**",
-          "!**/*.pyc",
-          "!**/.git/**"
-        ]
       }
     ],
     "mac": {
@@ -217,21 +208,31 @@
         {
           "target": "dmg",
           "arch": [
-            "arm64",
-            "x64"
+            "arm64"
           ]
         },
         {
           "target": "zip",
           "arch": [
-            "arm64",
-            "x64"
+            "arm64"
           ]
         }
       ],
       "identity": null,
       "hardenedRuntime": false,
-      "gatekeeperAssess": false
+      "gatekeeperAssess": false,
+      "extraResources": [
+        {
+          "from": "tools/piper-venv",
+          "to": "piper-venv",
+          "filter": [
+            "**/*",
+            "!**/__pycache__/**",
+            "!**/*.pyc",
+            "!**/.git/**"
+          ]
+        }
+      ]
     },
     "dmg": {
       "title": "Resonara"

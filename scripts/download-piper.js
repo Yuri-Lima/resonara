@@ -149,20 +149,30 @@ async function main() {
     }
   }
 
-  if (asset && !preferPython) {
-    const url = `https://github.com/rhasspy/piper/releases/download/${RELEASE}/${asset}`;
-    const archive = path.join(os.tmpdir(), asset);
+  async function extractNative(assetName) {
+    const url = `https://github.com/rhasspy/piper/releases/download/${RELEASE}/${assetName}`;
+    const archive = path.join(os.tmpdir(), assetName);
     console.log('Downloading native binary', url);
+    await download(url, archive);
+    console.log('Extracting to', OUT);
+    if (assetName.endsWith('.zip')) {
+      // Windows zip has a top-level piper/ folder — merge into OUT
+      const tmp = path.join(os.tmpdir(), `piper-extract-${Date.now()}`);
+      fs.mkdirSync(tmp, { recursive: true });
+      execSync(`unzip -o "${archive}" -d "${tmp}"`, { stdio: 'inherit' });
+      const nested = path.join(tmp, 'piper');
+      const src = fs.existsSync(nested) ? nested : tmp;
+      execSync(`cp -R "${src}/." "${OUT}/"`, { stdio: 'inherit' });
+    } else {
+      execSync(`tar -xzf "${archive}" -C "${OUT}" --strip-components=1`, {
+        stdio: 'inherit',
+      });
+    }
+  }
+
+  if (asset && !preferPython) {
     try {
-      await download(url, archive);
-      console.log('Extracting to', OUT);
-      if (asset.endsWith('.zip')) {
-        execSync(`unzip -o "${archive}" -d "${OUT}"`, { stdio: 'inherit' });
-      } else {
-        execSync(`tar -xzf "${archive}" -C "${OUT}" --strip-components=1`, {
-          stdio: 'inherit',
-        });
-      }
+      await extractNative(asset);
       const bin = path.join(OUT, process.platform === 'win32' ? 'piper.exe' : 'piper');
       if (fs.existsSync(bin)) {
         fs.chmodSync(bin, 0o755);
@@ -175,6 +185,22 @@ async function main() {
     } catch (e) {
       console.warn('Native download failed:', e.message);
     }
+  }
+
+  // Always stage Windows amd64 binary for cross-packaging from macOS/Linux
+  const winExe = path.join(OUT, 'piper.exe');
+  if (!fs.existsSync(winExe) || fs.statSync(winExe).size < 100_000) {
+    try {
+      console.log('Staging Windows piper.exe for NSIS packaging…');
+      await extractNative(ASSETS['win32-x64']);
+      if (fs.existsSync(winExe)) {
+        console.log('Windows piper.exe ready:', winExe);
+      }
+    } catch (e) {
+      console.warn('Windows binary staging failed:', e.message);
+    }
+  } else {
+    console.log('Windows piper.exe already present:', winExe);
   }
 
   // Write version stamp

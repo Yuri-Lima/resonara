@@ -34,3 +34,21 @@ Recorded during local verification on macOS arm64 with Python Piper venv.
 - macOS DMG: runtime-verified after install (synth en + pt-BR offline).
 - Windows NSIS: build-verified from macOS; see WINDOWS_TESTING.md.
 
+
+## Packaged app verification (this session)
+
+### macOS DMG (`release/Resonara-1.0.0-arm64.dmg`, ~418MB)
+
+- Bundled: `piper-venv` (Python Piper) + `en_US-lessac-medium` + `pt_BR-faber-medium`
+- Runtime: synthesized both languages offline using packaged resources:
+  - `/tmp/resonara-pack-en.wav` (lessac, 22050 Hz PCM)
+  - `/tmp/resonara-pack-pt.wav` (faber, 22050 Hz PCM)
+- afterPack: chmod +x + ad-hoc codesign on Piper binary
+
+### Windows NSIS (`release/Resonara Setup 1.0.0.exe`, x64)
+
+- Build-verified from macOS arm64 host (`npmRebuild: false` for cross-arch)
+- Contains `piper.exe` + ONNXRuntime DLLs + both language models
+- Does **not** ship macOS `piper-venv` (platform-specific extraResources)
+- Runtime checklist: WINDOWS_TESTING.md
+
