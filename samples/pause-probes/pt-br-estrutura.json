@@ -1,0 +1,166 @@
+{
+  "fixture": "pt-br-estrutura",
+  "language": "pt-BR",
+  "profile": "audiobook",
+  "charCount": 535,
+  "boundaries": [
+    {
+      "type": "chapter",
+      "offset": 24,
+      "char": "\\n",
+      "level": 1,
+      "title": "Capítulo Um: A Chegada",
+      "context": "# Capítulo Um: A Chegada↵↵A trilha estreita ",
+      "expectedBandMs": [
+        1500,
+        2500
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 65,
+      "char": ".",
+      "context": "companhou a floresta. Os pássaros calaram",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 102,
+      "char": ".",
+      "context": "aram perto da crista. Um vento frio desci",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "pre-header",
+      "offset": 134,
+      "char": "\\n\\n",
+      "context": "rio descia do norte.↵↵## Seção A — Primei",
+      "expectedBandMs": [
+        250,
+        400
+      ]
+    },
+    {
+      "type": "header",
+      "offset": 161,
+      "char": "\\n",
+      "level": 2,
+      "title": "Seção A — Primeira Luz",
+      "context": "## Seção A — Primeira Luz↵↵A névoa da manhã g",
+      "expectedBandMs": [
+        900,
+        1300
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 202,
+      "char": ".",
+      "context": "udava nas samambaias. Uma única pegada ma",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "pre-header",
+      "offset": 255,
+      "char": "\\n\\n",
+      "context": " ao lado do caminho.↵↵### Tópico: Fontes ",
+      "expectedBandMs": [
+        250,
+        400
+      ]
+    },
+    {
+      "type": "header",
+      "offset": 283,
+      "char": "\\n",
+      "level": 3,
+      "title": "Tópico: Fontes de Água",
+      "context": "### Tópico: Fontes de Água↵↵Encontre a nascent",
+      "expectedBandMs": [
+        900,
+        1300
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 330,
+      "char": ".",
+      "context": "te do carvalho caído. Encha as garrafas a",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 367,
+      "char": ".",
+      "context": "as antes do meio-dia. Não beba da poça es",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "chapter",
+      "offset": 398,
+      "char": "---",
+      "context": "ça estagnada.↵↵---↵↵# Capítulo Dois",
+      "expectedBandMs": [
+        1500,
+        2500
+      ]
+    },
+    {
+      "type": "chapter",
+      "offset": 431,
+      "char": "\\n",
+      "level": 1,
+      "title": "Capítulo Dois: A Travessia",
+      "context": "# Capítulo Dois: A Travessia↵↵O rio corria frio ",
+      "expectedBandMs": [
+        1500,
+        2500
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 459,
+      "char": ".",
+      "context": "corria frio e rápido. Eles cruzaram na cu",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "comma",
+      "offset": 490,
+      "char": ",",
+      "context": "aram na curva rasa e, então, subiram em d",
+      "expectedBandMs": [
+        150,
+        250
+      ]
+    },
+    {
+      "type": "comma",
+      "offset": 497,
+      "char": ",",
+      "context": " curva rasa e, então, subiram em direção ",
+      "expectedBandMs": [
+        150,
+        250
+      ]
+    }
+  ]
+}

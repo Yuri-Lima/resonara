@@ -1,0 +1,501 @@
+{
+  "note": "v1.0.0 A/B before WAVs \u2014 regenerate with scripts/pause-baseline.js",
+  "files": [
+    {
+      "path": "piper_en-punctuation.wav",
+      "bytes": 1029572
+    },
+    {
+      "path": "piper_en-structure.wav",
+      "bytes": 1221574
+    },
+    {
+      "path": "piper_pt-br-estrutura.wav",
+      "bytes": 1270922
+    },
+    {
+      "path": "piper_pt-br-pontuacao.wav",
+      "bytes": 1207360
+    },
+    {
+      "path": "platform_en-punctuation.wav",
+      "bytes": 1075984
+    },
+    {
+      "path": "platform_en-structure.wav",
+      "bytes": 1233162
+    },
+    {
+      "path": "platform_pt-br-estrutura.wav",
+      "bytes": 1516058
+    },
+    {
+      "path": "platform_pt-br-pontuacao.wav",
+      "bytes": 1526268
+    },
+    {
+      "path": "v1.0.0/piper_en-punctuation.wav",
+      "bytes": 1029572
+    },
+    {
+      "path": "v1.0.0/piper_en-structure.wav",
+      "bytes": 1221574
+    },
+    {
+      "path": "v1.0.0/piper_pt-br-estrutura.wav",
+      "bytes": 1270922
+    },
+    {
+      "path": "v1.0.0/piper_pt-br-pontuacao.wav",
+      "bytes": 1207360
+    },
+    {
+      "path": "v1.0.0/platform_en-punctuation.wav",
+      "bytes": 1075984
+    },
+    {
+      "path": "v1.0.0/platform_en-structure.wav",
+      "bytes": 1233162
+    },
+    {
+      "path": "v1.0.0/platform_pt-br-estrutura.wav",
+      "bytes": 1516058
+    },
+    {
+      "path": "v1.0.0/platform_pt-br-pontuacao.wav",
+      "bytes": 1526268
+    },
+    {
+      "path": "work/piper/en-punctuation/part-0-raw.wav",
+      "bytes": 317484
+    },
+    {
+      "path": "work/piper/en-punctuation/part-0-trim.wav",
+      "bytes": 309018
+    },
+    {
+      "path": "work/piper/en-punctuation/part-1-raw.wav",
+      "bytes": 338476
+    },
+    {
+      "path": "work/piper/en-punctuation/part-1-trim.wav",
+      "bytes": 329758
+    },
+    {
+      "path": "work/piper/en-punctuation/part-2-raw.wav",
+      "bytes": 250924
+    },
+    {
+      "path": "work/piper/en-punctuation/part-2-trim.wav",
+      "bytes": 246656
+    },
+    {
+      "path": "work/piper/en-punctuation/part-3-raw.wav",
+      "bytes": 152620
+    },
+    {
+      "path": "work/piper/en-punctuation/part-3-trim.wav",
+      "bytes": 144374
+    },
+    {
+      "path": "work/piper/en-structure/part-0-raw.wav",
+      "bytes": 86572
+    },
+    {
+      "path": "work/piper/en-structure/part-0-trim.wav",
+      "bytes": 77942
+    },
+    {
+      "path": "work/piper/en-structure/part-1-raw.wav",
+      "bytes": 289324
+    },
+    {
+      "path": "work/piper/en-structure/part-1-trim.wav",
+      "bytes": 285508
+    },
+    {
+      "path": "work/piper/en-structure/part-2-raw.wav",
+      "bytes": 77868
+    },
+    {
+      "path": "work/piper/en-structure/part-2-trim.wav",
+      "bytes": 74078
+    },
+    {
+      "path": "work/piper/en-structure/part-3-raw.wav",
+      "bytes": 200748
+    },
+    {
+      "path": "work/piper/en-structure/part-3-trim.wav",
+      "bytes": 194222
+    },
+    {
+      "path": "work/piper/en-structure/part-4-raw.wav",
+      "bytes": 80940
+    },
+    {
+      "path": "work/piper/en-structure/part-4-trim.wav",
+      "bytes": 74674
+    },
+    {
+      "path": "work/piper/en-structure/part-5-raw.wav",
+      "bytes": 227372
+    },
+    {
+      "path": "work/piper/en-structure/part-5-trim.wav",
+      "bytes": 219670
+    },
+    {
+      "path": "work/piper/en-structure/part-6-raw.wav",
+      "bytes": 2284
+    },
+    {
+      "path": "work/piper/en-structure/part-6-trim.wav",
+      "bytes": 2284
+    },
+    {
+      "path": "work/piper/en-structure/part-7-raw.wav",
+      "bytes": 76332
+    },
+    {
+      "path": "work/piper/en-structure/part-7-trim.wav",
+      "bytes": 69254
+    },
+    {
+      "path": "work/piper/en-structure/part-8-raw.wav",
+      "bytes": 231980
+    },
+    {
+      "path": "work/piper/en-structure/part-8-trim.wav",
+      "bytes": 224566
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-0-raw.wav",
+      "bytes": 68652
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-0-trim.wav",
+      "bytes": 65204
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-1-raw.wav",
+      "bytes": 274476
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-1-trim.wav",
+      "bytes": 271046
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-2-raw.wav",
+      "bytes": 64556
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-2-trim.wav",
+      "bytes": 60200
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-3-raw.wav",
+      "bytes": 204844
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-3-trim.wav",
+      "bytes": 201332
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-4-raw.wav",
+      "bytes": 68140
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-4-trim.wav",
+      "bytes": 63352
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-5-raw.wav",
+      "bytes": 276012
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-5-trim.wav",
+      "bytes": 269472
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-6-raw.wav",
+      "bytes": 2284
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-6-trim.wav",
+      "bytes": 2284
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-7-raw.wav",
+      "bytes": 77356
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-7-trim.wav",
+      "bytes": 72014
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-8-raw.wav",
+      "bytes": 269868
+    },
+    {
+      "path": "work/piper/pt-br-estrutura/part-8-trim.wav",
+      "bytes": 266642
+    },
+    {
+      "path": "work/piper/pt-br-pontuacao/part-0-raw.wav",
+      "bytes": 308268
+    },
+    {
+      "path": "work/piper/pt-br-pontuacao/part-0-trim.wav",
+      "bytes": 302078
+    },
+    {
+      "path": "work/piper/pt-br-pontuacao/part-1-raw.wav",
+      "bytes": 162348
+    },
+    {
+      "path": "work/piper/pt-br-pontuacao/part-1-trim.wav",
+      "bytes": 158072
+    },
+    {
+      "path": "work/piper/pt-br-pontuacao/part-2-raw.wav",
+      "bytes": 183340
+    },
+    {
+      "path": "work/piper/pt-br-pontuacao/part-2-trim.wav",
+      "bytes": 177136
+    },
+    {
+      "path": "work/piper/pt-br-pontuacao/part-3-raw.wav",
+      "bytes": 288812
+    },
+    {
+      "path": "work/piper/pt-br-pontuacao/part-3-trim.wav",
+      "bytes": 282922
+    },
+    {
+      "path": "work/piper/pt-br-pontuacao/part-4-raw.wav",
+      "bytes": 293932
+    },
+    {
+      "path": "work/piper/pt-br-pontuacao/part-4-trim.wav",
+      "bytes": 287464
+    },
+    {
+      "path": "work/platform/en-punctuation/part-0-raw.wav",
+      "bytes": 322780
+    },
+    {
+      "path": "work/platform/en-punctuation/part-0-trim.wav",
+      "bytes": 321366
+    },
+    {
+      "path": "work/platform/en-punctuation/part-1-raw.wav",
+      "bytes": 339142
+    },
+    {
+      "path": "work/platform/en-punctuation/part-1-trim.wav",
+      "bytes": 338402
+    },
+    {
+      "path": "work/platform/en-punctuation/part-2-raw.wav",
+      "bytes": 259140
+    },
+    {
+      "path": "work/platform/en-punctuation/part-2-trim.wav",
+      "bytes": 257994
+    },
+    {
+      "path": "work/platform/en-punctuation/part-3-raw.wav",
+      "bytes": 159560
+    },
+    {
+      "path": "work/platform/en-punctuation/part-3-trim.wav",
+      "bytes": 158456
+    },
+    {
+      "path": "work/platform/en-structure/part-0-raw.wav",
+      "bytes": 84774
+    },
+    {
+      "path": "work/platform/en-structure/part-0-trim.wav",
+      "bytes": 84214
+    },
+    {
+      "path": "work/platform/en-structure/part-1-raw.wav",
+      "bytes": 268870
+    },
+    {
+      "path": "work/platform/en-structure/part-1-trim.wav",
+      "bytes": 268140
+    },
+    {
+      "path": "work/platform/en-structure/part-2-raw.wav",
+      "bytes": 62852
+    },
+    {
+      "path": "work/platform/en-structure/part-2-trim.wav",
+      "bytes": 62372
+    },
+    {
+      "path": "work/platform/en-structure/part-3-raw.wav",
+      "bytes": 198494
+    },
+    {
+      "path": "work/platform/en-structure/part-3-trim.wav",
+      "bytes": 197848
+    },
+    {
+      "path": "work/platform/en-structure/part-4-raw.wav",
+      "bytes": 76304
+    },
+    {
+      "path": "work/platform/en-structure/part-4-trim.wav",
+      "bytes": 75182
+    },
+    {
+      "path": "work/platform/en-structure/part-5-raw.wav",
+      "bytes": 244012
+    },
+    {
+      "path": "work/platform/en-structure/part-5-trim.wav",
+      "bytes": 242832
+    },
+    {
+      "path": "work/platform/en-structure/part-6-raw.wav",
+      "bytes": 2284
+    },
+    {
+      "path": "work/platform/en-structure/part-6-trim.wav",
+      "bytes": 2284
+    },
+    {
+      "path": "work/platform/en-structure/part-7-raw.wav",
+      "bytes": 65530
+    },
+    {
+      "path": "work/platform/en-structure/part-7-trim.wav",
+      "bytes": 64536
+    },
+    {
+      "path": "work/platform/en-structure/part-8-raw.wav",
+      "bytes": 237416
+    },
+    {
+      "path": "work/platform/en-structure/part-8-trim.wav",
+      "bytes": 236378
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-0-raw.wav",
+      "bytes": 89282
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-0-trim.wav",
+      "bytes": 88022
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-1-raw.wav",
+      "bytes": 284330
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-1-trim.wav",
+      "bytes": 283250
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-2-raw.wav",
+      "bytes": 88490
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-2-trim.wav",
+      "bytes": 87914
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-3-raw.wav",
+      "bytes": 241562
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-3-trim.wav",
+      "bytes": 240776
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-4-raw.wav",
+      "bytes": 88778
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-4-trim.wav",
+      "bytes": 88214
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-5-raw.wav",
+      "bytes": 304870
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-5-trim.wav",
+      "bytes": 303840
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-6-raw.wav",
+      "bytes": 2284
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-6-trim.wav",
+      "bytes": 2284
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-7-raw.wav",
+      "bytes": 100288
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-7-trim.wav",
+      "bytes": 99296
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-8-raw.wav",
+      "bytes": 324090
+    },
+    {
+      "path": "work/platform/pt-br-estrutura/part-8-trim.wav",
+      "bytes": 323086
+    },
+    {
+      "path": "work/platform/pt-br-pontuacao/part-0-raw.wav",
+      "bytes": 402842
+    },
+    {
+      "path": "work/platform/pt-br-pontuacao/part-0-trim.wav",
+      "bytes": 401786
+    },
+    {
+      "path": "work/platform/pt-br-pontuacao/part-1-raw.wav",
+      "bytes": 219784
+    },
+    {
+      "path": "work/platform/pt-br-pontuacao/part-1-trim.wav",
+      "bytes": 219612
+    },
+    {
+      "path": "work/platform/pt-br-pontuacao/part-2-raw.wav",
+      "bytes": 228264
+    },
+    {
+      "path": "work/platform/pt-br-pontuacao/part-2-trim.wav",
+      "bytes": 226690
+    },
+    {
+      "path": "work/platform/pt-br-pontuacao/part-3-raw.wav",
+      "bytes": 339160
+    },
+    {
+      "path": "work/platform/pt-br-pontuacao/part-3-trim.wav",
+      "bytes": 338238
+    },
+    {
+      "path": "work/platform/pt-br-pontuacao/part-4-raw.wav",
+      "bytes": 341118
+    },
+    {
+      "path": "work/platform/pt-br-pontuacao/part-4-trim.wav",
+      "bytes": 340254
+    }
+  ]
+}

@@ -48,3 +48,9 @@ resources/whisper/
 resources/kokoro/
 demo-output/*
 !demo-output/.gitkeep
+
+# Pause probe synthesis artifacts (regenerate via npm run probe:all)
+reports/probe-out/
+reports/probe-logs/
+reports/ab-baseline/**/*.wav
+reports/ab-baseline/work/

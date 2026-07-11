@@ -1,0 +1,308 @@
+{
+  "fixture": "pt-br-pontuacao",
+  "language": "pt-BR",
+  "profile": "audiobook",
+  "charCount": 499,
+  "boundaries": [
+    {
+      "type": "comma",
+      "offset": 12,
+      "char": ",",
+      "context": "O rio quieto, passando pelo moinh",
+      "expectedBandMs": [
+        150,
+        250
+      ]
+    },
+    {
+      "type": "comma",
+      "offset": 34,
+      "char": ",",
+      "context": "passando pelo moinho, carregava folhas em",
+      "expectedBandMs": [
+        150,
+        250
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 70,
+      "char": ".",
+      "context": "as em direção ao mar. Ela pausou; depois ",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "semicolon",
+      "offset": 82,
+      "char": ";",
+      "context": "o ao mar. Ela pausou; depois falou: a dec",
+      "expectedBandMs": [
+        200,
+        300
+      ]
+    },
+    {
+      "type": "colon",
+      "offset": 96,
+      "char": ":",
+      "context": "pausou; depois falou: a decisão era final",
+      "expectedBandMs": [
+        200,
+        300
+      ]
+    },
+    {
+      "type": "paragraph",
+      "offset": 118,
+      "char": "\\n\\n",
+      "context": "a decisão era final.↵↵Depois da tempestad",
+      "expectedBandMs": [
+        700,
+        1000
+      ]
+    },
+    {
+      "type": "em-dash",
+      "offset": 141,
+      "char": "—",
+      "context": "epois da tempestade — que durou três dias",
+      "expectedBandMs": [
+        200,
+        350
+      ]
+    },
+    {
+      "type": "dialogue-attrib",
+      "offset": 141,
+      "char": "—",
+      "context": " da tempestade — que durou três dias — o",
+      "expectedBandMs": [
+        250,
+        400
+      ]
+    },
+    {
+      "type": "em-dash",
+      "offset": 163,
+      "char": "—",
+      "context": "que durou três dias — o jardim se recuper",
+      "expectedBandMs": [
+        200,
+        350
+      ]
+    },
+    {
+      "type": "dialogue-attrib",
+      "offset": 163,
+      "char": "—",
+      "context": "urou três dias — o jardim se recuperou.↵",
+      "expectedBandMs": [
+        250,
+        400
+      ]
+    },
+    {
+      "type": "paragraph",
+      "offset": 187,
+      "char": "\\n\\n",
+      "context": "jardim se recuperou.↵↵— Você vem? — pergu",
+      "expectedBandMs": [
+        700,
+        1000
+      ]
+    },
+    {
+      "type": "em-dash",
+      "offset": 189,
+      "char": "—",
+      "context": "rdim se recuperou.↵↵— Você vem? — pergunt",
+      "expectedBandMs": [
+        200,
+        350
+      ]
+    },
+    {
+      "type": "dialogue-open",
+      "offset": 189,
+      "char": "—",
+      "context": "se recuperou.↵↵— Você vem? — perguntou e",
+      "expectedBandMs": [
+        250,
+        400
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 199,
+      "char": "?",
+      "context": "cuperou.↵↵— Você vem? — perguntou ela.↵— ",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "em-dash",
+      "offset": 201,
+      "char": "—",
+      "context": "perou.↵↵— Você vem? — perguntou ela.↵— Ag",
+      "expectedBandMs": [
+        200,
+        350
+      ]
+    },
+    {
+      "type": "dialogue-attrib",
+      "offset": 201,
+      "char": "—",
+      "context": ".↵↵— Você vem? — perguntou ela.↵— Agora ",
+      "expectedBandMs": [
+        250,
+        400
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 216,
+      "char": ".",
+      "context": "vem? — perguntou ela.↵— Agora não — respo",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "em-dash",
+      "offset": 218,
+      "char": "—",
+      "context": "m? — perguntou ela.↵— Agora não — respond",
+      "expectedBandMs": [
+        200,
+        350
+      ]
+    },
+    {
+      "type": "dialogue-open",
+      "offset": 218,
+      "char": "—",
+      "context": "perguntou ela.↵— Agora não — respondeu e",
+      "expectedBandMs": [
+        250,
+        400
+      ]
+    },
+    {
+      "type": "em-dash",
+      "offset": 230,
+      "char": "—",
+      "context": "ou ela.↵— Agora não — respondeu ele, sem ",
+      "expectedBandMs": [
+        200,
+        350
+      ]
+    },
+    {
+      "type": "dialogue-attrib",
+      "offset": 230,
+      "char": "—",
+      "context": "a.↵— Agora não — respondeu ele, sem ergu",
+      "expectedBandMs": [
+        250,
+        400
+      ]
+    },
+    {
+      "type": "comma",
+      "offset": 245,
+      "char": ",",
+      "context": " não — respondeu ele, sem erguer o olhar.",
+      "expectedBandMs": [
+        150,
+        250
+      ]
+    },
+    {
+      "type": "paragraph",
+      "offset": 266,
+      "char": "\\n\\n",
+      "context": " sem erguer o olhar.↵↵O primeiro capítulo",
+      "expectedBandMs": [
+        700,
+        1000
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 300,
+      "char": ".",
+      "context": "apítulo termina aqui. O segundo começa se",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 329,
+      "char": "!",
+      "context": "do começa sem alarde! Alguém ouviu o sino",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 350,
+      "char": "?",
+      "context": " Alguém ouviu o sino? Ninguém respondeu d",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "paragraph",
+      "offset": 378,
+      "char": "\\n\\n",
+      "context": "m respondeu de fato.↵↵A trilha sumiu na n",
+      "expectedBandMs": [
+        700,
+        1000
+      ]
+    },
+    {
+      "type": "ellipsis",
+      "offset": 403,
+      "char": "…",
+      "context": "rilha sumiu na névoa… e depois no silênci",
+      "expectedBandMs": [
+        450,
+        750
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 425,
+      "char": ".",
+      "context": "e depois no silêncio. Ele arrumou a mochi",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "comma",
+      "offset": 448,
+      "char": ",",
+      "context": "le arrumou a mochila, conferiu duas vezes",
+      "expectedBandMs": [
+        150,
+        250
+      ]
+    }
+  ]
+}

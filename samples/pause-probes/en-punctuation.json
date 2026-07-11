@@ -1,0 +1,178 @@
+{
+  "fixture": "en-punctuation",
+  "language": "en",
+  "profile": "audiobook",
+  "charCount": 417,
+  "boundaries": [
+    {
+      "type": "comma",
+      "offset": 15,
+      "char": ",",
+      "context": "The quiet river, flowing past the mi",
+      "expectedBandMs": [
+        150,
+        250
+      ]
+    },
+    {
+      "type": "comma",
+      "offset": 38,
+      "char": ",",
+      "context": "lowing past the mill, carried leaves towa",
+      "expectedBandMs": [
+        150,
+        250
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 69,
+      "char": ".",
+      "context": "eaves toward the sea. She paused; then sh",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "semicolon",
+      "offset": 81,
+      "char": ";",
+      "context": " the sea. She paused; then she spoke: the",
+      "expectedBandMs": [
+        200,
+        300
+      ]
+    },
+    {
+      "type": "colon",
+      "offset": 97,
+      "char": ":",
+      "context": "used; then she spoke: the decision was fi",
+      "expectedBandMs": [
+        200,
+        300
+      ]
+    },
+    {
+      "type": "paragraph",
+      "offset": 122,
+      "char": "\\n\\n",
+      "context": " decision was final.↵↵After the storm — w",
+      "expectedBandMs": [
+        700,
+        1000
+      ]
+    },
+    {
+      "type": "em-dash",
+      "offset": 140,
+      "char": "—",
+      "context": "l.↵↵After the storm — which lasted three ",
+      "expectedBandMs": [
+        200,
+        350
+      ]
+    },
+    {
+      "type": "em-dash",
+      "offset": 166,
+      "char": "—",
+      "context": "h lasted three days — the garden recovere",
+      "expectedBandMs": [
+        200,
+        350
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 188,
+      "char": ".",
+      "context": "the garden recovered. The first chapter e",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 217,
+      "char": ".",
+      "context": "st chapter ends here. The second begins w",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "paragraph",
+      "offset": 253,
+      "char": "\\n\\n",
+      "context": "ins without fanfare!↵↵Did anyone hear the",
+      "expectedBandMs": [
+        700,
+        1000
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 279,
+      "char": "?",
+      "context": "anyone hear the bell? Nobody answered at ",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 303,
+      "char": ".",
+      "context": "body answered at all. The trail vanished ",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "ellipsis",
+      "offset": 333,
+      "char": "…",
+      "context": "l vanished into mist… and then into silen",
+      "expectedBandMs": [
+        450,
+        750
+      ]
+    },
+    {
+      "type": "paragraph",
+      "offset": 357,
+      "char": "\\n\\n",
+      "context": "d then into silence.↵↵He packed carefully",
+      "expectedBandMs": [
+        700,
+        1000
+      ]
+    },
+    {
+      "type": "comma",
+      "offset": 378,
+      "char": ",",
+      "context": "↵He packed carefully, checked twice, and ",
+      "expectedBandMs": [
+        150,
+        250
+      ]
+    },
+    {
+      "type": "comma",
+      "offset": 393,
+      "char": ",",
+      "context": "fully, checked twice, and left before daw",
+      "expectedBandMs": [
+        150,
+        250
+      ]
+    }
+  ]
+}
