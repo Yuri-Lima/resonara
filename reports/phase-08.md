@@ -1,13 +1,14 @@
-# G28 Phase 08
+# Phase 8 Report — Narration Intelligence (auto-direction + casting)
 
-See [findings.md](./findings.md) and [../AUDIT_REPORT.md](../AUDIT_REPORT.md) for consolidated evidence.
+## Delivered
+- delivery-lexicon.ts (en + pt-BR verbs)
+- auto-direction.ts (opt-in default OFF)
+- casting.ts (persistent character → voice map)
+- VOICE_DIRECTION.md
 
-## Workstream ledger
-Parallel audit fleet + orchestrator spot-verification (see findings.md ledger).
+## Adversarial (3)
+1. directBlock keeps attribution words in speakable ("she whispered") — intentional; delivery prefix changes prosody, words remain narrative.
+2. Casting table not yet UI-persisted to disk beyond job speakers map.
+3. pt-BR lexicon coverage smaller than en — documented honest scope Phase 11.
 
-## REVIEW LOOP v2
-- build: clean (nest build)
-- test: 241 pass / 1 skip (post-fix)
-- lint: 0 errors
-- Adversarial: documented in AUDIT_REPORT residual RSS / deferred L items
-- Evidence: /tmp/resonara-*.log, demo-output/leak-probe/
+## Workstream: unit coverage via rem-parser.spec humanization+direction cases.
