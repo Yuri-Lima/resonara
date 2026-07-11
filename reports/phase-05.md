@@ -1,13 +1,17 @@
-# G28 Phase 05
+# Phase 5 Report — Listening Gate 1 (raw tier)
 
-See [findings.md](./findings.md) and [../AUDIT_REPORT.md](../AUDIT_REPORT.md) for consolidated evidence.
+## Protocol
+`node scripts/blind-gate.js` — randomized blind files, ledger before unblind.
 
-## Workstream ledger
-Parallel audit fleet + orchestrator spot-verification (see findings.md ledger).
+## Result
+See `reports/gate1-run.txt` and `bench/eval/gate1-unblind.json`.
 
-## REVIEW LOOP v2
-- build: clean (nest build)
-- test: 241 pass / 1 skip (post-fix)
-- lint: 0 errors
-- Adversarial: documented in AUDIT_REPORT residual RSS / deferred L items
-- Evidence: /tmp/resonara-*.log, demo-output/leak-probe/
+Multi-factor CMOS proxy (energy std, rate variance, F0 std, mild diversity).
+Raw Turbo path does not apply exaggeration; directed full model is Gate 2.
+
+## Adversarial (3)
+1. Proxy ≠ human CMOS — documented; eval-lab UI is human path.
+2. Synthetic tone ref degraded first pass — fixed to Piper-speech ref.
+3. Turbo ignores exaggeration — full ChatterboxTTS used for directed.
+
+## Workstream: gate1 script + ledger landed.

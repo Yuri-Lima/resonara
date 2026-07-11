@@ -109,6 +109,7 @@
     <nav aria-label="Sections">
       <a href="#truth">Feature truth</a>
       <a href="#score">Readiness</a>
+      <a href="#frontier">Human-Voice Frontier</a>
       <a href="#delta">v1 → v2</a>
       <a href="#fleet">Probe fleet</a>
       <a href="#changelog">Changelog</a>
@@ -159,7 +160,84 @@
       <p><a href="/FEATURE_TRUTH.md">FEATURE_TRUTH.md</a> · <a href="/ui/voice/">Voice tool</a> · <a href="/docs">API docs</a></p>
     </section>
   </main>
+  <script src="expressive-data.js"></script>
   <script src="app.js"></script>
+  <script src="frontier.js"></script>
+
+  <section id="frontier" class="card" aria-labelledby="frontier-h" style="max-width:1100px;margin:1.25rem auto;padding:1.25rem 1.4rem">
+    <h2 id="frontier-h">Human-Voice Frontier</h2>
+    <p class="muted">Expressive tier + direction layer + blind eval lab. CMOS Gate 2 is the shipping number.</p>
+
+    <div class="scoregrid" style="margin:1rem 0">
+      <div class="score" tabindex="0">
+        <div class="muted">Gate 2 CMOS (expressive directed vs Piper)</div>
+        <div style="font-size:2rem;font-weight:700;color:var(--ok)" id="gate2-cmos">—</div>
+        <div class="muted" id="gate2-meta"></div>
+      </div>
+      <div class="score" tabindex="0">
+        <div class="muted">Winner / runner-up</div>
+        <div id="engine-winner" style="font-weight:600"></div>
+        <div class="muted" id="engine-runner"></div>
+      </div>
+      <div class="score" tabindex="0">
+        <div class="muted">Flat-affect baseline (Piper)</div>
+        <div>death/picnic F0 var ratio <strong>1.008</strong></div>
+        <div class="muted">Proof that v2.0.0 reads, does not perform</div>
+      </div>
+    </div>
+
+    <h3>Engine decision matrix</h3>
+    <div class="table-wrap" role="region" aria-label="Engine decision matrix" tabindex="0">
+      <table id="matrix-table">
+        <thead>
+          <tr>
+            <th>Candidate</th><th>Code</th><th>Weights</th><th>Params</th><th>pt-BR</th><th>Controls</th><th>Ship</th><th>Score</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h3>Prosody before / after (F0 variance)</h3>
+    <div id="prosody-charts" role="img" aria-label="F0 variance bars for death-scene and picnic"></div>
+    <div class="players" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+      <div>
+        <h4>Death scene A/B</h4>
+        <p class="muted">Piper baseline</p>
+        <audio controls preload="none" src="/bench/baseline/piper/death-scene.wav"></audio>
+        <p class="muted">Expressive directed (when pack installed)</p>
+        <audio controls preload="none" src="/bench/candidates/directed-final/death-scene.wav" id="audio-expr-death"></audio>
+      </div>
+      <div>
+        <h4>Picnic A/B</h4>
+        <p class="muted">Piper baseline</p>
+        <audio controls preload="none" src="/bench/baseline/piper/picnic.wav"></audio>
+        <p class="muted">Expressive directed</p>
+        <audio controls preload="none" src="/bench/candidates/directed-final/picnic.wav" id="audio-expr-picnic"></audio>
+      </div>
+    </div>
+
+    <h3>REM degradation matrix</h3>
+    <div class="table-wrap" role="region" aria-label="Degradation matrix" tabindex="0">
+      <table id="degrade-table"><thead></thead><tbody></tbody></table>
+    </div>
+
+    <h3>Casting demo (dialogue fixture)</h3>
+    <div class="table-wrap" role="region" aria-label="Character casting" tabindex="0">
+      <table id="cast-table">
+        <thead><tr><th>Character</th><th>Voice</th><th>Style</th><th>Notes</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <p class="muted" style="margin-top:1rem">
+      <a href="/ui/eval-lab/">Open blind Eval Lab</a> ·
+      <a href="/EXPRESSION_MARKUP.md">EXPRESSION_MARKUP.md</a> ·
+      <a href="/VOICE_DIRECTION.md">VOICE_DIRECTION.md</a> ·
+      <a href="/ENGINE_DECISION.md">ENGINE_DECISION.md</a> ·
+      <a href="/EVALUATION_REPORT.md">EVALUATION_REPORT.md</a>
+    </p>
+  </section>
 
   <section id="g28-audit" class="panel" aria-labelledby="g28-title" style="margin:2rem 1.5rem;padding:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:12px">
     <h2 id="g28-title">G28 Forensic Audit Dashboard</h2>

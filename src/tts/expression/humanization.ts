@@ -150,3 +150,36 @@ export function jitterRate(
   const cfg = resolveHumanization(opts);
   return baseRate * jitterFactor(seed, cfg.rateJitter);
 }
+
+/**
+ * FFmpeg filter graph for post-engine directed affect (humanization audio path).
+ * Pitch via asetrate+aresample; rate via atempo. Sample rate assumed 24 kHz.
+ */
+export function directedAudioFilter(
+  affect: 'grief' | 'joy' | 'neutral' | 'news',
+  sampleRate = 24000,
+): string {
+  switch (affect) {
+    case 'grief':
+      return `asetrate=${sampleRate}*0.92,aresample=${sampleRate},atempo=0.95,volume=0.82,lowpass=f=4200`;
+    case 'joy':
+      return `asetrate=${sampleRate}*1.07,aresample=${sampleRate},atempo=0.98,volume=1.15,treble=g=4`;
+    case 'news':
+      return `volume=1.0`; // leave neutral
+    default:
+      return `acompressor=threshold=-20dB:ratio=1.8:attack=10:release=150,volume=1.05`;
+  }
+}
+
+/** Map emotion / style to directed audio affect bucket. */
+export function emotionToAffect(
+  emotion?: string,
+  style?: string,
+): 'grief' | 'joy' | 'neutral' | 'news' {
+  const e = (emotion || '').toLowerCase();
+  const s = (style || '').toLowerCase();
+  if (s === 'newscast' || e === 'neutral') return 'news';
+  if (e === 'sadness' || e === 'grief' || e === 'tension') return 'grief';
+  if (e === 'joy' || e === 'anger' || s === 'animated') return 'joy';
+  return 'neutral';
+}

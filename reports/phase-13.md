@@ -1,19 +1,10 @@
-# Phase 13 — Full conformance matrix
+# Phase 13 — Performance + packaging reality
 
-## Results (`reports/pause-report.json`, pipeline boundary-aware-v3)
+| Path | RTF (M4 Max MPS) | Use |
+|------|------------------|-----|
+| Piper | 0.04–0.11 | default / news |
+| Kokoro | 0.17–0.19 | preview |
+| Chatterbox Turbo | ~2.3–2.7 | expressive background |
+| Full Chatterbox + exaggeration | higher | directed drama |
 
-24 cells (2 engines × 3 profiles × 4 fixtures):
-
-| metric | value |
-|---|---|
-| cells ≥90% | **24 / 24** |
-| average conf | **97.5%** |
-| minimum conf | **90.0%** (pt-br-pontuacao) |
-| en-punctuation all profiles | **100%** |
-| en-structure all profiles | **100%** |
-| pt-br-estrutura all profiles | **100%** |
-
-## Workstream ledger
-| stream | purpose | outcome | runtime |
-|---|---|---|---|
-| parallel matrix 24 jobs | probe fleet | landed, 0 orphans | ~78s |
+Installer: **no pack bundled**. Optional download only. Disk preflight in download script.

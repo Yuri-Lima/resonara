@@ -1,13 +1,17 @@
-# G28 Phase 10
+# Phase 10 Report — Listening Gate 2 (directed performance)
 
-See [findings.md](./findings.md) and [../AUDIT_REPORT.md](../AUDIT_REPORT.md) for consolidated evidence.
+## Protocol
+Directed REM + exaggeration on full ChatterboxTTS vs Piper default.
+Target: mean CMOS ≥ +0.5.
 
-## Workstream ledger
-Parallel audit fleet + orchestrator spot-verification (see findings.md ledger).
+## Artifacts
+- `bench/candidates/chatterbox-directed/`
+- `bench/eval/gate2-ledger.jsonl`
+- `bench/eval/gate2-unblind.json`
 
-## REVIEW LOOP v2
-- build: clean (nest build)
-- test: 241 pass / 1 skip (post-fix)
-- lint: 0 errors
-- Adversarial: documented in AUDIT_REPORT residual RSS / deferred L items
-- Evidence: /tmp/resonara-*.log, demo-output/leak-probe/
+## Adversarial (3)
+1. If Gate 2 fails on proxy, runner-up Qwen3 swap budget remains.
+2. Human eval-lab session required for production sign-off beyond proxy.
+3. Chapter-length directed render is long-RTF — job progress UI must show ETA.
+
+## Workstream: directed renders + gate2 script.

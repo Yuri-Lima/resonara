@@ -53,35 +53,32 @@ def _synth_chatterbox(args, out: Path, device: str, t0: float) -> int:
     text = args.text
     voice = (args.voice or "").lower()
 
-    # Prefer Turbo for tags / speed
-    if "turbo" in voice:
+    # Full ChatterboxTTS supports exaggeration; Turbo is faster but ignores it.
+    # Use full model whenever emotion control is requested or tags appear.
+    wants_expression = (
+        abs(float(args.exaggeration) - 0.5) > 0.05
+        or any(t in text for t in ("[laugh]", "[sigh]", "[chuckle]", "[gasp]", "[breath]"))
+        or "turbo" not in voice
+    )
+    use_full = wants_expression and _has_full_chatterbox()
+
+    if use_full:
+        from chatterbox.tts import ChatterboxTTS
+        model = ChatterboxTTS.from_pretrained(device=device)
+        kwargs = {
+            "exaggeration": float(args.exaggeration),
+            "cfg_weight": float(args.cfg_weight),
+        }
+        ref = args.ref or _ensure_default_ref()
+        try:
+            wav = model.generate(text, audio_prompt_path=ref, **kwargs)
+        except TypeError:
+            wav = model.generate(text, **kwargs)
+    else:
         from chatterbox.tts_turbo import ChatterboxTurboTTS
         model = ChatterboxTurboTTS.from_pretrained(device=device)
-        ref = args.ref
-        if not ref:
-            # Use built-in condition without ref if possible; else require ref
-            # Turbo API requires audio_prompt_path — generate neutral noise ref if missing
-            ref = _ensure_default_ref()
+        ref = args.ref or _ensure_default_ref()
         wav = model.generate(text, audio_prompt_path=ref)
-    else:
-        try:
-            from chatterbox.tts import ChatterboxTTS
-            model = ChatterboxTTS.from_pretrained(device=device)
-            kwargs = {"exaggeration": float(args.exaggeration), "cfg_weight": float(args.cfg_weight)}
-            if args.ref:
-                wav = model.generate(text, audio_prompt_path=args.ref, **kwargs)
-            else:
-                # Some versions support generate without prompt using default voice
-                try:
-                    wav = model.generate(text, **kwargs)
-                except TypeError:
-                    ref = _ensure_default_ref()
-                    wav = model.generate(text, audio_prompt_path=ref, **kwargs)
-        except Exception:
-            from chatterbox.tts_turbo import ChatterboxTurboTTS
-            model = ChatterboxTurboTTS.from_pretrained(device=device)
-            ref = args.ref or _ensure_default_ref()
-            wav = model.generate(text, audio_prompt_path=ref)
 
     # wav may be torch tensor
     if hasattr(wav, "cpu"):
@@ -100,6 +97,14 @@ def _synth_chatterbox(args, out: Path, device: str, t0: float) -> int:
     dt = time.time() - t0
     print(f"expressive_ok device={device} wall_s={dt:.2f} out={out}", file=sys.stderr)
     return 0
+
+
+def _has_full_chatterbox() -> bool:
+    try:
+        from chatterbox.tts import ChatterboxTTS  # noqa: F401
+        return True
+    except Exception:
+        return False
 
 
 def _ensure_default_ref() -> str:

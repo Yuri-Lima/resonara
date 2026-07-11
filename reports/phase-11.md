@@ -1,12 +1,11 @@
-# Phase 11 — Config surfaces
+# Phase 11 — pt-BR expressive pass (honest scope)
 
-## Exposed
-- API: `pauseProfile: audiobook|podcast|news|custom` on TTS job body
-- CLI: `--pause-profile`
-- Profiles: `src/tts/pause/pause-profiles.ts` + pt-BR overrides
-- Job entity persists pause metadata on chunk map (`endsAt`, `isHeader`)
+## Scope
+- Fixtures: `samples/expressive/pt-br/cena-dramatica.txt`, `dialogo-expressivo.txt`
+- Voice id: `expressive:chatterbox-pt-br` (paralinguisticTags: false)
+- Default shipping path for pt-BR remains **Piper** (`pt_BR-faber-medium`)
 
-## Workstream ledger
-| stream | purpose | outcome |
-|---|---|---|
-| controller + CLI wire | profile param | landed |
+## Claim level
+**Best-effort.** No claim of CMOS parity with en-US. Lexicon covers common PT delivery verbs (sussurrou, gritou, murmurou…).
+
+## Workstream: lexicon + voice entry landed; full pt-BR CMOS panel deferred.
