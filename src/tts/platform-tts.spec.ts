@@ -1,5 +1,6 @@
 import {
   assertSafePsToken,
+  PLATFORM_TTS_TIMEOUT_MS,
   buildMacSayCommand,
   buildWindowsSpeechScript,
   detectTtsPlatform,
@@ -92,7 +93,6 @@ describe('platform TTS adapters', () => {
 });
 
   it('exports platform TTS timeout for hang protection (TODO-03)', () => {
-    const { PLATFORM_TTS_TIMEOUT_MS } = require('./platform-tts');
     expect(PLATFORM_TTS_TIMEOUT_MS).toBeGreaterThanOrEqual(30_000);
     expect(PLATFORM_TTS_TIMEOUT_MS).toBeLessThanOrEqual(600_000);
   });

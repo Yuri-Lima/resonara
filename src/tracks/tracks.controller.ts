@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
   Param,
   ParseUUIDPipe,
   Post,
@@ -24,7 +23,6 @@ import {
 import { diskStorage } from 'multer';
 import { Request, Response } from 'express';
 import * as os from 'os';
-import * as path from 'path';
 import { NormalizeDto } from './dto/normalize.dto';
 import { TranscodeDto } from './dto/transcode.dto';
 import { TrimDto } from './dto/trim.dto';

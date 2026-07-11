@@ -190,10 +190,6 @@ export class FfmpegService implements OnModuleInit {
 
     if (needResample || needBitDepth || options.sampleRate) {
       // Mandatory soxr — never default SWR for production quality
-      const parts = [`resampler=soxr`, `precision=28`];
-      if (options.sampleRate) {
-        // aresample first arg / sample_rate
-      }
       let af = options.sampleRate
         ? `aresample=${options.sampleRate}:resampler=soxr:precision=28`
         : `aresample=resampler=soxr:precision=28`;
@@ -563,7 +559,6 @@ export class FfmpegService implements OnModuleInit {
         const off = i * bytesPerFrame;
         const l = buf.readFloatLE(off);
         const r = channels > 1 ? buf.readFloatLE(off + 4) : l;
-        const m = channels > 1 ? (l + r) / 2 : l;
 
         bucketMinL = Math.min(bucketMinL, l);
         bucketMaxL = Math.max(bucketMaxL, l);

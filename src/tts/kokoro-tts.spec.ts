@@ -1,6 +1,3 @@
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
 import { isKokoroAvailable, KOKORO_MAX_CHARS, listKokoroVoices } from './kokoro-tts';
 
 describe('kokoro-tts', () => {

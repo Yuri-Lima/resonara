@@ -43,6 +43,10 @@ export interface EngineStatus {
 }
 
 export class VoiceManager {
+  /** G28 TODO-13: short TTL cache for listVoices disk/spawn work */
+  private voiceCache: { at: number; voices: UnifiedVoice[] } | null = null;
+  private static readonly VOICE_CACHE_MS = 30_000;
+
   private piperModelsDir?: string;
   private piperBinary?: string;
 
@@ -51,15 +55,25 @@ export class VoiceManager {
     this.piperBinary = opts?.piperBinary;
   }
 
-  /** No-op refresh hook for callers after model download/delete. */
+  /** Invalidate voice list cache after model download/delete. */
   refresh(): void {
-    // Voices are scanned from disk on each listVoices() call.
+    this.voiceCache = null;
   }
 
   listVoices(filter?: {
     engine?: VoiceEngine;
     language?: string;
   }): UnifiedVoice[] {
+    // Unfiltered list is expensive (disk + spawn); cache briefly (G28 TODO-13)
+    if (
+      !filter?.engine &&
+      !filter?.language &&
+      this.voiceCache &&
+      Date.now() - this.voiceCache.at < VoiceManager.VOICE_CACHE_MS
+    ) {
+      return this.voiceCache.voices.slice();
+    }
+
     const out: UnifiedVoice[] = [];
 
     if (!filter?.engine || filter.engine === 'kokoro') {
@@ -99,6 +113,9 @@ export class VoiceManager {
         }
         return vl.includes(lang) || vl.includes(langBase);
       });
+    }
+    if (!filter?.engine && !filter?.language) {
+      this.voiceCache = { at: Date.now(), voices: result.slice() };
     }
     return result;
   }

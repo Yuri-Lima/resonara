@@ -1066,6 +1066,9 @@ export class TtsService implements OnModuleInit {
       } as TtsJobMetadata;
       await this.jobsRepo.save(job);
       this.gateway.emitFailed(job.id, message);
+      // G28 TODO-23: drop intermediate chunk trees on failure
+      const workDir = path.join(this.dataDir, job.id);
+      await fs.rm(workDir, { recursive: true, force: true }).catch(() => undefined);
       throw err;
     }
   }

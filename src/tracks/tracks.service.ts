@@ -5,10 +5,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createReadStream, createWriteStream } from 'fs';
+import { createReadStream } from 'fs';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { pipeline } from 'stream/promises';
 import { Repository } from 'typeorm';
 import { detectAudioFormat, FORMAT_MIME, isAllowedAudio } from '../common/magic-bytes';
 import { LUFS_PROFILES } from '../common/constants';
