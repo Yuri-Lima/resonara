@@ -370,23 +370,34 @@ export async function synthesizeWithPiper(
       cwd: path.dirname(binary),
     });
     let stderr = '';
+    // G28 TODO-05: single-settle so timeout kill does not double-reject on close
+    let settled = false;
+    const finish = (err?: Error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (err) reject(err);
+      else resolve();
+    };
     const timer = setTimeout(() => {
-      child.kill('SIGKILL');
-      reject(new Error(`Piper timed out after ${timeoutMs}ms`));
+      try {
+        child.kill('SIGKILL');
+      } catch {
+        /* ignore */
+      }
+      finish(new Error(`Piper timed out after ${timeoutMs}ms`));
     }, timeoutMs);
 
     child.stderr?.on('data', (d: Buffer) => {
       stderr += d.toString();
     });
     child.on('error', (err) => {
-      clearTimeout(timer);
-      reject(err);
+      finish(err);
     });
     child.on('close', (code) => {
-      clearTimeout(timer);
-      if (code === 0) resolve();
+      if (code === 0) finish();
       else
-        reject(
+        finish(
           new Error(
             `Piper exited ${code}: ${stderr.slice(0, 500) || 'no stderr'}`,
           ),
@@ -426,27 +437,4 @@ export async function synthesizeWithPiper(
   return { outPath: opts.outputPath, sampleRate };
 }
 
-/**
- * Stream raw PCM from Piper stdout (--output-raw).
- */
-export function synthesizePiperStream(
-  opts: Omit<PiperSynthOptions, 'outputPath'>,
-): import('stream').Readable {
-  const binary = resolvePiperBinary();
-  if (!binary) throw new Error('Piper binary not found');
-  const args = ['--model', opts.modelPath, '--output-raw'];
-  if (opts.jsonInput) args.push('--json-input');
-  const env = libraryPathEnv(binary);
-  const child = spawn(binary, args, {
-    env,
-    stdio: ['pipe', 'pipe', 'pipe'],
-    cwd: path.dirname(binary),
-  });
-  const payload = opts.jsonInput
-    ? JSON.stringify({ text: opts.text }) + '\n'
-    : opts.text;
-  child.stdin?.write(payload, 'utf8');
-  child.stdin?.end();
-  if (!child.stdout) throw new Error('Piper stdout unavailable');
-  return child.stdout;
-}
+

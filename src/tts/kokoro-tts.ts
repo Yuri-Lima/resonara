@@ -123,28 +123,39 @@ export async function synthesizeWithKokoro(
     if (opts.rate != null) args.push('--rate', String(opts.rate));
     const child = spawn(py, args, { stdio: ['ignore', 'pipe', 'pipe'] });
     let err = '';
+    // G28 TODO-05: single-settle so timeout kill does not double-reject
+    let settled = false;
+    const finish = (e?: Error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (e) reject(e);
+      else resolve();
+    };
     const timer = setTimeout(() => {
-      child.kill('SIGKILL');
-      reject(new Error(`Kokoro timed out after ${timeoutMs}ms`));
+      try {
+        child.kill('SIGKILL');
+      } catch {
+        /* ignore */
+      }
+      finish(new Error(`Kokoro timed out after ${timeoutMs}ms`));
     }, timeoutMs);
     child.stderr.on('data', (b) => {
       err += b.toString();
     });
     child.on('error', (e) => {
-      clearTimeout(timer);
-      reject(e);
+      finish(e);
     });
     child.on('close', (code) => {
-      clearTimeout(timer);
       if (code !== 0) {
-        reject(new Error(`Kokoro exited ${code}: ${err.slice(0, 400)}`));
+        finish(new Error(`Kokoro exited ${code}: ${err.slice(0, 400)}`));
         return;
       }
       if (!fs.existsSync(opts.outputPath) || fs.statSync(opts.outputPath).size === 0) {
-        reject(new Error('Kokoro produced empty output'));
+        finish(new Error('Kokoro produced empty output'));
         return;
       }
-      resolve();
+      finish();
     });
   });
 }
