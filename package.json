@@ -1,7 +1,7 @@
 {
   "name": "resonara",
-  "version": "1.0.0",
-  "description": "Resonara — Shape sound. Speak the long form. Play freely. Desktop audio lab, piano, and long-form system TTS.",
+  "version": "2.0.0",
+  "description": "Resonara \u2014 Shape sound. Speak the long form. Play freely. Offline desktop audio lab, piano, and long-form neural TTS (Piper + Kokoro + pt-BR).",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -165,7 +165,7 @@
   "build": {
     "appId": "app.resonara.desktop",
     "productName": "Resonara",
-    "copyright": "Copyright © Resonara",
+    "copyright": "Copyright \u00a9 Resonara",
     "directories": {
       "output": "release",
       "buildResources": "build"
