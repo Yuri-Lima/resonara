@@ -34,6 +34,10 @@ export interface TtsChunkMapEntry {
   textPreview: string;
   audioKey?: string;
   durationMs?: number;
+  /** Pause-map: how this chunk ends (boundary-aware assembly). */
+  endsAt?: string;
+  isHeader?: boolean;
+  headerLevel?: number;
 }
 
 export interface TtsJobMetadata {
@@ -57,6 +61,9 @@ export interface TtsJobMetadata {
   };
   /** Resolved primary language (en | pt-BR | …). */
   language?: string;
+  /** Active pause profile name + resolved insert bands. */
+  pauseProfile?: string;
+  pauseBands?: Record<string, { minMs: number; maxMs: number; insertMs: number }>;
   /** Mixed-language block map when language=auto detects both. */
   languageBlocks?: Array<{
     language: string;

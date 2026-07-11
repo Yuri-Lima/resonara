@@ -1,7 +1,7 @@
 {
   "name": "resonara",
   "version": "1.0.0",
-  "description": "Resonara \u2014 Shape sound. Speak the long form. Play freely. Desktop audio lab, piano, and long-form system TTS.",
+  "description": "Resonara — Shape sound. Speak the long form. Play freely. Desktop audio lab, piano, and long-form system TTS.",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -62,7 +62,10 @@
     "benchmark:pt": "node scripts/benchmark.js --lang pt-BR",
     "qa:sample": "node scripts/qa-run.js sample",
     "qa:all": "node scripts/qa-run.js all",
-    "cli": "node scripts/resonara-cli.js"
+    "cli": "node scripts/resonara-cli.js",
+    "probe:pauses": "node scripts/pause-probe.js",
+    "probe:all": "node scripts/pause-probe.js --all --engine all",
+    "probe:self-test": "node scripts/pause-probe.js --self-test"
   },
   "dependencies": {
     "@nestjs/bullmq": "^10.2.3",
@@ -162,7 +165,7 @@
   "build": {
     "appId": "app.resonara.desktop",
     "productName": "Resonara",
-    "copyright": "Copyright \u00a9 Resonara",
+    "copyright": "Copyright © Resonara",
     "directories": {
       "output": "release",
       "buildResources": "build"

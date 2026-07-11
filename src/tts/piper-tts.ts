@@ -28,6 +28,12 @@ export interface PiperSynthOptions {
   speakerId?: number;
   timeoutMs?: number;
   jsonInput?: boolean;
+  /**
+   * Seconds of silence after each sentence (piper --sentence_silence).
+   * Wired from the active PauseProfile; assembly inserts only the delta
+   * so we do not double-pause.
+   */
+  sentenceSilenceSec?: number;
 }
 
 export interface PiperAvailability {
@@ -344,6 +350,14 @@ export async function synthesizeWithPiper(
   }
   if (opts.lengthScale != null && Number.isFinite(opts.lengthScale)) {
     args.push('--length_scale', String(opts.lengthScale));
+  }
+  // Prefer hyphen form (Python piper-tts CLI); underscore accepted as alias.
+  if (
+    opts.sentenceSilenceSec != null &&
+    Number.isFinite(opts.sentenceSilenceSec) &&
+    opts.sentenceSilenceSec >= 0
+  ) {
+    args.push('--sentence_silence', String(opts.sentenceSilenceSec));
   }
 
   const env = libraryPathEnv(binary);

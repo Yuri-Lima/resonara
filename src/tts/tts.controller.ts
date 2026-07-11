@@ -101,6 +101,18 @@ class SynthesizeDto {
   postProcessing?: 'podcast' | 'audiobook' | 'raw' | 'custom';
 
   /**
+   * Pause profile for boundary-aware gaps.
+   * audiobook (default) | podcast (~20% tighter) | news (~35% tighter) | custom
+   */
+  @IsOptional()
+  @IsIn(['audiobook', 'podcast', 'news', 'custom'])
+  pauseProfile?: 'audiobook' | 'podcast' | 'news' | 'custom';
+
+  /** Per-boundary insertMs overrides (used with custom or to tweak a preset). */
+  @IsOptional()
+  pauseCustom?: Record<string, number>;
+
+  /**
    * Optional preprocessing config. Raw paste: off unless enabled.
    * Document import applies document defaults unless enabled === false.
    */
@@ -226,6 +238,10 @@ export class TtsController {
           }
         | undefined,
       qa: body.qa,
+      pauseProfile: body.pauseProfile,
+      pauseCustom: body.pauseCustom as
+        | import('./tts.service').SynthesizeLongOptions['pauseCustom']
+        | undefined,
     });
     return this.tts.toPublicJob(job);
   }
