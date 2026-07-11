@@ -1,0 +1,415 @@
+{
+  "generatedAt": "2026-07-11T00:18:00.649172+00:00",
+  "pipeline": "boundary-aware-v3",
+  "matrixCells": 24,
+  "reports": [
+    {
+      "fixture": "en-punctuation",
+      "engine": "piper",
+      "profile": "audiobook",
+      "conformancePct": 100.0,
+      "passed": 17,
+      "totalBanded": 17,
+      "byType": {
+        "paragraph": {
+          "avgMs": 850
+        },
+        "sentence": {
+          "avgMs": 450
+        }
+      },
+      "wav": "reports/probe-out/piper/audiobook/en-punctuation/out.wav"
+    },
+    {
+      "fixture": "en-structure",
+      "engine": "piper",
+      "profile": "audiobook",
+      "conformancePct": 100.0,
+      "passed": 14,
+      "totalBanded": 14,
+      "byType": {
+        "sentence": {
+          "avgMs": 450
+        },
+        "header": {
+          "avgMs": 1100
+        }
+      },
+      "wav": "reports/probe-out/piper/audiobook/en-structure/out.wav"
+    },
+    {
+      "fixture": "pt-br-estrutura",
+      "engine": "piper",
+      "profile": "audiobook",
+      "conformancePct": 100.0,
+      "passed": 15,
+      "totalBanded": 15,
+      "byType": {
+        "sentence": {
+          "avgMs": 450
+        },
+        "header": {
+          "avgMs": 1100
+        }
+      },
+      "wav": "reports/probe-out/piper/audiobook/pt-br-estrutura/out.wav"
+    },
+    {
+      "fixture": "pt-br-pontuacao",
+      "engine": "piper",
+      "profile": "audiobook",
+      "conformancePct": 90.0,
+      "passed": 27,
+      "totalBanded": 30,
+      "byType": {
+        "paragraph": {
+          "avgMs": 850
+        },
+        "sentence": {
+          "avgMs": 450
+        }
+      },
+      "wav": "reports/probe-out/piper/audiobook/pt-br-pontuacao/out.wav"
+    },
+    {
+      "fixture": "en-punctuation",
+      "engine": "piper",
+      "profile": "news",
+      "conformancePct": 100.0,
+      "passed": 17,
+      "totalBanded": 17,
+      "byType": {
+        "paragraph": {
+          "avgMs": 550
+        },
+        "sentence": {
+          "avgMs": 290
+        }
+      },
+      "wav": "reports/probe-out/piper/news/en-punctuation/out.wav"
+    },
+    {
+      "fixture": "en-structure",
+      "engine": "piper",
+      "profile": "news",
+      "conformancePct": 100.0,
+      "passed": 14,
+      "totalBanded": 14,
+      "byType": {
+        "sentence": {
+          "avgMs": 290
+        },
+        "header": {
+          "avgMs": 720
+        }
+      },
+      "wav": "reports/probe-out/piper/news/en-structure/out.wav"
+    },
+    {
+      "fixture": "pt-br-estrutura",
+      "engine": "piper",
+      "profile": "news",
+      "conformancePct": 100.0,
+      "passed": 15,
+      "totalBanded": 15,
+      "byType": {
+        "sentence": {
+          "avgMs": 290
+        },
+        "header": {
+          "avgMs": 720
+        }
+      },
+      "wav": "reports/probe-out/piper/news/pt-br-estrutura/out.wav"
+    },
+    {
+      "fixture": "pt-br-pontuacao",
+      "engine": "piper",
+      "profile": "news",
+      "conformancePct": 90.0,
+      "passed": 27,
+      "totalBanded": 30,
+      "byType": {
+        "paragraph": {
+          "avgMs": 550
+        },
+        "sentence": {
+          "avgMs": 290
+        }
+      },
+      "wav": "reports/probe-out/piper/news/pt-br-pontuacao/out.wav"
+    },
+    {
+      "fixture": "en-punctuation",
+      "engine": "piper",
+      "profile": "podcast",
+      "conformancePct": 100.0,
+      "passed": 17,
+      "totalBanded": 17,
+      "byType": {
+        "paragraph": {
+          "avgMs": 680
+        },
+        "sentence": {
+          "avgMs": 360
+        }
+      },
+      "wav": "reports/probe-out/piper/podcast/en-punctuation/out.wav"
+    },
+    {
+      "fixture": "en-structure",
+      "engine": "piper",
+      "profile": "podcast",
+      "conformancePct": 100.0,
+      "passed": 14,
+      "totalBanded": 14,
+      "byType": {
+        "sentence": {
+          "avgMs": 360
+        },
+        "header": {
+          "avgMs": 880
+        }
+      },
+      "wav": "reports/probe-out/piper/podcast/en-structure/out.wav"
+    },
+    {
+      "fixture": "pt-br-estrutura",
+      "engine": "piper",
+      "profile": "podcast",
+      "conformancePct": 100.0,
+      "passed": 15,
+      "totalBanded": 15,
+      "byType": {
+        "sentence": {
+          "avgMs": 360
+        },
+        "header": {
+          "avgMs": 880
+        }
+      },
+      "wav": "reports/probe-out/piper/podcast/pt-br-estrutura/out.wav"
+    },
+    {
+      "fixture": "pt-br-pontuacao",
+      "engine": "piper",
+      "profile": "podcast",
+      "conformancePct": 90.0,
+      "passed": 27,
+      "totalBanded": 30,
+      "byType": {
+        "paragraph": {
+          "avgMs": 680
+        },
+        "sentence": {
+          "avgMs": 360
+        }
+      },
+      "wav": "reports/probe-out/piper/podcast/pt-br-pontuacao/out.wav"
+    },
+    {
+      "fixture": "en-punctuation",
+      "engine": "platform",
+      "profile": "audiobook",
+      "conformancePct": 100.0,
+      "passed": 17,
+      "totalBanded": 17,
+      "byType": {
+        "paragraph": {
+          "avgMs": 850
+        },
+        "sentence": {
+          "avgMs": 450
+        }
+      },
+      "wav": "reports/probe-out/platform/audiobook/en-punctuation/out.wav"
+    },
+    {
+      "fixture": "en-structure",
+      "engine": "platform",
+      "profile": "audiobook",
+      "conformancePct": 100.0,
+      "passed": 14,
+      "totalBanded": 14,
+      "byType": {
+        "sentence": {
+          "avgMs": 450
+        },
+        "header": {
+          "avgMs": 1100
+        }
+      },
+      "wav": "reports/probe-out/platform/audiobook/en-structure/out.wav"
+    },
+    {
+      "fixture": "pt-br-estrutura",
+      "engine": "platform",
+      "profile": "audiobook",
+      "conformancePct": 100.0,
+      "passed": 15,
+      "totalBanded": 15,
+      "byType": {
+        "sentence": {
+          "avgMs": 450
+        },
+        "header": {
+          "avgMs": 1100
+        }
+      },
+      "wav": "reports/probe-out/platform/audiobook/pt-br-estrutura/out.wav"
+    },
+    {
+      "fixture": "pt-br-pontuacao",
+      "engine": "platform",
+      "profile": "audiobook",
+      "conformancePct": 90.0,
+      "passed": 27,
+      "totalBanded": 30,
+      "byType": {
+        "paragraph": {
+          "avgMs": 850
+        },
+        "sentence": {
+          "avgMs": 450
+        }
+      },
+      "wav": "reports/probe-out/platform/audiobook/pt-br-pontuacao/out.wav"
+    },
+    {
+      "fixture": "en-punctuation",
+      "engine": "platform",
+      "profile": "news",
+      "conformancePct": 100.0,
+      "passed": 17,
+      "totalBanded": 17,
+      "byType": {
+        "paragraph": {
+          "avgMs": 550
+        },
+        "sentence": {
+          "avgMs": 290
+        }
+      },
+      "wav": "reports/probe-out/platform/news/en-punctuation/out.wav"
+    },
+    {
+      "fixture": "en-structure",
+      "engine": "platform",
+      "profile": "news",
+      "conformancePct": 100.0,
+      "passed": 14,
+      "totalBanded": 14,
+      "byType": {
+        "sentence": {
+          "avgMs": 290
+        },
+        "header": {
+          "avgMs": 720
+        }
+      },
+      "wav": "reports/probe-out/platform/news/en-structure/out.wav"
+    },
+    {
+      "fixture": "pt-br-estrutura",
+      "engine": "platform",
+      "profile": "news",
+      "conformancePct": 100.0,
+      "passed": 15,
+      "totalBanded": 15,
+      "byType": {
+        "sentence": {
+          "avgMs": 290
+        },
+        "header": {
+          "avgMs": 720
+        }
+      },
+      "wav": "reports/probe-out/platform/news/pt-br-estrutura/out.wav"
+    },
+    {
+      "fixture": "pt-br-pontuacao",
+      "engine": "platform",
+      "profile": "news",
+      "conformancePct": 90.0,
+      "passed": 27,
+      "totalBanded": 30,
+      "byType": {
+        "paragraph": {
+          "avgMs": 550
+        },
+        "sentence": {
+          "avgMs": 290
+        }
+      },
+      "wav": "reports/probe-out/platform/news/pt-br-pontuacao/out.wav"
+    },
+    {
+      "fixture": "en-punctuation",
+      "engine": "platform",
+      "profile": "podcast",
+      "conformancePct": 100.0,
+      "passed": 17,
+      "totalBanded": 17,
+      "byType": {
+        "paragraph": {
+          "avgMs": 680
+        },
+        "sentence": {
+          "avgMs": 360
+        }
+      },
+      "wav": "reports/probe-out/platform/podcast/en-punctuation/out.wav"
+    },
+    {
+      "fixture": "en-structure",
+      "engine": "platform",
+      "profile": "podcast",
+      "conformancePct": 100.0,
+      "passed": 14,
+      "totalBanded": 14,
+      "byType": {
+        "sentence": {
+          "avgMs": 360
+        },
+        "header": {
+          "avgMs": 880
+        }
+      },
+      "wav": "reports/probe-out/platform/podcast/en-structure/out.wav"
+    },
+    {
+      "fixture": "pt-br-estrutura",
+      "engine": "platform",
+      "profile": "podcast",
+      "conformancePct": 100.0,
+      "passed": 15,
+      "totalBanded": 15,
+      "byType": {
+        "sentence": {
+          "avgMs": 360
+        },
+        "header": {
+          "avgMs": 880
+        }
+      },
+      "wav": "reports/probe-out/platform/podcast/pt-br-estrutura/out.wav"
+    },
+    {
+      "fixture": "pt-br-pontuacao",
+      "engine": "platform",
+      "profile": "podcast",
+      "conformancePct": 90.0,
+      "passed": 27,
+      "totalBanded": 30,
+      "byType": {
+        "paragraph": {
+          "avgMs": 680
+        },
+        "sentence": {
+          "avgMs": 360
+        }
+      },
+      "wav": "reports/probe-out/platform/podcast/pt-br-pontuacao/out.wav"
+    }
+  ]
+}

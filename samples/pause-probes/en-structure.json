@@ -1,0 +1,156 @@
+{
+  "fixture": "en-structure",
+  "language": "en",
+  "profile": "audiobook",
+  "charCount": 517,
+  "boundaries": [
+    {
+      "type": "chapter",
+      "offset": 27,
+      "char": "\\n",
+      "level": 1,
+      "title": "Chapter One: The Approach",
+      "context": "# Chapter One: The Approach↵↵The trail narrowed",
+      "expectedBandMs": [
+        1500,
+        2500
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 71,
+      "char": ".",
+      "context": "the forest thickened. Birds fell silent n",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 105,
+      "char": ".",
+      "context": "ilent near the ridge. A cold wind came do",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "pre-header",
+      "offset": 144,
+      "char": "\\n\\n",
+      "context": "down from the north.↵↵## Section A — Firs",
+      "expectedBandMs": [
+        250,
+        400
+      ]
+    },
+    {
+      "type": "header",
+      "offset": 172,
+      "char": "\\n",
+      "level": 2,
+      "title": "Section A — First Light",
+      "context": "## Section A — First Light↵↵Morning mist clung",
+      "expectedBandMs": [
+        900,
+        1300
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 205,
+      "char": ".",
+      "context": "t clung to the ferns. A single boot print",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "pre-header",
+      "offset": 258,
+      "char": "\\n\\n",
+      "context": "mud beside the path.↵↵### Topic: Water So",
+      "expectedBandMs": [
+        250,
+        400
+      ]
+    },
+    {
+      "type": "header",
+      "offset": 284,
+      "char": "\\n",
+      "level": 3,
+      "title": "Topic: Water Sources",
+      "context": "### Topic: Water Sources↵↵Find the spring ea",
+      "expectedBandMs": [
+        900,
+        1300
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 324,
+      "char": ".",
+      "context": "st of the fallen oak. Fill bottles before",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 350,
+      "char": ".",
+      "context": " bottles before noon. Do not drink from t",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "chapter",
+      "offset": 390,
+      "char": "---",
+      "context": "tagnant pool.↵↵---↵↵# Chapter Two: ",
+      "expectedBandMs": [
+        1500,
+        2500
+      ]
+    },
+    {
+      "type": "chapter",
+      "offset": 422,
+      "char": "\\n",
+      "level": 1,
+      "title": "Chapter Two: The Crossing",
+      "context": "# Chapter Two: The Crossing↵↵The river ran cold",
+      "expectedBandMs": [
+        1500,
+        2500
+      ]
+    },
+    {
+      "type": "sentence",
+      "offset": 451,
+      "char": ".",
+      "context": "er ran cold and fast. They crossed at the",
+      "expectedBandMs": [
+        350,
+        600
+      ]
+    },
+    {
+      "type": "comma",
+      "offset": 485,
+      "char": ",",
+      "context": " at the shallow bend, then climbed toward",
+      "expectedBandMs": [
+        150,
+        250
+      ]
+    }
+  ]
+}

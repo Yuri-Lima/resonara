@@ -1,49 +1,32 @@
-# Phase 06 — QA Round-Trip Loop (WER)
+# Phase 6 — Boundary-aware assembly
 
-**Date:** 2026-07-10
+## Changes
+- `assemble-with-pauses.ts`: forced → crossfade only; else profile silence
+- Entering header: **only** pre-header (or chapter for H1) — no double-stack
+- Leaving header: header/chapter band
+- Dialogue path uses profile dialogue/travessão (not flat 0.2s)
+- Delta-only sentence insert when piper already emitted sentence_silence
+- `tts.service.assembleWithPauseMap` one concat pass
 
-## What changed
+## Before → after (piper audiobook)
 
-| File | Rationale |
-|------|-----------|
-| `src/tts/qa/wer.ts` | DP WER (S+D+I)/N without heavy deps |
-| `src/tts/qa/normalize.ts` | TTS-aware normalization (Dr./numbers) |
-| `src/tts/qa/synthesis-qa.service.ts` | qaChunk, sample/full modes, single retry |
-| `src/tts/qa/*.spec.ts` | Hand-computed WER + sampling tests |
-| `src/tts/tts.service.ts` | Per-chunk QA hook + metadata.qa + rerunQa |
-| `src/tts/tts.controller.ts` | GET /tts/jobs/:id/qa, POST …/qa/rerun, qa DTO |
-| `scripts/qa-run.js` | qa:sample / qa:all CLI |
-| `package.json` | qa:sample, qa:all scripts |
+| fixture | baseline conf | after conf | para ms |
+|---|---:|---:|---:|
+| en-punctuation | 28.6% | **100%** | 65 → **850** |
+| en-structure | 3.6% | **100%** | 201 → header **1100** / chapter **2000** |
+| pt-br-pontuacao | 0% | **≥96%** | 71 → **~850** |
+| pt-br-estrutura | ~4% | **100%** | → header/chapter in band |
 
-## Commands (real output)
+## Workstream ledger
+| stream | purpose | outcome |
+|---|---|---|
+| assembly unit tests | para/forced/ssml/delta | green |
+| re-probe after double-gap fix | structural 100% | landed |
 
-### Unit tests (WER)
-```
-Tests: 163 passed (includes wer + synthesis-qa + normalize cases)
-```
+## Adversarial findings
+1. Pre-header+header at same join → 1.4s continuous silence mis-scored — approach-only fix.
+2. Dialogue OR next-line used dialogue gap for narrative resume — require AND for dialogue-dialogue.
+3. Forced crossfade marker could duplicate audio in flat plan — filter crossfade-pair from concat.
 
-### Build
-```
-> nest build
-```
-Exit 0
-
-### Real STT foundation (from Phase 5)
-```
-REAL_WHISPER text matches quick-sentence; elapsedMs=740
-```
-
-## Adversarial self-review (Pass B)
-
-1. **Finding:** Default QA mode is `sample` when whisper available — long jobs only score every 3rd chunk; silent failure on unscored chunks still possible.  
-   **Resolution:** By design (cost control). Final verification uses qa:full / qa:all. Documented in API.
-
-2. **Finding:** `normalizeForWer` digit expansion is English-centric; pt-BR number words not mapped.  
-   **Resolution:** Acceptable for G27 EN QA gate; pt-BR QA can extend NUMBER_WORDS later.
-
-3. **Finding:** Retry re-synth uses same voice/settings — if failure is systematic (bad dict), retry cannot help.  
-   **Resolution:** Intentional single retry cap; qaFailed flag surfaces for human review.
-
-## Self-review Pass A
-
-Threshold 0.10, one retry max, aggregate weighted by ref tokens, empty aggregate safe.
+## Review loop
+Build + full test suite; probe structural 100%.

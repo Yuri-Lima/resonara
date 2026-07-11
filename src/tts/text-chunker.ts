@@ -3,6 +3,7 @@
  * Pure functions — unit-testable without platform APIs.
  * Engine-aware: Piper uses larger chunks for cross-sentence prosody.
  * Language-aware: abbreviation protection + Brazilian number format + em-dash dialogue.
+ * Emits a pause map (endsAt + intraBoundaries) for boundary-aware assembly.
  */
 
 import {
@@ -10,6 +11,16 @@ import {
   tryGetLanguageConfig,
 } from './language/language-registry';
 import { LanguageCode } from './language/language.types';
+import {
+  ChunkEndBoundary,
+  PauseMapEntry,
+} from './pause/pause.types';
+import {
+  classifyPieceEnd,
+  detectHeaderLine,
+  findIntraBoundaries,
+  isChapterSeparator,
+} from './pause/boundary-detect';
 
 export type ChunkEngine = 'piper' | 'platform' | 'kokoro';
 
@@ -28,6 +39,8 @@ export interface TextChunk {
   index: number;
   text: string;
   charCount: number;
+  /** Boundary metadata for pause-aware assembly. */
+  pause?: PauseMapEntry;
 }
 
 const PLATFORM_MAX = 1800;
@@ -49,9 +62,23 @@ export function defaultChunkLimits(engine: ChunkEngine = 'platform'): {
   return { maxChars: PLATFORM_MAX, hardMaxChars: PLATFORM_HARD };
 }
 
+interface AnnotatedPiece {
+  text: string;
+  /** Boundary type if this piece is flushed as a chunk end. */
+  endHint: ChunkEndBoundary;
+  /** True when piece is a header/title line. */
+  isHeader?: boolean;
+  headerLevel?: number;
+  /** Forced mid-sentence/word split. */
+  forced?: boolean;
+  /** Explicit SSML break ms that ends this piece. */
+  explicitBreakMs?: number;
+}
+
 /**
  * Chunk text for long-form TTS. Prefer paragraph breaks, then sentences, then words.
  * Never splits inside SSML tags when markup is present.
+ * Each chunk carries pause map metadata (endsAt + intraBoundaries).
  */
 export function chunkTextForTts(
   input: string,
@@ -65,49 +92,340 @@ export function chunkTextForTts(
   const text = normalizeWhitespace(input);
   if (!text) return [];
 
-  if (text.length <= maxChars) {
-    return [{ index: 0, text, charCount: text.length }];
-  }
-
   // SSML-aware: protect tags by splitting only on safe boundaries
   if (/<[^>]+>/.test(text)) {
-    return chunkSsmlAware(text, maxChars, hardMax);
+    return annotateSsmlChunks(chunkSsmlAware(text, maxChars, hardMax), language);
   }
 
-  const paragraphs = text.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
-  const pieces: string[] = [];
+  // Always collect annotated pieces so paragraph/header boundaries become
+  // chunk edges (even when total length < maxChars). A single packed chunk
+  // would erase structural pauses at assembly time.
+  const pieces = collectAnnotatedPieces(text, maxChars, hardMax, language);
+  if (!pieces.length) {
+    return [buildChunk(0, text, language, 'document-end')];
+  }
+  const packed = packAnnotatedPieces(pieces, maxChars);
+  return packed.map((p, index) =>
+    buildChunk(index, p.text, language, p.endsAt, {
+      isHeader: p.isHeader,
+      headerLevel: p.headerLevel,
+      explicitBreakMs: p.explicitBreakMs,
+    }),
+  );
+}
 
-  for (const para of paragraphs) {
+function buildChunk(
+  index: number,
+  text: string,
+  language: string,
+  endsAt: ChunkEndBoundary,
+  extra: {
+    isHeader?: boolean;
+    headerLevel?: number;
+    explicitBreakMs?: number;
+  } = {},
+): TextChunk {
+  const header =
+    extra.isHeader != null
+      ? { isHeader: extra.isHeader, headerLevel: extra.headerLevel }
+      : detectHeaderFromChunk(text);
+  return {
+    index,
+    text,
+    charCount: text.length,
+    pause: {
+      endsAt,
+      intraBoundaries: findIntraBoundaries(text, language),
+      isHeader: header.isHeader,
+      headerLevel: header.headerLevel,
+      explicitBreakMs: extra.explicitBreakMs,
+    },
+  };
+}
+
+function detectHeaderFromChunk(text: string): {
+  isHeader?: boolean;
+  headerLevel?: number;
+} {
+  const first = text.trim().split('\n')[0] || '';
+  const h = detectHeaderLine(first);
+  if (h && text.trim().split('\n').length <= 2) {
+    return { isHeader: true, headerLevel: h.level };
+  }
+  return {};
+}
+
+function collectAnnotatedPieces(
+  text: string,
+  maxChars: number,
+  hardMax: number,
+  language: LanguageCode,
+): AnnotatedPiece[] {
+  const paragraphs = text
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    // Horizontal rules are chapter markers, not spoken content. Drop them so
+    // the chapter gap is applied once at the next H1 rather than triple-stacked.
+    .filter((p) => !/^---+\s*$/.test(p));
+  const pieces: AnnotatedPiece[] = [];
+
+  for (let pi = 0; pi < paragraphs.length; pi++) {
+    const para = paragraphs[pi];
+    const lines = para.split('\n');
+    const firstLine = lines[0] || para;
+    const header = detectHeaderLine(firstLine);
+    const isSep = isChapterSeparator(para);
+
+    // Prefer not to split header away from its first paragraph body unless forced
+    if (header && lines.length === 1) {
+      // Standalone header line (markdown) — ends as header/chapter before next para
+      const endsAt: ChunkEndBoundary =
+        header.level === 1 || isSep ? 'chapter' : 'header';
+      pieces.push({
+        text: para,
+        endHint: endsAt,
+        isHeader: true,
+        headerLevel: header.level,
+      });
+      continue;
+    }
+
     if (para.length <= maxChars) {
-      pieces.push(para);
+      // Whole paragraph — ends at paragraph (or document if last)
+      const isLast = pi === paragraphs.length - 1;
+      let endHint: ChunkEndBoundary = isLast ? 'document-end' : 'paragraph';
+      if (header) {
+        endHint = header.level === 1 ? 'chapter' : 'header';
+      }
+      // Dialogue paragraph (pt-BR travessão)
+      if (
+        language.startsWith('pt') &&
+        /^[—–]/.test(para.trim()) &&
+        pi + 1 < paragraphs.length &&
+        /^[—–]/.test(paragraphs[pi + 1].trim())
+      ) {
+        endHint = 'dialogue';
+      }
+      pieces.push({
+        text: para,
+        endHint,
+        isHeader: !!header && lines.length === 1,
+        headerLevel: header?.level,
+      });
       continue;
     }
-    pieces.push(...splitBySentences(para, maxChars, hardMax, language));
+
+    // Large paragraph: sentence split — never split inside dash clause if avoidable
+    const sentPieces = splitBySentencesAnnotated(
+      para,
+      maxChars,
+      hardMax,
+      language,
+    );
+    for (let si = 0; si < sentPieces.length; si++) {
+      const sp = sentPieces[si];
+      const isLastSent = si === sentPieces.length - 1;
+      const isLastPara = pi === paragraphs.length - 1;
+      let endHint: ChunkEndBoundary = sp.forced
+        ? 'forced'
+        : isLastSent
+          ? isLastPara
+            ? 'document-end'
+            : 'paragraph'
+          : 'sentence';
+      if (sp.forced) endHint = 'forced';
+      pieces.push({ ...sp, endHint });
+    }
   }
 
-  // Greedy pack small pieces into maxChars windows
-  const packed: string[] = [];
+  return pieces;
+}
+
+function splitBySentencesAnnotated(
+  para: string,
+  maxChars: number,
+  hardMax: number,
+  language: LanguageCode,
+): AnnotatedPiece[] {
+  const sentences = splitSentencesLanguageAware(para, language);
+  const out: AnnotatedPiece[] = [];
   let buf = '';
-  for (const piece of pieces) {
-    if (!buf) {
-      buf = piece;
+
+  const flush = (text: string, forced: boolean) => {
+    if (!text) return;
+    // Avoid ending mid dash-clause when possible
+    let endHint: ChunkEndBoundary = forced ? 'forced' : 'sentence';
+    if (/[—–]\s*$/.test(text.trim()) && !forced) endHint = 'dash-clause';
+    out.push({ text, endHint, forced });
+  };
+
+  for (const raw of sentences) {
+    const s = raw.trim();
+    if (!s) continue;
+    if (s.length > hardMax) {
+      if (buf) {
+        flush(buf, false);
+        buf = '';
+      }
+      for (const w of splitByWords(s, maxChars)) {
+        flush(w, true);
+      }
       continue;
     }
-    const candidate = `${buf}\n\n${piece}`;
+    // Don't pack across dash clause mid-attribution if it would split oddly
+    const candidate = buf ? `${buf} ${s}` : s;
     if (candidate.length <= maxChars) {
       buf = candidate;
     } else {
-      packed.push(buf);
-      buf = piece;
+      if (buf) flush(buf, false);
+      buf = s;
     }
   }
-  if (buf) packed.push(buf);
+  if (buf) flush(buf, false);
+  return out;
+}
 
-  return packed.map((t, index) => ({
-    index,
-    text: t,
-    charCount: t.length,
-  }));
+function packAnnotatedPieces(
+  pieces: AnnotatedPiece[],
+  maxChars: number,
+): Array<{
+  text: string;
+  endsAt: ChunkEndBoundary;
+  isHeader?: boolean;
+  headerLevel?: number;
+  explicitBreakMs?: number;
+}> {
+  const packed: Array<{
+    text: string;
+    endsAt: ChunkEndBoundary;
+    isHeader?: boolean;
+    headerLevel?: number;
+    explicitBreakMs?: number;
+  }> = [];
+
+  let buf = '';
+  let bufIsHeader: boolean | undefined;
+  let bufHeaderLevel: number | undefined;
+  let lastEndHint: ChunkEndBoundary = 'document-end';
+
+  const flushBuf = (endsAt: ChunkEndBoundary) => {
+    if (!buf) return;
+    packed.push({
+      text: buf,
+      endsAt,
+      isHeader: bufIsHeader,
+      headerLevel: bufHeaderLevel,
+    });
+    buf = '';
+    bufIsHeader = undefined;
+    bufHeaderLevel = undefined;
+  };
+
+  for (let i = 0; i < pieces.length; i++) {
+    const piece = pieces[i];
+    if (!buf) {
+      buf = piece.text;
+      bufIsHeader = piece.isHeader;
+      bufHeaderLevel = piece.headerLevel;
+      lastEndHint = piece.endHint;
+      continue;
+    }
+
+    // Never pack a header into previous body unless size forces (then forced)
+    if (piece.isHeader) {
+      flushBuf(lastEndHint === 'document-end' ? 'paragraph' : lastEndHint);
+      buf = piece.text;
+      bufIsHeader = piece.isHeader;
+      bufHeaderLevel = piece.headerLevel;
+      lastEndHint = piece.endHint;
+      continue;
+    }
+
+    // Never pack across structural boundaries — assembly inserts the gap
+    // at chunk edges. Packing paragraphs would erase paragraph pauses.
+    if (
+      lastEndHint === 'header' ||
+      lastEndHint === 'chapter' ||
+      lastEndHint === 'dialogue' ||
+      lastEndHint === 'paragraph' ||
+      lastEndHint === 'ssml-break' ||
+      piece.isHeader
+    ) {
+      flushBuf(lastEndHint);
+      buf = piece.text;
+      bufIsHeader = piece.isHeader;
+      bufHeaderLevel = piece.headerLevel;
+      lastEndHint = piece.endHint;
+      continue;
+    }
+
+    // Only pack sentence-level pieces into larger windows
+    const joiner = ' ';
+    const candidate = `${buf}${joiner}${piece.text}`;
+    if (candidate.length <= maxChars && !piece.forced) {
+      buf = candidate;
+      lastEndHint = rankBoundary(lastEndHint, piece.endHint);
+      continue;
+    }
+
+    // Flush current buffer; ending boundary is lastEndHint
+    flushBuf(lastEndHint);
+    buf = piece.text;
+    bufIsHeader = piece.isHeader;
+    bufHeaderLevel = piece.headerLevel;
+    lastEndHint = piece.endHint;
+  }
+  if (buf) flushBuf(lastEndHint);
+
+  // Last chunk always document-end
+  if (packed.length) {
+    packed[packed.length - 1].endsAt = 'document-end';
+  }
+  return packed;
+}
+
+function rankBoundary(
+  a: ChunkEndBoundary,
+  b: ChunkEndBoundary,
+): ChunkEndBoundary {
+  const rank: Record<ChunkEndBoundary, number> = {
+    'document-end': 0,
+    forced: 1,
+    'dash-clause': 2,
+    sentence: 3,
+    dialogue: 4,
+    'ssml-break': 5,
+    paragraph: 6,
+    header: 7,
+    chapter: 8,
+  };
+  return (rank[a] || 0) >= (rank[b] || 0) ? a : b;
+}
+
+function annotateSsmlChunks(
+  chunks: TextChunk[],
+  language: string,
+): TextChunk[] {
+  return chunks.map((c, i) => {
+    const isLast = i === chunks.length - 1;
+    // Detect explicit break at end of chunk text
+    const breakM = c.text.match(
+      /<break\b[^>]*\btime\s*=\s*["']?(\d+(?:\.\d+)?)(ms|s)?["']?[^>]*\/?>\s*$/i,
+    );
+    let endsAt: ChunkEndBoundary = isLast ? 'document-end' : 'paragraph';
+    let explicitBreakMs: number | undefined;
+    if (breakM) {
+      endsAt = 'ssml-break';
+      let ms = parseFloat(breakM[1]);
+      if ((breakM[2] || 'ms') === 's') ms *= 1000;
+      explicitBreakMs = Math.round(ms);
+    } else if (!isLast) {
+      const next = chunks[i + 1]?.text || '';
+      endsAt = classifyPieceEnd(c.text, next, { language });
+    }
+    return buildChunk(i, c.text, language, endsAt, { explicitBreakMs });
+  });
 }
 
 export function estimateWordCount(text: string): number {
@@ -241,39 +559,6 @@ function insideTag(text: string, pos: number): boolean {
   if (before === -1) return false;
   const closeBefore = text.lastIndexOf('>', pos);
   return before > closeBefore && after !== -1;
-}
-
-function splitBySentences(
-  para: string,
-  maxChars: number,
-  hardMax: number,
-  language: LanguageCode = 'en',
-): string[] {
-  const sentences = splitSentencesLanguageAware(para, language);
-  const out: string[] = [];
-  let buf = '';
-
-  for (const raw of sentences) {
-    const s = raw.trim();
-    if (!s) continue;
-    if (s.length > hardMax) {
-      if (buf) {
-        out.push(buf);
-        buf = '';
-      }
-      out.push(...splitByWords(s, maxChars));
-      continue;
-    }
-    const candidate = buf ? `${buf} ${s}` : s;
-    if (candidate.length <= maxChars) {
-      buf = candidate;
-    } else {
-      if (buf) out.push(buf);
-      buf = s;
-    }
-  }
-  if (buf) out.push(buf);
-  return out;
 }
 
 /**

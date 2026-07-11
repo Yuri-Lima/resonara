@@ -1,0 +1,3939 @@
+{
+  "generatedAt": "2026-07-10T23:59:40.368Z",
+  "note": "Baseline of CURRENT pipeline: no --sentence_silence, trim both edges, 20ms crossfade, zero inserted silence. Low conformance PROVES the user report.",
+  "reports": [
+    {
+      "fixture": "en-punctuation",
+      "engine": "piper",
+      "language": "en",
+      "chunkCount": 4,
+      "durationSec": 23.345,
+      "silenceRegions": 31,
+      "silenceDurationsMs": [
+        65,
+        127,
+        78,
+        206,
+        206,
+        62,
+        257,
+        66,
+        61,
+        165,
+        64,
+        43,
+        366,
+        237,
+        52,
+        267,
+        49,
+        44,
+        180,
+        55,
+        60,
+        136,
+        192,
+        58,
+        71,
+        48,
+        72,
+        163,
+        51,
+        233,
+        52
+      ],
+      "conformancePct": 28.6,
+      "passed": 6,
+      "totalBanded": 21,
+      "byType": {
+        "comma": {
+          "count": 4,
+          "sumMs": 729,
+          "maxMs": 233,
+          "minMs": 127,
+          "pass": 3,
+          "fail": 1,
+          "avgMs": 182
+        },
+        "sentence": {
+          "count": 9,
+          "sumMs": 1229,
+          "maxMs": 267,
+          "minMs": 52,
+          "pass": 0,
+          "fail": 9,
+          "avgMs": 137
+        },
+        "semicolon": {
+          "count": 1,
+          "sumMs": 257,
+          "maxMs": 257,
+          "minMs": 257,
+          "pass": 1,
+          "fail": 0,
+          "avgMs": 257
+        },
+        "colon": {
+          "count": 1,
+          "sumMs": 257,
+          "maxMs": 257,
+          "minMs": 257,
+          "pass": 1,
+          "fail": 0,
+          "avgMs": 257
+        },
+        "paragraph": {
+          "count": 3,
+          "sumMs": 196,
+          "maxMs": 72,
+          "minMs": 60,
+          "pass": 0,
+          "fail": 3,
+          "avgMs": 65
+        },
+        "em-dash": {
+          "count": 2,
+          "sumMs": 603,
+          "maxMs": 366,
+          "minMs": 237,
+          "pass": 1,
+          "fail": 1,
+          "avgMs": 302
+        },
+        "ellipsis": {
+          "count": 1,
+          "sumMs": 0,
+          "maxMs": 0,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 0
+        }
+      },
+      "boundaries": [
+        {
+          "type": "comma",
+          "offset": 15,
+          "context": "The quiet river, flowing past the mi",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 127,
+          "estimatedTimeSec": 0.84,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 38,
+          "context": "lowing past the mill, carried leaves towa",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 206,
+          "estimatedTimeSec": 2.127,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 69,
+          "context": "eaves toward the sea. She paused; then sh",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 206,
+          "estimatedTimeSec": 3.863,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "semicolon",
+          "offset": 81,
+          "context": " the sea. She paused; then she spoke: the",
+          "expectedBandMs": [
+            200,
+            300
+          ],
+          "measuredMs": 257,
+          "estimatedTimeSec": 4.535,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "colon",
+          "offset": 97,
+          "context": "used; then she spoke: the decision was fi",
+          "expectedBandMs": [
+            200,
+            300
+          ],
+          "measuredMs": 257,
+          "estimatedTimeSec": 5.43,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 121,
+          "context": "e decision was final.↵↵After the storm — ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 64,
+          "estimatedTimeSec": 6.774,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 122,
+          "context": " decision was final.↵↵After the storm — w",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 64,
+          "estimatedTimeSec": 6.83,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "em-dash",
+          "offset": 140,
+          "context": "l.↵↵After the storm — which lasted three ",
+          "expectedBandMs": [
+            200,
+            350
+          ],
+          "measuredMs": 366,
+          "estimatedTimeSec": 7.837,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "em-dash",
+          "offset": 166,
+          "context": "h lasted three days — the garden recovere",
+          "expectedBandMs": [
+            200,
+            350
+          ],
+          "measuredMs": 237,
+          "estimatedTimeSec": 9.293,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 188,
+          "context": "the garden recovered. The first chapter e",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 267,
+          "estimatedTimeSec": 10.525,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 217,
+          "context": "st chapter ends here. The second begins w",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 180,
+          "estimatedTimeSec": 12.148,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 252,
+          "context": "gins without fanfare!↵↵Did anyone hear th",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 60,
+          "estimatedTimeSec": 14.107,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 253,
+          "context": "ins without fanfare!↵↵Did anyone hear the",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 60,
+          "estimatedTimeSec": 14.163,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 279,
+          "context": "anyone hear the bell? Nobody answered at ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 136,
+          "estimatedTimeSec": 15.619,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 303,
+          "context": "body answered at all. The trail vanished ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 192,
+          "estimatedTimeSec": 16.963,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "ellipsis",
+          "offset": 333,
+          "context": "l vanished into mist… and then into silen",
+          "expectedBandMs": [
+            450,
+            750
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 18.642,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 356,
+          "context": "nd then into silence.↵↵He packed carefull",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 72,
+          "estimatedTimeSec": 19.93,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 357,
+          "context": "d then into silence.↵↵He packed carefully",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 72,
+          "estimatedTimeSec": 19.986,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 378,
+          "context": "↵He packed carefully, checked twice, and ",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 163,
+          "estimatedTimeSec": 21.161,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 393,
+          "context": "fully, checked twice, and left before daw",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 233,
+          "estimatedTimeSec": 22.001,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 415,
+          "context": "and left before dawn.↵",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 52,
+          "estimatedTimeSec": 23.233,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        }
+      ],
+      "wav": "reports/ab-baseline/piper_en-punctuation.wav"
+    },
+    {
+      "fixture": "en-structure",
+      "engine": "piper",
+      "language": "en",
+      "chunkCount": 9,
+      "durationSec": 27.698,
+      "silenceRegions": 42,
+      "silenceDurationsMs": [
+        395,
+        58,
+        49,
+        54,
+        42,
+        66,
+        48,
+        221,
+        96,
+        162,
+        56,
+        61,
+        303,
+        61,
+        54,
+        54,
+        61,
+        185,
+        75,
+        42,
+        65,
+        49,
+        56,
+        50,
+        69,
+        437,
+        55,
+        45,
+        59,
+        106,
+        137,
+        63,
+        49,
+        79,
+        257,
+        44,
+        59,
+        53,
+        261,
+        54,
+        41,
+        258
+      ],
+      "conformancePct": 3.6,
+      "passed": 1,
+      "totalBanded": 28,
+      "byType": {
+        "paragraph": {
+          "count": 8,
+          "sumMs": 1606,
+          "maxMs": 437,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 8,
+          "avgMs": 201
+        },
+        "chapter": {
+          "count": 3,
+          "sumMs": 731,
+          "maxMs": 395,
+          "minMs": 79,
+          "pass": 0,
+          "fail": 3,
+          "avgMs": 244
+        },
+        "sentence": {
+          "count": 10,
+          "sumMs": 1207,
+          "maxMs": 261,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 10,
+          "avgMs": 121
+        },
+        "pre-header": {
+          "count": 3,
+          "sumMs": 135,
+          "maxMs": 79,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 3,
+          "avgMs": 45
+        },
+        "em-dash": {
+          "count": 1,
+          "sumMs": 303,
+          "maxMs": 303,
+          "minMs": 303,
+          "pass": 1,
+          "fail": 0,
+          "avgMs": 303
+        },
+        "header": {
+          "count": 2,
+          "sumMs": 740,
+          "maxMs": 437,
+          "minMs": 303,
+          "pass": 0,
+          "fail": 2,
+          "avgMs": 370
+        },
+        "comma": {
+          "count": 1,
+          "sumMs": 258,
+          "maxMs": 258,
+          "minMs": 258,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 258
+        }
+      },
+      "boundaries": [
+        {
+          "type": "paragraph",
+          "offset": 27,
+          "context": "er One: The Approach↵↵The trail narrowed ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 395,
+          "estimatedTimeSec": 1.447,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 27,
+          "context": "# Chapter One: The Approach↵↵The trail narrowed",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 395,
+          "estimatedTimeSec": 1.447,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 71,
+          "context": "the forest thickened. Birds fell silent n",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 221,
+          "estimatedTimeSec": 3.804,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 105,
+          "context": "ilent near the ridge. A cold wind came do",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 162,
+          "estimatedTimeSec": 5.625,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 143,
+          "context": " down from the north.↵↵## Section A — Fir",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 7.661,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 144,
+          "context": "down from the north.↵↵## Section A — Firs",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 7.715,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 146,
+          "context": "e north.↵↵## Section A — First Light↵↵Mo",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 7.822,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "em-dash",
+          "offset": 159,
+          "context": "orth.↵↵## Section A — First Light↵↵Mornin",
+          "expectedBandMs": [
+            200,
+            350
+          ],
+          "measuredMs": 303,
+          "estimatedTimeSec": 8.518,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 172,
+          "context": "tion A — First Light↵↵Morning mist clung ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 303,
+          "estimatedTimeSec": 9.215,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "header",
+          "offset": 172,
+          "context": "## Section A — First Light↵↵Morning mist clung",
+          "expectedBandMs": [
+            900,
+            1300
+          ],
+          "measuredMs": 303,
+          "estimatedTimeSec": 9.215,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 205,
+          "context": "t clung to the ferns. A single boot print",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 185,
+          "estimatedTimeSec": 10.983,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 257,
+          "context": " mud beside the path.↵↵### Topic: Water S",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 56,
+          "estimatedTimeSec": 13.769,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 258,
+          "context": "mud beside the path.↵↵### Topic: Water So",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 56,
+          "estimatedTimeSec": 13.822,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 260,
+          "context": "he path.↵↵### Topic: Water Sources↵↵Find",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 56,
+          "estimatedTimeSec": 13.93,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 284,
+          "context": "Topic: Water Sources↵↵Find the spring eas",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 437,
+          "estimatedTimeSec": 15.215,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "header",
+          "offset": 284,
+          "context": "### Topic: Water Sources↵↵Find the spring ea",
+          "expectedBandMs": [
+            900,
+            1300
+          ],
+          "measuredMs": 437,
+          "estimatedTimeSec": 15.215,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 324,
+          "context": "st of the fallen oak. Fill bottles before",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 106,
+          "estimatedTimeSec": 17.358,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 350,
+          "context": " bottles before noon. Do not drink from t",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 137,
+          "estimatedTimeSec": 18.751,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 387,
+          "context": "om the stagnant pool.↵↵---↵↵# Chapter Two",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 79,
+          "estimatedTimeSec": 20.734,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 388,
+          "context": "m the stagnant pool.↵↵---↵↵# Chapter Two:",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 79,
+          "estimatedTimeSec": 20.787,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 390,
+          "context": "tagnant pool.↵↵---↵↵# Chapter Two: ",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 79,
+          "estimatedTimeSec": 20.894,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 393,
+          "context": " stagnant pool.↵↵---↵↵# Chapter Two: The ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 79,
+          "estimatedTimeSec": 21.055,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 395,
+          "context": "ol.↵↵---↵↵# Chapter Two: The Crossing↵↵T",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 79,
+          "estimatedTimeSec": 21.162,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 422,
+          "context": "er Two: The Crossing↵↵The river ran cold ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 257,
+          "estimatedTimeSec": 22.609,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 422,
+          "context": "# Chapter Two: The Crossing↵↵The river ran cold",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 257,
+          "estimatedTimeSec": 22.609,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 451,
+          "context": "er ran cold and fast. They crossed at the",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 261,
+          "estimatedTimeSec": 24.162,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 485,
+          "context": " at the shallow bend, then climbed toward",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 258,
+          "estimatedTimeSec": 25.984,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 515,
+          "context": "mbed toward the pass.↵",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 27.591,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        }
+      ],
+      "wav": "reports/ab-baseline/piper_en-structure.wav"
+    },
+    {
+      "fixture": "pt-br-pontuacao",
+      "engine": "piper",
+      "language": "pt-BR",
+      "chunkCount": 5,
+      "durationSec": 27.376,
+      "silenceRegions": 21,
+      "silenceDurationsMs": [
+        136,
+        88,
+        146,
+        106,
+        170,
+        87,
+        82,
+        47,
+        61,
+        106,
+        190,
+        148,
+        75,
+        176,
+        241,
+        200,
+        57,
+        59,
+        175,
+        81,
+        53
+      ],
+      "conformancePct": 0,
+      "passed": 0,
+      "totalBanded": 29,
+      "byType": {
+        "comma": {
+          "count": 4,
+          "sumMs": 453,
+          "maxMs": 148,
+          "minMs": 81,
+          "pass": 0,
+          "fail": 4,
+          "avgMs": 113
+        },
+        "sentence": {
+          "count": 12,
+          "sumMs": 1516,
+          "maxMs": 241,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 12,
+          "avgMs": 126
+        },
+        "semicolon": {
+          "count": 1,
+          "sumMs": 146,
+          "maxMs": 146,
+          "minMs": 146,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 146
+        },
+        "colon": {
+          "count": 1,
+          "sumMs": 170,
+          "maxMs": 170,
+          "minMs": 170,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 170
+        },
+        "paragraph": {
+          "count": 4,
+          "sumMs": 282,
+          "maxMs": 87,
+          "minMs": 59,
+          "pass": 0,
+          "fail": 4,
+          "avgMs": 71
+        },
+        "dialogue-attrib": {
+          "count": 4,
+          "sumMs": 425,
+          "maxMs": 190,
+          "minMs": 47,
+          "pass": 0,
+          "fail": 4,
+          "avgMs": 106
+        },
+        "dialogue-open": {
+          "count": 2,
+          "sumMs": 251,
+          "maxMs": 190,
+          "minMs": 61,
+          "pass": 0,
+          "fail": 2,
+          "avgMs": 126
+        },
+        "ellipsis": {
+          "count": 1,
+          "sumMs": 0,
+          "maxMs": 0,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 0
+        }
+      },
+      "boundaries": [
+        {
+          "type": "comma",
+          "offset": 12,
+          "context": "O rio quieto, passando pelo moinh",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 136,
+          "estimatedTimeSec": 0.658,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 34,
+          "context": "passando pelo moinho, carregava folhas em",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 88,
+          "estimatedTimeSec": 1.865,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 70,
+          "context": "as em direção ao mar. Ela pausou; depois ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 146,
+          "estimatedTimeSec": 3.84,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "semicolon",
+          "offset": 82,
+          "context": "o ao mar. Ela pausou; depois falou: a dec",
+          "expectedBandMs": [
+            200,
+            300
+          ],
+          "measuredMs": 146,
+          "estimatedTimeSec": 4.499,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "colon",
+          "offset": 96,
+          "context": "pausou; depois falou: a decisão era final",
+          "expectedBandMs": [
+            200,
+            300
+          ],
+          "measuredMs": 170,
+          "estimatedTimeSec": 5.267,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 117,
+          "context": " a decisão era final.↵↵Depois da tempesta",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 87,
+          "estimatedTimeSec": 6.419,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 118,
+          "context": "a decisão era final.↵↵Depois da tempestad",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 87,
+          "estimatedTimeSec": 6.474,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-attrib",
+          "offset": 141,
+          "context": " da tempestade — que durou três dias — o",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 82,
+          "estimatedTimeSec": 7.736,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-attrib",
+          "offset": 163,
+          "context": "urou três dias — o jardim se recuperou.↵",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 47,
+          "estimatedTimeSec": 8.942,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 186,
+          "context": " jardim se recuperou.↵↵— Você vem? — perg",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 61,
+          "estimatedTimeSec": 10.204,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 187,
+          "context": "jardim se recuperou.↵↵— Você vem? — pergu",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 61,
+          "estimatedTimeSec": 10.259,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-open",
+          "offset": 189,
+          "context": "se recuperou.↵↵— Você vem? — perguntou e",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 61,
+          "estimatedTimeSec": 10.369,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 199,
+          "context": "cuperou.↵↵— Você vem? — perguntou ela.↵— ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 106,
+          "estimatedTimeSec": 10.917,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-attrib",
+          "offset": 201,
+          "context": ".↵↵— Você vem? — perguntou ela.↵— Agora ",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 106,
+          "estimatedTimeSec": 11.027,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 216,
+          "context": "vem? — perguntou ela.↵— Agora não — respo",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 190,
+          "estimatedTimeSec": 11.85,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-open",
+          "offset": 218,
+          "context": "perguntou ela.↵— Agora não — respondeu e",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 190,
+          "estimatedTimeSec": 11.96,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-attrib",
+          "offset": 230,
+          "context": "a.↵— Agora não — respondeu ele, sem ergu",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 190,
+          "estimatedTimeSec": 12.618,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 245,
+          "context": " não — respondeu ele, sem erguer o olhar.",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 148,
+          "estimatedTimeSec": 13.441,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 265,
+          "context": ", sem erguer o olhar.↵↵O primeiro capítul",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 75,
+          "estimatedTimeSec": 14.538,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 266,
+          "context": " sem erguer o olhar.↵↵O primeiro capítulo",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 75,
+          "estimatedTimeSec": 14.593,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 300,
+          "context": "apítulo termina aqui. O segundo começa se",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 176,
+          "estimatedTimeSec": 16.459,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 329,
+          "context": "do começa sem alarde! Alguém ouviu o sino",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 241,
+          "estimatedTimeSec": 18.05,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 350,
+          "context": " Alguém ouviu o sino? Ninguém respondeu d",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 200,
+          "estimatedTimeSec": 19.202,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 377,
+          "context": "ém respondeu de fato.↵↵A trilha sumiu na ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 59,
+          "estimatedTimeSec": 20.683,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 378,
+          "context": "m respondeu de fato.↵↵A trilha sumiu na n",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 59,
+          "estimatedTimeSec": 20.738,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "ellipsis",
+          "offset": 403,
+          "context": "rilha sumiu na névoa… e depois no silênci",
+          "expectedBandMs": [
+            450,
+            750
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 22.109,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 425,
+          "context": "e depois no silêncio. Ele arrumou a mochi",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 175,
+          "estimatedTimeSec": 23.316,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 448,
+          "context": "le arrumou a mochila, conferiu duas vezes",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 81,
+          "estimatedTimeSec": 24.578,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 497,
+          "context": "u antes do amanhecer.↵",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 27.266,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        }
+      ],
+      "wav": "reports/ab-baseline/piper_pt-br-pontuacao.wav"
+    },
+    {
+      "fixture": "pt-br-estrutura",
+      "engine": "piper",
+      "language": "pt-BR",
+      "chunkCount": 9,
+      "durationSec": 28.817,
+      "silenceRegions": 20,
+      "silenceDurationsMs": [
+        170,
+        84,
+        55,
+        203,
+        41,
+        47,
+        476,
+        68,
+        58,
+        207,
+        55,
+        107,
+        74,
+        151,
+        167,
+        97,
+        106,
+        59,
+        162,
+        66
+      ],
+      "conformancePct": 3.4,
+      "passed": 1,
+      "totalBanded": 29,
+      "byType": {
+        "paragraph": {
+          "count": 8,
+          "sumMs": 681,
+          "maxMs": 170,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 8,
+          "avgMs": 85
+        },
+        "chapter": {
+          "count": 3,
+          "sumMs": 335,
+          "maxMs": 170,
+          "minMs": 59,
+          "pass": 0,
+          "fail": 3,
+          "avgMs": 112
+        },
+        "sentence": {
+          "count": 10,
+          "sumMs": 1570,
+          "maxMs": 476,
+          "minMs": 0,
+          "pass": 1,
+          "fail": 9,
+          "avgMs": 157
+        },
+        "pre-header": {
+          "count": 3,
+          "sumMs": 213,
+          "maxMs": 107,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 3,
+          "avgMs": 71
+        },
+        "em-dash": {
+          "count": 1,
+          "sumMs": 68,
+          "maxMs": 68,
+          "minMs": 68,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 68
+        },
+        "header": {
+          "count": 2,
+          "sumMs": 142,
+          "maxMs": 74,
+          "minMs": 68,
+          "pass": 0,
+          "fail": 2,
+          "avgMs": 71
+        },
+        "comma": {
+          "count": 2,
+          "sumMs": 132,
+          "maxMs": 66,
+          "minMs": 66,
+          "pass": 0,
+          "fail": 2,
+          "avgMs": 66
+        }
+      },
+      "boundaries": [
+        {
+          "type": "paragraph",
+          "offset": 24,
+          "context": "pítulo Um: A Chegada↵↵A trilha estreita a",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 170,
+          "estimatedTimeSec": 1.293,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 24,
+          "context": "# Capítulo Um: A Chegada↵↵A trilha estreita ",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 170,
+          "estimatedTimeSec": 1.293,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 65,
+          "context": "companhou a floresta. Os pássaros calaram",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 203,
+          "estimatedTimeSec": 3.501,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 102,
+          "context": "aram perto da crista. Um vento frio desci",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 476,
+          "estimatedTimeSec": 5.494,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 133,
+          "context": "frio descia do norte.↵↵## Seção A — Prime",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 7.164,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 134,
+          "context": "rio descia do norte.↵↵## Seção A — Primei",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 7.218,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 136,
+          "context": "o norte.↵↵## Seção A — Primeira Luz↵↵A n",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 7.326,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "em-dash",
+          "offset": 147,
+          "context": " norte.↵↵## Seção A — Primeira Luz↵↵A név",
+          "expectedBandMs": [
+            200,
+            350
+          ],
+          "measuredMs": 68,
+          "estimatedTimeSec": 7.918,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 161,
+          "context": "ção A — Primeira Luz↵↵A névoa da manhã gr",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 68,
+          "estimatedTimeSec": 8.672,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "header",
+          "offset": 161,
+          "context": "## Seção A — Primeira Luz↵↵A névoa da manhã g",
+          "expectedBandMs": [
+            900,
+            1300
+          ],
+          "measuredMs": 68,
+          "estimatedTimeSec": 8.672,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 202,
+          "context": "udava nas samambaias. Uma única pegada ma",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 207,
+          "estimatedTimeSec": 10.881,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 254,
+          "context": "a ao lado do caminho.↵↵### Tópico: Fontes",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 107,
+          "estimatedTimeSec": 13.681,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 255,
+          "context": " ao lado do caminho.↵↵### Tópico: Fontes ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 107,
+          "estimatedTimeSec": 13.735,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 257,
+          "context": "caminho.↵↵### Tópico: Fontes de Água↵↵En",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 107,
+          "estimatedTimeSec": 13.843,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 283,
+          "context": "pico: Fontes de Água↵↵Encontre a nascente",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 74,
+          "estimatedTimeSec": 15.244,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "header",
+          "offset": 283,
+          "context": "### Tópico: Fontes de Água↵↵Encontre a nascent",
+          "expectedBandMs": [
+            900,
+            1300
+          ],
+          "measuredMs": 74,
+          "estimatedTimeSec": 15.244,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 330,
+          "context": "te do carvalho caído. Encha as garrafas a",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 151,
+          "estimatedTimeSec": 17.775,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 367,
+          "context": "as antes do meio-dia. Não beba da poça es",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 167,
+          "estimatedTimeSec": 19.768,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 395,
+          "context": "ba da poça estagnada.↵↵---↵↵# Capítulo Do",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 97,
+          "estimatedTimeSec": 21.276,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 396,
+          "context": "a da poça estagnada.↵↵---↵↵# Capítulo Doi",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 97,
+          "estimatedTimeSec": 21.33,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 398,
+          "context": "ça estagnada.↵↵---↵↵# Capítulo Dois",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 106,
+          "estimatedTimeSec": 21.438,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 401,
+          "context": "poça estagnada.↵↵---↵↵# Capítulo Dois: A ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 106,
+          "estimatedTimeSec": 21.6,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 403,
+          "context": "da.↵↵---↵↵# Capítulo Dois: A Travessia↵↵",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 106,
+          "estimatedTimeSec": 21.707,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 431,
+          "context": "lo Dois: A Travessia↵↵O rio corria frio e",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 59,
+          "estimatedTimeSec": 23.215,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 431,
+          "context": "# Capítulo Dois: A Travessia↵↵O rio corria frio ",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 59,
+          "estimatedTimeSec": 23.215,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 459,
+          "context": "corria frio e rápido. Eles cruzaram na cu",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 162,
+          "estimatedTimeSec": 24.724,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 490,
+          "context": "aram na curva rasa e, então, subiram em d",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 66,
+          "estimatedTimeSec": 26.393,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 497,
+          "context": " curva rasa e, então, subiram em direção ",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 66,
+          "estimatedTimeSec": 26.77,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 533,
+          "context": "eção ao desfiladeiro.↵",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 28.71,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        }
+      ],
+      "wav": "reports/ab-baseline/piper_pt-br-estrutura.wav"
+    },
+    {
+      "fixture": "en-punctuation",
+      "engine": "platform",
+      "language": "en",
+      "chunkCount": 4,
+      "durationSec": 24.397,
+      "silenceRegions": 33,
+      "silenceDurationsMs": [
+        141,
+        419,
+        363,
+        53,
+        299,
+        62,
+        65,
+        452,
+        470,
+        44,
+        276,
+        324,
+        61,
+        75,
+        63,
+        359,
+        48,
+        45,
+        69,
+        369,
+        322,
+        45,
+        76,
+        48,
+        49,
+        46,
+        59,
+        330,
+        83,
+        86,
+        342,
+        50,
+        50
+      ],
+      "conformancePct": 23.8,
+      "passed": 5,
+      "totalBanded": 21,
+      "byType": {
+        "comma": {
+          "count": 4,
+          "sumMs": 1232,
+          "maxMs": 419,
+          "minMs": 141,
+          "pass": 0,
+          "fail": 4,
+          "avgMs": 308
+        },
+        "sentence": {
+          "count": 9,
+          "sumMs": 1865,
+          "maxMs": 369,
+          "minMs": 0,
+          "pass": 3,
+          "fail": 6,
+          "avgMs": 207
+        },
+        "semicolon": {
+          "count": 1,
+          "sumMs": 299,
+          "maxMs": 299,
+          "minMs": 299,
+          "pass": 1,
+          "fail": 0,
+          "avgMs": 299
+        },
+        "colon": {
+          "count": 1,
+          "sumMs": 452,
+          "maxMs": 452,
+          "minMs": 452,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 452
+        },
+        "paragraph": {
+          "count": 3,
+          "sumMs": 128,
+          "maxMs": 69,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 3,
+          "avgMs": 43
+        },
+        "em-dash": {
+          "count": 2,
+          "sumMs": 746,
+          "maxMs": 470,
+          "minMs": 276,
+          "pass": 1,
+          "fail": 1,
+          "avgMs": 373
+        },
+        "ellipsis": {
+          "count": 1,
+          "sumMs": 76,
+          "maxMs": 76,
+          "minMs": 76,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 76
+        }
+      },
+      "boundaries": [
+        {
+          "type": "comma",
+          "offset": 15,
+          "context": "The quiet river, flowing past the mi",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 141,
+          "estimatedTimeSec": 0.878,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 38,
+          "context": "lowing past the mill, carried leaves towa",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 419,
+          "estimatedTimeSec": 2.223,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 69,
+          "context": "eaves toward the sea. She paused; then sh",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 363,
+          "estimatedTimeSec": 4.037,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "semicolon",
+          "offset": 81,
+          "context": " the sea. She paused; then she spoke: the",
+          "expectedBandMs": [
+            200,
+            300
+          ],
+          "measuredMs": 299,
+          "estimatedTimeSec": 4.739,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "colon",
+          "offset": 97,
+          "context": "used; then she spoke: the decision was fi",
+          "expectedBandMs": [
+            200,
+            300
+          ],
+          "measuredMs": 452,
+          "estimatedTimeSec": 5.675,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 121,
+          "context": "e decision was final.↵↵After the storm — ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 7.079,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 122,
+          "context": " decision was final.↵↵After the storm — w",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 7.138,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "em-dash",
+          "offset": 140,
+          "context": "l.↵↵After the storm — which lasted three ",
+          "expectedBandMs": [
+            200,
+            350
+          ],
+          "measuredMs": 470,
+          "estimatedTimeSec": 8.191,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "em-dash",
+          "offset": 166,
+          "context": "h lasted three days — the garden recovere",
+          "expectedBandMs": [
+            200,
+            350
+          ],
+          "measuredMs": 276,
+          "estimatedTimeSec": 9.712,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 188,
+          "context": "the garden recovered. The first chapter e",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 324,
+          "estimatedTimeSec": 10.999,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 217,
+          "context": "st chapter ends here. The second begins w",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 359,
+          "estimatedTimeSec": 12.696,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 252,
+          "context": "gins without fanfare!↵↵Did anyone hear th",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 69,
+          "estimatedTimeSec": 14.743,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 253,
+          "context": "ins without fanfare!↵↵Did anyone hear the",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 69,
+          "estimatedTimeSec": 14.802,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 279,
+          "context": "anyone hear the bell? Nobody answered at ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 369,
+          "estimatedTimeSec": 16.323,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 303,
+          "context": "body answered at all. The trail vanished ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 322,
+          "estimatedTimeSec": 17.727,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "ellipsis",
+          "offset": 333,
+          "context": "l vanished into mist… and then into silen",
+          "expectedBandMs": [
+            450,
+            750
+          ],
+          "measuredMs": 76,
+          "estimatedTimeSec": 19.482,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 356,
+          "context": "nd then into silence.↵↵He packed carefull",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 59,
+          "estimatedTimeSec": 20.828,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 357,
+          "context": "d then into silence.↵↵He packed carefully",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 59,
+          "estimatedTimeSec": 20.887,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 378,
+          "context": "↵He packed carefully, checked twice, and ",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 330,
+          "estimatedTimeSec": 22.115,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 393,
+          "context": "fully, checked twice, and left before daw",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 342,
+          "estimatedTimeSec": 22.993,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 415,
+          "context": "and left before dawn.↵",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 24.28,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        }
+      ],
+      "wav": "reports/ab-baseline/platform_en-punctuation.wav"
+    },
+    {
+      "fixture": "en-structure",
+      "engine": "platform",
+      "language": "en",
+      "chunkCount": 9,
+      "durationSec": 27.961,
+      "silenceRegions": 41,
+      "silenceDurationsMs": [
+        461,
+        69,
+        74,
+        41,
+        54,
+        55,
+        345,
+        247,
+        46,
+        50,
+        54,
+        321,
+        50,
+        102,
+        47,
+        54,
+        66,
+        58,
+        60,
+        76,
+        377,
+        45,
+        62,
+        89,
+        368,
+        59,
+        354,
+        100,
+        41,
+        40,
+        65,
+        81,
+        58,
+        66,
+        118,
+        57,
+        341,
+        40,
+        359,
+        60,
+        42
+      ],
+      "conformancePct": 14.3,
+      "passed": 4,
+      "totalBanded": 28,
+      "byType": {
+        "paragraph": {
+          "count": 8,
+          "sumMs": 1045,
+          "maxMs": 461,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 8,
+          "avgMs": 131
+        },
+        "chapter": {
+          "count": 3,
+          "sumMs": 542,
+          "maxMs": 461,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 3,
+          "avgMs": 181
+        },
+        "sentence": {
+          "count": 10,
+          "sumMs": 2476,
+          "maxMs": 377,
+          "minMs": 0,
+          "pass": 3,
+          "fail": 7,
+          "avgMs": 248
+        },
+        "pre-header": {
+          "count": 3,
+          "sumMs": 495,
+          "maxMs": 377,
+          "minMs": 0,
+          "pass": 1,
+          "fail": 2,
+          "avgMs": 165
+        },
+        "em-dash": {
+          "count": 1,
+          "sumMs": 0,
+          "maxMs": 0,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 0
+        },
+        "header": {
+          "count": 2,
+          "sumMs": 45,
+          "maxMs": 45,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 2,
+          "avgMs": 23
+        },
+        "comma": {
+          "count": 1,
+          "sumMs": 359,
+          "maxMs": 359,
+          "minMs": 359,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 359
+        }
+      },
+      "boundaries": [
+        {
+          "type": "paragraph",
+          "offset": 27,
+          "context": "er One: The Approach↵↵The trail narrowed ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 461,
+          "estimatedTimeSec": 1.46,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 27,
+          "context": "# Chapter One: The Approach↵↵The trail narrowed",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 461,
+          "estimatedTimeSec": 1.46,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 71,
+          "context": "the forest thickened. Birds fell silent n",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 345,
+          "estimatedTimeSec": 3.84,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 105,
+          "context": "ilent near the ridge. A cold wind came do",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 247,
+          "estimatedTimeSec": 5.679,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 143,
+          "context": " down from the north.↵↵## Section A — Fir",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 7.734,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 144,
+          "context": "down from the north.↵↵## Section A — Firs",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 7.788,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 146,
+          "context": "e north.↵↵## Section A — First Light↵↵Mo",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 7.896,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "em-dash",
+          "offset": 159,
+          "context": "orth.↵↵## Section A — First Light↵↵Mornin",
+          "expectedBandMs": [
+            200,
+            350
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 8.599,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 172,
+          "context": "tion A — First Light↵↵Morning mist clung ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 9.302,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "header",
+          "offset": 172,
+          "context": "## Section A — First Light↵↵Morning mist clung",
+          "expectedBandMs": [
+            900,
+            1300
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 9.302,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 205,
+          "context": "t clung to the ferns. A single boot print",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 321,
+          "estimatedTimeSec": 11.087,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 257,
+          "context": " mud beside the path.↵↵### Topic: Water S",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 377,
+          "estimatedTimeSec": 13.899,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 258,
+          "context": "mud beside the path.↵↵### Topic: Water So",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 377,
+          "estimatedTimeSec": 13.954,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 260,
+          "context": "he path.↵↵### Topic: Water Sources↵↵Find",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 377,
+          "estimatedTimeSec": 14.062,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 284,
+          "context": "Topic: Water Sources↵↵Find the spring eas",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 45,
+          "estimatedTimeSec": 15.36,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "header",
+          "offset": 284,
+          "context": "### Topic: Water Sources↵↵Find the spring ea",
+          "expectedBandMs": [
+            900,
+            1300
+          ],
+          "measuredMs": 45,
+          "estimatedTimeSec": 15.36,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 324,
+          "context": "st of the fallen oak. Fill bottles before",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 368,
+          "estimatedTimeSec": 17.523,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 350,
+          "context": " bottles before noon. Do not drink from t",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 354,
+          "estimatedTimeSec": 18.929,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 387,
+          "context": "om the stagnant pool.↵↵---↵↵# Chapter Two",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 81,
+          "estimatedTimeSec": 20.93,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 388,
+          "context": "m the stagnant pool.↵↵---↵↵# Chapter Two:",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 81,
+          "estimatedTimeSec": 20.984,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 390,
+          "context": "tagnant pool.↵↵---↵↵# Chapter Two: ",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 81,
+          "estimatedTimeSec": 21.093,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 393,
+          "context": " stagnant pool.↵↵---↵↵# Chapter Two: The ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 81,
+          "estimatedTimeSec": 21.255,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 395,
+          "context": "ol.↵↵---↵↵# Chapter Two: The Crossing↵↵T",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 118,
+          "estimatedTimeSec": 21.363,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 422,
+          "context": "er Two: The Crossing↵↵The river ran cold ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 22.823,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 422,
+          "context": "# Chapter Two: The Crossing↵↵The river ran cold",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 22.823,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 451,
+          "context": "er ran cold and fast. They crossed at the",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 341,
+          "estimatedTimeSec": 24.392,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 485,
+          "context": " at the shallow bend, then climbed toward",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 359,
+          "estimatedTimeSec": 26.23,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 515,
+          "context": "mbed toward the pass.↵",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 42,
+          "estimatedTimeSec": 27.853,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        }
+      ],
+      "wav": "reports/ab-baseline/platform_en-structure.wav"
+    },
+    {
+      "fixture": "pt-br-pontuacao",
+      "engine": "platform",
+      "language": "pt-BR",
+      "chunkCount": 5,
+      "durationSec": 34.607,
+      "silenceRegions": 40,
+      "silenceDurationsMs": [
+        438,
+        50,
+        181,
+        44,
+        348,
+        67,
+        387,
+        56,
+        295,
+        59,
+        418,
+        100,
+        56,
+        363,
+        41,
+        45,
+        52,
+        98,
+        87,
+        351,
+        440,
+        56,
+        271,
+        46,
+        54,
+        86,
+        365,
+        58,
+        330,
+        307,
+        72,
+        70,
+        329,
+        64,
+        344,
+        153,
+        51,
+        70,
+        44,
+        40
+      ],
+      "conformancePct": 20.7,
+      "passed": 6,
+      "totalBanded": 29,
+      "byType": {
+        "comma": {
+          "count": 4,
+          "sumMs": 1403,
+          "maxMs": 440,
+          "minMs": 181,
+          "pass": 1,
+          "fail": 3,
+          "avgMs": 351
+        },
+        "sentence": {
+          "count": 12,
+          "sumMs": 2632,
+          "maxMs": 365,
+          "minMs": 44,
+          "pass": 2,
+          "fail": 10,
+          "avgMs": 219
+        },
+        "semicolon": {
+          "count": 1,
+          "sumMs": 387,
+          "maxMs": 387,
+          "minMs": 387,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 387
+        },
+        "colon": {
+          "count": 1,
+          "sumMs": 387,
+          "maxMs": 387,
+          "minMs": 387,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 387
+        },
+        "paragraph": {
+          "count": 4,
+          "sumMs": 1001,
+          "maxMs": 363,
+          "minMs": 72,
+          "pass": 0,
+          "fail": 4,
+          "avgMs": 250
+        },
+        "dialogue-attrib": {
+          "count": 4,
+          "sumMs": 880,
+          "maxMs": 418,
+          "minMs": 52,
+          "pass": 1,
+          "fail": 3,
+          "avgMs": 220
+        },
+        "dialogue-open": {
+          "count": 2,
+          "sumMs": 714,
+          "maxMs": 363,
+          "minMs": 351,
+          "pass": 2,
+          "fail": 0,
+          "avgMs": 357
+        },
+        "ellipsis": {
+          "count": 1,
+          "sumMs": 329,
+          "maxMs": 329,
+          "minMs": 329,
+          "pass": 0,
+          "fail": 1,
+          "avgMs": 329
+        }
+      },
+      "boundaries": [
+        {
+          "type": "comma",
+          "offset": 12,
+          "context": "O rio quieto, passando pelo moinh",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 438,
+          "estimatedTimeSec": 0.832,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 34,
+          "context": "passando pelo moinho, carregava folhas em",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 181,
+          "estimatedTimeSec": 2.358,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 70,
+          "context": "as em direção ao mar. Ela pausou; depois ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 348,
+          "estimatedTimeSec": 4.855,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "semicolon",
+          "offset": 82,
+          "context": "o ao mar. Ela pausou; depois falou: a dec",
+          "expectedBandMs": [
+            200,
+            300
+          ],
+          "measuredMs": 387,
+          "estimatedTimeSec": 5.687,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "colon",
+          "offset": 96,
+          "context": "pausou; depois falou: a decisão era final",
+          "expectedBandMs": [
+            200,
+            300
+          ],
+          "measuredMs": 387,
+          "estimatedTimeSec": 6.658,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 117,
+          "context": " a decisão era final.↵↵Depois da tempesta",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 295,
+          "estimatedTimeSec": 8.114,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 118,
+          "context": "a decisão era final.↵↵Depois da tempestad",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 295,
+          "estimatedTimeSec": 8.184,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-attrib",
+          "offset": 141,
+          "context": " da tempestade — que durou três dias — o",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 59,
+          "estimatedTimeSec": 9.779,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-attrib",
+          "offset": 163,
+          "context": "urou três dias — o jardim se recuperou.↵",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 418,
+          "estimatedTimeSec": 11.305,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 186,
+          "context": " jardim se recuperou.↵↵— Você vem? — perg",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 363,
+          "estimatedTimeSec": 12.9,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 187,
+          "context": "jardim se recuperou.↵↵— Você vem? — pergu",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 363,
+          "estimatedTimeSec": 12.969,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-open",
+          "offset": 189,
+          "context": "se recuperou.↵↵— Você vem? — perguntou e",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 363,
+          "estimatedTimeSec": 13.108,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 199,
+          "context": "cuperou.↵↵— Você vem? — perguntou ela.↵— ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 52,
+          "estimatedTimeSec": 13.801,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-attrib",
+          "offset": 201,
+          "context": ".↵↵— Você vem? — perguntou ela.↵— Agora ",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 52,
+          "estimatedTimeSec": 13.94,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 216,
+          "context": "vem? — perguntou ela.↵— Agora não — respo",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 98,
+          "estimatedTimeSec": 14.98,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-open",
+          "offset": 218,
+          "context": "perguntou ela.↵— Agora não — respondeu e",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 351,
+          "estimatedTimeSec": 15.119,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "dialogue-attrib",
+          "offset": 230,
+          "context": "a.↵— Agora não — respondeu ele, sem ergu",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 351,
+          "estimatedTimeSec": 15.951,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 245,
+          "context": " não — respondeu ele, sem erguer o olhar.",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 440,
+          "estimatedTimeSec": 16.992,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 265,
+          "context": ", sem erguer o olhar.↵↵O primeiro capítul",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 271,
+          "estimatedTimeSec": 18.379,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 266,
+          "context": " sem erguer o olhar.↵↵O primeiro capítulo",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 271,
+          "estimatedTimeSec": 18.448,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 300,
+          "context": "apítulo termina aqui. O segundo começa se",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 365,
+          "estimatedTimeSec": 20.806,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 329,
+          "context": "do começa sem alarde! Alguém ouviu o sino",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 330,
+          "estimatedTimeSec": 22.817,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 350,
+          "context": " Alguém ouviu o sino? Ninguém respondeu d",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 330,
+          "estimatedTimeSec": 24.274,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 377,
+          "context": "ém respondeu de fato.↵↵A trilha sumiu na ",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 72,
+          "estimatedTimeSec": 26.146,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 378,
+          "context": "m respondeu de fato.↵↵A trilha sumiu na n",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 72,
+          "estimatedTimeSec": 26.216,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "ellipsis",
+          "offset": 403,
+          "context": "rilha sumiu na névoa… e depois no silênci",
+          "expectedBandMs": [
+            450,
+            750
+          ],
+          "measuredMs": 329,
+          "estimatedTimeSec": 27.95,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 425,
+          "context": "e depois no silêncio. Ele arrumou a mochi",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 64,
+          "estimatedTimeSec": 29.475,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 448,
+          "context": "le arrumou a mochila, conferiu duas vezes",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 344,
+          "estimatedTimeSec": 31.07,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 497,
+          "context": "u antes do amanhecer.↵",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 44,
+          "estimatedTimeSec": 34.469,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        }
+      ],
+      "wav": "reports/ab-baseline/platform_pt-br-pontuacao.wav"
+    },
+    {
+      "fixture": "pt-br-estrutura",
+      "engine": "platform",
+      "language": "pt-BR",
+      "chunkCount": 9,
+      "durationSec": 34.376,
+      "silenceRegions": 43,
+      "silenceDurationsMs": [
+        59,
+        45,
+        294,
+        55,
+        41,
+        353,
+        71,
+        49,
+        40,
+        45,
+        275,
+        43,
+        314,
+        315,
+        64,
+        51,
+        56,
+        51,
+        264,
+        49,
+        80,
+        44,
+        342,
+        62,
+        91,
+        332,
+        54,
+        66,
+        58,
+        80,
+        60,
+        41,
+        349,
+        55,
+        42,
+        320,
+        42,
+        61,
+        49,
+        115,
+        326,
+        51,
+        52
+      ],
+      "conformancePct": 17.2,
+      "passed": 5,
+      "totalBanded": 29,
+      "byType": {
+        "paragraph": {
+          "count": 8,
+          "sumMs": 1354,
+          "maxMs": 349,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 8,
+          "avgMs": 169
+        },
+        "chapter": {
+          "count": 3,
+          "sumMs": 698,
+          "maxMs": 349,
+          "minMs": 55,
+          "pass": 0,
+          "fail": 3,
+          "avgMs": 233
+        },
+        "sentence": {
+          "count": 10,
+          "sumMs": 2342,
+          "maxMs": 353,
+          "minMs": 0,
+          "pass": 1,
+          "fail": 9,
+          "avgMs": 234
+        },
+        "pre-header": {
+          "count": 3,
+          "sumMs": 927,
+          "maxMs": 349,
+          "minMs": 264,
+          "pass": 3,
+          "fail": 0,
+          "avgMs": 309
+        },
+        "em-dash": {
+          "count": 1,
+          "sumMs": 314,
+          "maxMs": 314,
+          "minMs": 314,
+          "pass": 1,
+          "fail": 0,
+          "avgMs": 314
+        },
+        "header": {
+          "count": 2,
+          "sumMs": 0,
+          "maxMs": 0,
+          "minMs": 0,
+          "pass": 0,
+          "fail": 2,
+          "avgMs": 0
+        },
+        "comma": {
+          "count": 2,
+          "sumMs": 652,
+          "maxMs": 326,
+          "minMs": 326,
+          "pass": 0,
+          "fail": 2,
+          "avgMs": 326
+        }
+      },
+      "boundaries": [
+        {
+          "type": "paragraph",
+          "offset": 24,
+          "context": "pítulo Um: A Chegada↵↵A trilha estreita a",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 294,
+          "estimatedTimeSec": 1.542,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 24,
+          "context": "# Capítulo Um: A Chegada↵↵A trilha estreita ",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 294,
+          "estimatedTimeSec": 1.542,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 65,
+          "context": "companhou a floresta. Os pássaros calaram",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 353,
+          "estimatedTimeSec": 4.177,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 102,
+          "context": "aram perto da crista. Um vento frio desci",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 275,
+          "estimatedTimeSec": 6.554,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 133,
+          "context": "frio descia do norte.↵↵## Seção A — Prime",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 43,
+          "estimatedTimeSec": 8.546,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 134,
+          "context": "rio descia do norte.↵↵## Seção A — Primei",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 43,
+          "estimatedTimeSec": 8.61,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 136,
+          "context": "o norte.↵↵## Seção A — Primeira Luz↵↵A n",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 314,
+          "estimatedTimeSec": 8.739,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "em-dash",
+          "offset": 147,
+          "context": " norte.↵↵## Seção A — Primeira Luz↵↵A név",
+          "expectedBandMs": [
+            200,
+            350
+          ],
+          "measuredMs": 314,
+          "estimatedTimeSec": 9.445,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 161,
+          "context": "ção A — Primeira Luz↵↵A névoa da manhã gr",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 10.345,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "header",
+          "offset": 161,
+          "context": "## Seção A — Primeira Luz↵↵A névoa da manhã g",
+          "expectedBandMs": [
+            900,
+            1300
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 10.345,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 202,
+          "context": "udava nas samambaias. Uma única pegada ma",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 315,
+          "estimatedTimeSec": 12.979,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 254,
+          "context": "a ao lado do caminho.↵↵### Tópico: Fontes",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 264,
+          "estimatedTimeSec": 16.321,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 255,
+          "context": " ao lado do caminho.↵↵### Tópico: Fontes ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 264,
+          "estimatedTimeSec": 16.385,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 257,
+          "context": "caminho.↵↵### Tópico: Fontes de Água↵↵En",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 264,
+          "estimatedTimeSec": 16.513,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 283,
+          "context": "pico: Fontes de Água↵↵Encontre a nascente",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 18.184,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "header",
+          "offset": 283,
+          "context": "### Tópico: Fontes de Água↵↵Encontre a nascent",
+          "expectedBandMs": [
+            900,
+            1300
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 18.184,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 330,
+          "context": "te do carvalho caído. Encha as garrafas a",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 91,
+          "estimatedTimeSec": 21.204,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 367,
+          "context": "as antes do meio-dia. Não beba da poça es",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 332,
+          "estimatedTimeSec": 23.581,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 395,
+          "context": "ba da poça estagnada.↵↵---↵↵# Capítulo Do",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 349,
+          "estimatedTimeSec": 25.38,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 396,
+          "context": "a da poça estagnada.↵↵---↵↵# Capítulo Doi",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 349,
+          "estimatedTimeSec": 25.445,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 398,
+          "context": "ça estagnada.↵↵---↵↵# Capítulo Dois",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 349,
+          "estimatedTimeSec": 25.573,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 401,
+          "context": "poça estagnada.↵↵---↵↵# Capítulo Dois: A ",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 349,
+          "estimatedTimeSec": 25.766,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "pre-header",
+          "offset": 403,
+          "context": "da.↵↵---↵↵# Capítulo Dois: A Travessia↵↵",
+          "expectedBandMs": [
+            250,
+            400
+          ],
+          "measuredMs": 349,
+          "estimatedTimeSec": 25.894,
+          "pass": true,
+          "fail": false,
+          "unbanded": false
+        },
+        {
+          "type": "paragraph",
+          "offset": 431,
+          "context": "lo Dois: A Travessia↵↵O rio corria frio e",
+          "expectedBandMs": [
+            700,
+            1000
+          ],
+          "measuredMs": 55,
+          "estimatedTimeSec": 27.694,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "chapter",
+          "offset": 431,
+          "context": "# Capítulo Dois: A Travessia↵↵O rio corria frio ",
+          "expectedBandMs": [
+            1500,
+            2500
+          ],
+          "measuredMs": 55,
+          "estimatedTimeSec": 27.694,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 459,
+          "context": "corria frio e rápido. Eles cruzaram na cu",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 320,
+          "estimatedTimeSec": 29.493,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 490,
+          "context": "aram na curva rasa e, então, subiram em d",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 326,
+          "estimatedTimeSec": 31.485,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "comma",
+          "offset": 497,
+          "context": " curva rasa e, então, subiram em direção ",
+          "expectedBandMs": [
+            150,
+            250
+          ],
+          "measuredMs": 326,
+          "estimatedTimeSec": 31.934,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        },
+        {
+          "type": "sentence",
+          "offset": 533,
+          "context": "eção ao desfiladeiro.↵",
+          "expectedBandMs": [
+            350,
+            600
+          ],
+          "measuredMs": 0,
+          "estimatedTimeSec": 34.247,
+          "pass": false,
+          "fail": true,
+          "unbanded": false
+        }
+      ],
+      "wav": "reports/ab-baseline/platform_pt-br-estrutura.wav"
+    }
+  ]
+}

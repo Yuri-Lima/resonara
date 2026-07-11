@@ -962,6 +962,9 @@ export class FfmpegService implements OnModuleInit {
   /**
    * Trim leading/trailing silence from a chunk WAV (TTS seam reduction).
    * Uses silenceremove with reverse for trailing edge.
+   *
+   * Boundary-aware: pass trimLeading/trimTrailing to preserve engine
+   * sentence silence at non-forced chunk ends (pause architecture).
    */
   async trimChunkSilence(
     inputPath: string,
@@ -969,16 +972,47 @@ export class FfmpegService implements OnModuleInit {
     options: {
       thresholdDb?: number;
       minSilenceSec?: number;
+      /** Default true. Set false to keep engine leading silence. */
+      trimLeading?: boolean;
+      /** Default true. Set false to keep engine trailing silence (sentence gaps). */
+      trimTrailing?: boolean;
     } = {},
   ): Promise<string> {
     const threshold = options.thresholdDb ?? -50;
     const minSil = options.minSilenceSec ?? 0.03;
+    const trimLeading = options.trimLeading !== false;
+    const trimTrailing = options.trimTrailing !== false;
     await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
-    const af =
-      `silenceremove=start_periods=1:start_silence=${minSil}:start_threshold=${threshold}dB,` +
-      `areverse,` +
-      `silenceremove=start_periods=1:start_silence=${minSil}:start_threshold=${threshold}dB,` +
-      `areverse`;
+
+    if (!trimLeading && !trimTrailing) {
+      await fs.promises.copyFile(inputPath, outputPath);
+      return outputPath;
+    }
+
+    // Build filter: silenceremove on start, optional reverse for trailing
+    const parts: string[] = [];
+    if (trimLeading) {
+      parts.push(
+        `silenceremove=start_periods=1:start_silence=${minSil}:start_threshold=${threshold}dB`,
+      );
+    }
+    if (trimTrailing) {
+      // reverse → remove "start" (was trailing) → reverse back
+      if (!trimLeading) {
+        parts.push('areverse');
+        parts.push(
+          `silenceremove=start_periods=1:start_silence=${minSil}:start_threshold=${threshold}dB`,
+        );
+        parts.push('areverse');
+      } else {
+        parts.push('areverse');
+        parts.push(
+          `silenceremove=start_periods=1:start_silence=${minSil}:start_threshold=${threshold}dB`,
+        );
+        parts.push('areverse');
+      }
+    }
+    const af = parts.join(',');
     try {
       await this.runFfmpegRaw([
         '-hide_banner',

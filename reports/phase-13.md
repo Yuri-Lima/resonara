@@ -1,35 +1,19 @@
-# Phase 13 — EPUB3 Media Overlays Export
+# Phase 13 — Full conformance matrix
 
-**Date:** 2026-07-10
+## Results (`reports/pause-report.json`, pipeline boundary-aware-v3)
 
-## What changed
+24 cells (2 engines × 3 profiles × 4 fixtures):
 
-| File | Rationale |
-|------|-----------|
-| `src/tts/export/epub-overlay-exporter.ts` | SMIL, span wrap, OPF media-overlay inject, validate monotonic |
-| `src/tts/export/epub-overlay-exporter.spec.ts` | Structural validation tests |
-| `src/tts/tts.service.ts` exportEpubOverlay | Build package from forced/proportional sentences |
-| `src/tts/tts.controller.ts` | POST /tts/jobs/:id/export/epub-overlay |
-| entity metadata | epubOverlayDir |
+| metric | value |
+|---|---|
+| cells ≥90% | **24 / 24** |
+| average conf | **97.5%** |
+| minimum conf | **90.0%** (pt-br-pontuacao) |
+| en-punctuation all profiles | **100%** |
+| en-structure all profiles | **100%** |
+| pt-br-estrutura all profiles | **100%** |
 
-## Commands (real output)
-
-```
-PASS src/tts/export/epub-overlay-exporter.spec.ts
-npm run build → exit 0
-```
-
-## Adversarial self-review (Pass B)
-
-1. **Finding:** `wrapSentenceSpans` does first-occurrence string replace — duplicate sentences collide.  
-   **Resolution:** Acceptable for generated body from unique sentence slices; documented.
-
-2. **Finding:** Export is package fragments (xhtml+smil+opf), not a full zip EPUB container.  
-   **Resolution:** Structural MO content valid; zip packaging can wrap outDir later.
-
-3. **Finding:** Non-monotonic timestamps only clamped with warn — silent quality loss.  
-   **Resolution:** validateSmilMonotonic + clamp; logged.
-
-## Self-review Pass A
-
-Idempotent span wrap if s0001 present; escapeHtml on text.
+## Workstream ledger
+| stream | purpose | outcome | runtime |
+|---|---|---|---|
+| parallel matrix 24 jobs | probe fleet | landed, 0 orphans | ~78s |

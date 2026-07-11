@@ -62,6 +62,20 @@ import {
   ChunkQaResult,
   JobQaSummary,
 } from './qa/synthesis-qa.service';
+import {
+  PauseMapEntry,
+  PauseProfile,
+  PauseProfileName,
+} from './pause/pause.types';
+import {
+  dialogueGapMs,
+  buildAssemblePlan,
+  flattenPlanForConcat,
+  shouldTrimChunkEdge,
+} from './pause/assemble-with-pauses';
+import { resolvePauseProfile } from './pause/pause-profiles';
+import { toSpeakable } from './pause/boundary-detect';
+import { planMicroPauseSegments } from './pause/micro-pauses';
 
 export interface SynthesizeLongOptions {
   text: string;
@@ -95,6 +109,29 @@ export interface SynthesizeLongOptions {
   };
   /** Whisper QA mode: off | sample (every 3rd) | full. Default sample when available. */
   qa?: QaMode;
+  /**
+   * Pause profile for boundary-aware gaps.
+   * 'audiobook' (default) | 'podcast' | 'news' | 'custom'
+   */
+  pauseProfile?: PauseProfileName;
+  /** Per-boundary ms overrides when pauseProfile='custom' (or to tweak a preset). */
+  pauseCustom?: Partial<
+    Record<
+      | 'comma'
+      | 'semicolon'
+      | 'colon'
+      | 'emDash'
+      | 'sentence'
+      | 'ellipsis'
+      | 'paragraph'
+      | 'header'
+      | 'preHeader'
+      | 'chapter'
+      | 'dialogue'
+      | 'dialogueAttrib',
+      number
+    >
+  >;
 }
 
 export interface JobListQuery {
@@ -866,9 +903,19 @@ export class TtsService implements OnModuleInit {
           opts.language ||
           job.metadata?.language ||
           detectLanguage(job.text).code;
+        const pauseProfile = resolvePauseProfile({
+          profile: opts.pauseProfile || 'audiobook',
+          custom: opts.pauseCustom,
+          language: lang,
+        });
+        job.metadata = {
+          ...(job.metadata || {}),
+          pauseProfile: pauseProfile.name,
+          pauseBands: pauseProfile.bands,
+        };
         const chunks = chunkTextForTts(job.text, {
           engine,
-          language: lang,
+          language: lang as import('./language/language.types').LanguageCode,
         });
         job.totalChunks = chunks.length;
         job.status = TtsJobStatus.SYNTHESIZING;
@@ -887,6 +934,8 @@ export class TtsService implements OnModuleInit {
           compress: opts.compress,
           jobId: job.id,
           qaMode: opts.qa,
+          pauseProfile,
+          language: lang,
           onProgress: async (pct, chunksDone) => {
             job.progress = Math.round(pct);
             job.completedChunks = chunksDone;
@@ -1024,11 +1073,20 @@ export class TtsService implements OnModuleInit {
       } catch {
         parts.push(raw);
       }
-      // Inter-speaker pause ~200ms (shorter than paragraph)
+      // Inter-speaker pause from pause profile (dialogue / travessão band)
       if (i < parsed.blocks.length - 1) {
         const silence = path.join(opts.workDir, `dlg-${i}-gap.wav`);
         try {
-          await this.ffmpeg.insertSilence(0.2, 22050, silence);
+          const dlgProfile = resolvePauseProfile({
+            profile: 'audiobook',
+            language:
+              (job.metadata as { language?: string } | undefined)?.language,
+          });
+          const gapMs = dialogueGapMs(
+            dlgProfile,
+            (job.metadata as { language?: string } | undefined)?.language,
+          );
+          await this.ffmpeg.insertSilence(gapMs / 1000, 22050, silence);
           parts.push(silence);
         } catch {
           /* skip gap if insertSilence unavailable */
@@ -1142,7 +1200,12 @@ export class TtsService implements OnModuleInit {
     job.status = TtsJobStatus.CONCATENATING;
     await this.jobsRepo.save(job);
 
-    // Crossfade chapter files into full output
+    // Chapter assembly: profile chapter gap between chapters (not flat crossfade)
+    const chapterProfile = resolvePauseProfile({
+      profile: 'audiobook',
+      language: (job.metadata as { language?: string } | undefined)?.language,
+    });
+    const chapterGapSec = chapterProfile.bands.chapter.insertMs / 1000;
     const wavParts: string[] = [];
     for (let i = 0; i < chapterFiles.length; i++) {
       const w = path.join(opts.workDir, `ch-full-${i}.wav`);
@@ -1152,10 +1215,14 @@ export class TtsService implements OnModuleInit {
         await this.convertToWav(chapterFiles[i], w);
       }
       wavParts.push(w);
+      if (i < chapterFiles.length - 1 && chapterGapSec > 0) {
+        const gap = path.join(opts.workDir, `ch-gap-${i}.wav`);
+        await this.ffmpeg.insertSilence(chapterGapSec, 22050, gap);
+        wavParts.push(gap);
+      }
     }
     const concatWav = path.join(opts.workDir, 'full-concat.wav');
-    await this.ffmpeg.crossfadeChunks(wavParts, concatWav, {
-      durationSec: 0.02,
+    await this.ffmpeg.concatAudioFiles(wavParts, concatWav, {
       format: 'wav',
     });
 
@@ -1188,6 +1255,8 @@ export class TtsService implements OnModuleInit {
       compress?: boolean;
       jobId?: string;
       qaMode?: QaMode;
+      pauseProfile?: PauseProfile;
+      language?: string;
       onProgress: (pct: number, chunksDone: number) => Promise<void>;
       onChunkMap?: (
         map: NonNullable<TtsJobMetadata['chunkMap']>,
@@ -1196,12 +1265,19 @@ export class TtsService implements OnModuleInit {
     },
   ) {
     const partPaths: string[] = [];
+    const pauseMaps: PauseMapEntry[] = [];
     const chunkMap: NonNullable<TtsJobMetadata['chunkMap']> = [];
     const qaResults: ChunkQaResult[] = [];
     const n = chunks.length || 1;
     const qaMode: QaMode =
       opts.qaMode ||
       (this.synthesisQa?.isAvailable() ? 'sample' : 'off');
+    const profile =
+      opts.pauseProfile ||
+      resolvePauseProfile({
+        profile: 'audiobook',
+        language: opts.language,
+      });
     const ssmlEngine: SsmlEngine =
       opts.engine === 'piper'
         ? 'piper'
@@ -1213,32 +1289,58 @@ export class TtsService implements OnModuleInit {
 
     for (let i = 0; i < chunks.length; i++) {
       let pieceText = chunks[i].text;
+      const pause: PauseMapEntry = chunks[i].pause || {
+        endsAt: i === chunks.length - 1 ? 'document-end' : 'paragraph',
+        intraBoundaries: [],
+      };
       if (opts.ssml || /<[^>]+>/.test(pieceText)) {
         const transformed = transformSsml(pieceText, {
           engine: ssmlEngine,
           isSsml: true,
         });
         pieceText = transformed.engineText || transformed.plainText;
+      } else {
+        // Strip markdown markers for engines that choke on --- / #
+        pieceText = toSpeakable(pieceText);
+      }
+
+      // Platform macOS: inject [[slnc]] micro-pauses for commas/dashes
+      if (opts.engine === 'platform' && process.platform === 'darwin') {
+        pieceText = injectMacSlncPauses(pieceText, profile);
       }
 
       const rawPart = path.join(
         opts.workDir,
         `part-${String(i).padStart(4, '0')}-raw.wav`,
       );
-      await this.synthesizeOne(pieceText, rawPart, opts.engine, opts.voice, opts.rate);
+      await this.synthesizeOne(
+        pieceText,
+        rawPart,
+        opts.engine,
+        opts.voice,
+        opts.rate,
+        profile,
+      );
 
+      // Boundary-aware trim: keep trailing silence except at forced seams
+      const trimTrailing = shouldTrimChunkEdge(pause, 'trailing');
+      const trimLeading = shouldTrimChunkEdge(pause, 'leading');
       const trimmed = path.join(
         opts.workDir,
         `part-${String(i).padStart(4, '0')}-trim.wav`,
       );
       let used = rawPart;
       try {
-        await this.ffmpeg.trimChunkSilence(rawPart, trimmed);
+        await this.ffmpeg.trimChunkSilence(rawPart, trimmed, {
+          trimLeading,
+          trimTrailing,
+        });
         used = trimmed;
         partPaths.push(trimmed);
       } catch {
         partPaths.push(rawPart);
       }
+      pauseMaps.push(pause);
 
       // Per-chunk Whisper QA (sample/full)
       if (
@@ -1255,14 +1357,23 @@ export class TtsService implements OnModuleInit {
                 opts.workDir,
                 `part-${String(i).padStart(4, '0')}-retry-raw.wav`,
               );
-              await this.synthesizeOne(pieceText, retryRaw, engine, voice, rate);
+              await this.synthesizeOne(
+                pieceText,
+                retryRaw,
+                engine,
+                voice,
+                rate,
+                profile,
+              );
               const retryTrim = path.join(
                 opts.workDir,
                 `part-${String(i).padStart(4, '0')}-retry-trim.wav`,
               );
               try {
-                await this.ffmpeg.trimChunkSilence(retryRaw, retryTrim);
-                // replace part path
+                await this.ffmpeg.trimChunkSilence(retryRaw, retryTrim, {
+                  trimLeading,
+                  trimTrailing,
+                });
                 const idx = partPaths.length - 1;
                 if (idx >= 0) partPaths[idx] = retryTrim;
                 used = retryTrim;
@@ -1289,6 +1400,9 @@ export class TtsService implements OnModuleInit {
         endOffset: chunks[i].charCount,
         textPreview: chunks[i].text.slice(0, 50),
         audioKey: used,
+        endsAt: pause.endsAt,
+        isHeader: pause.isHeader,
+        headerLevel: pause.headerLevel,
       });
       if (opts.onChunkMap) await opts.onChunkMap(chunkMap);
       if (opts.jobId) {
@@ -1314,11 +1428,12 @@ export class TtsService implements OnModuleInit {
 
     await opts.onProgress(85, chunks.length);
     const concatPath = path.join(opts.workDir, 'concat.wav');
-    // WHY 20ms crossfade: shorter produces clicks at boundaries; longer
-    // creates audible double-speak / smear. Tuned in listening Phase 7.
-    await this.ffmpeg.crossfadeChunks(partPaths, concatPath, {
-      durationSec: 0.02,
-      format: 'wav',
+
+    // Boundary-aware assembly: silence gaps + forced-only crossfade
+    await this.assembleWithPauseMap(partPaths, pauseMaps, concatPath, {
+      profile,
+      workDir: opts.workDir,
+      engine: opts.engine,
     });
 
     await opts.onProgress(92, chunks.length);
@@ -1331,15 +1446,139 @@ export class TtsService implements OnModuleInit {
     await opts.onProgress(100, chunks.length);
   }
 
+  /**
+   * Assemble chunk WAVs using the pause map:
+   *  - forced joins → 20ms crossfade (seam fix preserved)
+   *  - all other boundaries → profile silence insert (one concat pass)
+   */
+  private async assembleWithPauseMap(
+    partPaths: string[],
+    pauseMaps: PauseMapEntry[],
+    outputPath: string,
+    opts: {
+      profile: PauseProfile;
+      workDir: string;
+      engine: string;
+    },
+  ): Promise<void> {
+    if (partPaths.length === 1) {
+      await fs.copyFile(partPaths[0], outputPath);
+      return;
+    }
+
+    // Pre-resolve forced joins into crossfaded segments
+    const resolved: Array<{ path: string; pause: PauseMapEntry }> = [];
+    let i = 0;
+    while (i < partPaths.length) {
+      const pause = pauseMaps[i] || {
+        endsAt: 'document-end' as const,
+        intraBoundaries: [],
+      };
+      if (
+        pause.endsAt === 'forced' &&
+        i + 1 < partPaths.length
+      ) {
+        // Crossfade this chunk with the next; absorb next's pause map
+        const xfOut = path.join(
+          opts.workDir,
+          `xf-${String(i).padStart(4, '0')}.wav`,
+        );
+        try {
+          await this.ffmpeg.crossfadeChunks(
+            [partPaths[i], partPaths[i + 1]],
+            xfOut,
+            { durationSec: 0.02, format: 'wav' },
+          );
+          // Carry the NEXT chunk's end boundary forward
+          const nextPause = pauseMaps[i + 1] || pause;
+          resolved.push({ path: xfOut, pause: nextPause });
+          i += 2;
+          continue;
+        } catch {
+          // fall through to plain keep
+        }
+      }
+      resolved.push({ path: partPaths[i], pause });
+      i += 1;
+    }
+
+    const plan = buildAssemblePlan(
+      resolved.map((r) => ({ path: r.path, pause: r.pause })),
+      {
+        profile: opts.profile,
+        accountForEngineSentenceSilence: opts.engine === 'piper',
+        jitter: true,
+      },
+    );
+    const flat = flattenPlanForConcat(plan);
+
+    // Materialize silence WAVs and concat in one pass
+    const sampleRate = 22050;
+    const concatParts: string[] = [];
+    let silIdx = 0;
+    for (const item of flat) {
+      if (item.type === 'audio') {
+        concatParts.push(item.path);
+      } else {
+        const silPath = path.join(
+          opts.workDir,
+          `gap-${String(silIdx++).padStart(4, '0')}.wav`,
+        );
+        await this.ffmpeg.insertSilence(item.sec, sampleRate, silPath);
+        concatParts.push(silPath);
+      }
+    }
+
+    if (concatParts.length === 1) {
+      await fs.copyFile(concatParts[0], outputPath);
+      return;
+    }
+    await this.ffmpeg.concatAudioFiles(concatParts, outputPath, {
+      format: 'wav',
+    });
+  }
+
   private async synthesizeOne(
     text: string,
     outPath: string,
     engine: 'piper' | 'platform' | 'kokoro',
     voice?: UnifiedVoice,
     rate?: number,
+    pauseProfile?: PauseProfile,
+  ): Promise<void> {
+    // Intra-chunk micro-pauses for piper/kokoro (platform uses [[slnc]] upstream)
+    if (
+      pauseProfile &&
+      (engine === 'piper' || engine === 'kokoro') &&
+      text.length > 0
+    ) {
+      const segments = planMicroPauseSegments(text, pauseProfile);
+      if (segments.length > 1) {
+        await this.synthesizeWithMicroPauses(
+          segments,
+          outPath,
+          engine,
+          voice,
+          rate,
+          pauseProfile,
+        );
+        return;
+      }
+    }
+
+    await this.synthesizeOneRaw(text, outPath, engine, voice, rate, pauseProfile);
+  }
+
+  /** Single-utterance engine call (no micro-split). */
+  private async synthesizeOneRaw(
+    text: string,
+    outPath: string,
+    engine: 'piper' | 'platform' | 'kokoro',
+    voice?: UnifiedVoice,
+    rate?: number,
+    pauseProfile?: PauseProfile,
   ): Promise<void> {
     if (engine === 'kokoro') {
-      // Lazy require to keep Phase 5 green before Phase 8 lands fully
       const { synthesizeWithKokoro } = await import('./kokoro-tts');
       await synthesizeWithKokoro({
         text,
@@ -1356,7 +1595,6 @@ export class TtsService implements OnModuleInit {
       if (!modelPath) {
         throw new Error('No Piper voice model available');
       }
-      // rate: map WPM-ish to length_scale (higher rate → lower length_scale)
       let lengthScale: number | undefined;
       if (rate != null && Number.isFinite(rate)) {
         lengthScale = Math.max(0.5, Math.min(2, 175 / rate));
@@ -1366,12 +1604,15 @@ export class TtsService implements OnModuleInit {
         modelPath,
         outputPath: outPath,
         lengthScale,
+        sentenceSilenceSec:
+          pauseProfile?.piperSentenceSilenceSec ?? undefined,
       });
       return;
     }
 
-    // platform
-    const platformOut = outPath.replace(/\.wav$/i, '') + (process.platform === 'darwin' ? '.aiff' : '.wav');
+    const platformOut =
+      outPath.replace(/\.wav$/i, '') +
+      (process.platform === 'darwin' ? '.aiff' : '.wav');
     await synthesizeChunk({
       text,
       outPath: platformOut,
@@ -1382,6 +1623,54 @@ export class TtsService implements OnModuleInit {
       await this.convertToWav(platformOut, outPath);
       await fs.unlink(platformOut).catch(() => undefined);
     }
+  }
+
+  /**
+   * Synthesize sub-utterances and insert profile micro-gaps between them.
+   * One concat pass; never splits mid-word (planner splits on punctuation).
+   */
+  private async synthesizeWithMicroPauses(
+    segments: { text: string; gapAfterMs: number }[],
+    outPath: string,
+    engine: 'piper' | 'platform' | 'kokoro',
+    voice: UnifiedVoice | undefined,
+    rate: number | undefined,
+    pauseProfile: PauseProfile,
+  ): Promise<void> {
+    const workDir = path.dirname(outPath);
+    const parts: string[] = [];
+    const uid = `mp${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+    for (let i = 0; i < segments.length; i++) {
+      const seg = segments[i];
+      if (!seg.text.trim()) continue;
+      const segPath = path.join(workDir, `${uid}-seg-${i}.wav`);
+      // Only apply full sentence_silence on the last segment of the chunk
+      const prof =
+        i === segments.length - 1
+          ? pauseProfile
+          : {
+              ...pauseProfile,
+              piperSentenceSilenceSec: Math.min(
+                0.08,
+                pauseProfile.piperSentenceSilenceSec,
+              ),
+            };
+      await this.synthesizeOneRaw(seg.text, segPath, engine, voice, rate, prof);
+      parts.push(segPath);
+      if (seg.gapAfterMs >= 15) {
+        const gapPath = path.join(workDir, `${uid}-gap-${i}.wav`);
+        await this.ffmpeg.insertSilence(seg.gapAfterMs / 1000, 22050, gapPath);
+        parts.push(gapPath);
+      }
+    }
+    if (!parts.length) {
+      throw new Error('micro-pause synthesis produced no parts');
+    }
+    if (parts.length === 1) {
+      await fs.copyFile(parts[0], outPath);
+      return;
+    }
+    await this.ffmpeg.concatAudioFiles(parts, outPath, { format: 'wav' });
   }
 
   private resolveVoice(
@@ -1640,4 +1929,23 @@ function runFf(bin: string, args: string[]): Promise<void> {
       else reject(new Error(`ffmpeg exited ${code}: ${stderr.slice(-400)}`));
     });
   });
+}
+
+/**
+ * Inject macOS `say` [[slnc N]] embedded pauses at comma/dash/ellipsis.
+ * N is milliseconds. Best-effort platform parity with piper sentence_silence.
+ */
+export function injectMacSlncPauses(
+  text: string,
+  profile: PauseProfile,
+): string {
+  const comma = profile.bands.comma.insertMs;
+  const dash = profile.bands.emDash.insertMs;
+  const ellipsis = profile.bands.ellipsis.insertMs;
+  const semi = profile.bands.semicolon.insertMs;
+  return text
+    .replace(/,/g, `,[[slnc ${comma}]]`)
+    .replace(/;/g, `;[[slnc ${semi}]]`)
+    .replace(/—|–/g, `—[[slnc ${dash}]]`)
+    .replace(/…/g, `…[[slnc ${ellipsis}]]`);
 }

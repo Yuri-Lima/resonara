@@ -19,6 +19,16 @@ Offline-first desktop audio studio — production tools, a hybrid piano, and lon
 
 ---
 
+
+## Prosody & pauses
+
+Resonara treats pauses as a **measured contract**, not taste. Three profiles
+(`audiobook`, `podcast`, `news`) drive boundary-typed gaps (comma, sentence,
+paragraph, header, chapter, pt-BR travessão). Piper gets `--sentence_silence`,
+assembly inserts profile silence only at non-forced joins, and
+`npm run probe:all` regression-guards conformance ≥ 90%. See
+[PAUSE_TUNING.md](./PAUSE_TUNING.md) and [PAUSE_ARCHITECTURE.md](./PAUSE_ARCHITECTURE.md).
+
 ## Why Resonara
 
 Most “AI audio” tools push speech and processing to the cloud. Resonara keeps the full loop local: import and normalize audio, play and record piano, synthesize long-form speech with offline neural engines, verify quality with Whisper, and ship chaptered files — without an account, API key, or always-on network.
