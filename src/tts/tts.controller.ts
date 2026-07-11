@@ -23,6 +23,9 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Max,
+  MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 import * as fs from 'fs/promises';
@@ -42,14 +45,19 @@ class SynthesizeDto {
   @IsOptional()
   @IsString()
   @MinLength(1)
+  // G28 TODO-11: cap body size to protect synthesis pipeline
+  @MaxLength(500_000)
   text?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(128)
   voice?: string;
 
   @IsOptional()
   @IsNumber()
+  @Min(50)
+  @Max(400)
   rate?: number;
 
   @IsOptional()
@@ -186,10 +194,6 @@ export class TtsController {
     return this.tts.engineStatus();
   }
 
-  @Get('engine')
-  engine() {
-    return this.tts.engineStatus();
-  }
 
   @Get('ssml')
   ssmlReference() {
