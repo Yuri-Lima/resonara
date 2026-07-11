@@ -18,8 +18,14 @@ import {
   listKokoroVoices,
   KokoroVoiceInfo,
 } from './kokoro-tts';
+import {
+  isExpressiveAvailable,
+  listExpressiveVoices,
+  ExpressiveVoiceInfo,
+  getExpressiveVersion,
+} from './expressive-tts';
 
-export type VoiceEngine = 'piper' | 'platform' | 'kokoro';
+export type VoiceEngine = 'piper' | 'platform' | 'kokoro' | 'expressive';
 
 export interface UnifiedVoice {
   id: string;
@@ -76,6 +82,13 @@ export class VoiceManager {
 
     const out: UnifiedVoice[] = [];
 
+    if (!filter?.engine || filter.engine === 'expressive') {
+      if (isExpressiveAvailable()) {
+        for (const v of listExpressiveVoices()) {
+          out.push(this.fromExpressive(v));
+        }
+      }
+    }
     if (!filter?.engine || filter.engine === 'kokoro') {
       if (isKokoroAvailable()) {
         for (const v of listKokoroVoices()) {
@@ -133,11 +146,18 @@ export class VoiceManager {
    * Evidence-based default refined in Phase 9 shootout + G26/G27 multilingual.
    */
   resolveEngine(
-    requested: 'auto' | 'piper' | 'platform' | 'kokoro' = 'auto',
+    requested: 'auto' | 'piper' | 'platform' | 'kokoro' | 'expressive' = 'auto',
     language?: string,
-  ): 'piper' | 'platform' | 'kokoro' {
+  ): 'piper' | 'platform' | 'kokoro' | 'expressive' {
     const piper = isPiperAvailable(this.piperBinary, this.piperModelsDir);
     const kokoro = isKokoroAvailable();
+    const expressive = isExpressiveAvailable();
+    if (requested === 'expressive') {
+      if (!expressive) {
+        throw new Error('Expressive engine unavailable');
+      }
+      return 'expressive';
+    }
     if (requested === 'kokoro') {
       if (!kokoro) {
         throw new Error('Kokoro engine unavailable');
@@ -157,7 +177,7 @@ export class VoiceManager {
       }
       return 'platform';
     }
-    // auto: language-aware order. Kokoro has no pt-BR voices.
+    // auto: language-aware order. Expressive is opt-in (not default auto).
     // English: kokoro → piper → platform. Portuguese: piper → platform.
     const lang = (language || 'en').toLowerCase().replace(/_/g, '-');
     const isPortuguese = lang.startsWith('pt');
@@ -176,7 +196,17 @@ export class VoiceManager {
     const platformVoices = platform.available ? listPlatformVoices().length : 0;
     const kokoro = isKokoroAvailable();
     const kokoroVoices = kokoro ? listKokoroVoices().length : 0;
+    const expressive = isExpressiveAvailable();
+    const expressiveVoices = expressive ? listExpressiveVoices().length : 0;
+    const expressiveVer = getExpressiveVersion();
     return [
+      {
+        id: 'expressive',
+        available: expressive,
+        detail: expressiveVer.detail,
+        voiceCount: expressiveVoices,
+        primary: false,
+      },
       {
         id: 'kokoro',
         available: kokoro,
@@ -204,7 +234,7 @@ export class VoiceManager {
   }
 
   defaultVoice(
-    engine?: 'piper' | 'platform' | 'kokoro',
+    engine?: 'piper' | 'platform' | 'kokoro' | 'expressive',
     language?: string,
   ): UnifiedVoice | undefined {
     const eng = engine || this.resolveEngineSafe();
@@ -251,6 +281,20 @@ export class VoiceManager {
       );
     }
 
+    if (eng === 'expressive') {
+      if (/pt/i.test(lang)) {
+        return (
+          pool.find((v) => /pt-br|pt_br|pt-BR/i.test(v.id + (v.language || ''))) ||
+          pool[0]
+        );
+      }
+      return (
+        pool.find((v) => /turbo/i.test(v.id)) ||
+        pool.find((v) => /chatterbox/i.test(v.id)) ||
+        pool[0]
+      );
+    }
+
     // Platform: never cross languages
     if (/pt/i.test(lang)) {
       return (
@@ -274,20 +318,21 @@ export class VoiceManager {
    */
   getDefaultVoiceForLanguage(
     language: string,
-    preferredEngine?: 'piper' | 'platform' | 'kokoro',
+    preferredEngine?: 'piper' | 'platform' | 'kokoro' | 'expressive',
   ): UnifiedVoice | undefined {
     const lang = language || 'en';
     const isPt = /^pt/i.test(lang);
-    const defaultOrder: Array<'piper' | 'platform' | 'kokoro'> = isPt
+    const defaultOrder: Array<'piper' | 'platform' | 'kokoro' | 'expressive'> = isPt
       ? ['piper', 'platform']
       : ['kokoro', 'piper', 'platform'];
-    const order: Array<'piper' | 'platform' | 'kokoro'> = preferredEngine
+    const order: Array<'piper' | 'platform' | 'kokoro' | 'expressive'> = preferredEngine
       ? [
           preferredEngine,
           ...defaultOrder.filter((e) => e !== preferredEngine),
         ]
       : defaultOrder;
     for (const eng of order) {
+      if (eng === 'expressive' && !isExpressiveAvailable()) continue;
       if (eng === 'kokoro' && (isPt || !isKokoroAvailable())) continue;
       if (eng === 'piper' && !isPiperAvailable().available) continue;
       if (eng === 'platform' && !ttsEngineAvailable().available) continue;
@@ -313,7 +358,7 @@ export class VoiceManager {
     return vl.includes(lang) || voice.id.toLowerCase().includes(lang);
   }
 
-  private resolveEngineSafe(): 'piper' | 'platform' | 'kokoro' | undefined {
+  private resolveEngineSafe(): 'piper' | 'platform' | 'kokoro' | 'expressive' | undefined {
     try {
       return this.resolveEngine('auto');
     } catch {
@@ -354,6 +399,18 @@ export class VoiceManager {
       engine: 'platform',
       language: v.language,
       quality: 'system',
+      nativeId: v.id,
+    };
+  }
+
+  private fromExpressive(v: ExpressiveVoiceInfo): UnifiedVoice {
+    return {
+      id: v.id,
+      name: v.name,
+      engine: 'expressive',
+      language: v.language,
+      quality: 'expressive',
+      gender: v.gender,
       nativeId: v.id,
     };
   }

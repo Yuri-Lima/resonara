@@ -12,7 +12,7 @@ const PORT = Number(process.env.RESONARA_PORT || process.env.PORT || 3847);
 
 function usage() {
   console.log(`Usage:
-  resonara synth <file> [--voice X] [--engine Y] [--language Z] [--out DIR] [--speed N] [--qa full|sample|off] [--pause-profile audiobook|podcast|news|custom]
+  resonara synth <file> [--voice X] [--engine Y] [--language Z] [--out DIR] [--speed N] [--qa full|sample|off] [--pause-profile audiobook|podcast|news|custom] [--style narrative|conversational|newscast|animated] [--auto-direct]
   resonara voices [--language X]
   resonara engines
   resonara jobs [--status S]
@@ -166,6 +166,8 @@ async function cmdSynth(args) {
     text,
     voice: args.voice,
     engine: args.engine || 'auto',
+    autoDirect: !!(args['auto-direct'] || args.autoDirect),
+    style: args.style,
     language: args.language || 'auto',
     qa: args.qa || 'sample',
     title: path.basename(file),
@@ -251,6 +253,8 @@ async function cmdWatch(args) {
         const syn = await request('POST', '/tts/synthesize', {
           text,
           engine: args.engine || 'auto',
+      autoDirect: !!args.autoDirect,
+      style: args.style,
           voice: args.voice,
           title: base,
           qa: args.qa || 'off',

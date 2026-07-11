@@ -65,8 +65,45 @@ class SynthesizeDto {
   format?: 'wav' | 'mp3' | 'm4b';
 
   @IsOptional()
-  @IsIn(['auto', 'piper', 'platform', 'kokoro'])
-  engine?: 'auto' | 'piper' | 'platform' | 'kokoro';
+  @IsIn(['auto', 'piper', 'platform', 'kokoro', 'expressive'])
+  engine?: 'auto' | 'piper' | 'platform' | 'kokoro' | 'expressive';
+
+  /** Apply attribution-driven auto-direction (default false). */
+  @IsOptional()
+  @IsBoolean()
+  autoDirect?: boolean;
+
+  /** REM markup present / allow REM parse (default auto-detect). */
+  @IsOptional()
+  @IsBoolean()
+  rem?: boolean;
+
+  /** Emotion exaggeration 0..1 for expressive tier. */
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(1)
+  exaggeration?: number;
+
+  /** Narration style profile: audiobook | podcast | news | drama | children. */
+  @IsOptional()
+  @IsString()
+  styleProfile?: string;
+
+  /** Humanization micro-layer (breaths, jitter) — profile-gated. */
+  @IsOptional()
+  @IsBoolean()
+  humanize?: boolean;
+
+  /** User affirms rights to reference audio for cloning. */
+  @IsOptional()
+  @IsBoolean()
+  cloneConsent?: boolean;
+
+  /** Optional reference wav path for voice cloning (consent required). */
+  @IsOptional()
+  @IsString()
+  referenceAudioPath?: string;
 
   @IsOptional()
   @IsIn(['off', 'sample', 'full'])
@@ -246,6 +283,13 @@ export class TtsController {
       pauseCustom: body.pauseCustom as
         | import('./tts.service').SynthesizeLongOptions['pauseCustom']
         | undefined,
+      autoDirect: body.autoDirect,
+      rem: body.rem,
+      exaggeration: body.exaggeration,
+      styleProfile: body.styleProfile,
+      humanize: body.humanize,
+      cloneConsent: body.cloneConsent,
+      referenceAudioPath: body.referenceAudioPath,
     });
     return this.tts.toPublicJob(job);
   }

@@ -16,6 +16,7 @@ import {
   PauseMapEntry,
 } from './pause/pause.types';
 import { KOKORO_MAX_CHARS } from './kokoro-tts';
+import { EXPRESSIVE_MAX_CHARS } from './expressive-tts';
 import {
   classifyPieceEnd,
   detectHeaderLine,
@@ -23,7 +24,7 @@ import {
   isChapterSeparator,
 } from './pause/boundary-detect';
 
-export type ChunkEngine = 'piper' | 'platform' | 'kokoro';
+export type ChunkEngine = 'piper' | 'platform' | 'kokoro' | 'expressive';
 
 export interface ChunkOptions {
   /** Soft max characters per chunk. Default engine-aware. */
@@ -53,6 +54,12 @@ export function defaultChunkLimits(engine: ChunkEngine = 'platform'): {
   maxChars: number;
   hardMaxChars: number;
 } {
+  if (engine === 'expressive') {
+    return {
+      maxChars: EXPRESSIVE_MAX_CHARS,
+      hardMaxChars: Math.round(EXPRESSIVE_MAX_CHARS * 1.5),
+    };
+  }
   if (engine === 'kokoro') {
     // Kokoro practical max from shared constant (G28 A5 drift fix)
     return { maxChars: KOKORO_MAX_CHARS, hardMaxChars: Math.round(KOKORO_MAX_CHARS * 1.5) };

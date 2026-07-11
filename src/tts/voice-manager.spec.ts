@@ -2,10 +2,13 @@ import { VoiceManager } from './voice-manager';
 import * as piper from './piper-tts';
 import * as platform from './platform-tts';
 import * as kokoro from './kokoro-tts';
+import * as expressive from './expressive-tts';
 
 describe('VoiceManager', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
+    jest.spyOn(expressive, 'isExpressiveAvailable').mockReturnValue(false);
+    jest.spyOn(expressive, 'listExpressiveVoices').mockReturnValue([]);
   });
 
   it('lists engines', () => {

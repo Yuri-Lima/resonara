@@ -65,7 +65,13 @@
     "cli": "node scripts/resonara-cli.js",
     "probe:pauses": "node scripts/pause-probe.js",
     "probe:all": "node scripts/pause-probe.js --all --engine all",
-    "probe:self-test": "node scripts/pause-probe.js --self-test"
+    "probe:self-test": "node scripts/pause-probe.js --self-test",
+    "metrics:prosody": "node scripts/prosody-metrics.js",
+    "metrics:self-test": "node scripts/prosody-metrics.js --self-test",
+    "render:expressive": "node scripts/render-expressive-fixtures.js",
+    "eval:session": "node scripts/eval-session.js",
+    "download:expressive": "node scripts/download-expressive-pack.js",
+    "probe:prosody": "node scripts/prosody-metrics.js --self-test"
   },
   "dependencies": {
     "@nestjs/bullmq": "^10.2.3",
