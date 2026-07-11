@@ -25,8 +25,71 @@
   </header>
 
   <main class="voice-main">
-    <section class="panel">
-      <h2>Long-form neural TTS</h2>
+
+  <aside class="onboarding" id="onboarding" hidden>
+    <div class="onboarding-card" role="dialog" aria-labelledby="ob-title">
+      <h2 id="ob-title">Welcome to Resonara Voice</h2>
+      <ol>
+        <li>We check engines and voices on this machine.</li>
+        <li>Download missing models in the background if needed.</li>
+        <li>Synthesize your first paragraph — offline.</li>
+      </ol>
+      <p id="ob-status" role="status" aria-live="polite">Checking engines…</p>
+      <button type="button" id="ob-dismiss" class="primary">Get started</button>
+    </div>
+  </aside>
+
+  <nav class="voice-ia" aria-label="Voice tool sections">
+    <button type="button" data-view="library" class="ia-tab active" aria-current="page">Library</button>
+    <button type="button" data-view="wizard" class="ia-tab">Synthesize</button>
+    <button type="button" data-view="settings" class="ia-tab">Settings</button>
+    <button type="button" id="btn-help" class="ia-tab ghost" title="Keyboard shortcuts">?</button>
+  </nav>
+  <div id="toast-host" class="toast-host" aria-live="polite" aria-relevant="additions"></div>
+  <dialog id="help-dialog" class="help-dialog">
+    <h2>Keyboard map</h2>
+    <ul>
+      <li><kbd>/</kbd> Focus search / text</li>
+      <li><kbd>n</kbd> New synthesis</li>
+      <li><kbd>l</kbd> Library</li>
+      <li><kbd>s</kbd> Settings</li>
+      <li><kbd>?</kbd> This help</li>
+      <li><kbd>Esc</kbd> Close dialogs</li>
+    </ul>
+    <button type="button" id="help-close">Close</button>
+  </dialog>
+
+  <section id="view-library" class="voice-view">
+    <h2>Your bookshelf</h2>
+    <p class="lede">Continue listening and browse completed jobs with covers.</p>
+    <div id="continue-rail" class="continue-rail" aria-label="Continue listening"></div>
+    <div id="library-rail" class="library-grid" aria-busy="true">
+      <p class="empty-state" id="library-empty">Loading library…</p>
+    </div>
+  </section>
+
+  <section id="view-settings" class="voice-view" hidden>
+    <h2>Settings</h2>
+    <form id="settings-form" class="settings-form">
+      <label>Default engine
+        <select id="set-engine"><option value="auto">Auto</option><option value="piper">Piper</option><option value="kokoro">Kokoro</option><option value="platform">Platform</option></select>
+      </label>
+      <label>Default language
+        <select id="set-lang"><option value="auto">Auto</option><option value="en">English</option><option value="pt-BR">Português (Brasil)</option></select>
+      </label>
+      <label class="chk"><input type="checkbox" id="set-feeds" checked /> Enable local podcast feeds</label>
+      <label>Pause profile
+        <select id="set-pause"><option value="audiobook">Audiobook</option><option value="podcast">Podcast</option><option value="news">News</option></select>
+      </label>
+      <button type="button" id="btn-diagnostics" class="ghost">Export diagnostics bundle</button>
+      <button type="submit" class="primary">Save settings</button>
+      <p id="settings-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+
+    <section class="panel voice-view" id="view-wizard" hidden>
+      <h2>Synthesis wizard</h2>
       <p class="lede">
         Piper neural voices (offline) with platform fallback. Seam-free chunking,
         SSML control, pronunciation dictionary, and document import.

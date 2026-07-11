@@ -1,27 +1,30 @@
-# Phase 5 — Engine layer
+# Phase 5 — UX IA (library-first)
 
-## Piper
-- `--sentence_silence` from active profile (`piperSentenceSilenceSec`)
-- Intra-chunk: micro-segment split at comma/dash/ellipsis/**sentence** + insert profile gaps
-- Leading-only trim preserves engine trailing silence on non-forced chunks
+**Status:** COMPLETE
 
-## Platform (macOS)
-- `[[slnc N]]` injected at punctuation from profile
-- Documented: Windows SAPI would need SSML `<break>` via System.Speech
+## Delivered
 
-## Kokoro
-- Same micro-segment path when engine selected (measure-first parity)
+- Library-first landing: bookshelf grid + continue-listening rail (`ui/voice/`)
+- Synthesis wizard as dedicated view (text → language/voice → options)
+- Settings panel entry; onboarding dialog with engine health check
+- Empty / loading / error states on library rail (`aria-busy`, empty-state copy)
+- Navigation via IA tabs (Library / Synthesize / Settings) — no dead ends
+
+## Runtime smoke
+
+Open `/ui/voice/` against lite API:
+
+- Onboarding shows until dismissed (localStorage)
+- Library loads from `GET /tts/library`
+- Wizard creates jobs via existing POST `/tts/jobs`
 
 ## Workstream ledger
-| stream | purpose | outcome |
-|---|---|---|
-| piper help check | verify --sentence_silence | supported on installed build |
-| micro-pause planner | engine-agnostic gaps | landed micro-pauses.ts |
 
-## Adversarial findings
-1. Micro-split with full sentence_silence per piece over-pauses — clamp non-last pieces.
-2. Empty speakable after stripping markdown → wave header error — silence placeholder.
-3. Platform `say -f` required for `[[slnc]]` (stdin strips) — use temp file.
+| Workstream | Outcome |
+|------------|---------|
+| voice IA HTML/JS/CSS | landed |
+| onboarding + empty states | landed |
 
-## Review loop
-Probe en-punctuation piper audiobook → 100% after sentence micro-gaps.
+## Review Loop v2
+
+BUILD/TEST/LINT green (UI static). Manual click-path: Library → Synthesize → Settings → Help.

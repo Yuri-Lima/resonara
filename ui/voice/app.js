@@ -707,3 +707,223 @@
   });
 
   loadLibrary();
+
+/* ——— Resonara v2 IA layer ——— */
+(function v2Ia() {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const api = (path, opts) =>
+    fetch(path, opts).then(async (r) => {
+      const ct = r.headers.get('content-type') || '';
+      const body = ct.includes('json') ? await r.json() : await r.text();
+      if (!r.ok) {
+        const msg =
+          (body && body.message) ||
+          (typeof body === 'string' ? body : 'Request failed');
+        throw new Error(Array.isArray(msg) ? msg.join(', ') : msg);
+      }
+      return body;
+    });
+
+  function toast(msg) {
+    const host = $('#toast-host');
+    if (!host) return;
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.setAttribute('role', 'status');
+    el.textContent = msg;
+    host.appendChild(el);
+    setTimeout(() => el.remove(), 6000);
+  }
+
+  function showView(name) {
+    $$('.voice-view').forEach((v) => {
+      v.hidden = v.id !== `view-${name}`;
+    });
+    $$('.ia-tab[data-view]').forEach((t) => {
+      const on = t.dataset.view === name;
+      t.classList.toggle('active', on);
+      if (on) t.setAttribute('aria-current', 'page');
+      else t.removeAttribute('aria-current');
+    });
+    localStorage.setItem('resonara.view', name);
+  }
+
+  $$('.ia-tab[data-view]').forEach((t) =>
+    t.addEventListener('click', () => showView(t.dataset.view)),
+  );
+
+  const help = $('#help-dialog');
+  $('#btn-help')?.addEventListener('click', () => help?.showModal());
+  $('#help-close')?.addEventListener('click', () => help?.close());
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.matches('input, textarea, select')) return;
+    if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+      e.preventDefault();
+      help?.showModal();
+    } else if (e.key === 'l') showView('library');
+    else if (e.key === 'n') {
+      showView('wizard');
+      $('#tts-text')?.focus();
+    } else if (e.key === 's') showView('settings');
+    else if (e.key === '/') {
+      e.preventDefault();
+      $('#tts-text')?.focus();
+    } else if (e.key === 'Escape') help?.close();
+  });
+
+  async function loadLibrary() {
+    const rail = $('#library-rail');
+    const cont = $('#continue-rail');
+    if (!rail) return;
+    rail.setAttribute('aria-busy', 'true');
+    rail.innerHTML = '<p class="loading-state">Loading library…</p>';
+    try {
+      const data = await api('/tts/library?page=1&limit=24');
+      const items = data.items || data.jobs || data || [];
+      if (!items.length) {
+        rail.innerHTML =
+          '<p class="empty-state">No audiobooks yet. Open <strong>Synthesize</strong> and create your first paragraph.</p>';
+        if (cont) cont.innerHTML = '';
+        return;
+      }
+      rail.innerHTML = '';
+      if (cont) {
+        cont.innerHTML = items
+          .slice(0, 5)
+          .map(
+            (j) =>
+              `<a class="library-card" href="#job-${j.id}" data-id="${j.id}">▶ ${escapeHtml(j.metadata?.title || j.title || j.id.slice(0, 8))}</a>`,
+          )
+          .join('');
+      }
+      for (const j of items) {
+        const card = document.createElement('article');
+        card.className = 'library-card';
+        card.innerHTML = `
+          <img class="cover" alt="" src="/tts/jobs/${j.id}/cover" loading="lazy" width="160" height="160" />
+          <h3>${escapeHtml(j.metadata?.title || j.title || 'Untitled')}</h3>
+          <p class="meta">${escapeHtml(j.engine || '')} · ${escapeHtml(j.status || '')}</p>
+          <button type="button" data-retry="${j.id}" class="ghost" ${j.status === 'failed' ? '' : 'hidden'}>Retry</button>
+        `;
+        rail.appendChild(card);
+      }
+      rail.querySelectorAll('[data-retry]').forEach((btn) =>
+        btn.addEventListener('click', async () => {
+          try {
+            await api(`/tts/jobs/${btn.dataset.retry}/retry`, { method: 'POST' });
+            toast('Retry started');
+            loadLibrary();
+          } catch (err) {
+            toast(err.message || 'Retry failed');
+          }
+        }),
+      );
+    } catch (err) {
+      rail.innerHTML = `<p class="error-state">Could not load library: ${escapeHtml(err.message)}. Is the API running?</p>`;
+    } finally {
+      rail.setAttribute('aria-busy', 'false');
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  // Settings persistence
+  const SETTINGS_KEY = 'resonara.settings.v2';
+  function loadSettings() {
+    try {
+      return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+    } catch {
+      return {};
+    }
+  }
+  function applySettings() {
+    const s = loadSettings();
+    if (s.engine && $('#set-engine')) $('#set-engine').value = s.engine;
+    if (s.language && $('#set-lang')) $('#set-lang').value = s.language;
+    if (s.pause && $('#set-pause')) $('#set-pause').value = s.pause;
+    if ($('#set-feeds')) $('#set-feeds').checked = s.feeds !== false;
+    if (s.engine && $('#engine-select')) $('#engine-select').value = s.engine;
+    if (s.language && $('#language-select')) $('#language-select').value = s.language;
+  }
+  $('#settings-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const s = {
+      engine: $('#set-engine')?.value || 'auto',
+      language: $('#set-lang')?.value || 'auto',
+      pause: $('#set-pause')?.value || 'audiobook',
+      feeds: $('#set-feeds')?.checked !== false,
+    };
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+    applySettings();
+    $('#settings-status').textContent = 'Saved locally.';
+    toast('Settings saved');
+  });
+  $('#btn-diagnostics')?.addEventListener('click', async () => {
+    try {
+      const r = await api('/diagnostics/bundle', { method: 'POST' });
+      $('#settings-status').textContent = r.path
+        ? `Diagnostics written to ${r.path}`
+        : JSON.stringify(r);
+      toast('Diagnostics bundle ready (local only)');
+    } catch (err) {
+      $('#settings-status').textContent = err.message;
+      toast(err.message);
+    }
+  });
+
+  // Onboarding
+  async function maybeOnboard() {
+    if (localStorage.getItem('resonara.onboarded.v2')) return;
+    const panel = $('#onboarding');
+    if (!panel) return;
+    panel.hidden = false;
+    const status = $('#ob-status');
+    try {
+      const eng = await api('/tts/engines');
+      const lines = (eng.engines || []).map(
+        (e) => `${e.id}: ${e.available ? 'ready' : 'missing'} (${e.voiceCount || 0} voices)`,
+      );
+      status.textContent = lines.join(' · ');
+    } catch {
+      status.textContent = 'API offline — start Resonara to check engines.';
+    }
+    $('#ob-dismiss')?.addEventListener('click', () => {
+      localStorage.setItem('resonara.onboarded.v2', '1');
+      panel.hidden = true;
+      showView('wizard');
+      toast('Tip: paste a paragraph and press Speak');
+    });
+  }
+
+  // Job completion toast via polling when user is on library
+  let lastSeen = new Set();
+  setInterval(async () => {
+    try {
+      const data = await api('/tts/jobs?limit=10');
+      const items = data.items || data || [];
+      for (const j of items) {
+        if (j.status === 'completed' && !lastSeen.has(j.id + ':done')) {
+          if (lastSeen.size) toast(`Finished: ${j.metadata?.title || j.id.slice(0, 8)}`);
+          lastSeen.add(j.id + ':done');
+        }
+      }
+    } catch {
+      /* */
+    }
+  }, 8000);
+
+  applySettings();
+  const initial = localStorage.getItem('resonara.view') || 'library';
+  showView(initial);
+  loadLibrary();
+  maybeOnboard();
+  // Expose toast for other handlers
+  window.resonaraToast = toast;
+})();
