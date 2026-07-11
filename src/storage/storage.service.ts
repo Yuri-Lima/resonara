@@ -74,8 +74,31 @@ export class StorageService implements OnModuleInit {
     return this.buckets.samples;
   }
 
+  /**
+   * Resolve a storage object path under the lite root.
+   * Rejects path traversal (`..`, absolute keys) so keys cannot escape the
+   * configured data directory (G28 TODO-01).
+   */
   private keyPath(bucket: string, key: string): string {
-    return path.join(this.root, bucket, key);
+    if (!bucket || bucket.includes('..') || path.isAbsolute(bucket) || bucket.includes('\0')) {
+      throw new Error(`Invalid storage bucket: ${bucket}`);
+    }
+    if (!key || key.includes('\0') || path.isAbsolute(key)) {
+      throw new Error(`Invalid storage key: ${key}`);
+    }
+    // Normalize separators; reject any .. segment after split
+    const segments = key.split(/[/\\]+/).filter((s) => s.length > 0);
+    if (segments.some((s) => s === '..' || s === '.')) {
+      throw new Error(`Invalid storage key (path traversal): ${key}`);
+    }
+    const rootResolved = path.resolve(this.root);
+    const bucketRoot = path.resolve(rootResolved, bucket);
+    const dest = path.resolve(bucketRoot, ...segments);
+    const prefix = bucketRoot.endsWith(path.sep) ? bucketRoot : bucketRoot + path.sep;
+    if (dest !== bucketRoot && !dest.startsWith(prefix)) {
+      throw new Error(`Storage path escapes root: ${key}`);
+    }
+    return dest;
   }
 
   async putStream(
