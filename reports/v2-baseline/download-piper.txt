@@ -1,0 +1,414 @@
+Downloading voice en_US-lessac-medium (en-US)
+Downloading voice pt_BR-faber-medium (pt-BR)
+Installing piper-tts into tools/piper-venv (recommended on macOS arm64)…
+Requirement already satisfied: pip in ./tools/piper-venv/lib/python3.11/site-packages (23.2.1)
+Collecting pip
+  Obtaining dependency information for pip from https://files.pythonhosted.org/packages/5d/95/6b5cb3461ea5673ba0995989746db58eb18b91b54dbf331e72f569540946/pip-26.1.2-py3-none-any.whl.metadata
+  Using cached pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
+Collecting piper-tts
+  Obtaining dependency information for piper-tts from https://files.pythonhosted.org/packages/47/e1/84fcb36c7ac413bb22eb3bdda5f21861f02d0f436df0a9090949c9fec032/piper_tts-1.4.2-cp39-abi3-macosx_11_0_arm64.whl.metadata
+  Using cached piper_tts-1.4.2-cp39-abi3-macosx_11_0_arm64.whl.metadata (2.3 kB)
+Collecting onnxruntime<2,>=1 (from piper-tts)
+  Obtaining dependency information for onnxruntime<2,>=1 from https://files.pythonhosted.org/packages/d4/e4/5353d7e09ced4a8f473f843223fc75d726b2b5519dcefc12f22a6c92852d/onnxruntime-1.27.0-cp311-cp311-macosx_14_0_arm64.whl.metadata
+  Using cached onnxruntime-1.27.0-cp311-cp311-macosx_14_0_arm64.whl.metadata (5.4 kB)
+Collecting pathvalidate<4,>=3 (from piper-tts)
+  Obtaining dependency information for pathvalidate<4,>=3 from https://files.pythonhosted.org/packages/9a/70/875f4a23bfc4731703a5835487d0d2fb999031bd415e7d17c0ae615c18b7/pathvalidate-3.3.1-py3-none-any.whl.metadata
+  Using cached pathvalidate-3.3.1-py3-none-any.whl.metadata (12 kB)
+Collecting flatbuffers (from onnxruntime<2,>=1->piper-tts)
+  Obtaining dependency information for flatbuffers from https://files.pythonhosted.org/packages/e8/2d/d2a548598be01649e2d46231d151a6c56d10b964d94043a335ae56ea2d92/flatbuffers-25.12.19-py2.py3-none-any.whl.metadata
+  Using cached flatbuffers-25.12.19-py2.py3-none-any.whl.metadata (1.0 kB)
+Collecting numpy>=1.21.6 (from onnxruntime<2,>=1->piper-tts)
+  Obtaining dependency information for numpy>=1.21.6 from https://files.pythonhosted.org/packages/ad/40/40a40ee0ddf7ceb782c49af278894b686e586d65d8c1889c8b5da01a3d7d/numpy-2.4.6-cp311-cp311-macosx_14_0_arm64.whl.metadata
+  Using cached numpy-2.4.6-cp311-cp311-macosx_14_0_arm64.whl.metadata (6.6 kB)
+Collecting packaging (from onnxruntime<2,>=1->piper-tts)
+  Obtaining dependency information for packaging from https://files.pythonhosted.org/packages/df/b2/87e62e8c3e2f4b32e5fe99e0b86d576da1312593b39f47d8ceef365e95ed/packaging-26.2-py3-none-any.whl.metadata
+  Using cached packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting protobuf>=4.25.8 (from onnxruntime<2,>=1->piper-tts)
+  Obtaining dependency information for protobuf>=4.25.8 from https://files.pythonhosted.org/packages/10/03/8aeeb7458d22546bf64b5250ca1daeb5ff757d900e8e4a7476c6f0db843e/protobuf-7.35.1-cp310-abi3-macosx_10_9_universal2.whl.metadata
+  Using cached protobuf-7.35.1-cp310-abi3-macosx_10_9_universal2.whl.metadata (595 bytes)
+Using cached pip-26.1.2-py3-none-any.whl (1.8 MB)
+Using cached piper_tts-1.4.2-cp39-abi3-macosx_11_0_arm64.whl (13.8 MB)
+Using cached onnxruntime-1.27.0-cp311-cp311-macosx_14_0_arm64.whl (18.4 MB)
+Using cached pathvalidate-3.3.1-py3-none-any.whl (24 kB)
+Using cached numpy-2.4.6-cp311-cp311-macosx_14_0_arm64.whl (5.5 MB)
+Using cached protobuf-7.35.1-cp310-abi3-macosx_10_9_universal2.whl (433 kB)
+Using cached flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+Using cached packaging-26.2-py3-none-any.whl (100 kB)
+Installing collected packages: flatbuffers, protobuf, pip, pathvalidate, packaging, numpy, onnxruntime, piper-tts
+  Attempting uninstall: pip
+    Found existing installation: pip 23.2.1
+    Uninstalling pip-23.2.1:
+      Successfully uninstalled pip-23.2.1
+Successfully installed flatbuffers-25.12.19 numpy-2.4.6 onnxruntime-1.27.0 packaging-26.2 pathvalidate-3.3.1 pip-26.1.2 piper-tts-1.4.2 protobuf-7.35.1
+Python Piper binary: /private/tmp/trace-swe23-20260712-000916/tools/piper-venv/bin/piper
+Staging Windows piper.exe for NSIS packaging…
+Downloading native binary https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_windows_amd64.zip
+Extracting to /private/tmp/trace-swe23-20260712-000916/resources/piper
+Archive:  /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper_windows_amd64.zip
+   creating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/pkgconfig
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng.dll  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/libtashkeel_model.ort  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/onnxruntime_providers_shared.dll  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/onnxruntime.dll  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/piper_phonemize.dll  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/piper.exe  
+   creating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/af_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/am_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/an_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ar_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/as_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/az_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ba_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/be_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/bg_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/bn_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/bpy_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/bs_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ca_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/chr_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/cmn_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/cs_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/cv_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/cy_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/da_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/de_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/el_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/en_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/eo_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/es_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/et_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/eu_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/fa_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/fi_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/fr_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ga_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/gd_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/gn_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/grc_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/gu_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/hak_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/haw_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/he_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/hi_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/hr_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ht_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/hu_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/hy_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ia_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/id_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/intonations  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/io_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/is_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/it_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ja_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/jbo_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ka_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/kk_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/kl_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/kn_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ko_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/kok_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ku_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ky_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/la_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lb_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lfn_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lt_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lv_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/mi_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/mk_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ml_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/mr_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ms_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/mt_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/mto_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/my_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/nci_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ne_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/nl_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/no_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/nog_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/om_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/or_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/pa_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/pap_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/phondata  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/phondata-manifest  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/phonindex  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/phontab  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/piqd_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/pl_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/pt_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/py_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/qdb_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/qu_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/quc_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/qya_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ro_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ru_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/sd_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/shn_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/si_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/sjn_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/sk_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/sl_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/smj_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/sq_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/sr_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/sv_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/sw_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ta_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/te_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/th_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/tk_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/tn_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/tr_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/tt_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ug_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/uk_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/ur_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/uz_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/vi_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/yue_dict  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/eu  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/ko  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/qu  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/aav/vi  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/aav/vi-VN-x-central  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/aav/vi-VN-x-south  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/art/eo  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/art/ia  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/art/io  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/art/jbo  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/art/lfn  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/art/piqd  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/art/py  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/art/qdb  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/art/qya  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/art/sjn  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/azc/nci  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/bat/lt  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/bat/ltg  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/bat/lv  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/bnt/sw  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/bnt/tn  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/ccs/ka  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/cel/cy  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/cel/ga  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/cel/gd  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/cus/om  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/dra/kn  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/dra/ml  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/dra/ta  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/dra/te  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/esx/kl  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmq/da  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmq/is  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmq/nb  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmq/sv  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/af  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/de  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/en  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/en-029  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/en-GB-scotland  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/en-GB-x-gbclan  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/en-GB-x-gbcwmd  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/en-GB-x-rp  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/en-US  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/en-US-nyc  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/lb  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/gmw/nl  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/grk/el  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/grk/grc  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/as  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/bn  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/bpy  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/gu  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/hi  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/kok  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/mr  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/ne  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/or  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/pa  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/sd  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/si  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/inc/ur  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/ine/hy  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/ine/hyw  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/ine/sq  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/ira/fa  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/ira/fa-Latn  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/ira/ku  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/iro/chr  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/itc/la  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/jpx/ja  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/map/haw  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/miz/mto  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/myn/quc  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/poz/id  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/poz/mi  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/poz/ms  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/an  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/ca  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/es  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/es-419  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/fr  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/fr-BE  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/fr-CH  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/ht  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/it  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/pap  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/pt  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/pt-BR  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/roa/ro  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/sai/gn  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/sem/am  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/sem/ar  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/sem/he  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/sem/mt  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/sit/cmn  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/sit/cmn-Latn-pinyin  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/sit/hak  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/sit/my  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/sit/yue  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/sit/yue-Latn-jyutping  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/tai/shn  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/tai/th  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/trk/az  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/trk/ba  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/trk/cv  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/trk/kk  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/trk/ky  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/trk/nog  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/trk/tk  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/trk/tr  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/trk/tt  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/trk/ug  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/trk/uz  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/urj/et  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/urj/fi  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/urj/hu  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/urj/smj  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zle/be  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zle/ru  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zle/ru-cl  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zle/ru-LV  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zle/uk  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zls/bg  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zls/bs  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zls/hr  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zls/mk  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zls/sl  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zls/sr  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zlw/cs  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zlw/pl  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/lang/zlw/sk  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/adam  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Alex  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Alicia  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Andrea  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Andy  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/anika  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/anikaRobot  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Annie  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/announcer  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/antonio  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/AnxiousAndy  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/aunty  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/belinda  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/benjamin  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/boris  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/caleb  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/croak  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/david  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Demonic  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Denis  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Diogo  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/ed  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/edward  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/edward2  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/f1  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/f2  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/f3  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/f4  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/f5  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/fast  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Gene  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Gene2  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/grandma  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/grandpa  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/gustave  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Henrique  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Hugo  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/ian  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/iven  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/iven2  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/iven3  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/iven4  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Jacky  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/john  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/kaukovalta  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/klatt  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/klatt2  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/klatt3  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/klatt4  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/klatt5  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/klatt6  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Lee  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/linda  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/m1  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/m2  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/m3  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/m4  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/m5  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/m6  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/m7  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/m8  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/marcelo  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Marco  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Mario  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/max  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Michael  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/michel  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/miguel  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Mike  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/mike2  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Mr serious  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Nguyen  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/norbert  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/pablo  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/paul  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/pedro  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/quincy  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Reed  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/RicishayMax  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/RicishayMax2  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/RicishayMax3  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/rob  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/robert  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/robosoft  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/robosoft2  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/robosoft3  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/robosoft4  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/robosoft5  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/robosoft6  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/robosoft7  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/robosoft8  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/sandro  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/shelby  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/steph  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/steph2  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/steph3  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Storm  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/travis  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/Tweaky  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/UniRobot  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/victor  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/whisper  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/whisperf  
+  inflating: /var/folders/gy/kwmrhf9s4777hm_z2_fccrs40000gn/T/piper-extract-1783807842595/piper/espeak-ng-data/voices/!v/zac  
+Windows piper.exe ready: /private/tmp/trace-swe23-20260712-000916/resources/piper/piper.exe
+Done. Bundled models: en_US-lessac-medium,pt_BR-faber-medium
+Resonara resolves tools/piper-venv/bin/piper first when runnable.
+Optional: export PIPER_PATH and PIPER_MODELS_DIR

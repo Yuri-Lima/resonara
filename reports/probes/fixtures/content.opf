@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:identifier id="uid">10425551-31e4-4e3f-b147-b92538e5ba48</dc:identifier>
+    <dc:title>EPUB Probe Book</dc:title>
+    <dc:language>en</dc:language>
+    <meta property="media:duration">00:00:04.616</meta>
+  </metadata>
+  <manifest>
+    <item id="ch1" href="chapter.xhtml" media-type="application/xhtml+xml"/>
+    <item id="audio" href="speech.wav" media-type="audio/mpeg"/>
+    <item id="mo-ch1" href="chapter.smil" media-type="application/smil+xml"/>
+  </manifest>
+  <spine>
+    <itemref idref="ch1"/ media-overlay="mo-ch1">
+  </spine>
+</package>

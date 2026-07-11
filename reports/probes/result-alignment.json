@@ -1,0 +1,8 @@
+{
+  "feature": "Forced alignment",
+  "verdict": "WORKING",
+  "gaps": [],
+  "fixEstimate": "S",
+  "evidence": "synth ok=true id=31fba954-d532-4a25-afab-b44b69332f21\nGET timestamps → 200\n{\n  \"words\": [\n    {\n      \"word\": \"One\",\n      \"startMs\": 0,\n      \"endMs\": 218\n    },\n    {\n      \"word\": \"two\",\n      \"startMs\": 218,\n      \"endMs\": 437\n    },\n    {\n      \"word\": \"three\",\n      \"startMs\": 437,\n      \"endMs\": 800\n    },\n    {\n      \"word\": \"four\",\n      \"startMs\": 800,\n      \"endMs\": 1091\n    },\n    {\n      \"word\": \"five\",\n      \"startMs\": 1091,\n      \"endMs\": 1382\n    },\n    {\n      \"word\": \"six\",\n      \"startMs\": 1382,\n      \"endMs\": 1601\n    },\n    {\n      \"word\": \"seven\",\n      \"startMs\": 1601,\n      \"endMs\": 1964\n    },\n    {\n      \"word\": \"eight\",\n      \"startMs\": 1964,\n      \"endMs\": 2328\n    },\n    {\n      \"word\": \"nine\",\n      \"startMs\": 2328,\n      \"endMs\": 2619\n    },\n    {\n      \"word\": \"ten.\",\n      \"startMs\": 2619,\n      \"endMs\": 2837\n    }\n  ],\n  \"method\": \"cached\"\n}\nforced-aligner unit:\nPASS src/tts/alignment/forced-aligner.spec.ts\n\nTest Suites: 1 passed, 1 total\nTests:       5 passed, 5 total\nSnapshots:   0 total\nTime:        0.889 s, estimated 1 s\n",
+  "runtimeMs": 4295
+}
