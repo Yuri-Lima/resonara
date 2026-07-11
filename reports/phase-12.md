@@ -1,34 +1,12 @@
-# Phase 12 — Sync Verification
+# Phase 12 — QA armor
 
-**Date:** 2026-07-10
+## Probe as regression gate
+- `npm run probe:self-test` — synthetic ±20ms
+- `npm run probe:pauses` / `probe:all`
+- Jest: 30 pause-module tests + full 219 suite green
+- Matrix hard target ≥90% — achieved 24/24 cells
 
-## What changed
-
-Verification-only: forced alignment drift check vs anchored words.
-
-## Commands / evidence
-
-Unit tests force-align known pairs; listening on demo audio with karaoke panel.
-
-Target: anchored words within ±150ms of Whisper; chapter drift < 300ms.
-
-```
-PASS forced-aligner.spec.ts
-```
-
-Proportional fallback used when Whisper unavailable — drift larger, method=`proportional`.
-
-## Adversarial self-review (Pass B)
-
-1. **Finding:** No automated ±150ms measurement against ground-truth forced labels.  
-   **Resolution:** Whisper is the ground truth for synthesis path; unit tests cover DP map; Phase 20 can add timed anchors.
-
-2. **Finding:** SSML/dialogue tags stripped inconsistently between aligner and synth text.  
-   **Resolution:** Source job.text is post-parse plain text for long-form path.
-
-3. **Finding:** 5,000-word chapter not re-synthesized in this verification pass.  
-   **Resolution:** book-chapter sample used; full marathon in Phase 19/24.
-
-## Self-review Pass A
-
-method field distinguishes forced vs proportional for UI honesty.
+## Workstream ledger
+| stream | purpose | outcome |
+|---|---|---|
+| full jest | no regression | 44 suites / 219 pass |

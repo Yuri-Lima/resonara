@@ -725,4 +725,90 @@
         demoText.appendChild(span);
       });
   }
+
+  /* ---------- Prosody: pause before/after waveforms ---------- */
+  function drawPauseWave(canvas, mode) {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.fillStyle = '#0b1220';
+    ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = '#1e293b';
+    ctx.beginPath();
+    ctx.moveTo(0, h / 2);
+    ctx.lineTo(w, h / 2);
+    ctx.stroke();
+
+    // Paragraph boundary near 55% of timeline
+    const paraAt = 0.55;
+    const gapWidth = mode === 'before' ? 0.012 : 0.09; // ~65ms vs ~850ms visual
+    const mid = h / 2;
+    ctx.beginPath();
+    ctx.strokeStyle = mode === 'before' ? '#f87171' : '#2dd4bf';
+    ctx.lineWidth = 1.5;
+    for (let x = 0; x < w; x++) {
+      const t = x / w;
+      let amp = 0.4 + 0.3 * Math.sin(t * 36) * Math.sin(t * 5);
+      amp *= 0.35 + 0.65 * Math.abs(Math.sin(t * Math.PI * 5));
+      if (Math.abs(t - paraAt) < gapWidth / 2) amp *= 0.04;
+      const y = mid + Math.sin(x * 0.32) * amp * (h * 0.42);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Annotate gap
+    const gx = paraAt * w;
+    ctx.fillStyle = mode === 'before' ? '#fca5a5' : '#5eead4';
+    ctx.font = '12px system-ui,sans-serif';
+    ctx.fillText(mode === 'before' ? '¶ ~65ms' : '¶ ~850ms', gx - 24, 18);
+    ctx.strokeStyle = ctx.fillStyle;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(gx, 24);
+    ctx.lineTo(gx, h - 8);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  drawPauseWave(document.getElementById('wave-pause-before'), 'before');
+  drawPauseWave(document.getElementById('wave-pause-after'), 'after');
+
+  /* ---------- Prosody: live conformance matrix ---------- */
+  const matrixBody = document.getElementById('pause-matrix-body');
+  if (matrixBody) {
+    fetch('/reports/pause-report.json')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data || !Array.isArray(data.reports)) return;
+        const rows = data.reports
+          .filter((r) => !r.error)
+          .map((r) => {
+            const conf = r.conformancePct;
+            const cls = conf >= 90 ? 'ok' : conf >= 50 ? 'warn' : 'bad';
+            return (
+              '<tr class="' +
+              cls +
+              '"><td>' +
+              r.fixture +
+              '</td><td>' +
+              r.engine +
+              '</td><td>' +
+              r.profile +
+              '</td><td><strong>' +
+              conf +
+              '%</strong></td><td>' +
+              (r.byType && r.byType.paragraph ? r.byType.paragraph.avgMs + ' ms' : '—') +
+              '</td><td>' +
+              (r.byType && r.byType.sentence ? r.byType.sentence.avgMs + ' ms' : '—') +
+              '</td></tr>'
+            );
+          });
+        if (rows.length) matrixBody.innerHTML = rows.join('');
+      })
+      .catch(() => {
+        /* offline — keep placeholder */
+      });
+  }
 })();

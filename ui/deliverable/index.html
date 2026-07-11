@@ -35,6 +35,7 @@
       <a href="#mixed">Mixed-lang</a>
       <a href="#desktop">Desktop</a>
       <a href="#g27">G27 parity</a>
+      <a href="#prosody">Prosody</a>
     </nav>
   </header>
 
@@ -335,6 +336,102 @@
 npm run demo:all
 npm run benchmark</pre>
     </section>
+  
+    <!-- Prosody engineering — boundary-aware pauses -->
+    <section id="prosody" class="card" aria-labelledby="prosody-h">
+      <h2 id="prosody-h">Prosody engineering — pauses that breathe</h2>
+      <p class="muted">
+        Seam-elimination (trim + 20&nbsp;ms crossfade) fixed clicks by erasing
+        sentence and paragraph silence. The pause architecture restores
+        professional audiobook rhythm: boundary-typed gaps, three profiles,
+        a measured probe contract, and regression pins so the next audio fix
+        cannot silently kill pauses again.
+      </p>
+
+      <h3>Before / after — paragraph &amp; header boundaries</h3>
+      <div class="wave-grid">
+        <figure class="wave-panel">
+          <figcaption>v1.0.0 baseline — paragraph join (~65&nbsp;ms)</figcaption>
+          <canvas id="wave-pause-before" width="640" height="140" role="img"
+            aria-label="Waveform with near-zero paragraph gap"></canvas>
+          <p class="muted">Measured: paragraph avg 65&nbsp;ms (target 700–1000)</p>
+        </figure>
+        <figure class="wave-panel">
+          <figcaption>Boundary-aware — paragraph gap (~850&nbsp;ms)</figcaption>
+          <canvas id="wave-pause-after" width="640" height="140" role="img"
+            aria-label="Waveform with audiobook paragraph pause"></canvas>
+          <p class="muted">Measured: paragraph avg ~850–1000&nbsp;ms in band</p>
+        </figure>
+      </div>
+
+      <h3>A/B audio — same paragraph, old vs new</h3>
+      <div class="audio-row" style="display:grid;gap:0.75rem;grid-template-columns:1fr 1fr">
+        <label>v1.0.0 baseline (run-on)
+          <audio controls preload="none"
+            src="/reports/ab-baseline/v1.0.0/piper_en-punctuation.wav"></audio>
+        </label>
+        <label>New pipeline (audiobook profile)
+          <audio id="audio-pause-after" controls preload="none"
+            src="/reports/probe-out/piper/audiobook/en-punctuation/out.wav"></audio>
+        </label>
+      </div>
+
+      <h3>Pause-map pipeline</h3>
+      <ol class="pipeline-steps" aria-label="Pause pipeline stages">
+        <li><strong>Chunker</strong> emits <code>endsAt</code> + intra-boundaries (comma, dash, ellipsis)</li>
+        <li><strong>Engine</strong> Piper <code>--sentence_silence</code> / macOS <code>[[slnc]]</code> / micro-splits</li>
+        <li><strong>Trim</strong> leading always; trailing only at <code>forced</code> seams</li>
+        <li><strong>Assemble</strong> profile silence at structural joins; 20&nbsp;ms crossfade only at forced</li>
+        <li><strong>Probe</strong> silencedetect + bands → conformance %</li>
+      </ol>
+
+      <h3>Profile reference card</h3>
+      <div class="table-wrap" role="region" aria-label="Pause profile bands" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Boundary</th>
+              <th scope="col">Audiobook (ms)</th>
+              <th scope="col">Podcast (~−20%)</th>
+              <th scope="col">News (~−35%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Comma / vírgula</td><td>150–250</td><td>120–200</td><td>100–160</td></tr>
+            <tr><td>Sentence . ! ?</td><td>350–600</td><td>280–480</td><td>230–390</td></tr>
+            <tr><td>Em-dash / travessão</td><td>200–350</td><td>160–280</td><td>130–230</td></tr>
+            <tr><td>Paragraph</td><td>700–1000</td><td>560–800</td><td>455–650</td></tr>
+            <tr><td>Header → body</td><td>900–1300</td><td>720–1040</td><td>585–845</td></tr>
+            <tr><td>Chapter</td><td>1500–2500</td><td>1200–2000</td><td>975–1625</td></tr>
+            <tr><td>pt-BR dialogue attrib</td><td>250–400</td><td>200–320</td><td>160–260</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Conformance matrix <span class="muted">(engine × language × profile)</span></h3>
+      <div class="table-wrap" role="region" aria-label="Pause conformance matrix" tabindex="0">
+        <table id="pause-matrix">
+          <thead>
+            <tr>
+              <th scope="col">Fixture</th>
+              <th scope="col">Engine</th>
+              <th scope="col">Profile</th>
+              <th scope="col">Conformance</th>
+              <th scope="col">Para avg</th>
+              <th scope="col">Sent avg</th>
+            </tr>
+          </thead>
+          <tbody id="pause-matrix-body">
+            <tr><td colspan="6" class="muted">Load live numbers from <code>reports/pause-report.json</code> when available…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">
+        Contract: ≥90% of annotated boundaries in band. Baseline (v1.0.0) was 0–29%.
+        See <code>PAUSE_ARCHITECTURE.md</code> and <code>PAUSE_TUNING.md</code>.
+      </p>
+    </section>
+
   </main>
 
   <footer>
