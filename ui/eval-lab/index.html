@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resonara Eval Lab — Blind Listening</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main</a>
+  <header class="top">
+    <h1>Resonara Eval Lab</h1>
+    <p class="sub">Blind CMOS / PMOS listening — system identity hidden until you commit scores.</p>
+  </header>
+  <main id="main">
+    <section id="setup" class="panel" aria-labelledby="setup-h">
+      <h2 id="setup-h">Session</h2>
+      <label>Manifest URL or path
+        <input id="manifestUrl" type="text" value="/ui/eval-lab/session-manifest.json" aria-describedby="manifest-help" />
+      </label>
+      <p id="manifest-help" class="help">Loads paired A/B renders with randomized order. Anchors included for sanity.</p>
+      <button id="btnLoad" type="button">Load session</button>
+      <p id="sessionMeta" class="meta" aria-live="polite"></p>
+    </section>
+
+    <section id="trial" class="panel hidden" aria-labelledby="trial-h">
+      <h2 id="trial-h">Trial <span id="trialNum">1</span> / <span id="trialTotal">?</span></h2>
+      <p class="fixture" id="fixtureLabel"></p>
+      <div class="players">
+        <div class="player">
+          <h3>System A</h3>
+          <audio id="audioA" controls preload="auto"></audio>
+          <button type="button" class="replay" data-target="audioA">Replay A (1)</button>
+        </div>
+        <div class="player">
+          <h3>System B</h3>
+          <audio id="audioB" controls preload="auto"></audio>
+          <button type="button" class="replay" data-target="audioB">Replay B (2)</button>
+        </div>
+      </div>
+
+      <fieldset>
+        <legend>CMOS (−3 = A much better … +3 = B much better)</legend>
+        <div class="cmos" role="radiogroup" aria-label="CMOS score">
+          <label><input type="radio" name="cmos" value="-3" /> −3</label>
+          <label><input type="radio" name="cmos" value="-2" /> −2</label>
+          <label><input type="radio" name="cmos" value="-1" /> −1</label>
+          <label><input type="radio" name="cmos" value="0" /> 0</label>
+          <label><input type="radio" name="cmos" value="1" /> +1</label>
+          <label><input type="radio" name="cmos" value="2" /> +2</label>
+          <label><input type="radio" name="cmos" value="3" /> +3</label>
+        </div>
+      </fieldset>
+
+      <fieldset class="pmos">
+        <legend>PMOS-style (prosody focus, 0–100)</legend>
+        <label>Pitch variety <input type="range" id="pmosPitch" min="0" max="100" value="50" /><span id="pmosPitchV">50</span></label>
+        <label>Rhythm <input type="range" id="pmosRhythm" min="0" max="100" value="50" /><span id="pmosRhythmV">50</span></label>
+        <label>Expressiveness <input type="range" id="pmosExpr" min="0" max="100" value="50" /><span id="pmosExprV">50</span></label>
+      </fieldset>
+
+      <div class="actions">
+        <button id="btnCommit" type="button">Commit score (Enter)</button>
+        <button id="btnSkip" type="button" class="ghost">Skip</button>
+      </div>
+      <p class="help">Keyboard: 1/2 replay · −/= for CMOS · Enter commit. Identities revealed only after the full session.</p>
+    </section>
+
+    <section id="summary" class="panel hidden" aria-labelledby="sum-h">
+      <h2 id="sum-h">Session summary (unblinded)</h2>
+      <div id="summaryBody"></div>
+      <button id="btnDownload" type="button">Download ledger JSONL</button>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

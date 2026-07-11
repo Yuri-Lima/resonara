@@ -1,0 +1,4 @@
+Hugging Face model: Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice
+cardData.license / README: apache-2.0 (Apache License 2.0)
+Verified via HF API cardData.license=apache-2.0 and model README front matter.
+Code license: Apache-2.0 from https://github.com/QwenLM/Qwen3-TTS/blob/main/LICENSE
