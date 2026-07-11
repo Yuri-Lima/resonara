@@ -111,7 +111,12 @@ function isPageNumberLine(line: string): boolean {
   const t = line.trim();
   if (!t) return false;
   if (/^\d{1,4}$/.test(t)) return true;
+  // "Page 3", "page 12"
   if (/^page\s+\d{1,4}$/i.test(t)) return true;
+  // "Page 1 of 99", "página 2 de 10" (common PDF footer forms)
+  if (/^page\s+\d{1,4}\s+of\s+\d{1,4}$/i.test(t)) return true;
+  if (/^p[aá]gina\s+\d{1,4}(\s+de\s+\d{1,4})?$/i.test(t)) return true;
+  // "2 of 10"
   if (/^\d{1,4}\s+of\s+\d{1,4}$/i.test(t)) return true;
   if (/^-\s*\d{1,4}\s*-$/.test(t)) return true;
   return false;

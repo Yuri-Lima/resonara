@@ -98,6 +98,8 @@ export interface TtsJobMetadata {
   resumePositionMs?: number;
   /** Directory with EPUB3 Media Overlays export (SMIL + XHTML + OPF). */
   epubOverlayDir?: string;
+  /** Packaged EPUB path (book.epub) when export completed. */
+  epubPath?: string;
 }
 
 @Entity('tts_jobs')

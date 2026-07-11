@@ -1,26 +1,36 @@
-# Phase 3 — Pause probe harness
+# Phase 3 — FIX MARATHON II: PARTIAL → WORKING
 
-## Deliverables
-- `scripts/pause-probe.js` — synthesize or measure WAV, score boundaries
-- `npm run probe:pauses` / `probe:all` / `probe:self-test`
-- Synthetic self-test: constructed silence measured ±20ms (200/500/850/1100 PASS)
-- Unit tests in `src/tts/pause/*.spec.ts` for profiles, assembly, micro-pauses
+**Status:** COMPLETE
 
-## Scoring model
-- Intentional inserts (structural + micro + sentence splits) → known-gap ms
-- silencedetect fallback for residual engine gaps
-- Profile-scaled bands for podcast (×0.8) and news (×0.65)
+| Feature | Before | After | Evidence |
+|---------|--------|-------|----------|
+| EPUB export | PARTIAL (overlay dir only) | WORKING | book.epub zip with mimetype, META-INF/container.xml, OEBPS/* |
+| Preprocessor | PARTIAL (Page N of M kept) | WORKING | cleaned="Hello world." removals pageNumbers |
+| CLI | PARTIAL (auto-start hides server-down) | WORKING | `--no-start` → exit 1 + clear message on :19998 |
+| Watch debounce | expected gap | improved | settle timer before enqueue |
 
-## Workstream ledger
-| stream | purpose | outcome |
-|---|---|---|
-| self-test | validate measurement math | 4/4 PASS ±20ms |
-| probe unit tests | profiles/assembly/micro | 30 pause tests green |
+## Runtime re-probe (pasted)
 
-## Adversarial findings
-1. Continuous silence merges pre-header+header into one region — score known inserts by type.
-2. Race on parallel `--all` overwriting pause-report.json — per-cell JSON then merge.
-3. Empty piper micro-segments throw wave.Error — insertSilence fallback.
+### Preprocessor
+```
+cleaned: "Hello world."
+removals: Page 1 of 99, Page 2 of 99 (rule=pageNumbers)
+```
 
-## Review loop
-`npm run probe:self-test` green; pause Jest suite green.
+### CLI
+```
+Resonara server not reachable on :19998 (connect ECONNREFUSED ...)
+exit=1
+```
+
+### EPUB
+```
+epubPath=.../book.epub
+unzip: mimetype, META-INF/container.xml, OEBPS/chapter.smil, chapter.xhtml, content.opf, speech.wav
+```
+
+## Review Loop v2
+
+- BUILD clean, TEST 222 pass (+2 pinning tests)
+- SELF-REVIEW B: adm-zip untyped (mirrors document-extractor); mimetype compression best-effort; CLI still auto-starts by default (opt-in --no-start)
+- Commit: fix(v2): phase 3 partial features to WORKING

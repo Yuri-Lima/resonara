@@ -199,16 +199,28 @@ export class TtsService implements OnModuleInit {
     const allVoices = this.voiceManager.listVoices();
     const countByLang = (engineId: string) => {
       const subset = allVoices.filter((v) => v.engine === engineId);
-      const en = subset.filter((v) => /en/i.test(v.language || v.id)).length;
-      const pt = subset.filter((v) => /pt/i.test(v.language || v.id)).length;
+      const en = subset.filter((v) =>
+        /en/i.test(`${v.language || ''} ${v.id}`),
+      ).length;
+      const pt = subset.filter((v) =>
+        /pt/i.test(`${v.language || ''} ${v.id}`),
+      ).length;
       return { en, 'pt-BR': pt };
     };
     return {
-      engines: engines.map((e) => ({
-        ...e,
-        languages: ['en', 'pt-BR'],
-        voiceCountByLanguage: countByLang(e.id),
-      })),
+      engines: engines.map((e) => {
+        const byLang = countByLang(e.id);
+        // Honesty: only advertise languages that have at least one voice.
+        // Kokoro is English-only today — do not list pt-BR when count is 0.
+        const languages = (['en', 'pt-BR'] as const).filter(
+          (code) => (byLang[code] || 0) > 0,
+        );
+        return {
+          ...e,
+          languages: languages.length ? [...languages] : [],
+          voiceCountByLanguage: byLang,
+        };
+      }),
       piper: this.voiceManager.getPiperPaths(),
       languages: [
         { code: 'en', name: 'English' },
@@ -1848,11 +1860,13 @@ export class TtsService implements OnModuleInit {
     job.metadata = {
       ...(job.metadata || {}),
       epubOverlayDir: outDir,
+      epubPath: paths.epubPath,
     };
     await this.jobsRepo.save(job);
     return {
       outDir,
       ...paths,
+      epubPath: paths.epubPath,
       sentenceCount: sentences.length,
       method: 'method' in sub ? sub.method : 'unknown',
     };

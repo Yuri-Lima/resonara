@@ -43,6 +43,24 @@ describe('text-preprocessor', () => {
       expect(r.cleaned).not.toMatch(/Page 3/i);
       expect(r.cleaned).not.toMatch(/2 of 10/);
     });
+
+    it('strips "Page N of M" PDF footer form', () => {
+      const input =
+        'Page 1 of 99\n\nHello world.\n\nPage 2 of 99\n\nMore text.';
+      const r = preprocessDocument(input, {
+        headers: false,
+        footnotes: false,
+        citations: 'verbatim',
+        urls: 'verbatim',
+        dashes: false,
+        allCapsHeadings: false,
+        whitespace: true,
+      });
+      expect(r.cleaned).not.toMatch(/Page \d+ of \d+/i);
+      expect(r.cleaned).toContain('Hello world');
+      expect(r.cleaned).toContain('More text');
+      expect(r.removals.some((x) => x.rule === 'pageNumbers')).toBe(true);
+    });
   });
 
   describe('headers', () => {

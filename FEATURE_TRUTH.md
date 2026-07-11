@@ -129,3 +129,23 @@ dialogue:true accepted; formatter unit suite green in fleet
 3. **CLI** — distinguish server-down vs auto-start; non-zero exit + clear message when `--no-start` or RESONARA_NO_AUTOSTART
 4. **Engines honesty** — Kokoro languages list only those with voices
 
+
+
+## Post-fix verdicts (Phases 2–3)
+
+| # | Feature | Final verdict | Decision |
+|---|---------|---------------|----------|
+| 1 | Kokoro | WORKING | KEEP |
+| 2 | Whisper | WORKING | KEEP |
+| 3 | QA | WORKING | KEEP |
+| 4 | Alignment | WORKING | KEEP |
+| 5 | Library | WORKING | KEEP |
+| 6 | Feeds | WORKING | KEEP |
+| 7 | Cover | WORKING | KEEP |
+| 8 | EPUB export | **WORKING** (was PARTIAL) | KEEP |
+| 9 | Preprocessor | **WORKING** (was PARTIAL) | KEEP |
+| 10 | CLI | **WORKING** (was PARTIAL) | KEEP |
+| 11 | Watch | WORKING (+debounce) | KEEP |
+| 12 | pt-BR | WORKING | KEEP |
+
+All 12 KEEP features probe-verified WORKING. Zero DESCOPE.
