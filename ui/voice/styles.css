@@ -238,3 +238,28 @@
 @media (prefers-reduced-motion: reduce) {
   .readalong-text .w.active.sweep { transition: none; }
 }
+
+/* v2 IA + polish */
+.voice-ia { display:flex; gap:.5rem; flex-wrap:wrap; margin:1rem 0; }
+.ia-tab { border:1px solid #3a3f4b; background:#1a1d24; color:#e8eaed; padding:.5rem 1rem; border-radius:8px; cursor:pointer; }
+.ia-tab.active, .ia-tab[aria-current="page"] { background:#3d5afe; border-color:#3d5afe; }
+.ia-tab:focus-visible { outline:2px solid #90caf9; outline-offset:2px; }
+.library-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:1rem; }
+.library-card { background:#1a1d24; border:1px solid #2a2f3a; border-radius:12px; padding:.75rem; color:#e8eaed; }
+.library-card img, .library-card .cover { width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; background:#111; }
+.continue-rail { display:flex; gap:.75rem; overflow-x:auto; margin-bottom:1rem; min-height:2rem; }
+.empty-state, .error-state, .loading-state { color:#b0b8c4; padding:1.5rem; border:1px dashed #3a3f4b; border-radius:12px; }
+.error-state { border-color:#ef5350; color:#ffcdd2; }
+.toast-host { position:fixed; right:1rem; bottom:1rem; z-index:1000; display:flex; flex-direction:column; gap:.5rem; }
+.toast { background:#263238; color:#fff; padding:.75rem 1rem; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.4); max-width:20rem; }
+.onboarding { position:fixed; inset:0; background:rgba(0,0,0,.65); display:flex; align-items:center; justify-content:center; z-index:2000; }
+.onboarding[hidden] { display:none !important; }
+.onboarding-card { background:#12151a; color:#e8eaed; padding:1.5rem; border-radius:16px; max-width:28rem; border:1px solid #3d5afe; }
+.help-dialog { border:none; border-radius:12px; padding:1.25rem; background:#12151a; color:#e8eaed; max-width:24rem; }
+.help-dialog::backdrop { background:rgba(0,0,0,.55); }
+.help-dialog kbd { background:#2a2f3a; padding:.1rem .35rem; border-radius:4px; }
+.settings-form { display:grid; gap:.75rem; max-width:28rem; }
+/* WCAG AA focus + contrast */
+.voice-page { background:#0e1116; color:#e8eaed; }
+.voice-page a { color:#90caf9; }
+.voice-page .primary { background:#3d5afe; color:#fff; }

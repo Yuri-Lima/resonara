@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<smil xmlns="http://www.w3.org/ns/SMIL" version="3.0">
+  <body>
+    <seq id="seq1" epub:textref="chapter.xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+    <par id="s0001-par">
+      <text src="chapter.xhtml#s0001"/>
+      <audio src="speech.wav" clipBegin="0.000s" clipEnd="0.757s"/>
+    </par>
+    <par id="s0002-par">
+      <text src="chapter.xhtml#s0002"/>
+      <audio src="speech.wav" clipBegin="0.757s" clipEnd="4.616s"/>
+    </par>
+    </seq>
+  </body>
+</smil>

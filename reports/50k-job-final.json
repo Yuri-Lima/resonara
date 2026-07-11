@@ -1,0 +1,118 @@
+{
+  "id": "56d25e72-a724-451f-9c77-483dbcff9ad7",
+  "status": "completed",
+  "progress": 100,
+  "wordCount": 8000,
+  "chunkCount": 39,
+  "chunksDone": 39,
+  "voice": "kokoro:af_sarah",
+  "engine": "platform",
+  "format": "wav",
+  "outputPath": "/Users/yurilima/.resonara/data/56d25e72-a724-451f-9c77-483dbcff9ad7/speech.wav",
+  "downloadPath": "/tts/jobs/56d25e72-a724-451f-9c77-483dbcff9ad7/download",
+  "error": null,
+  "metadata": {
+    "wordCount": 8000,
+    "title": "stability-8k-word-segment",
+    "dialogue": false,
+    "postProcess": {
+      "normalize": true,
+      "highpass": true,
+      "compress": false,
+      "preset": "podcast"
+    },
+    "language": "en",
+    "pauseProfile": "audiobook",
+    "pauseBands": {
+      "comma": {
+        "minMs": 150,
+        "maxMs": 250,
+        "insertMs": 200
+      },
+      "semicolon": {
+        "minMs": 200,
+        "maxMs": 300,
+        "insertMs": 250
+      },
+      "colon": {
+        "minMs": 200,
+        "maxMs": 300,
+        "insertMs": 250
+      },
+      "emDash": {
+        "minMs": 200,
+        "maxMs": 350,
+        "insertMs": 275
+      },
+      "sentence": {
+        "minMs": 350,
+        "maxMs": 600,
+        "insertMs": 450
+      },
+      "ellipsis": {
+        "minMs": 450,
+        "maxMs": 750,
+        "insertMs": 600
+      },
+      "paragraph": {
+        "minMs": 700,
+        "maxMs": 1000,
+        "insertMs": 850
+      },
+      "header": {
+        "minMs": 900,
+        "maxMs": 1300,
+        "insertMs": 1100
+      },
+      "preHeader": {
+        "minMs": 250,
+        "maxMs": 400,
+        "insertMs": 325
+      },
+      "chapter": {
+        "minMs": 1500,
+        "maxMs": 2500,
+        "insertMs": 2000
+      },
+      "dialogue": {
+        "minMs": 250,
+        "maxMs": 400,
+        "insertMs": 325
+      },
+      "dialogueAttrib": {
+        "minMs": 250,
+        "maxMs": 400,
+        "insertMs": 325
+      }
+    },
+    "chunkMap": [
+      {
+        "index": 0,
+        "startOffset": 0,
+        "endOffset": 1766,
+        "textPreview": "Paragraph about offline audiobook synthesis, pause",
+        "audioKey": "/Users/yurilima/.resonara/data/56d25e72-a724-451f-9c77-483dbcff9ad7/part-0000-trim.wav",
+        "endsAt": "sentence"
+      },
+      {
+        "index": 1,
+        "startOffset": 0,
+        "endOffset": 1766,
+        "textPreview": "Paragraph about offline audiobook synthesis, pause",
+        "audioKey": "/Users/yurilima/.resonara/data/56d25e72-a724-451f-9c77-483dbcff9ad7/part-0001-trim.wav",
+        "endsAt": "sentence"
+      },
+      {
+        "index": 2,
+        "startOffset": 0,
+        "endOffset": 1766,
+        "textPreview": "Paragraph about offline audiobook synthesis, pause",
+        "audioKey": "/Users/yurilima/.resonara/data/56d25e72-a724-451f-9c77-483dbcff9ad7/part-0002-trim.wav",
+        "endsAt": "sentence"
+      },
+      {
+        "index": 3,
+        "startOffset": 0,
+        "endOffset": 1766,
+        "textPreview": "Paragraph about offline audiobook synthesis, pause",
+     

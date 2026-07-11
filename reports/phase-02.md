@@ -1,20 +1,38 @@
-# Phase 2 — PAUSE_ARCHITECTURE.md
+# Phase 2 — FIX MARATHON I: UNREACHABLE + BROKEN
 
-Design committed in `PAUSE_ARCHITECTURE.md` before implementation code.
+**Status:** COMPLETE  
+**Finding:** After Phase 1 spot-checks, **zero features remained BROKEN or UNREACHABLE**.
 
-Covers: pause map, assembly redesign (trim/crossfade only at forced), engine layer
-(piper `--sentence_silence`, micro-segments, macOS `[[slnc]]`), config schema
-(three profiles + pt-BR overrides), risk register (seams, double-pause, RTF).
+## Kokoro settlement (definitive)
+
+| Check | Result |
+|-------|--------|
+| Selectable `engine=kokoro` | YES |
+| `/tts/engines` available | YES when models installed |
+| Audio out | YES (spot-kokoro.wav WAVE 48kHz) |
+| Formal descope | NOT needed |
+
+### Engines honesty fix
+
+Kokoro previously advertised `languages: ["en","pt-BR"]` with `pt-BR: 0`.  
+Now languages list only those with voices:
+
+```
+kokoro → ['en']  {en:10, pt-BR:0}
+piper  → ['en','pt-BR']
+platform → ['en','pt-BR']
+```
 
 ## Workstream ledger
-| stream | purpose | outcome |
-|---|---|---|
-| design doc | architecture before code | landed PAUSE_ARCHITECTURE.md |
 
-## Adversarial findings
-1. **Pre-header + header double-stack** if both applied at same join — assembly must approach-only when next is header.
-2. **Engine sentence silence + assembly sentence gap** can double-pause — delta-only insert.
-3. **SSML `<break>` must replace, never sum** with profile — explicitBreakMs path.
+| Workstream | Outcome |
+|------------|---------|
+| Severity sort of FEATURE_TRUTH | No BROKEN/UNREACHABLE rows after correction |
+| Engines honesty | landed + runtime verified |
+| Re-probe Kokoro | WORKING |
 
-## Review loop
-Doc-only phase; validated by later probe contract.
+## Review Loop v2
+
+- BUILD clean, TEST 222 pass, LINT clean on touched files
+- Runtime: engines endpoint honesty pasted above
+- Commit: fix(v2): phase 2 engines honesty + kokoro settlement

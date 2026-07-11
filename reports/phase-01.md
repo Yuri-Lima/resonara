@@ -1,57 +1,104 @@
-# Phase 1 — Reproduce the pause bug with numbers
+# Phase 1 — BASELINE + THE PROBE FLEET
 
-## Forensic evidence (verified file:line)
+**Date:** 2026-07-12  
+**Baseline:** `pre-v2` @ f1e47bcd5d845e9ea50e4c376253cfdc1ce5846e  
+**Status:** COMPLETE
 
-### 1. No `--sentence_silence` in Piper spawn args
-Pre-fix `src/tts/piper-tts.ts` ~333: args were `--model`, `--output_file`, `--json-input`, `--speaker`, `--length_scale` only.
+## 1a. Baseline (real output)
 
-### 2. `trimChunkSilence` strips leading AND trailing
-`src/ffmpeg/ffmpeg.service.ts` ~966: `silenceremove` + `areverse` twice on every chunk.
+### build
+```
+> resonara@1.0.0 build
+> nest build
+(exit 0)
+```
 
-### 3. Long-form: synthesize → trim → crossfade(d=0.02)
-Pre-fix pipeline crossfaded every join with zero inserted silence.
+### test
+```
+Test Suites: 44 passed, 44 total
+Tests:       1 skipped, 221 passed, 222 total
+Time:        6.77 s
+```
 
-### 4. Chunk map had no boundary metadata
-`TtsChunkMapEntry` lacked `endsAt` / pause map.
+### lint
+```
+✖ 8 problems (0 errors, 8 warnings)  # unused vars only
+```
 
-### 5. Dialogue path flat 0.2s only
-Only speaker-block path inserted silence (0.2s flat).
+### coverage
+```
+All files | 77.38% stmts | 56.39% branch | 66.24% funcs | 79.57% lines
+Jest: global threshold 80% not met for statements/lines
+```
 
-### 6. Em-dash normalization hopes for a pause
-Preprocessor spaces dashes; Piper does not pause on `—`.
+### npm audit
+```
+31 vulnerabilities (3 low, 21 moderate, 7 high)
+```
 
-### 7. Headers flow into body
-Markdown titles synthesized as prose with no pause treatment.
+### demo:quick
+```
+engine: platform  voiceId: platform:Albert
+words: 16  duration: 7.506583  fileSize: 1081050  RTF: 2.13
+```
 
-## Fixtures
-- `samples/pause-probes/en-punctuation.{txt,json}`
-- `samples/pause-probes/en-structure.{md,json}`
-- `samples/pause-probes/pt-br-pontuacao.{txt,json}`
-- `samples/pause-probes/pt-br-estrutura.{md,json}`
+### tag
+```
+pre-v2 → f1e47bcd5d845e9ea50e4c376253cfdc1ce5846e (LOCAL)
+```
 
-## Baseline (v1.0.0 / pre-fix pipeline)
+## 1b–d. Probe fleet
 
-Source: `reports/pause-baseline.json` + `reports/ab-baseline/`
+- Harness: `scripts/probe-fleet.js` on :3848
+- 12 subagents in parallel
+- Spot-checks: Kokoro, preprocessor, pt-BR (orchestrator)
 
-| fixture | engine | conformance | para avg ms | sentence avg ms |
-|---|---|---:|---:|---:|
-| en-punctuation | piper | **28.6%** | **65** | **137** |
-| en-structure | piper | **3.6%** | **201** | **121** |
-| pt-br-pontuacao | piper | **0%** | **71** | **126** |
-| pt-br-estrutura | piper | **~4%** | **~180** | **~130** |
+### Fleet summary (corrected)
 
-**Bug proven:** paragraph/header/sentence gaps near zero after trim+crossfade. A/B WAVs archived under `reports/ab-baseline/`.
+| Feature | Corrected verdict | Decision |
+|---------|-------------------|----------|
+| Kokoro | WORKING | KEEP |
+| Whisper | WORKING (201≠fail) | KEEP |
+| QA | WORKING | KEEP |
+| Alignment | WORKING | KEEP |
+| Library | WORKING | KEEP |
+| Feeds | WORKING | KEEP |
+| Cover | WORKING | KEEP |
+| EPUB | PARTIAL | FIX |
+| Preprocessor | PARTIAL | FIX |
+| CLI | PARTIAL | FIX |
+| Watch | WORKING | KEEP |
+| pt-BR | WORKING | KEEP |
+
+Full table + evidence: `FEATURE_TRUTH.md`
 
 ## Workstream ledger
-| stream | purpose | outcome |
-|---|---|---|
-| baseline fleet (8 cells) | piper+platform × 4 fixtures | landed → pause-baseline.json |
-| A/B archive | v1.0.0 reference WAVs | landed → reports/ab-baseline/ |
 
-## Adversarial findings
-1. **Char-linear time mapping drifts after long silences** — fixed in later probe with known-gap timeline.
-2. **Markdown `#`/`---` choke engines** — speakableText strips markers.
-3. **Baseline probe could false-pass if window too wide** — tightened noise/window for baseline.
+| ID | Purpose | Outcome | Runtime |
+|----|---------|---------|---------|
+| pre-v2 | baseline pin | landed | <1s |
+| download-piper | engines/models | landed | ~4m |
+| download-whisper | STT | landed | ~3m |
+| download-kokoro | neural TTS | landed | ~2m |
+| server-3848 | probe API | landed | session |
+| probe-fleet | 12 probes | landed | 107s |
+| subagents 1–12 | parallel probes | landed | ~1–3m ea |
+| spot×3 | verification | landed | ~25s ea |
 
-## Review loop
-- Build/test deferred to phase commits; baseline scripts pure Node+ffmpeg.
+## Review Loop v2
+
+1. BUILD: clean (pre-change)
+2. TEST: 221 pass
+3. LINT: 0 errors
+4. SELF-REVIEW A: FEATURE_TRUTH evidence-linked; no code fixes in this commit
+5. SELF-REVIEW B (3 weaknesses):
+   - Probe harness treated 201 as failure → documented, not product bug
+   - Concurrent fleet load caused one ECONNRESET → Phase 4 reliability
+   - EPUB returns overlay dir not zip → Phase 2/3 fix queue
+6. RUNTIME SMOKE: demo:quick + 3 spot-checks pasted above
+7. This report + FEATURE_TRUTH.md
+8. COMMIT: chore(v2): phase 1 baseline + feature-truth audit
+
+## Process note
+
+Stale server on :3847 pointed at `trace-swe22-…` — probes deliberately used :3848 with this workspace's piper/kokoro/whisper paths.

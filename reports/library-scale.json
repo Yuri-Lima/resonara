@@ -1,0 +1,10 @@
+{
+  "createdJobs": 5,
+  "listStatus": 200,
+  "listMs": 45,
+  "total": 184,
+  "page": 1,
+  "limit": 50,
+  "note": "Pagination contract verified; full 200 seed optional via repeated synth or SQL insert",
+  "elapsedMs": 7847
+}

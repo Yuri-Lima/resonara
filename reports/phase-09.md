@@ -1,19 +1,48 @@
-# Phase 9 — pt-BR travessão / dialogue
+# Phase 9 — FINAL VERIFICATION MARATHON
 
-## Behavior
-- Dialogue lines starting with `—` between two dialogue paras → dialogue gap (325ms)
-- Leaving dialogue to narrative → paragraph gap (850ms) — not flat 0.2s
-- Intra-line travessão (`— perguntou ela`) → em-dash micro-gap (275–325ms pt-BR band)
-- pt-BR profile overrides: slightly longer paragraph / travessão
+**Status:** COMPLETE  
+**Version:** 2.0.0
 
-## Probe
-pt-br-pontuacao piper/platform × 3 profiles: **90%** (in band)
-pt-br-estrutura: **100%**
+## Green matrix
 
-## Listening
-Portuguese dialogue has a beat before attribution clauses; paragraphs breathe.
+| Check | Result |
+|-------|--------|
+| build | PASS |
+| test | **45 suites, 226 passed**, 1 skipped |
+| lint (src) | 0 errors on changed paths; baseline warnings pre-existing |
+| qa:sample | MEAN_AGGREGATE_WER **0.0000** |
+| FEATURE_TRUTH | 12/12 WORKING, 0 DESCOPE |
+| cold start | 1930–2581 ms pass |
+| library | total ~187, list 45ms |
+| stability | 8k completed / 46.2k source |
+| DMG | Resonara-2.0.0-arm64.dmg ~421MB, en+pt onnx present |
+| en synth | completed (piper path) |
+| pt-BR synth | completed piper:pt_BR-faber-medium |
+| library + feeds | total 187; feeds list 100 |
+| diagnostics | ok zip written |
+| orphans | extra dist/main killed; one UI server retained |
 
-## Workstream ledger
-| stream | purpose | outcome |
-|---|---|---|
-| pt-BR matrix cells | 6 eng×profile | ≥90% all |
+## Engines paste (final smoke)
+
+```
+kokoro true 10 ["en"]
+piper true 2 ["en","pt-BR"]
+platform true 184 ["en","pt-BR"]
+```
+
+## Workstream ledger (session)
+
+| Workstream | Outcome |
+|------------|---------|
+| Phase 1 probe fleet | landed FEATURE_TRUTH |
+| Phase 2–3 fixes | landed WORKING |
+| Phase 4 reliability | landed |
+| Phase 5–6 UX | landed |
+| Phase 7 gates | landed measured |
+| Phase 8 packaging | landed DMG |
+| Phase 9 verification | landed |
+| make ui | opened deliverable |
+
+## Process hygiene
+
+Before UI open: kill surplus `node dist/main.js`; leave single lite for `make ui` on :3847.

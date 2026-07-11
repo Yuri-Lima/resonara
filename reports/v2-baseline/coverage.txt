@@ -1,0 +1,80 @@
+
+> resonara@1.0.0 test:cov
+> jest --coverage
+
+PASS src/tts/pause/assemble-with-pauses.spec.ts
+PASS src/tts/pause/pause-profiles.spec.ts
+PASS src/tts/text-preprocessor.spec.ts
+PASS src/stt/whisper.service.spec.ts
+PASS src/ffmpeg/concurrency.spec.ts
+PASS src/ffmpeg/tts-audio.spec.ts
+PASS src/tts/ssml-parser.spec.ts
+PASS src/storage/storage.service.spec.ts
+PASS src/tts/text-chunker.spec.ts
+PASS src/tts/pause/boundary-detect.spec.ts
+PASS src/tts/pause/pause-regression.spec.ts
+PASS src/ffmpeg/resolve-ffmpeg.spec.ts
+PASS src/tts/model-manager.spec.ts
+PASS src/tts/dialogue-parser.spec.ts
+PASS src/tts/qa/synthesis-qa.service.spec.ts
+PASS src/tts/language/language-detector.spec.ts
+PASS src/tts/language/pt-br.formatter.spec.ts
+PASS src/common/constants.spec.ts
+PASS src/tts/document-extractor.spec.ts
+PASS src/entities/tts-job.entity.spec.ts
+PASS src/tts/qa/wer.spec.ts
+PASS src/tts/feeds/podcast-feed.spec.ts
+PASS src/tts/piper-tts.spec.ts
+PASS src/tts/alignment/forced-aligner.spec.ts
+PASS src/tts/export/epub-overlay-exporter.spec.ts
+PASS src/tts/cover/cover-art.spec.ts
+PASS src/gateway/jobs.gateway.spec.ts
+PASS src/tts/qa/deliberate-break.spec.ts
+PASS src/tts/pause/micro-pauses.spec.ts
+PASS src/tts/timestamp-aligner.spec.ts
+PASS src/tts/language/language-registry.spec.ts
+PASS src/common/magic-bytes.spec.ts
+PASS src/tts/pronunciation.service.spec.ts
+PASS src/config/configuration.spec.ts
+PASS src/jobs/jobs.service.spec.ts
+PASS src/piano/piano.service.spec.ts
+PASS src/tts/tts.service.spec.ts
+PASS src/tracks/tracks.service.spec.ts
+PASS src/queue/queue.service.spec.ts
+PASS src/tts/platform-tts.spec.ts
+PASS src/tts/tts.controller.spec.ts
+PASS src/ffmpeg/ffmpeg.service.spec.ts
+PASS src/health/health.controller.spec.ts
+PASS src/tts/voice-manager.spec.ts (5.918 s)
+---------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------------------------
+File                       | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                                                                               
+---------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------------------------
+All files                  |   77.38 |    56.39 |   66.24 |   79.57 |                                                                                                                 
+ common                    |     100 |      100 |     100 |     100 |                                                                                                                 
+  constants.ts             |     100 |      100 |     100 |     100 |                                                                                                                 
+ config                    |     100 |      100 |     100 |     100 |                                                                                                                 
+  configuration.ts         |     100 |      100 |     100 |     100 |                                                                                                                 
+ entities                  |     100 |      100 |     100 |     100 |                                                                                                                 
+  pronunciation.entity.ts  |     100 |      100 |     100 |     100 |                                                                                                                 
+  tts-job.entity.ts        |     100 |      100 |     100 |     100 |                                                                                                                 
+ gateway                   |   78.94 |      100 |    62.5 |   76.47 |                                                                                                                 
+  jobs.gateway.ts          |   78.94 |      100 |    62.5 |   76.47 | 22,31,60-73                                                                                                     
+ health                    |   76.08 |    54.05 |     100 |   78.04 |                                                                                                                 
+  health.controller.ts     |   76.08 |    54.05 |     100 |   78.04 | 32-33,37-49                                                                                                     
+ jobs                      |     100 |      100 |     100 |     100 |                                                                                                                 
+  jobs.service.ts          |     100 |      100 |     100 |     100 |                                                                                                                 
+ tts                       |    75.4 |    51.26 |   64.78 |   77.94 |                                                                                                                 
+  pronunciation.service.ts |   79.41 |    54.43 |      80 |   88.37 | 98,115,148,212,232-241                                                                                          
+  ssml-parser.ts           |   79.43 |    60.52 |   79.16 |   81.63 | 78,105,111-114,140,151,155,159,170,184-185,194-198,204-206                                                      
+  text-chunker.ts          |    80.2 |    63.39 |   87.09 |   82.37 | 57,105,153,199,268-269,367-369,392-403,419-422,462,482,490,515-521,536-561,600,630-633                          
+  tts.controller.ts        |   65.45 |    18.64 |   46.15 |   66.25 | 202-205,251-254,264-300,334,343-344,353-361,366,371-372,384,389,394,399,404,409-429,434,439,453-459,467-481,541 
+  voice-manager.ts         |   71.01 |    47.61 |   48.48 |    73.6 | 67-68,100,126,132,139,201-215,224-225,231-232,239-241,247,270,280,296-303,322,355-356                           
+---------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------------------------------
+Jest: "global" coverage threshold for statements (80%) not met: 77.38%
+Jest: "global" coverage threshold for lines (80%) not met: 79.57%
+
+Test Suites: 44 passed, 44 total
+Tests:       1 skipped, 221 passed, 222 total
+Snapshots:   0 total
+Time:        6.446 s, estimated 7 s
+Ran all test suites.

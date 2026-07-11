@@ -60,5 +60,21 @@ describe('epub-overlay-exporter', () => {
     });
     expect(fs.existsSync(r.smilPath)).toBe(true);
     expect(fs.existsSync(r.opfPath)).toBe(true);
+    expect(fs.existsSync(r.epubPath)).toBe(true);
+    expect(fs.existsSync(r.containerPath)).toBe(true);
+    expect(fs.existsSync(path.join(dir, 'mimetype'))).toBe(true);
+    expect(fs.readFileSync(path.join(dir, 'mimetype'), 'utf8')).toBe(
+      'application/epub+zip',
+    );
+    // Structural zip check via adm-zip (CJS package)
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+    const AdmZip = require('adm-zip') as new (p: string) => {
+      getEntries(): { entryName: string }[];
+    };
+    const zip = new AdmZip(r.epubPath);
+    const names = zip.getEntries().map((e: { entryName: string }) => e.entryName);
+    expect(names).toContain('mimetype');
+    expect(names.some((n: string) => n.includes('container.xml'))).toBe(true);
+    expect(names.some((n: string) => n.includes('content.opf'))).toBe(true);
   });
 });

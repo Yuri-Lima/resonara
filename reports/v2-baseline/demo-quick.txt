@@ -1,0 +1,24 @@
+
+> resonara@1.0.0 demo:quick
+> node scripts/demo/run-demo.js quick-sentence
+
+Waiting for server on http://127.0.0.1:3855…
+Health OK {"status":"ok","product":"Resonara","mode":"lite","tagline":"Shape sound. Speak the long form. Play freely.","checks":{"database":"ok","queue":"inline","storage":"filesystem","ffmpeg":"ok","tts":"ok",
+Demo: quick-sentence lang=en
+--- demo stats ---
+{
+  "name": "quick-sentence",
+  "language": "en",
+  "jobId": "8f2dd652-b4e5-42a4-ac78-1d8a00b1b5c5",
+  "engine": "platform",
+  "voiceId": "platform:Albert",
+  "words": 16,
+  "chars": 92,
+  "elapsedMs": 3528,
+  "charsPerSecond": 26.077097505668934,
+  "wordsPerSecond": 4.535147392290249,
+  "fileSize": 1081050,
+  "duration": 7.506583,
+  "output": "/private/tmp/trace-swe23-20260712-000916/demo-output/quick-sentence.wav",
+  "realTimeFactor": 2.1277162698412697
+}

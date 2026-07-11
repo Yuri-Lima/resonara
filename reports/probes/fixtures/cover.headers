@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS
+Access-Control-Allow-Headers: Content-Type, Accept, Range
+Access-Control-Expose-Headers: Content-Length, Content-Range, Accept-Ranges
+Content-Type: image/svg+xml
+Date: Sat, 11 Jul 2026 22:15:42 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked
+

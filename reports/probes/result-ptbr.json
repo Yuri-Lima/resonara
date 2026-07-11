@@ -1,0 +1,8 @@
+{
+  "feature": "pt-BR pipeline",
+  "verdict": "WORKING",
+  "gaps": [],
+  "fixEstimate": "S",
+  "evidence": "synth ok=true id=bc017e50-70fd-46ec-95dc-94c05603c2ca engine=piper voice=piper:pt_BR-faber-medium\ndownload bytes=555822 voice=piper:pt_BR-faber-medium engine=piper\nformatter unit:\nPASS src/tts/language/pt-br.formatter.spec.ts\n\nTest Suites: 1 passed, 1 total\nTests:       5 passed, 5 total\nSnapshots:   0 total\nTime:        0.864 s, estimated 1 s\n\ndialogue unit:\nPASS src/tts/dialogue-parser.spec.ts\n\nTest Suites: 1 passed, 1 total\nTests:       7 passed, 7 total\nSnapshots:   0 total\nTime:        0.881 s, estimated 1 s\n",
+  "runtimeMs": 5253
+}

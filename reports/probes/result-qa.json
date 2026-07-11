@@ -1,0 +1,8 @@
+{
+  "feature": "QA loop",
+  "verdict": "WORKING",
+  "gaps": [],
+  "fixEstimate": "S",
+  "evidence": "npm run qa:sample:\n{\n  \"name\": \"quick-sentence\",\n  \"jobId\": \"2cc4b642-b7c3-40ec-ae55-39b9159845e6\",\n  \"elapsedMs\": 2771,\n  \"aggregateWer\": 0,\n  \"failedCount\": 0,\n  \"sampledCount\": 1,\n  \"chunks\": [\n    {\n      \"chunkIndex\": 0,\n      \"wer\": 0,\n      \"transcript\": \"The quick brown fox jumped gracefully over the lazy sleeping dog near the old stone bridge.\",\n      \"missing\": [],\n      \"inserted\": [],\n      \"referenceTokens\": 16,\n      \"qaFailed\": false,\n      \"retried\": false\n    }\n  ],\n  \"truncated\": false\n}\nWrote /private/tmp/trace-swe23-20260712-000916/demo-output/qa-report.json\nWrote /private/tmp/trace-swe23-20260712-000916/demo-output/qa-report.md\nMEAN_AGGREGATE_WER 0.0000\nMEAN_PROSE_WER 0.0000\n\nsynth qa=full ok=true id=16711aa6-5410-4d98-a390-945dcb8a45c5\nGET /tts/jobs/16711aa6-5410-4d98-a390-945dcb8a45c5/qa → 200\n{\n  \"mode\": \"full\",\n  \"aggregateWer\": 0,\n  \"failedCount\": 0,\n  \"sampledCount\": 1,\n  \"threshold\": 0.1,\n  \"chunks\": [\n    {\n      \"chunkIndex\": 0,\n      \"wer\": 0,\n      \"transcript\": \"Quality assurance probe sentence for word error rate measurement.\",\n      \"missing\": [],\n      \"inserted\": [],\n      \"referenceTokens\": 9,\n      \"qaFailed\": false,\n      \"retried\": false\n    }\n  ]\n}",
+  "runtimeMs": 14298
+}

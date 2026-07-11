@@ -1,0 +1,98 @@
+{
+  "at": "2026-07-11T22:16:38.444Z",
+  "port": 3848,
+  "results": [
+    {
+      "feature": "Kokoro engine",
+      "verdict": "WORKING",
+      "fixEstimate": "S",
+      "gaps": [],
+      "runtimeMs": 31383
+    },
+    {
+      "feature": "Whisper STT",
+      "verdict": "BROKEN",
+      "fixEstimate": "M",
+      "gaps": [
+        "{\"text\":\"The quick brown fox jumps over the lazy dog.\",\"segments\":[{\"text\":\"The quick brown fox jumps over the lazy dog.\",\"startMs\":0,\"endMs\":2680,\"words\":[{\"word\":\"The\",\"startMs\":0,\"endMs\":160},{\"word\":\"quick\",\"startMs\":160,\"endMs\":380},{\"word\":\"brown\",\"startMs\":380,\"endMs\":740},{\"word\":\"fox\",\"startMs\":740,\"endMs\":1200},{\"word\":\"jumps\",\"startMs\":1200,\"endMs\":1620},{\"word\":\"over\",\"startMs\":1620,\"endMs\":1900},{\"word\":\"the\",\"startMs\":1900,\"endMs\":2000},{\"word\":\"lazy\",\"startMs\":2000,\"endMs\":2240},{"
+      ],
+      "runtimeMs": 11374
+    },
+    {
+      "feature": "QA loop",
+      "verdict": "WORKING",
+      "fixEstimate": "S",
+      "gaps": [],
+      "runtimeMs": 14298
+    },
+    {
+      "feature": "Forced alignment",
+      "verdict": "WORKING",
+      "fixEstimate": "S",
+      "gaps": [],
+      "runtimeMs": 4295
+    },
+    {
+      "feature": "Library",
+      "verdict": "WORKING",
+      "fixEstimate": "S",
+      "gaps": [],
+      "runtimeMs": 3035
+    },
+    {
+      "feature": "Podcast feeds",
+      "verdict": "WORKING",
+      "fixEstimate": "S",
+      "gaps": [],
+      "runtimeMs": 2995
+    },
+    {
+      "feature": "Cover art",
+      "verdict": "WORKING",
+      "fixEstimate": "S",
+      "gaps": [],
+      "runtimeMs": 3052
+    },
+    {
+      "feature": "EPUB export",
+      "verdict": "PARTIAL",
+      "fixEstimate": "M",
+      "gaps": [
+        "Response bytes but not valid epub zip"
+      ],
+      "runtimeMs": 4211
+    },
+    {
+      "feature": "Text preprocessor",
+      "verdict": "BROKEN",
+      "fixEstimate": "M",
+      "gaps": [
+        "preview status 201"
+      ],
+      "runtimeMs": 2
+    },
+    {
+      "feature": "CLI",
+      "verdict": "PARTIAL",
+      "fixEstimate": "S",
+      "gaps": [
+        "CLI may auto-start server on dead port; error-handling for true server-down unclear"
+      ],
+      "runtimeMs": 13983
+    },
+    {
+      "feature": "Watch folder",
+      "verdict": "WORKING",
+      "fixEstimate": "S",
+      "gaps": [],
+      "runtimeMs": 5813
+    },
+    {
+      "feature": "pt-BR pipeline",
+      "verdict": "WORKING",
+      "fixEstimate": "S",
+      "gaps": [],
+      "runtimeMs": 5253
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "feature": "Text preprocessor",
+  "verdict": "BROKEN",
+  "gaps": [
+    "preview status 201"
+  ],
+  "fixEstimate": "M",
+  "evidence": "POST preprocess-preview → 201\n{\n  \"original\": \"Page 1 of 99\\n\\nCHAPTER ONE\\n\\nHello   world...  see https://example.com for more.\\n\\n[1] footnote garbage\\n\\n\\\"Smart quotes\\\" and — dashes.\\n\\nPage 2 of 99\\n\",\n  \"cleaned\": \"Page 1 of 99\\n\\nChapter One\\n\\nHello world… see example dot com for more.\\n\\nfootnote garbage\\n\\n\\\"Smart quotes\\\" and — dashes.\\n\\nPage 2 of 99\",\n  \"removals\": [\n    {\n      \"rule\": \"allCapsHeadings\",\n      \"text\": \"CHAPTER ONE\",\n      \"position\": 14\n    },\n    {\n      \"rule\": \"footnotes\",\n      \"text\": \"[1]\",\n      \"position\": 80\n    },\n    {\n      \"rule\": \"urls\",\n      \"text\": \"https://example.com\",\n      \"position\": 49\n    }\n  ]\n}\nraw-paste path → 201\n{\n  \"original\": \"Page 1 of 99\\n\\nCHAPTER ONE\\n\\nHello   world...  see https://example.com for more.\\n\\n[1] footnote garbage\\n\\n\\\"Smart quotes\\\" and — dashes.\\n\\nPage 2 of 99\\n\",\n  \"cleaned\": \"Page 1 of 99\\n\\nCHAPTER ONE\\n\\nHello   world...  see https://example.com for more.\\n\\n[1] footnote garbage\\n\\n\\\"Smart quotes\\\" and — dashes.\\n\\nPage 2 of 99\\n\",\n  \"removals\": []\n}\nrulesApplied=undefined",
+  "runtimeMs": 2
+}

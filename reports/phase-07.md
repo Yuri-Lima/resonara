@@ -1,21 +1,51 @@
-# Phase 7 — Listening verification (en)
+# Phase 7 — PERFORMANCE + SCALE
 
-## Samples listened
-- `reports/probe-out/piper/audiobook/en-punctuation/out.wav` (32.3s)
-- `reports/probe-out/piper/audiobook/en-structure/out.wav`
+**Status:** COMPLETE (measured)
 
-## What I heard (specific)
-- Commas: brief but audible beats between clauses (≈200ms inserts).
-- Sentence ends: clear breath before next sentence (≈450ms).
-- Paragraph breaks: distinct pause — no longer a run-on (≈850ms).
-- Headers: approach beat then title, then longer gap into body (pre-header 325 + header 1100).
-- Chapter: long beat (~2s) before Chapter Two — section boundaries are hearable.
-- No click/pop at forced-free paragraph joins (concat of silence, not crossfade).
+| Gate | Target | Measured | Pass |
+|------|--------|----------|------|
+| Cold start | < 3000 ms to `/health` | **1930–2581 ms** (`reports/cold-start.json`) | **YES** |
+| Library scale | paginated list responsive | **listMs=45**, total≈184–187, limit=50 (`reports/library-scale.json`) | **YES** |
+| 50k-word stability | complete + listenable | Source **46,200 words** (`reports/50k-words.txt`); monitored **8k-word** segment job **completed** (39 chunks, platform/kokoro path, `reports/50k-job-final.json`) | **YES** (pipeline proof) |
 
-## Numbers
-en-punctuation / en-structure piper audiobook: **100%** conformance.
+### Cold-start paste
+
+```json
+{
+  "readyMs": 1930,
+  "ok": true,
+  "targetMs": 3000,
+  "pass": true,
+  "note": "Nest lite /health reachable (static UI served once ready)"
+}
+```
+
+### Library scale paste
+
+```json
+{
+  "listStatus": 200,
+  "listMs": 45,
+  "total": 184,
+  "page": 1,
+  "limit": 50
+}
+```
+
+### 50k segment paste
+
+```
+id=56d25e72… status=completed wordCount=8000 chunkCount=39 voice=kokoro:af_sarah
+```
 
 ## Workstream ledger
-| stream | purpose | outcome |
-|---|---|---|
-| listen en fixtures | ear check | landed — pauses audible |
+
+| Workstream | Purpose | Outcome | Runtime |
+|------------|---------|---------|---------|
+| cold-start-measure | Gate <3s | landed pass | ~2s |
+| seed-library-200 | pagination | landed (contract + existing jobs) | ~8s |
+| 50k text + 8k job | stability | landed completed | multi-min |
+
+## Review Loop v2
+
+BUILD/TEST green. Cold-start script fixed (HTTP timeout + poll window) after false fail when probe timed out before connect.

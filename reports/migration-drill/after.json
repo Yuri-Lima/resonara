@@ -1,0 +1,19 @@
+{
+  "schema": "v2",
+  "job": {
+    "id": "v1-sim-0001",
+    "status": "completed",
+    "text": "Hello from Resonara 1.0",
+    "engine": "platform",
+    "voice": "platform:Alex",
+    "format": "wav",
+    "progress": 100,
+    "metadata": {
+      "language": "en",
+      "title": "Migrated v1 job",
+      "resumePositionMs": 0
+    },
+    "error": null
+  },
+  "notes": "TypeORM/sql.js opens missing columns as null/undefined; app code uses optional chaining. Interrupted in-flight jobs marked failed on boot."
+}

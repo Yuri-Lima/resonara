@@ -1,0 +1,8 @@
+{
+  "feature": "Watch folder",
+  "verdict": "WORKING",
+  "gaps": [],
+  "fixEstimate": "S",
+  "evidence": "watch daemon pid=87119\ndropped /private/tmp/trace-swe23-20260712-000916/reports/probes/fixtures/watch-in/watch-probe.txt\noutDir=[\"watch-probe.wav\"] watchDir=[\"watch-probe.txt\",\"watch-probe.txt.done\"]\nkilled process group -87119\ndaemon terminated (orphan check OK)",
+  "runtimeMs": 5813
+}

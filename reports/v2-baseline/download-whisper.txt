@@ -1,0 +1,14 @@
+Creating tools/whisper-venv…
+Installing faster-whisper…
+transcribe helper present: /private/tmp/trace-swe23-20260712-000916/tools/whisper/transcribe.py
+Downloading Whisper model: tiny → /private/tmp/trace-swe23-20260712-000916/tools/whisper/models
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+loaded tiny
+Model tiny ready
+Downloading Whisper model: base → /private/tmp/trace-swe23-20260712-000916/tools/whisper/models
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+loaded base
+Model base ready
+Done. Python: /private/tmp/trace-swe23-20260712-000916/tools/whisper-venv/bin/python
+Models dir: /private/tmp/trace-swe23-20260712-000916/tools/whisper/models
+Transcribe helper: /private/tmp/trace-swe23-20260712-000916/tools/whisper/transcribe.py

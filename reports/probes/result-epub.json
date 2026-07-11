@@ -1,0 +1,10 @@
+{
+  "feature": "EPUB export",
+  "verdict": "PARTIAL",
+  "gaps": [
+    "Response bytes but not valid epub zip"
+  ],
+  "fixEstimate": "M",
+  "evidence": "synth ok=true id=8b5e6b71-df16-4632-aef0-6d5a938424d0\nPOST export/epub-overlay → 201\n{\n  \"outDir\": \"/Users/yurilima/.resonara/data/8b5e6b71-df16-4632-aef0-6d5a938424d0/epub-overlay\",\n  \"smilPath\": \"/Users/yurilima/.resonara/data/8b5e6b71-df16-4632-aef0-6d5a938424d0/epub-overlay/chapter.smil\",\n  \"xhtmlPath\": \"/Users/yurilima/.resonara/data/8b5e6b71-df16-4632-aef0-6d5a938424d0/epub-overlay/chapter.xhtml\",\n  \"opfPath\": \"/Users/yurilima/.resonara/data/8b5e6b71-df16-4632-aef0-6d5a938424d0/epub-overlay/content.opf\",\n  \"sentenceCount\": 2,\n  \"method\": \"cached\"\n}\nunzip:\nArchive:  /private/tmp/trace-swe23-20260712-000916/reports/probes/fixtures/probe.epub\n  End-of-central-directory signature not found.  Either this file is not\n  a zipfile, or it constitutes one disk of a multi-part archive.  In the\n  latter case the central directory and zipfile comment will be found on\n  the last disk(s) of this archive.\nunzip:  cannot find zipfile directory in one of /private/tmp/trace-swe23-20260712-000916/reports/probes/fixtures/probe.epub or\n        /private/tmp/trace-swe23-20260712-000916/reports/probes/fixtures/probe.epub.zip, and cannot find /private/tmp/trace-swe23-20260712-000916/reports/probes/fixtures/probe.epub.ZIP, period.\n",
+  "runtimeMs": 4211
+}

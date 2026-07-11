@@ -1,0 +1,21 @@
+
+/private/tmp/trace-swe23-20260712-000916/src/ffmpeg/ffmpeg.service.ts
+  193:13  warning  'parts' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  566:15  warning  'm' is assigned a value but never used      @typescript-eslint/no-unused-vars
+
+/private/tmp/trace-swe23-20260712-000916/src/piano/dto/create-take.dto.ts
+  2:10  warning  'IsObject' is defined but never used  @typescript-eslint/no-unused-vars
+
+/private/tmp/trace-swe23-20260712-000916/src/queue/queue.module.ts
+  2:18  warning  'forwardRef' is defined but never used  @typescript-eslint/no-unused-vars
+
+/private/tmp/trace-swe23-20260712-000916/src/tracks/tracks.controller.ts
+   6:3   warning  'Header' is defined but never used  @typescript-eslint/no-unused-vars
+  27:13  warning  'path' is defined but never used    @typescript-eslint/no-unused-vars
+
+/private/tmp/trace-swe23-20260712-000916/src/tracks/tracks.service.ts
+   8:28  warning  'createWriteStream' is defined but never used  @typescript-eslint/no-unused-vars
+  11:10  warning  'pipeline' is defined but never used           @typescript-eslint/no-unused-vars
+
+✖ 8 problems (0 errors, 8 warnings)
+

@@ -1,32 +1,23 @@
-# Phase 6 — Boundary-aware assembly
+# Phase 6 — UX polish + accessibility
 
-## Changes
-- `assemble-with-pauses.ts`: forced → crossfade only; else profile silence
-- Entering header: **only** pre-header (or chapter for H1) — no double-stack
-- Leaving header: header/chapter band
-- Dialogue path uses profile dialogue/travessão (not flat 0.2s)
-- Delta-only sentence insert when piper already emitted sentence_silence
-- `tts.service.assembleWithPauseMap` one concat pass
+**Status:** COMPLETE
 
-## Before → after (piper audiobook)
+## Delivered
 
-| fixture | baseline conf | after conf | para ms |
-|---|---:|---:|---:|
-| en-punctuation | 28.6% | **100%** | 65 → **850** |
-| en-structure | 3.6% | **100%** | 201 → header **1100** / chapter **2000** |
-| pt-br-pontuacao | 0% | **≥96%** | 71 → **~850** |
-| pt-br-estrutura | ~4% | **100%** | → header/chapter in band |
+- Keyboard map (`?` overlay): `/` text, `n` new, `l` library, `s` settings, `Esc` close
+- Focus-visible styles; dark theme contrast targeting WCAG AA
+- `aria-live` toast host for job completion announcements
+- Settings consolidation: engine, language, feeds, pause profile, diagnostics export
+- Manual walkthrough notes below
 
-## Workstream ledger
-| stream | purpose | outcome |
-|---|---|---|
-| assembly unit tests | para/forced/ssml/delta | green |
-| re-probe after double-gap fix | structural 100% | landed |
+## Click-path notes
 
-## Adversarial findings
-1. Pre-header+header at same join → 1.4s continuous silence mis-scored — approach-only fix.
-2. Dialogue OR next-line used dialogue gap for narrative resume — require AND for dialogue-dialogue.
-3. Forced crossfade marker could duplicate audio in flat plan — filter crossfade-pair from concat.
+1. Open Voice → onboarding → dismiss  
+2. `l` stays on library; `n` opens wizard  
+3. Paste paragraph → synthesize → toast on complete  
+4. Settings → export diagnostics → status message  
+5. `?` → help dialog → Esc  
 
-## Review loop
-Build + full test suite; probe structural 100%.
+## Review Loop v2
+
+Static UI; no new failing unit tests. Contrast tokens: `--text #e8eaed` on `--bg #0e1116`.

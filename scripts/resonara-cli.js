@@ -17,6 +17,11 @@ function usage() {
   resonara engines
   resonara jobs [--status S]
   resonara watch <dir> [--out DIR] [--engine Y] [--voice X]
+
+Options:
+  --no-start          Do not auto-start a lite server if health check fails
+  RESONARA_NO_AUTOSTART=1  Same as --no-start (env)
+  RESONARA_PORT / PORT     Server port (default 3847)
 `);
 }
 
@@ -69,12 +74,28 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-async function ensureServer() {
+async function ensureServer(opts = {}) {
+  const noAutostart =
+    opts.noStart === true ||
+    process.env.RESONARA_NO_AUTOSTART === '1' ||
+    process.env.RESONARA_NO_AUTOSTART === 'true';
   try {
     const h = await request('GET', '/health');
     if (h.status === 200) return;
-  } catch {
-    /* */
+  } catch (e) {
+    if (noAutostart) {
+      console.error(
+        `Resonara server not reachable on :${PORT} (${e.message || 'connection refused'}). ` +
+          `Start it with: RESONARA_LITE=1 PORT=${PORT} npm run start:lite`,
+      );
+      process.exit(1);
+    }
+  }
+  if (noAutostart) {
+    console.error(
+      `Resonara server not healthy on :${PORT}. Start it manually or omit --no-start.`,
+    );
+    process.exit(1);
   }
   const dist = path.join(ROOT, 'dist', 'main.js');
   if (!fs.existsSync(dist)) {
@@ -109,7 +130,9 @@ async function ensureServer() {
       /* */
     }
   }
-  console.error('Server failed to start');
+  console.error(
+    `Server failed to start on :${PORT}. Check logs or run: RESONARA_LITE=1 PORT=${PORT} node dist/main.js`,
+  );
   process.exit(1);
 }
 
@@ -256,16 +279,34 @@ async function cmdWatch(args) {
     busy = false;
   }
 
+  /** Debounce partial writes: wait until size is stable for settleMs. */
+  const pending = new Map();
+  const settleMs = Number(args.debounce || args['debounce-ms'] || 800);
+
   function enqueue(f) {
-    if (seen.has(f)) return;
     if (!/\.(txt|md|epub|docx)$/i.test(f)) return;
-    if (f.endsWith('.done') || f.endsWith('.failed')) return;
-    seen.add(f);
-    queue.push(f);
-    processQueue();
+    if (f.endsWith('.done') || f.endsWith('.failed') || f.endsWith('.processing')) return;
+    if (pending.has(f)) clearTimeout(pending.get(f));
+    pending.set(
+      f,
+      setTimeout(() => {
+        pending.delete(f);
+        try {
+          const st = fs.statSync(f);
+          if (!st.isFile() || st.size === 0) return;
+        } catch {
+          return;
+        }
+        if (seen.has(f)) return;
+        seen.add(f);
+        fs.writeFileSync(f + '.processing', `queued_at=${new Date().toISOString()}\n`);
+        queue.push(f);
+        processQueue();
+      }, settleMs),
+    );
   }
 
-  console.log('[watch] watching', dir, '→', outDir);
+  console.log('[watch] watching', dir, '→', outDir, `(debounce ${settleMs}ms)`);
   for (const name of fs.readdirSync(dir)) {
     enqueue(path.join(dir, name));
   }
@@ -283,7 +324,8 @@ async function main() {
   }
   const cmd = argv[0];
   const args = parseArgs(argv.slice(1));
-  await ensureServer();
+  const noStart = args['no-start'] === true || args.noStart === true;
+  await ensureServer({ noStart });
   if (cmd === 'synth') await cmdSynth(args);
   else if (cmd === 'voices') await cmdVoices(args);
   else if (cmd === 'engines') await cmdEngines();

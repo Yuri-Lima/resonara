@@ -1,0 +1,54 @@
+
+> resonara@1.0.0 test
+> jest
+
+PASS src/tts/ssml-parser.spec.ts
+PASS src/tts/pause/pause-profiles.spec.ts
+PASS src/tts/text-chunker.spec.ts
+PASS src/tts/pause/boundary-detect.spec.ts
+PASS src/tts/text-preprocessor.spec.ts
+PASS src/tts/pause/assemble-with-pauses.spec.ts
+PASS src/tts/pause/pause-regression.spec.ts
+PASS src/tts/export/epub-overlay-exporter.spec.ts
+PASS src/stt/whisper.service.spec.ts
+PASS src/tts/qa/wer.spec.ts
+PASS src/tts/document-extractor.spec.ts
+PASS src/tts/alignment/forced-aligner.spec.ts
+PASS src/tts/qa/deliberate-break.spec.ts
+PASS src/tts/dialogue-parser.spec.ts
+PASS src/tts/piper-tts.spec.ts
+PASS src/tts/language/pt-br.formatter.spec.ts
+PASS src/tts/pause/micro-pauses.spec.ts
+PASS src/tts/language/language-detector.spec.ts
+PASS src/tts/model-manager.spec.ts
+PASS src/tts/feeds/podcast-feed.spec.ts
+PASS src/tts/timestamp-aligner.spec.ts
+PASS src/ffmpeg/tts-audio.spec.ts
+PASS src/tts/qa/synthesis-qa.service.spec.ts
+PASS src/ffmpeg/resolve-ffmpeg.spec.ts
+PASS src/common/magic-bytes.spec.ts
+PASS src/storage/storage.service.spec.ts
+PASS src/tts/language/language-registry.spec.ts
+PASS src/tts/cover/cover-art.spec.ts
+PASS src/config/configuration.spec.ts
+PASS src/common/constants.spec.ts
+PASS src/gateway/jobs.gateway.spec.ts
+PASS src/tts/pronunciation.service.spec.ts
+PASS src/entities/tts-job.entity.spec.ts
+PASS src/ffmpeg/concurrency.spec.ts
+PASS src/jobs/jobs.service.spec.ts
+PASS src/queue/queue.service.spec.ts
+PASS src/tts/tts.service.spec.ts
+PASS src/tracks/tracks.service.spec.ts
+PASS src/piano/piano.service.spec.ts
+PASS src/tts/tts.controller.spec.ts
+PASS src/tts/platform-tts.spec.ts
+PASS src/health/health.controller.spec.ts
+PASS src/ffmpeg/ffmpeg.service.spec.ts (5.191 s)
+PASS src/tts/voice-manager.spec.ts (6.282 s)
+
+Test Suites: 44 passed, 44 total
+Tests:       1 skipped, 221 passed, 222 total
+Snapshots:   0 total
+Time:        6.77 s
+Ran all test suites.
