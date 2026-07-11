@@ -1,0 +1,9 @@
+{
+  "readyMs": 1930,
+  "ok": true,
+  "targetMs": 3000,
+  "pass": true,
+  "note": "Nest lite /health reachable (static UI served once ready)",
+  "measuredAt": "2026-07-11T22:30:24.239Z",
+  "secondRunMs": 2581
+}
