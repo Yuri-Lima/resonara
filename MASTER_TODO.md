@@ -10,7 +10,7 @@ P0 → leaks → duplication → async/errors → security remainder → perform
 
 | id | sev | category | file:line | evidence-ref | fix plan | effort | status |
 |----|-----|----------|-----------|--------------|----------|--------|--------|
-| TODO-01 | P0 | security | storage.service.ts:77; storage.controller.ts:17 | findings S1; path.join probe escapes to /etc/passwd | resolve+root containment; reject `..`; unit probe | M | [ ] |
+| TODO-01 | P0 | security | storage.service.ts:77; storage.controller.ts:17 | findings S1; path.join probe escapes to /etc/passwd | resolve+root containment; reject `..`; unit probe | M | [x] fixed (fca1aa9) |
 | TODO-02 | P0 | security | platform-tts.ts:68-104 | findings S2 | EncodedCommand or env-based script; allowlist voices; unit attack test | M | [ ] |
 | TODO-03 | P0 | leak | platform-tts.ts:293-305 | findings L1/AS5 | timeout+SIGKILL+settled gate like whisper | S | [ ] |
 | TODO-04 | P0 | async | main.ts (no hooks) | findings AS1 | enableShutdownHooks; SIGTERM; child registry | M | [ ] |
