@@ -45,4 +45,16 @@ describe('ModelManager', () => {
     fs.writeFileSync(path.join(dir, 'test-voice.onnx'), 'x');
     expect(() => mgr.delete('test-voice')).toThrow(/last installed/);
   });
+
+  it('rejects path-traversal model keys (TODO-09)', () => {
+    expect(() => mgr.assertSafeModelKey('../../../etc/passwd')).toThrow(
+      /Invalid model key/,
+    );
+    expect(() => mgr.assertSafeModelKey('foo/bar')).toThrow(/Invalid model key/);
+    expect(() => mgr.delete('..%2F..%2Ftmp%2Fcanary')).toThrow();
+    expect(mgr.assertSafeModelKey('en_US-lessac-medium')).toBe(
+      'en_US-lessac-medium',
+    );
+  });
+
 });

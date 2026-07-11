@@ -196,9 +196,35 @@ export class ModelManager {
     return [...new Set([...fromVoices, ...fromFs])];
   }
 
+  /** G28 TODO-09: only safe model key basenames may touch the models dir. */
+  assertSafeModelKey(modelKey: string): string {
+    if (
+      typeof modelKey !== 'string' ||
+      !/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$/.test(modelKey)
+    ) {
+      throw new Error(`Invalid model key: ${modelKey}`);
+    }
+    if (modelKey.includes('..') || modelKey.includes('/') || modelKey.includes('\\')) {
+      throw new Error(`Invalid model key: ${modelKey}`);
+    }
+    return modelKey;
+  }
+
+  private modelPaths(modelKey: string): { onnx: string; json: string } {
+    const key = this.assertSafeModelKey(modelKey);
+    const dir = path.resolve(this.modelsDir);
+    const onnx = path.resolve(dir, `${key}.onnx`);
+    const json = onnx + '.json';
+    const prefix = dir.endsWith(path.sep) ? dir : dir + path.sep;
+    if (!onnx.startsWith(prefix) && onnx !== dir) {
+      throw new Error(`Model path escapes models dir: ${modelKey}`);
+    }
+    return { onnx, json };
+  }
+
   getModelPath(modelKey: string): string | null {
-    const p = path.join(this.modelsDir, `${modelKey}.onnx`);
-    return fs.existsSync(p) ? p : null;
+    const { onnx } = this.modelPaths(modelKey);
+    return fs.existsSync(onnx) ? onnx : null;
   }
 
   diskUsage(): { totalBytes: number; models: { key: string; bytes: number }[] } {
@@ -221,43 +247,54 @@ export class ModelManager {
     modelKey: string,
     onProgress?: (pct: number) => void,
   ): Promise<string> {
-    const entry = this.registry.find((m) => m.key === modelKey);
-    if (!entry) throw new Error(`Unknown model key: ${modelKey}`);
+    const key = this.assertSafeModelKey(modelKey);
+    const entry = this.registry.find((m) => m.key === key);
+    if (!entry) throw new Error(`Unknown model key: ${key}`);
     fs.mkdirSync(this.modelsDir, { recursive: true });
-    const onnxPath = path.join(this.modelsDir, `${modelKey}.onnx`);
-    const jsonPath = onnxPath + '.json';
-    this.downloads.set(modelKey, { progress: 0 });
+    const { onnx: onnxPath, json: jsonPath } = this.modelPaths(key);
+    this.downloads.set(key, { progress: 0 });
     try {
       await this.downloadFile(entry.onnxUrl, onnxPath, (pct) => {
-        this.downloads.set(modelKey, { progress: Math.round(pct * 0.95) });
+        this.downloads.set(key, { progress: Math.round(pct * 0.95) });
         onProgress?.(Math.round(pct * 0.95));
       });
       await this.downloadFile(entry.jsonUrl, jsonPath);
-      this.downloads.set(modelKey, { progress: 100 });
+      this.downloads.set(key, { progress: 100 });
       onProgress?.(100);
+      // G28 TODO-22: evict completed status after a short window
+      setTimeout(() => this.downloads.delete(key), 60_000).unref?.();
       return onnxPath;
     } catch (e) {
-      this.downloads.set(modelKey, {
+      this.downloads.set(key, {
         progress: 0,
         error: (e as Error).message,
       });
+      setTimeout(() => this.downloads.delete(key), 60_000).unref?.();
       throw e;
     }
   }
 
   delete(modelKey: string): void {
+    const key = this.assertSafeModelKey(modelKey);
     const installed = this.listInstalled();
-    if (installed.length <= 1 && installed.includes(modelKey)) {
+    if (installed.length <= 1 && installed.includes(key)) {
       throw new Error('Cannot delete the last installed model');
     }
-    const onnx = path.join(this.modelsDir, `${modelKey}.onnx`);
-    const json = onnx + '.json';
+    if (!installed.includes(key) && !this.registry.some((m) => m.key === key)) {
+      throw new Error(`Unknown model key: ${key}`);
+    }
+    const { onnx, json } = this.modelPaths(key);
     if (fs.existsSync(onnx)) fs.unlinkSync(onnx);
     if (fs.existsSync(json)) fs.unlinkSync(json);
+    this.downloads.delete(key);
   }
 
   downloadStatus(modelKey: string) {
-    return this.downloads.get(modelKey) || null;
+    try {
+      return this.downloads.get(this.assertSafeModelKey(modelKey)) || null;
+    } catch {
+      return null;
+    }
   }
 
   private downloadFile(

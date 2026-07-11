@@ -25,7 +25,7 @@ export class SttController {
 
   @Post('transcribe')
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 50 * 1024 * 1024 } }))
   async transcribe(@UploadedFile() file: Express.Multer.File) {
     if (!file?.buffer && !file?.path) {
       throw new BadRequestException('file is required');
@@ -33,10 +33,11 @@ export class SttController {
     if (!this.whisper.isAvailable()) {
       throw new BadRequestException(this.whisper.getVersion().detail);
     }
-    const tmp = path.join(
-      os.tmpdir(),
-      `resonara-stt-${Date.now()}${path.extname(file.originalname || '.wav') || '.wav'}`,
-    );
+    const extRaw = path.extname(file.originalname || '').toLowerCase();
+    const ext = ['.wav', '.mp3', '.m4a', '.flac', '.ogg', '.webm'].includes(extRaw)
+      ? extRaw
+      : '.wav';
+    const tmp = path.join(os.tmpdir(), `resonara-stt-${Date.now()}-${Math.random().toString(16).slice(2)}${ext}`);
     try {
       if (file.buffer) {
         await fs.writeFile(tmp, file.buffer);

@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
   Param,
   ParseUUIDPipe,
   Post,
@@ -24,7 +23,6 @@ import {
 import { diskStorage } from 'multer';
 import { Request, Response } from 'express';
 import * as os from 'os';
-import * as path from 'path';
 import { NormalizeDto } from './dto/normalize.dto';
 import { TranscodeDto } from './dto/transcode.dto';
 import { TrimDto } from './dto/trim.dto';
@@ -49,8 +47,9 @@ export class TracksController {
       storage: diskStorage({
         destination: (_req, _file, cb) =>
           cb(null, os.tmpdir()),
-        filename: (_req, file, cb) =>
-          cb(null, `up-${Date.now()}-${file.originalname}`),
+        // G28 TODO-08: never use client originalname in the filesystem path
+        filename: (_req, _file, cb) =>
+          cb(null, `up-${Date.now()}-${Math.random().toString(16).slice(2)}.bin`),
       }),
       limits: { fileSize: 2048 * 1024 * 1024 },
     }),

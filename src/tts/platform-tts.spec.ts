@@ -1,4 +1,6 @@
 import {
+  assertSafePsToken,
+  PLATFORM_TTS_TIMEOUT_MS,
   buildMacSayCommand,
   buildWindowsSpeechScript,
   detectTtsPlatform,
@@ -41,13 +43,36 @@ describe('platform TTS adapters', () => {
     });
     expect(cmd.bin).toBe('powershell.exe');
     expect(cmd.args[0]).toBe('-NoProfile');
-    expect(cmd.args).toContain('-Command');
+    // G28 TODO-02: EncodedCommand, never raw -Command with user strings
+    expect(cmd.args).toContain('-EncodedCommand');
+    expect(cmd.args).not.toContain('-Command');
     expect(cmd.script).toContain('System.Speech');
     expect(cmd.script).toContain('SpeechSynthesizer');
     expect(cmd.script).toContain('SetOutputToWaveFile');
     expect(cmd.script).toContain('Microsoft Zira Desktop');
     expect(cmd.script).toContain('C:\\data\\out.wav');
     expect(cmd.script).toContain('C:\\data\\in.txt');
+    const enc = cmd.args[cmd.args.indexOf('-EncodedCommand') + 1];
+    expect(Buffer.from(enc, 'base64').toString('utf16le')).toContain(
+      'SpeechSynthesizer',
+    );
+  });
+
+  it('rejects PowerShell voice injection payloads (TODO-02)', () => {
+    expect(() =>
+      buildWindowsSpeechScript({
+        textFile: 'C:\\data\\in.txt',
+        outPath: 'C:\\data\\out.wav',
+        voice: "'); Remove-Item -Recurse C:\\Users\\Public\\x; #",
+      }),
+    ).toThrow(/Invalid voice/i);
+    expect(() => assertSafePsToken("a';b", 'voice')).toThrow();
+    expect(() =>
+      buildWindowsSpeechScript({
+        textFile: "C:\\data\\in'; Write-Host pwned.txt",
+        outPath: 'C:\\data\\out.wav',
+      }),
+    ).toThrow(/Invalid textFile/i);
   });
 
   it('selects Windows path under win32 platform stub', () => {
@@ -66,3 +91,8 @@ describe('platform TTS adapters', () => {
     expect(st.available).toBe(true);
   });
 });
+
+  it('exports platform TTS timeout for hang protection (TODO-03)', () => {
+    expect(PLATFORM_TTS_TIMEOUT_MS).toBeGreaterThanOrEqual(30_000);
+    expect(PLATFORM_TTS_TIMEOUT_MS).toBeLessThanOrEqual(600_000);
+  });

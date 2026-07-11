@@ -65,4 +65,23 @@ describe('StorageService lite mode', () => {
     const j = await service.getJson(service.artifactBucket, 'meta.json');
     expect(j).toEqual({ a: 1 });
   });
+
+  it('rejects path traversal keys (TODO-01)', () => {
+    expect(() =>
+      service.resolveLocalPath(service.originalBucket, '../../../etc/passwd'),
+    ).toThrow(/Invalid storage key|path traversal|escapes/i);
+    expect(() =>
+      service.resolveLocalPath(service.originalBucket, 'foo/../../etc/passwd'),
+    ).toThrow(/Invalid storage key|path traversal|escapes/i);
+    expect(() =>
+      service.resolveLocalPath('..', 'x'),
+    ).toThrow(/Invalid storage bucket/i);
+  });
+
+  it('resolves safe nested keys under root', () => {
+    const p = service.resolveLocalPath(service.originalBucket, 'a/b/c.wav');
+    expect(p).toBeTruthy();
+    expect(p!.startsWith(root)).toBe(true);
+    expect(p!.includes('..')).toBe(false);
+  });
 });

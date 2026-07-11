@@ -10,9 +10,13 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
   });
+  // G28 TODO-04: drain Nest providers on SIGTERM/SIGINT
+  app.enableShutdownHooks();
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      // G28 TODO-11: reject unknown body fields
+      forbidNonWhitelisted: true,
       transform: true,
       transformOptions: { enableImplicitConversion: true },
     }),
@@ -64,12 +68,22 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
+  // G28 TODO-34: desktop/lite default to loopback unless PORT/HOST overrides
+  const port = Number(process.env.PORT || 3000);
+  const host =
+    process.env.HOST ||
+    (process.env.RESONARA_LITE === '1' || process.env.RESONARA_DESKTOP === '1'
+      ? '127.0.0.1'
+      : '0.0.0.0');
+  await app.listen(port, host);
   // eslint-disable-next-line no-console
   console.log(
-    `Resonara :${port} — Swagger /docs — Lab /ui/ — Piano /ui/piano/ — Voice /ui/voice/ — TTS dashboard /ui/deliverable/`,
+    `Resonara ${host}:${port} — Swagger /docs — Lab /ui/ — Piano /ui/piano/ — Voice /ui/voice/ — TTS dashboard /ui/deliverable/`,
   );
 }
 
-bootstrap();
+bootstrap().catch((err) => {
+  // eslint-disable-next-line no-console
+  console.error('Resonara failed to start:', err);
+  process.exit(1);
+});

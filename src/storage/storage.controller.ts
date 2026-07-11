@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   NotFoundException,
@@ -33,7 +34,12 @@ export class StorageController {
       .split('/')
       .map(decodeURIComponent)
       .join('/');
-    const local = this.storage.resolveLocalPath(bucket, key);
+    let local: string | null;
+    try {
+      local = this.storage.resolveLocalPath(bucket, key);
+    } catch {
+      throw new BadRequestException('Invalid storage path');
+    }
     if (!local || !existsSync(local)) {
       throw new NotFoundException(`Object not found: ${bucket}/${key}`);
     }

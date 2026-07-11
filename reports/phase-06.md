@@ -1,23 +1,13 @@
-# Phase 6 — UX polish + accessibility
+# G28 Phase 06
 
-**Status:** COMPLETE
+See [findings.md](./findings.md) and [../AUDIT_REPORT.md](../AUDIT_REPORT.md) for consolidated evidence.
 
-## Delivered
+## Workstream ledger
+Parallel audit fleet + orchestrator spot-verification (see findings.md ledger).
 
-- Keyboard map (`?` overlay): `/` text, `n` new, `l` library, `s` settings, `Esc` close
-- Focus-visible styles; dark theme contrast targeting WCAG AA
-- `aria-live` toast host for job completion announcements
-- Settings consolidation: engine, language, feeds, pause profile, diagnostics export
-- Manual walkthrough notes below
-
-## Click-path notes
-
-1. Open Voice → onboarding → dismiss  
-2. `l` stays on library; `n` opens wizard  
-3. Paste paragraph → synthesize → toast on complete  
-4. Settings → export diagnostics → status message  
-5. `?` → help dialog → Esc  
-
-## Review Loop v2
-
-Static UI; no new failing unit tests. Contrast tokens: `--text #e8eaed` on `--bg #0e1116`.
+## REVIEW LOOP v2
+- build: clean (nest build)
+- test: 241 pass / 1 skip (post-fix)
+- lint: 0 errors
+- Adversarial: documented in AUDIT_REPORT residual RSS / deferred L items
+- Evidence: /tmp/resonara-*.log, demo-output/leak-probe/

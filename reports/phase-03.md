@@ -1,36 +1,13 @@
-# Phase 3 — FIX MARATHON II: PARTIAL → WORKING
+# G28 Phase 03
 
-**Status:** COMPLETE
+See [findings.md](./findings.md) and [../AUDIT_REPORT.md](../AUDIT_REPORT.md) for consolidated evidence.
 
-| Feature | Before | After | Evidence |
-|---------|--------|-------|----------|
-| EPUB export | PARTIAL (overlay dir only) | WORKING | book.epub zip with mimetype, META-INF/container.xml, OEBPS/* |
-| Preprocessor | PARTIAL (Page N of M kept) | WORKING | cleaned="Hello world." removals pageNumbers |
-| CLI | PARTIAL (auto-start hides server-down) | WORKING | `--no-start` → exit 1 + clear message on :19998 |
-| Watch debounce | expected gap | improved | settle timer before enqueue |
+## Workstream ledger
+Parallel audit fleet + orchestrator spot-verification (see findings.md ledger).
 
-## Runtime re-probe (pasted)
-
-### Preprocessor
-```
-cleaned: "Hello world."
-removals: Page 1 of 99, Page 2 of 99 (rule=pageNumbers)
-```
-
-### CLI
-```
-Resonara server not reachable on :19998 (connect ECONNREFUSED ...)
-exit=1
-```
-
-### EPUB
-```
-epubPath=.../book.epub
-unzip: mimetype, META-INF/container.xml, OEBPS/chapter.smil, chapter.xhtml, content.opf, speech.wav
-```
-
-## Review Loop v2
-
-- BUILD clean, TEST 222 pass (+2 pinning tests)
-- SELF-REVIEW B: adm-zip untyped (mirrors document-extractor); mimetype compression best-effort; CLI still auto-starts by default (opt-in --no-start)
-- Commit: fix(v2): phase 3 partial features to WORKING
+## REVIEW LOOP v2
+- build: clean (nest build)
+- test: 241 pass / 1 skip (post-fix)
+- lint: 0 errors
+- Adversarial: documented in AUDIT_REPORT residual RSS / deferred L items
+- Evidence: /tmp/resonara-*.log, demo-output/leak-probe/

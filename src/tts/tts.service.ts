@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   Logger,
   NotFoundException,
@@ -266,6 +267,19 @@ export class TtsService implements OnModuleInit {
 
   async deleteJob(id: string): Promise<void> {
     const job = await this.getJob(id);
+    // G28 TODO-12: do not delete while synthesis pipeline is active
+    const inFlight: TtsJobStatus[] = [
+      TtsJobStatus.QUEUED,
+      TtsJobStatus.CHUNKING,
+      TtsJobStatus.SYNTHESIZING,
+      TtsJobStatus.CONCATENATING,
+      TtsJobStatus.NORMALIZING,
+    ];
+    if (inFlight.includes(job.status)) {
+      throw new ConflictException(
+        `Cannot delete job ${id} while status is ${job.status}`,
+      );
+    }
     if (job.outputKey) {
       await fs.rm(job.outputKey, { force: true }).catch(() => undefined);
       const dir = path.dirname(job.outputKey);
@@ -1052,6 +1066,9 @@ export class TtsService implements OnModuleInit {
       } as TtsJobMetadata;
       await this.jobsRepo.save(job);
       this.gateway.emitFailed(job.id, message);
+      // G28 TODO-23: drop intermediate chunk trees on failure
+      const workDir = path.join(this.dataDir, job.id);
+      await fs.rm(workDir, { recursive: true, force: true }).catch(() => undefined);
       throw err;
     }
   }
@@ -1955,17 +1972,39 @@ export class TtsService implements OnModuleInit {
   }
 }
 
-function runFf(bin: string, args: string[]): Promise<void> {
+/** G28 TODO-06: ad-hoc ffmpeg spawn with timeout + single-settle. */
+function runFf(
+  bin: string,
+  args: string[],
+  timeoutMs = 120_000,
+): Promise<void> {
   return new Promise((resolve, reject) => {
     const child = spawn(bin, args, { stdio: ['ignore', 'pipe', 'pipe'] });
     let stderr = '';
+    let settled = false;
+    const finish = (err?: Error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (err) reject(err);
+      else resolve();
+    };
+    const timer = setTimeout(() => {
+      try {
+        child.kill('SIGKILL');
+      } catch {
+        /* ignore */
+      }
+      finish(new Error(`ffmpeg timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
     child.stderr?.on('data', (d) => {
       stderr += d.toString();
     });
-    child.on('error', reject);
+    child.on('error', (err) => finish(err));
     child.on('close', (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`ffmpeg exited ${code}: ${stderr.slice(-400)}`));
+      if (code === 0) finish();
+      else
+        finish(new Error(`ffmpeg exited ${code}: ${stderr.slice(-400)}`));
     });
   });
 }

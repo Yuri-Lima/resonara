@@ -62,8 +62,27 @@ export function buildMacSayCommand(opts: {
 }
 
 /**
+ * Safe token for PowerShell single-quoted strings and voice names.
+ * Rejects quote-breaking / injection payloads (G28 TODO-02).
+ */
+export function assertSafePsToken(value: string, label: string): string {
+  if (typeof value !== 'string' || value.length === 0 || value.length > 256) {
+    throw new Error(`Invalid ${label}: empty or too long`);
+  }
+  // Allow letters, digits, spaces, common voice punctuation — no quotes, $, `;, |, etc.
+  if (!/^[\w .()\-+#]+$/u.test(value)) {
+    throw new Error(`Invalid ${label}: disallowed characters`);
+  }
+  if (value.includes("'") || value.includes('"') || value.includes('`')) {
+    throw new Error(`Invalid ${label}: quotes not allowed`);
+  }
+  return value;
+}
+
+/**
  * Build PowerShell script that uses System.Speech.Synthesis to write a WAV file.
- * Invoked as: powershell -NoProfile -ExecutionPolicy Bypass -Command <script>
+ * Uses -EncodedCommand (UTF-16LE base64) so user-influenced paths/voices never
+ * pass through shell metacharacter parsing of -Command strings (G28 TODO-02).
  */
 export function buildWindowsSpeechScript(opts: {
   textFile: string;
@@ -71,36 +90,55 @@ export function buildWindowsSpeechScript(opts: {
   voice?: string;
   rate?: number; // -10..10 for SAPI Rate
 }): WinPsArgs {
-  const voiceLine = opts.voice
-    ? `$s.SelectVoice(${psQuote(opts.voice)});`
-    : '';
+  // Paths may include drive letters and backslashes — block PS metacharacters only
+  const safePath = (p: string, label: string): string => {
+    if (typeof p !== 'string' || !p || p.length > 512) {
+      throw new Error(`Invalid ${label}`);
+    }
+    if (/[`$'";|&<>]/.test(p) || p.includes('\0')) {
+      throw new Error(`Invalid ${label}: disallowed characters`);
+    }
+    return p;
+  };
+  const outPath = safePath(opts.outPath, 'outPath');
+  const inPath = safePath(opts.textFile, 'textFile');
+  const voice =
+    opts.voice != null && opts.voice !== ''
+      ? assertSafePsToken(opts.voice, 'voice')
+      : undefined;
   const rateLine =
     opts.rate != null && Number.isFinite(opts.rate)
       ? `$s.Rate = ${Math.max(-10, Math.min(10, Math.round(opts.rate)))};`
       : '';
+  const voiceLine = voice ? `$s.SelectVoice('${voice}');` : '';
   // Read UTF-8 text file; write WAV via SetOutputToWaveFile
   const script = [
     `Add-Type -AssemblyName System.Speech;`,
     `$s = New-Object System.Speech.Synthesis.SpeechSynthesizer;`,
     voiceLine,
     rateLine,
-    `$text = [System.IO.File]::ReadAllText(${psQuote(opts.textFile)}, [System.Text.Encoding]::UTF8);`,
-    `$s.SetOutputToWaveFile(${psQuote(opts.outPath)});`,
+    `$text = [System.IO.File]::ReadAllText('${inPath}', [System.Text.Encoding]::UTF8);`,
+    `$s.SetOutputToWaveFile('${outPath}');`,
     `$s.Speak($text);`,
     `$s.Dispose();`,
   ]
     .filter(Boolean)
     .join(' ');
 
+  // EncodedCommand: UTF-16LE base64 — avoids -Command injection surface
+  const encoded = Buffer.from(script, 'utf16le').toString('base64');
+
   return {
     bin: 'powershell.exe',
-    args: ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', script],
+    args: [
+      '-NoProfile',
+      '-ExecutionPolicy',
+      'Bypass',
+      '-EncodedCommand',
+      encoded,
+    ],
     script,
   };
-}
-
-function psQuote(s: string): string {
-  return `'${s.replace(/'/g, "''")}'`;
 }
 
 /**
@@ -290,17 +328,43 @@ export async function synthesizeChunk(
   }
 }
 
-function runCommand(bin: string, args: string[]): Promise<void> {
+/** Default timeout for OS TTS (say / PowerShell). G28 TODO-03. */
+export const PLATFORM_TTS_TIMEOUT_MS = 120_000;
+
+function runCommand(
+  bin: string,
+  args: string[],
+  timeoutMs: number = PLATFORM_TTS_TIMEOUT_MS,
+): Promise<void> {
   return new Promise((resolve, reject) => {
     const child = spawn(bin, args, { stdio: ['ignore', 'pipe', 'pipe'] });
     let stderr = '';
+    let settled = false;
+    const finish = (err?: Error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (err) reject(err);
+      else resolve();
+    };
+    const timer = setTimeout(() => {
+      try {
+        child.kill('SIGKILL');
+      } catch {
+        /* ignore */
+      }
+      finish(new Error(`${bin} timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
     child.stderr?.on('data', (d) => {
       stderr += d.toString();
     });
-    child.on('error', reject);
+    child.on('error', (err) => finish(err));
     child.on('close', (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`${bin} exited ${code}: ${stderr.slice(0, 500)}`));
+      if (code === 0) finish();
+      else
+        finish(
+          new Error(`${bin} exited ${code}: ${stderr.slice(0, 500)}`),
+        );
     });
   });
 }

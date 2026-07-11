@@ -62,8 +62,7 @@ describe('TtsController', () => {
 
   it('engines endpoint', () => {
     expect(ctrl.engines().engines.length).toBe(1);
-    expect(ctrl.engine().engines.length).toBe(1);
-  });
+      });
 
   it('synthesize requires text', async () => {
     await expect(ctrl.synthesize({} as never)).rejects.toThrow(/text/i);
