@@ -1,0 +1,7 @@
+{
+  "jobId": "553c9063-b6b0-4b48-8d3f-cc7617694d62",
+  "statusAfterRestart": "failed",
+  "error": "Synthesis was interrupted by a restart. Retry the job from the library.",
+  "retryOffered": true,
+  "retryStatus": 201
+}

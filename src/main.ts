@@ -59,7 +59,7 @@ async function bootstrap() {
     .setDescription(
       'Shape sound. Speak the long form. Play freely. — Audio lab, sample piano, long-form system TTS.',
     )
-    .setVersion('1.0')
+    .setVersion('2.0.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

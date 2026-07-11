@@ -100,6 +100,13 @@ export interface TtsJobMetadata {
   epubOverlayDir?: string;
   /** Packaged EPUB path (book.epub) when export completed. */
   epubPath?: string;
+  /** Last typed failure (code + user message); no stacks. */
+  lastError?: {
+    code?: string;
+    message?: string;
+    retryable?: boolean;
+    details?: Record<string, unknown>;
+  };
 }
 
 @Entity('tts_jobs')

@@ -76,6 +76,12 @@ import {
 import { resolvePauseProfile } from './pause/pause-profiles';
 import { toSpeakable } from './pause/boundary-detect';
 import { planMicroPauseSegments } from './pause/micro-pauses';
+import {
+  AppError,
+  checkDiskSpace,
+  mapEngineError,
+  userFacingMessage,
+} from '../common/app-error';
 
 export interface SynthesizeLongOptions {
   text: string;
@@ -184,7 +190,8 @@ export class TtsService implements OnModuleInit {
     });
     for (const job of interrupted) {
       job.status = TtsJobStatus.FAILED;
-      job.error = 'interrupted by restart';
+      job.error =
+        'Synthesis was interrupted by a restart. Retry the job from the library.';
       await this.jobsRepo.save(job);
     }
     if (interrupted.length) {
@@ -320,6 +327,18 @@ export class TtsService implements OnModuleInit {
           'text is empty after preprocessing (all content removed by rules)',
         );
       }
+    }
+
+    // Disk preflight before long synthesis (skip if free space unknown)
+    const disk = checkDiskSpace(this.dataDir);
+    if (disk && !disk.ok) {
+      throw new BadRequestException(
+        new AppError(
+          'DISK_FULL',
+          `Not enough free disk space to synthesize (need >100MB under ${disk.path}). Free space and try again.`,
+          { retryable: true, details: { freeBytes: disk.freeBytes } },
+        ).userMessage,
+      );
     }
 
     // Resolve language FIRST so engine auto-selection is language-aware
@@ -1022,9 +1041,15 @@ export class TtsService implements OnModuleInit {
       await this.jobsRepo.save(job);
       this.gateway.emitCompleted(job.id, this.toPublicJob(job));
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
+      const mapped = mapEngineError(String(job.engine || 'auto'), err);
+      const message = userFacingMessage(mapped);
       job.status = TtsJobStatus.FAILED;
       job.error = message;
+      job.metadata = {
+        ...(job.metadata || {}),
+        // Typed error for UI/CLI (no stack traces)
+        lastError: mapped.toJSON(),
+      } as TtsJobMetadata;
       await this.jobsRepo.save(job);
       this.gateway.emitFailed(job.id, message);
       throw err;
