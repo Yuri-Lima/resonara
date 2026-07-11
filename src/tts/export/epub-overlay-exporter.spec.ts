@@ -66,9 +66,11 @@ describe('epub-overlay-exporter', () => {
     expect(fs.readFileSync(path.join(dir, 'mimetype'), 'utf8')).toBe(
       'application/epub+zip',
     );
-    // Structural zip check via adm-zip
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const AdmZip = require('adm-zip');
+    // Structural zip check via adm-zip (CJS package)
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+    const AdmZip = require('adm-zip') as new (p: string) => {
+      getEntries(): { entryName: string }[];
+    };
     const zip = new AdmZip(r.epubPath);
     const names = zip.getEntries().map((e: { entryName: string }) => e.entryName);
     expect(names).toContain('mimetype');

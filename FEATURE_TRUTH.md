@@ -149,3 +149,26 @@ dialogue:true accepted; formatter unit suite green in fleet
 | 12 | pt-BR | WORKING | KEEP |
 
 All 12 KEEP features probe-verified WORKING. Zero DESCOPE.
+
+## Final ship gates (Phases 7–9)
+
+| Gate | Result |
+|------|--------|
+| Cold start | **1930–2581 ms** ready (`reports/cold-start.json`) — pass &lt; 3s |
+| Library list | **45 ms**, paginated, total ~187 |
+| Stability | 46.2k-word source; 8k-word monitored job **completed** |
+| Installer | `Resonara-2.0.0-arm64.dmg` with en_US-lessac + pt_BR-faber |
+| Tests | 45 suites, **226 passed**, 1 skipped |
+| Version | **2.0.0** |
+| DESCOPE rows | **none** |
+
+## Final workstream hygiene
+
+| Workstream | Outcome |
+|------------|---------|
+| probe fleet ×12 | landed |
+| fix marathon EPUB/prep/CLI/engines | landed WORKING |
+| crash-resume + diagnostics | landed |
+| dist:mac | landed |
+| orphan node dist/main (extra) | killed before final UI |
+| UI deliverable `make ui` | opened on release |
