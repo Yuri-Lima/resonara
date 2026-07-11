@@ -49,8 +49,9 @@ export class TracksController {
       storage: diskStorage({
         destination: (_req, _file, cb) =>
           cb(null, os.tmpdir()),
-        filename: (_req, file, cb) =>
-          cb(null, `up-${Date.now()}-${file.originalname}`),
+        // G28 TODO-08: never use client originalname in the filesystem path
+        filename: (_req, _file, cb) =>
+          cb(null, `up-${Date.now()}-${Math.random().toString(16).slice(2)}.bin`),
       }),
       limits: { fileSize: 2048 * 1024 * 1024 },
     }),

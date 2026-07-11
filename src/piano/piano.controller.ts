@@ -62,8 +62,9 @@ export class PianoController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: (_r, _f, cb) => cb(null, os.tmpdir()),
-        filename: (_r, file, cb) =>
-          cb(null, `piano-${Date.now()}-${file.originalname}`),
+        // G28 TODO-08: never use client originalname in the filesystem path
+        filename: (_r, _file, cb) =>
+          cb(null, `piano-${Date.now()}-${Math.random().toString(16).slice(2)}.bin`),
       }),
       limits: { fileSize: 512 * 1024 * 1024 },
     }),
