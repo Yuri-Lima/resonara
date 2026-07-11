@@ -102,3 +102,60 @@
     })
     .catch(() => {});
 })();
+
+/* G28 audit dashboard */
+(function () {
+  const g28TodoRows = [
+    { id: 'TODO-01', sev: 'P0', cat: 'security', status: 'fixed' },
+    { id: 'TODO-02', sev: 'P0', cat: 'security', status: 'fixed' },
+    { id: 'TODO-03', sev: 'P0', cat: 'leak', status: 'fixed' },
+    { id: 'TODO-04', sev: 'P0', cat: 'async', status: 'fixed' },
+    { id: 'TODO-05', sev: 'P1', cat: 'leak', status: 'fixed' },
+    { id: 'TODO-06', sev: 'P1', cat: 'leak', status: 'fixed' },
+    { id: 'TODO-08', sev: 'P1', cat: 'security', status: 'fixed' },
+    { id: 'TODO-09', sev: 'P1', cat: 'security', status: 'fixed' },
+    { id: 'TODO-10', sev: 'P1', cat: 'security', status: 'fixed' },
+    { id: 'TODO-11', sev: 'P1', cat: 'security', status: 'fixed' },
+    { id: 'TODO-12', sev: 'P1', cat: 'async', status: 'fixed' },
+    { id: 'TODO-13', sev: 'P1', cat: 'perf', status: 'fixed' },
+    { id: 'TODO-15', sev: 'P1', cat: 'test', status: 'fixed' },
+    { id: 'TODO-16', sev: 'P1', cat: 'test', status: 'fixed' },
+    { id: 'TODO-23', sev: 'P2', cat: 'leak', status: 'fixed' },
+    { id: 'TODO-26', sev: 'P2', cat: 'dead', status: 'fixed' },
+    { id: 'TODO-31', sev: 'P3', cat: 'polish', status: 'fixed' },
+    { id: 'TODO-32', sev: 'P3', cat: 'docs', status: 'fixed' },
+    { id: 'TODO-34', sev: 'P1', cat: 'security', status: 'fixed' },
+    { id: 'TODO-22', sev: 'P2', cat: 'leak', status: 'fixed' },
+    { id: 'TODO-17', sev: 'P1', cat: 'dup', status: 'deferred' },
+    { id: 'TODO-18', sev: 'P1', cat: 'dup', status: 'deferred' },
+    { id: 'TODO-19', sev: 'P1', cat: 'dup', status: 'deferred' },
+    { id: 'TODO-20', sev: 'P1', cat: 'arch', status: 'deferred' },
+    { id: 'TODO-24', sev: 'P2', cat: 'dup', status: 'deferred' },
+    { id: 'TODO-25', sev: 'P2', cat: 'dup', status: 'deferred' },
+    { id: 'TODO-27', sev: 'P2', cat: 'perf', status: 'deferred' },
+    { id: 'TODO-28', sev: 'P2', cat: 'security', status: 'deferred' },
+    { id: 'TODO-29', sev: 'P2', cat: 'types', status: 'deferred' },
+    { id: 'TODO-30', sev: 'P2', cat: 'coverage', status: 'deferred' },
+    { id: 'TODO-07', sev: 'P1', cat: 'leak', status: 'deferred' },
+    { id: 'TODO-14', sev: 'P1', cat: 'perf', status: 'deferred' },
+    { id: 'TODO-21', sev: 'P1', cat: 'config', status: 'deferred' },
+    { id: 'TODO-33', sev: 'P2', cat: 'async', status: 'deferred' },
+  ];
+  function renderTodos(filter) {
+    const tb = document.querySelector('#todo-table tbody');
+    if (!tb) return;
+    tb.innerHTML = '';
+    g28TodoRows
+      .filter((r) => filter === 'all' || r.status === filter)
+      .forEach((r) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${r.id}</td><td>${r.sev}</td><td>${r.cat}</td><td>${r.status}</td>`;
+        tb.appendChild(tr);
+      });
+  }
+  const sel = document.getElementById('todo-filter');
+  if (sel) {
+    sel.addEventListener('change', () => renderTodos(sel.value));
+    renderTodos('all');
+  }
+})();

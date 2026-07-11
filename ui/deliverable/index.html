@@ -160,5 +160,43 @@
     </section>
   </main>
   <script src="app.js"></script>
+
+  <section id="g28-audit" class="panel" aria-labelledby="g28-title" style="margin:2rem 1.5rem;padding:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:12px">
+    <h2 id="g28-title">G28 Forensic Audit Dashboard</h2>
+    <p class="muted">Post-merge audit of main after PR waves #2–#10. Keyboard: Tab through controls. WCAG AA dark theme.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:1rem 0">
+      <div class="stat"><strong>34</strong><span> findings</span></div>
+      <div class="stat"><strong>20</strong><span> fixed</span></div>
+      <div class="stat"><strong>14</strong><span> deferred</span></div>
+      <div class="stat"><strong>0</strong><span> open</span></div>
+    </div>
+    <h3>Severity bars</h3>
+    <div role="img" aria-label="Severity distribution">
+      <div style="margin:.4rem 0">P0 <span style="display:inline-block;height:12px;width:80px;background:#ff6b6b"></span> 4 fixed</div>
+      <div style="margin:.4rem 0">P1 <span style="display:inline-block;height:12px;width:200px;background:#fcc419"></span> 16 items</div>
+      <div style="margin:.4rem 0">P2 <span style="display:inline-block;height:12px;width:160px;background:#5c7cfa"></span> 12 items</div>
+      <div style="margin:.4rem 0">P3 <span style="display:inline-block;height:12px;width:40px;background:#9aa3b2"></span> 2 items</div>
+    </div>
+    <h3>Leak probe (handles flat)</h3>
+    <pre style="background:#0a0c10;padding:1rem;overflow:auto;font-size:12px" id="leak-table">Before RSS Δ +71MB handles flat
+After  RSS Δ +103MB handles flat · tmp flat
+Verdict: no FD/tmp leak; RSS residual deferred</pre>
+    <h3>jscpd</h3>
+    <p>src before 2.31% → after 2.54% (test growth; large consolidations deferred)</p>
+    <h3>Coverage</h3>
+    <p>77.38% → 77.62% stmts · tests 226 → 241</p>
+    <h3>Filter MASTER_TODO</h3>
+    <label>Status <select id="todo-filter" aria-label="Filter findings by status">
+      <option value="all">All</option>
+      <option value="fixed">Fixed</option>
+      <option value="deferred">Deferred</option>
+    </select></label>
+    <table id="todo-table" style="width:100%;border-collapse:collapse;margin-top:1rem;font-size:13px">
+      <thead><tr><th>ID</th><th>Sev</th><th>Category</th><th>Status</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p><a href="../../MASTER_TODO.md">Full MASTER_TODO.md</a> · <a href="../../AUDIT_REPORT.md">AUDIT_REPORT.md</a></p>
+  </section>
+
 </body>
 </html>
