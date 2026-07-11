@@ -390,15 +390,4 @@ export class TracksService {
       },
     };
   }
-
-  /** Materialize track to local temp for workers */
-  async downloadToTemp(track: Track, destDir: string): Promise<string> {
-    const local = path.join(destDir, 'source');
-    await this.storage.getFile(
-      this.storage.originalBucket,
-      track.storageKey,
-      local,
-    );
-    return local;
-  }
 }

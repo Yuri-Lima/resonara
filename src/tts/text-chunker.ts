@@ -15,6 +15,7 @@ import {
   ChunkEndBoundary,
   PauseMapEntry,
 } from './pause/pause.types';
+import { KOKORO_MAX_CHARS } from './kokoro-tts';
 import {
   classifyPieceEnd,
   detectHeaderLine,
@@ -53,8 +54,8 @@ export function defaultChunkLimits(engine: ChunkEngine = 'platform'): {
   hardMaxChars: number;
 } {
   if (engine === 'kokoro') {
-    // Kokoro practical max ~400 chars; hard cap a bit higher
-    return { maxChars: 400, hardMaxChars: 600 };
+    // Kokoro practical max from shared constant (G28 A5 drift fix)
+    return { maxChars: KOKORO_MAX_CHARS, hardMaxChars: Math.round(KOKORO_MAX_CHARS * 1.5) };
   }
   if (engine === 'piper') {
     return { maxChars: PIPER_MAX, hardMaxChars: PIPER_HARD };

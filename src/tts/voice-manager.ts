@@ -349,9 +349,4 @@ export class VoiceManager {
   }
 }
 
-/** Singleton-style factory for Nest providers. */
-let defaultManager: VoiceManager | null = null;
-export function getVoiceManager(): VoiceManager {
-  if (!defaultManager) defaultManager = new VoiceManager();
-  return defaultManager;
-}
+
