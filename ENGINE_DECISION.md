@@ -28,7 +28,7 @@
 | F5-TTS | — | — | **0 NC** | — | — | — | — | DQ | disqualified Phase 1 |
 | StyleTTS2 | — | — | **2 terms** | — | — | — | — | DQ | disqualified Phase 1 |
 
-\*Quality pre-Gate-1 is hypothesis+install smoke; Gate 1 blind CMOS is the hard quality gate.
+\*Quality pre-Gate-1 is hypothesis+install smoke. **Shipping quality gate is human CMOS Gate 2** (eval-lab); automated objective prosody proxy is diagnostic only and does not certify.
 
 ---
 
