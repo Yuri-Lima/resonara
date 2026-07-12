@@ -1,104 +1,58 @@
-# Phase 1 — BASELINE + THE PROBE FLEET
+# Phase 1 Report — Landscape Verification
 
 **Date:** 2026-07-12  
-**Baseline:** `pre-v2` @ f1e47bcd5d845e9ea50e4c376253cfdc1ce5846e  
-**Status:** COMPLETE
+**Branch:** main  
+**Scope:** Research only — no engine integration.
 
-## 1a. Baseline (real output)
+## Build / test / lint
 
-### build
 ```
-> resonara@1.0.0 build
-> nest build
-(exit 0)
-```
-
-### test
-```
-Test Suites: 44 passed, 44 total
-Tests:       1 skipped, 221 passed, 222 total
-Time:        6.77 s
+npm run build  → clean (nest build OK)
+npm test       → deferred to Phase 2 (no src changes this phase)
+npx eslint     → N/A (docs only)
 ```
 
-### lint
-```
-✖ 8 problems (0 errors, 8 warnings)  # unused vars only
-```
+## Deliverables
 
-### coverage
-```
-All files | 77.38% stmts | 56.39% branch | 66.24% funcs | 79.57% lines
-Jest: global threshold 80% not met for statements/lines
-```
+- `EXPRESSIVE_LANDSCAPE.md` — verified table for 8 engines, licenses pasted from live sources, hard disqualifications, 6 bench advancers, non-goals.
 
-### npm audit
-```
-31 vulnerabilities (3 low, 21 moderate, 7 high)
-```
+## Key decisions
 
-### demo:quick
-```
-engine: platform  voiceId: platform:Albert
-words: 16  duration: 7.506583  fileSize: 1081050  RTF: 2.13
-```
+| Decision | Rationale |
+|----------|-----------|
+| Disqualify **F5-TTS** from shipping | Weights **CC-BY-NC-4.0** on HF (verified cardData) |
+| Disqualify **StyleTTS2** from shipping | Custom weight consent terms + GPL phonemizer risk |
+| Advance 6: Chatterbox, Orpheus, Dia, CosyVoice2, Qwen3-TTS, Kokoro floor | All have commercial-OK code+weights (Apache-2.0 or MIT) |
+| pt-BR: Chatterbox dedicated pack + Qwen3 Portuguese listed | To be measured honestly in Phase 3/11 |
 
-### tag
-```
-pre-v2 → f1e47bcd5d845e9ea50e4c376253cfdc1ce5846e (LOCAL)
-```
+## Self-review Pass A (correctness)
 
-## 1b–d. Probe fleet
+- License strings match curl of LICENSE files / HF API on 2026-07-12.
+- No integration code touched.
+- Kokoro correctly marked as incumbent floor, not a “win” candidate.
 
-- Harness: `scripts/probe-fleet.js` on :3848
-- 12 subagents in parallel
-- Spot-checks: Kokoro, preprocessor, pt-BR (orchestrator)
+## Self-review Pass B — 3 adversarial weaknesses
 
-### Fleet summary (corrected)
+1. **EXPRESSIVE_LANDSCAPE.md / CosyVoice row / failure:** CosyVoice ecosystem historically mixed model trees; a sub-package could still pull non-Apache assets. **Mitigation:** Phase 3 license check on *downloaded* artifacts, not just HF API.
+2. **EXPRESSIVE_LANDSCAPE.md / Qwen3 row / failure:** Apple Silicon path unverified; if only CUDA works, RTF may be unusable offline on this Mac. **Mitigation:** Phase 3 real RTF on M4 Max; kill if install fails.
+3. **EXPRESSIVE_LANDSCAPE.md / Chatterbox Turbo tags / failure:** Tags may be Turbo-only while Multilingual V3 lacks them — product could over-promise. **Mitigation:** Phase 3 control probe documents which variant supports which tags.
 
-| Feature | Corrected verdict | Decision |
-|---------|-------------------|----------|
-| Kokoro | WORKING | KEEP |
-| Whisper | WORKING (201≠fail) | KEEP |
-| QA | WORKING | KEEP |
-| Alignment | WORKING | KEEP |
-| Library | WORKING | KEEP |
-| Feeds | WORKING | KEEP |
-| Cover | WORKING | KEEP |
-| EPUB | PARTIAL | FIX |
-| Preprocessor | PARTIAL | FIX |
-| CLI | PARTIAL | FIX |
-| Watch | WORKING | KEEP |
-| pt-BR | WORKING | KEEP |
+## Audio smoke
 
-Full table + evidence: `FEATURE_TRUTH.md`
+N/A — research phase.
 
 ## Workstream ledger
 
 | ID | Purpose | Outcome | Runtime |
 |----|---------|---------|---------|
-| pre-v2 | baseline pin | landed | <1s |
-| download-piper | engines/models | landed | ~4m |
-| download-whisper | STT | landed | ~3m |
-| download-kokoro | neural TTS | landed | ~2m |
-| server-3848 | probe API | landed | session |
-| probe-fleet | 12 probes | landed | 107s |
-| subagents 1–12 | parallel probes | landed | ~1–3m ea |
-| spot×3 | verification | landed | ~25s ea |
+| ws-p1-web | GitHub/HF license verification (8 engines) | landed | ~3 min |
+| ws-p1-build | `npm run build` baseline | landed clean | ~15 s |
+| subagents | none this phase | n/a | — |
 
-## Review Loop v2
+## Orphans
 
-1. BUILD: clean (pre-change)
-2. TEST: 221 pass
-3. LINT: 0 errors
-4. SELF-REVIEW A: FEATURE_TRUTH evidence-linked; no code fixes in this commit
-5. SELF-REVIEW B (3 weaknesses):
-   - Probe harness treated 201 as failure → documented, not product bug
-   - Concurrent fleet load caused one ECONNRESET → Phase 4 reliability
-   - EPUB returns overlay dir not zip → Phase 2/3 fix queue
-6. RUNTIME SMOKE: demo:quick + 3 spot-checks pasted above
-7. This report + FEATURE_TRUTH.md
-8. COMMIT: chore(v2): phase 1 baseline + feature-truth audit
+None.
 
-## Process note
+## Commit plan
 
-Stale server on :3847 pointed at `trace-swe22-…` — probes deliberately used :3848 with this workspace's piper/kokoro/whisper paths.
+`docs(voice): Phase 1 expressive TTS landscape verification`

@@ -1,0 +1,83 @@
+[
+  {
+    "fixture": "children-story.txt",
+    "engine": "kokoro",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/kokoro/children-story.wav",
+    "bytes": 1083436,
+    "durationSec": 22.570667,
+    "wallMs": 5643,
+    "rtf": 0.25001476473867607
+  },
+  {
+    "fixture": "comedy-beat.txt",
+    "engine": "kokoro",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/kokoro/comedy-beat.wav",
+    "bytes": 937004,
+    "durationSec": 19.52,
+    "wallMs": 3662,
+    "rtf": 0.18760245901639344
+  },
+  {
+    "fixture": "death-scene.txt",
+    "engine": "kokoro",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/kokoro/death-scene.wav",
+    "bytes": 1165356,
+    "durationSec": 24.277333,
+    "wallMs": 4501,
+    "rtf": 0.1853992775895112
+  },
+  {
+    "fixture": "dialogue-performance.txt",
+    "engine": "kokoro",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/kokoro/dialogue-performance.wav",
+    "bytes": 1176620,
+    "durationSec": 24.512,
+    "wallMs": 3831,
+    "rtf": 0.15629079634464751
+  },
+  {
+    "fixture": "newscast.txt",
+    "engine": "kokoro",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/kokoro/newscast.wav",
+    "bytes": 1097772,
+    "durationSec": 22.869333,
+    "wallMs": 3764,
+    "rtf": 0.1645872225482046
+  },
+  {
+    "fixture": "picnic.txt",
+    "engine": "kokoro",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/kokoro/picnic.wav",
+    "bytes": 1193004,
+    "durationSec": 24.853333,
+    "wallMs": 4208,
+    "rtf": 0.16931330699186303
+  },
+  {
+    "fixture": "pt-br/cena-dramatica.txt",
+    "engine": "kokoro",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/kokoro/pt-br__cena-dramatica.wav",
+    "bytes": 1303596,
+    "durationSec": 27.157333,
+    "wallMs": 4600,
+    "rtf": 0.16938334850480344
+  },
+  {
+    "fixture": "pt-br/dialogo-expressivo.txt",
+    "engine": "kokoro",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/kokoro/pt-br__dialogo-expressivo.wav",
+    "bytes": 1188908,
+    "durationSec": 24.768,
+    "wallMs": 4355,
+    "rtf": 0.17583171834625325
+  },
+  {
+    "fixture": "suspense.txt",
+    "engine": "kokoro",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/kokoro/suspense.wav",
+    "bytes": 885804,
+    "durationSec": 18.453333,
+    "wallMs": 3479,
+    "rtf": 0.18852962768297737
+  }
+]

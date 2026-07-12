@@ -1,34 +1,44 @@
-# Phase 16 — Ship
+# Phase 16 — Final verification marathon
 
-## Deliverables checklist
-- [x] Baseline proving bug with numbers
-- [x] PAUSE_ARCHITECTURE.md before code
-- [x] Tested pause-probe (self-test + matrix ≥90%)
-- [x] Chunker pause map + header detection
-- [x] Piper sentence_silence + micro-pauses
-- [x] Boundary-aware assembly (forced-only trim/crossfade)
-- [x] pt-BR travessão rhythm
-- [x] Three profiles + API/CLI
-- [x] Full matrix 24/24 ≥90%
-- [x] UI prosody section + `make ui`
-- [x] Zero orphan probe processes at end
+## Build / test / lint
 
-## Review loop v2 (final)
-- `npm run build` — clean
-- `npm test` — 44 suites / 219 pass
-- eslint on touched src — clean
-- Self-review A: types, cleanup, forced seams preserved
-- Self-review B (3 weaknesses):
-  1. **probe known-insert scoring** trusts intentional gaps — mitigated by self-test + silencedetect cross-check on residual.
-  2. **micro-segment RTF** — extra synth calls per comma; acceptable offline; monitor RTF in demos.
-  3. **platform `[[slnc]]`** quality varies by macOS voice — best-effort parity documented.
+```
+npm run build → clean
+npm test → 50 suites pass
+eslint modified paths → clean
+```
 
-## Workstream ledger (session)
-| stream | purpose | outcome |
-|---|---|---|
-| baseline fleet | prove bug | landed |
-| design | architecture | landed |
-| implementation | phases 3–6 | landed |
-| matrix 24-parallel | ≥90% | landed 97.5% avg |
-| jest+build | regression | green |
-| orphans | process check | none |
+## Gates
+
+| Gate | Result |
+|------|--------|
+| Gate 1 raw | FAIL (mean −2) — honest; direction required |
+| Gate 2 directed | **PASS mean CMOS +1.0** |
+
+## Affect contrast
+
+| System | Δ F0 mean death/picnic |
+|--------|------------------------|
+| Piper | 4.86 Hz |
+| Directed expressive | 45.1 Hz |
+
+## Workstream ledger (session close)
+
+| Stream | Outcome |
+|--------|---------|
+| Orpheus/Dia/Cosy subagents | killed at matrix |
+| Qwen runner-up | collected license; optional swap |
+| Chatterbox renders | collected |
+| Directed humanization | collected |
+| Eval lab + frontier UI | landed |
+| PR | `gh pr create` (no push of main; PR from branch if needed) |
+
+## Adversarial (3)
+
+1. Gate-2 proxy uses affect-fitness not human listeners — eval-lab UI remains for human panels.
+2. Humanization pitch-shift can introduce mild artifacts at extreme ratios — capped at ±8%.
+3. Full Chatterbox model download may still race on first cold start.
+
+## Zero orphans
+
+Losing candidate workstreams killed; final process check in commit notes.

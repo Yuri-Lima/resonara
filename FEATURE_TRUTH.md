@@ -172,3 +172,15 @@ All 12 KEEP features probe-verified WORKING. Zero DESCOPE.
 | dist:mac | landed |
 | orphan node dist/main (extra) | killed before final UI |
 | UI deliverable `make ui` | opened on release |
+
+## Expressive tier (v2.1)
+
+| Claim | Status | Evidence |
+|-------|--------|----------|
+| Fourth engine `expressive` (Chatterbox) | SHIPPED optional pack | `src/tts/expressive-tts.ts` |
+| Offline only | TRUE | no cloud API keys |
+| REM markup + degradation | SHIPPED | `src/tts/expression/` |
+| Auto-direction default OFF | TRUE | `autoDirect` opt-in |
+| Blind CMOS Gate 2 ≥ +0.5 | MEASURED | `EVALUATION_REPORT.md` / `bench/eval/` |
+| Installer size unchanged | TRUE | pack not bundled |
+| pt-BR expressive parity | NOT CLAIMED | best-effort |

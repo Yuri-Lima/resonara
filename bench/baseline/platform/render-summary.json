@@ -1,0 +1,83 @@
+[
+  {
+    "fixture": "children-story.txt",
+    "engine": "platform",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/platform/children-story.wav",
+    "bytes": 1126732,
+    "durationSec": 25.54771,
+    "wallMs": 3438,
+    "rtf": 0.13457174830933968
+  },
+  {
+    "fixture": "comedy-beat.txt",
+    "engine": "platform",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/platform/comedy-beat.wav",
+    "bytes": 794986,
+    "durationSec": 18.025125,
+    "wallMs": 2622,
+    "rtf": 0.14546362369193003
+  },
+  {
+    "fixture": "death-scene.txt",
+    "engine": "platform",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/platform/death-scene.wav",
+    "bytes": 1066662,
+    "durationSec": 24.185578,
+    "wallMs": 3242,
+    "rtf": 0.13404682741094714
+  },
+  {
+    "fixture": "dialogue-performance.txt",
+    "engine": "platform",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/platform/dialogue-performance.wav",
+    "bytes": 1301176,
+    "durationSec": 29.503356,
+    "wallMs": 3728,
+    "rtf": 0.1263585064695691
+  },
+  {
+    "fixture": "newscast.txt",
+    "engine": "platform",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/platform/newscast.wav",
+    "bytes": 947606,
+    "durationSec": 21.485896,
+    "wallMs": 2911,
+    "rtf": 0.1354842264897866
+  },
+  {
+    "fixture": "picnic.txt",
+    "engine": "platform",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/platform/picnic.wav",
+    "bytes": 1112506,
+    "durationSec": 25.225125,
+    "wallMs": 3261,
+    "rtf": 0.12927587078359376
+  },
+  {
+    "fixture": "pt-br/cena-dramatica.txt",
+    "engine": "platform",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/platform/pt-br__cena-dramatica.wav",
+    "bytes": 1381240,
+    "durationSec": 31.318866,
+    "wallMs": 3874,
+    "rtf": 0.12369541093856974
+  },
+  {
+    "fixture": "pt-br/dialogo-expressivo.txt",
+    "engine": "platform",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/platform/pt-br__dialogo-expressivo.wav",
+    "bytes": 1497318,
+    "durationSec": 33.95102,
+    "wallMs": 4130,
+    "rtf": 0.12164582978655722
+  },
+  {
+    "fixture": "suspense.txt",
+    "engine": "platform",
+    "outWav": "/private/tmp/trace-sweG29-20260712-013205/bench/baseline/platform/suspense.wav",
+    "bytes": 799900,
+    "durationSec": 18.136553,
+    "wallMs": 2576,
+    "rtf": 0.14203360473183632
+  }
+]

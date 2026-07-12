@@ -1,0 +1,29 @@
+{
+  "gate": 2,
+  "meanCmosExpressiveVsPiper": 1,
+  "n": 4,
+  "pass": true,
+  "ledger": "/private/tmp/trace-sweG29-20260712-013205/bench/eval/gate2-ledger.jsonl",
+  "unblind": [
+    {
+      "fixture": "death-scene",
+      "cmosExpressiveVsPiper": 2,
+      "flip": false
+    },
+    {
+      "fixture": "picnic",
+      "cmosExpressiveVsPiper": 2,
+      "flip": true
+    },
+    {
+      "fixture": "dialogue-performance",
+      "cmosExpressiveVsPiper": 0,
+      "flip": true
+    },
+    {
+      "fixture": "newscast",
+      "cmosExpressiveVsPiper": 0,
+      "flip": false
+    }
+  ]
+}

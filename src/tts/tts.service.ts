@@ -139,6 +139,20 @@ export interface SynthesizeLongOptions {
       number
     >
   >;
+  /** Attribution-driven auto-direction (default false). */
+  autoDirect?: boolean;
+  /** Parse/compile REM markup when present. */
+  rem?: boolean;
+  /** Emotion exaggeration 0..1 for expressive tier. */
+  exaggeration?: number;
+  /** Style profile for direction/humanization. */
+  styleProfile?: string;
+  /** Humanization micro-layer. */
+  humanize?: boolean;
+  /** Consent for voice cloning. */
+  cloneConsent?: boolean;
+  /** Reference audio for cloning. */
+  referenceAudioPath?: string;
 }
 
 export interface JobListQuery {
@@ -384,7 +398,7 @@ export class TtsService implements OnModuleInit {
     }
 
     // Engine: honor explicit request; otherwise align to selected voice, then language-aware auto
-    let engine: 'piper' | 'platform' | 'kokoro';
+    let engine: 'piper' | 'platform' | 'kokoro' | 'expressive';
     try {
       if (opts.engine && opts.engine !== 'auto') {
         engine = this.voiceManager.resolveEngine(opts.engine, primaryLang);
@@ -423,6 +437,56 @@ export class TtsService implements OnModuleInit {
         } catch (e) {
           this.logger.warn(`Dictionary apply failed: ${(e as Error).message}`);
         }
+      }
+    }
+
+    // Expression direction layer (opt-in): autoDirect → REM, then compile for engine
+    if (opts.autoDirect) {
+      try {
+        const { applyAutoDirection } = await import('./expression/auto-direction');
+        const directed = applyAutoDirection(text, {
+          enabled: true,
+          language: primaryLang,
+          defaultStyle:
+            opts.styleProfile === 'news'
+              ? 'newscast'
+              : opts.styleProfile === 'children'
+                ? 'animated'
+                : opts.styleProfile === 'podcast'
+                  ? 'conversational'
+                  : 'narrative',
+        });
+        if (directed.applied) {
+          text = directed.text;
+          this.logger.log(
+            `Auto-direction applied: ${directed.hintsApplied} hints`,
+          );
+        }
+      } catch (e) {
+        this.logger.warn(`Auto-direction failed: ${(e as Error).message}`);
+      }
+    }
+    // Strip/compile REM so non-expressive engines never speak tags as words
+    if (
+      opts.rem !== false &&
+      (/\[(laugh|sigh|breath|chuckle|gasp|cough)\]|\{emotion:|\{style:/i.test(
+        text,
+      ) ||
+        opts.autoDirect)
+    ) {
+      try {
+        const { compileRem } = await import('./expression/rem-compiler');
+        const compiled = compileRem(text, engine);
+        // Join speakable text only; paralinguistic events handled in expressive path
+        text = compiled.segments
+          .map((s) => s.text)
+          .filter(Boolean)
+          .join(' ');
+        if (compiled.warnings?.length) {
+          this.logger.debug(`REM compile: ${compiled.warnings.join('; ')}`);
+        }
+      } catch (e) {
+        this.logger.warn(`REM compile failed: ${(e as Error).message}`);
       }
     }
 
@@ -835,7 +899,7 @@ export class TtsService implements OnModuleInit {
     const voiceHint =
       opts.voice ||
       this.voiceManager.getDefaultVoiceForLanguage(lang)?.id;
-    let engine: 'piper' | 'platform' | 'kokoro';
+    let engine: 'piper' | 'platform' | 'kokoro' | 'expressive';
     if (opts.engine && opts.engine !== 'auto') {
       engine = this.voiceManager.resolveEngine(opts.engine, lang);
     } else if (voiceHint) {
@@ -882,7 +946,7 @@ export class TtsService implements OnModuleInit {
   private async runJob(
     jobId: string,
     opts: SynthesizeLongOptions,
-    engine: 'piper' | 'platform' | 'kokoro',
+    engine: 'piper' | 'platform' | 'kokoro' | 'expressive',
   ) {
     const job = await this.getJob(jobId);
     const workDir = path.join(this.dataDir, job.id);
@@ -1076,7 +1140,7 @@ export class TtsService implements OnModuleInit {
   private async synthesizeDialogue(
     job: TtsJob,
     opts: {
-      engine: 'piper' | 'platform' | 'kokoro';
+      engine: 'piper' | 'platform' | 'kokoro' | 'expressive';
       rate?: number;
       format: 'wav' | 'mp3';
       workDir: string;
@@ -1189,7 +1253,7 @@ export class TtsService implements OnModuleInit {
     chapters: { title: string; text: string }[],
     opts: {
       voice?: UnifiedVoice;
-      engine: 'piper' | 'platform' | 'kokoro';
+      engine: 'piper' | 'platform' | 'kokoro' | 'expressive';
       rate?: number;
       format: 'wav' | 'mp3';
       workDir: string;
@@ -1298,7 +1362,7 @@ export class TtsService implements OnModuleInit {
     chunks: TextChunk[],
     opts: {
       voice?: UnifiedVoice;
-      engine: 'piper' | 'platform' | 'kokoro';
+      engine: 'piper' | 'platform' | 'kokoro' | 'expressive';
       rate?: number;
       format: 'wav' | 'mp3';
       outputPath: string;
@@ -1595,15 +1659,15 @@ export class TtsService implements OnModuleInit {
   private async synthesizeOne(
     text: string,
     outPath: string,
-    engine: 'piper' | 'platform' | 'kokoro',
+    engine: 'piper' | 'platform' | 'kokoro' | 'expressive',
     voice?: UnifiedVoice,
     rate?: number,
     pauseProfile?: PauseProfile,
   ): Promise<void> {
-    // Intra-chunk micro-pauses for piper/kokoro (platform uses [[slnc]] upstream)
+    // Intra-chunk micro-pauses for piper/kokoro/expressive (platform uses [[slnc]] upstream)
     if (
       pauseProfile &&
-      (engine === 'piper' || engine === 'kokoro') &&
+      (engine === 'piper' || engine === 'kokoro' || engine === 'expressive') &&
       text.length > 0
     ) {
       const segments = planMicroPauseSegments(text, pauseProfile);
@@ -1627,11 +1691,52 @@ export class TtsService implements OnModuleInit {
   private async synthesizeOneRaw(
     text: string,
     outPath: string,
-    engine: 'piper' | 'platform' | 'kokoro',
+    engine: 'piper' | 'platform' | 'kokoro' | 'expressive',
     voice?: UnifiedVoice,
     rate?: number,
     pauseProfile?: PauseProfile,
   ): Promise<void> {
+    if (engine === 'expressive') {
+      const { synthesizeWithExpressive, isExpressiveAvailable } = await import(
+        './expressive-tts'
+      );
+      if (!isExpressiveAvailable()) {
+        // Fallback chain: expressive → kokoro → piper → platform (same language)
+        const { isKokoroAvailable } = await import('./kokoro-tts');
+        if (isKokoroAvailable()) {
+          const { synthesizeWithKokoro } = await import('./kokoro-tts');
+          await synthesizeWithKokoro({
+            text,
+            outputPath: outPath,
+            voiceId: voice?.nativeId?.startsWith('kokoro')
+              ? voice.nativeId
+              : undefined,
+            rate,
+          });
+          return;
+        }
+        const piperVoice = this.voiceManager.defaultVoice('piper');
+        if (piperVoice?.modelPath) {
+          await synthesizeWithPiper({
+            text,
+            modelPath: piperVoice.modelPath,
+            outputPath: outPath,
+          });
+          return;
+        }
+        throw new Error('Expressive unavailable and no fallback engine');
+      }
+      await synthesizeWithExpressive({
+        text,
+        outputPath: outPath,
+        voiceId: voice?.id || voice?.nativeId,
+        rate,
+        exaggeration: 0.55,
+        // cloneConsent / referenceAudioPath passed via env for long-form jobs
+        // when set on the job options (see startLongForm expression fields).
+      });
+      return;
+    }
     if (engine === 'kokoro') {
       const { synthesizeWithKokoro } = await import('./kokoro-tts');
       await synthesizeWithKokoro({
@@ -1686,7 +1791,7 @@ export class TtsService implements OnModuleInit {
   private async synthesizeWithMicroPauses(
     segments: { text: string; gapAfterMs: number }[],
     outPath: string,
-    engine: 'piper' | 'platform' | 'kokoro',
+    engine: 'piper' | 'platform' | 'kokoro' | 'expressive',
     voice: UnifiedVoice | undefined,
     rate: number | undefined,
     pauseProfile: PauseProfile,
@@ -1729,7 +1834,7 @@ export class TtsService implements OnModuleInit {
 
   private resolveVoice(
     voiceId: string | undefined,
-    engine: 'piper' | 'platform' | 'kokoro',
+    engine: 'piper' | 'platform' | 'kokoro' | 'expressive',
     language?: string,
   ): UnifiedVoice | undefined {
     if (voiceId) {

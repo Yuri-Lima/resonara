@@ -1,13 +1,13 @@
-# G28 Phase 06
+# Phase 6 Report — Evaluation Lab
 
-See [findings.md](./findings.md) and [../AUDIT_REPORT.md](../AUDIT_REPORT.md) for consolidated evidence.
+## Delivered
+- ui/eval-lab/ index.html + app.js + styles.css (blind A/B, keyboard CMOS -3..+3, PMOS sliders)
+- scripts/eval-session.js build + aggregate
+- Anchor discipline: identical + current-default anchors
 
-## Workstream ledger
-Parallel audit fleet + orchestrator spot-verification (see findings.md ledger).
+## Adversarial (3)
+1. UI loads local file URLs — needs `make ui` / static server for audio CORS.
+2. Results write to eval-results.jsonl client-side download when no backend.
+3. Manifest must be rebuilt after new renders.
 
-## REVIEW LOOP v2
-- build: clean (nest build)
-- test: 241 pass / 1 skip (post-fix)
-- lint: 0 errors
-- Adversarial: documented in AUDIT_REPORT residual RSS / deferred L items
-- Evidence: /tmp/resonara-*.log, demo-output/leak-probe/
+## Workstream: scaffold landed Phase 3; session tooling Phase 6.

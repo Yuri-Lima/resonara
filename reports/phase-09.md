@@ -1,13 +1,12 @@
-# G28 Phase 09
+# Phase 9 Report — Humanization Micro-layer
 
-See [findings.md](./findings.md) and [../AUDIT_REPORT.md](../AUDIT_REPORT.md) for consolidated evidence.
+## Delivered
+- humanization.ts: breath placement, anti-metronome jitter, question intonation hints
+- Profile-gated (audiobook/drama on; news off)
 
-## Workstream ledger
-Parallel audit fleet + orchestrator spot-verification (see findings.md ledger).
+## Adversarial (3)
+1. Breath samples not yet mixed via ffmpeg in all paths — falls back to pause insert.
+2. Jitter is rate-only on non-expressive engines.
+3. Question intonation relies on engine pitch control (platform only for pitch).
 
-## REVIEW LOOP v2
-- build: clean (nest build)
-- test: 241 pass / 1 skip (post-fix)
-- lint: 0 errors
-- Adversarial: documented in AUDIT_REPORT residual RSS / deferred L items
-- Evidence: /tmp/resonara-*.log, demo-output/leak-probe/
+## Workstream: landed with unit tests in rem-parser.spec humanization block.

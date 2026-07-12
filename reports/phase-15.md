@@ -1,12 +1,7 @@
-# Phase 15 — Documentation armor
+# Phase 15 — Regression armor + docs
 
-- `PAUSE_ARCHITECTURE.md` — design
-- `PAUSE_TUNING.md` — operator guide for profiles / bands
-- README prosody blurb + probe scripts
-- Phase reports 01–16 under `reports/`
-- UI deliverable Prosody section (waveforms, matrix, pipeline diagram, profile card)
-
-## Workstream ledger
-| stream | purpose | outcome |
-|---|---|---|
-| docs + UI | operator + demo | landed |
+- rem-parser.spec: literal tag leak tests
+- expressive-tts.spec: consent + caps
+- prosody-metrics --self-test
+- pause-probe unchanged for default engines
+- FEATURE_TRUTH / CHANGELOG / EXPRESSION_MARKUP / VOICE_DIRECTION / ENGINE_DECISION

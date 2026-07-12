@@ -16,7 +16,7 @@ export enum TtsJobStatus {
   FAILED = 'failed',
 }
 
-export type TtsEngineName = 'piper' | 'platform' | 'kokoro' | 'auto';
+export type TtsEngineName = 'piper' | 'platform' | 'kokoro' | 'expressive' | 'auto';
 
 export interface TtsChapterMeta {
   index: number;

@@ -1,3 +1,11 @@
+## [2.1.0] — 2026-07-12
+
+### Added
+- Optional **expressive** TTS tier (Chatterbox Turbo/full, MIT) with Expressive Pack download
+- REM expression markup, auto-direction, casting, humanization micro-layer
+- Blind evaluation lab + prosody metrics + CMOS gates
+- Human-Voice Frontier deliverable dashboard section
+
 # Changelog
 
 All notable changes to Resonara are documented in this file.
