@@ -80,8 +80,18 @@
   }
 
   function renderSoak() {
-    const samples = (data.soak && data.soak.samples) || [];
+    const soak = data.soak || {};
+    const mem = soak.memory || soak;
+    const samples = mem.samples || [];
+    const plateau = mem.plateau || soak.plateau;
     const canvas = $('#soak-chart');
+    const meta = $('#soak-meta');
+    if (meta) {
+      const st = soak.state || {};
+      meta.textContent = samples.length
+        ? `RSS samples ${samples.length} · plateau ${plateau ? 'YES' : 'no'} · farm ${st.status || '—'} · job ${st.done || 0}/${st.total || 0}`
+        : 'Soak samples will appear while memory probe runs…';
+    }
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const w = canvas.width, h = canvas.height;
@@ -95,6 +105,13 @@
     const rss = samples.map((s) => s.rssMB);
     const max = Math.max(...rss) * 1.1;
     const min = Math.min(...rss) * 0.9;
+    // plateau band highlight (last 6 samples range)
+    if (samples.length >= 6) {
+      const last = samples.slice(-6);
+      const x0 = ((samples.length - 6) / (samples.length - 1)) * (w - 40) + 20;
+      ctx.fillStyle = 'rgba(61, 203, 122, 0.12)';
+      ctx.fillRect(x0, 20, w - 20 - x0, h - 40);
+    }
     ctx.strokeStyle = '#5b9fd4';
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -104,10 +121,12 @@
       if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     });
     ctx.stroke();
-    if (data.soak.plateau) {
-      ctx.fillStyle = '#3dcb7a';
-      ctx.fillText('Plateau detected (no monotonic leak)', 24, 24);
-    }
+    ctx.fillStyle = plateau ? '#3dcb7a' : '#9aa8bc';
+    ctx.fillText(
+      plateau ? 'Plateau detected (no monotonic leak)' : `RSS ${fmt(rss[rss.length - 1], 1)} MB (tracking…)`,
+      24,
+      24,
+    );
   }
 
   function renderThroughput() {
