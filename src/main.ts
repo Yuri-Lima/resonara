@@ -50,6 +50,7 @@ async function bootstrap() {
   app.useStaticAssets(join(process.cwd(), 'ui'), { prefix: '/ui' });
   // Sample texts for in-UI demo Play buttons
   app.useStaticAssets(join(process.cwd(), 'samples'), { prefix: '/samples' });
+  app.useStaticAssets(join(process.cwd(), 'bench'), { prefix: '/bench' });
   // Cached WAV outputs from npm run demo:* (instant Play when present)
   app.useStaticAssets(join(process.cwd(), 'reports'), {
     prefix: '/reports',
