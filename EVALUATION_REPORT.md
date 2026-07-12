@@ -102,3 +102,27 @@ Installer size **unchanged** — Expressive Pack is optional download (`node scr
 Affect contrast (F0 mean death vs picnic): Piper **4.86 Hz** → Directed **45.1 Hz** (~9×).
 
 Gate 1 raw Turbo (no direction): **FAIL** mean −2 — proves model-only is insufficient; direction+humanization is required (claim rebuttal).
+
+## Honesty note — Gate 2 vs product path (2026-07-12 revision)
+
+Gate 2 WAVs under `bench/candidates/directed-final/` were originally produced by an
+**offline ffmpeg directed-affect filter** applied to raw Chatterbox renders (same
+graphs as `directedAudioFilter()` in `src/tts/expression/humanization.ts`).
+
+**Before this fix**, the product path did **not** reproduce that pipeline:
+- `exaggeration` was hardcoded to `0.55` in `synthesizeOneRaw`
+- REM was flattened to plain text (controls discarded)
+- `directedAudioFilter` / `emotionToAffect` were never called from `src/`
+
+**After the product-path fix** (`direction-runtime` + `tts.service` wiring):
+- Job `exaggeration` and REM-derived exaggeration are passed to Chatterbox
+- REM native tags are kept for the expressive engine
+- When `humanize=true`, the same directed AF graph runs via `FfmpegService.applyAudioFilter`
+- Multi-emotion REM documents synth per-segment controls (`multiControl`)
+
+Gate 2 **numeric scores still refer to the offline directed-final artifacts**. They
+are evidence that the **filter family** can move CMOS/F0; they are **not** a claim
+that an earlier unreleased product path already did so. Re-run Gate 2 against
+`engine=expressive&autoDirect=true&humanize=true` outputs to re-certify the wired path.
+
+

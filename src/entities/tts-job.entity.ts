@@ -107,6 +107,32 @@ export interface TtsJobMetadata {
     retryable?: boolean;
     details?: Record<string, unknown>;
   };
+  /**
+   * Expression / direction runtime (expressive tier).
+   * Controls must be honored by synthesizeOne — not display-only scaffolding.
+   */
+  expression?: {
+    directed?: boolean;
+    humanize?: boolean;
+    exaggeration?: number;
+    emotion?: string;
+    style?: string;
+    affect?: 'grief' | 'joy' | 'neutral' | 'news';
+    multiControl?: boolean;
+    remWarnings?: string[];
+    remDegraded?: boolean;
+    /** Maps synth chunk index → expression.segments index (multiControl path). */
+    chunkSegmentMap?: number[];
+    segments?: Array<{
+      text: string;
+      speakable: string;
+      exaggeration: number;
+      emotion?: string;
+      style?: string;
+      affect: 'grief' | 'joy' | 'neutral' | 'news';
+      rate?: number;
+    }>;
+  };
 }
 
 @Entity('tts_jobs')

@@ -14,11 +14,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Blind evaluation lab + prosody metrics + CMOS gates
 - Human-Voice Frontier deliverable dashboard section
 - macOS / Windows installer targets for the expressive release (`Resonara-2.1.0-arm64.dmg`, `Resonara Setup 2.1.0.exe`)
+- **Product-path direction runtime** (`direction-runtime.ts`): job `exaggeration`, REM per-segment controls, and `humanize` directed AF are applied at synth time (not scaffolding)
 
 ### Changed
 
 - Product version **2.0.0 → 2.1.0** (package, OpenAPI, GitHub Pages download fallbacks)
 - Marketing/docs download URLs now point at **v2.1.0** macOS DMG/ZIP and Windows NSIS assets
+- Expressive synth no longer hardcodes `exaggeration: 0.55` over the request/REM value
+- REM compile keeps native tags for expressive; non-expressive still gets speakable-only text
+
+### Fixed
+
+- Dead `directedAudioFilter` / `emotionToAffect` — now invoked via `FfmpegService.applyAudioFilter` when `humanize=true`
+- Gate 2 honesty: EVALUATION_REPORT notes offline directed-final artifacts vs wired product path
 
 ## [2.0.0] — 2026-07-12
 
