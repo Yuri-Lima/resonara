@@ -1,0 +1,6 @@
+=== before teardown ===
+yurilima         45849   0.0  0.5 446362960 229280   ??  SNs   5:42p.m.   0:58.92 node /private/tmp/trace-sweG30-20260712-163649/dist/main.js
+yurilima          4885   0.0  0.0 1890520272  21056   ??  S    Fri11p.m.   0:08.86 /Applications/Cursor.app/Contents/Frameworks/Cursor Helper (Plugin).app/Contents/MacOS/Cursor Helper (Plugin) /Users/yurilima/.cursor/extensions/streetsidesoftware.code-spell-checker-4.5.6-universal/packages/_server/dist/main.cjs --node-ipc --clientProcessId=79445
+COMMAND   PID     USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    45849 yurilima   17u  IPv4 0xa8ffb48394393992      0t0  TCP localhost:sasp (LISTEN)
+port 3861 free
