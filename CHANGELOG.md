@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] — 2026-07-12
+
 ### Removed
 
 - **Hybrid Piano** product surface (UI, API, sample packs, takes)
@@ -19,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Product focus: **offline long-form text-to-speech** only (multi-engine, en + pt-BR, documents → chaptered audio, optional QA)
 - Desktop and `/ui/` open **Voice** as the primary surface
 - Tagline and package description retargeted away from “audio studio / play freely”
+- Product version **2.1.0 → 2.2.0** (package, OpenAPI, GitHub Pages download URLs)
+- Installers: `Resonara-2.2.0-arm64.dmg` / zip · `Resonara Setup 2.2.0.exe`
 
 ## [2.1.0] — 2026-07-12
 
@@ -95,6 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Resonara desktop audio lab, piano, platform TTS long-form, FFmpeg pipeline.
 
+[2.2.0]: https://github.com/Yuri-Lima/resonara/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/Yuri-Lima/resonara/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/Yuri-Lima/resonara/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/Yuri-Lima/resonara/releases/tag/v1.0.0

@@ -64,7 +64,7 @@ async function bootstrap() {
     .setDescription(
       'Offline long-form text-to-speech — multi-engine (Piper, Kokoro, optional expressive), en + pt-BR, documents → chaptered audio, optional quality gates.',
     )
-    .setVersion('2.1.0')
+    .setVersion('2.2.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

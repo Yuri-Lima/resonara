@@ -71,19 +71,19 @@ Historical research (archived): [docs/history/](./docs/history/) · [reports/IND
 
 ## Install
 
-**Current release:** [v2.1.0](https://github.com/Yuri-Lima/resonara/releases/tag/v2.1.0) — expressive TTS tier + macOS / Windows installers.
+**Current release:** [v2.2.0](https://github.com/Yuri-Lima/resonara/releases/tag/v2.2.0) — expressive TTS tier + macOS / Windows installers.
 
 | Platform | Asset | Direct download |
 |----------|--------|-----------------|
-| **macOS** (Apple Silicon) | `Resonara-2.1.0-arm64.dmg` | [DMG](https://github.com/Yuri-Lima/resonara/releases/download/v2.1.0/Resonara-2.1.0-arm64.dmg) |
-| **macOS** (portable) | `Resonara-2.1.0-arm64-mac.zip` | [ZIP](https://github.com/Yuri-Lima/resonara/releases/download/v2.1.0/Resonara-2.1.0-arm64-mac.zip) |
-| **Windows** x64 | `Resonara Setup 2.1.0.exe` | [NSIS Setup](https://github.com/Yuri-Lima/resonara/releases/download/v2.1.0/Resonara.Setup.2.1.0.exe) |
-| All assets | GitHub Releases | [v2.1.0](https://github.com/Yuri-Lima/resonara/releases/tag/v2.1.0) · [latest](https://github.com/Yuri-Lima/resonara/releases/latest) |
+| **macOS** (Apple Silicon) | `Resonara-2.2.0-arm64.dmg` | [DMG](https://github.com/Yuri-Lima/resonara/releases/download/v2.2.0/Resonara-2.2.0-arm64.dmg) |
+| **macOS** (portable) | `Resonara-2.2.0-arm64-mac.zip` | [ZIP](https://github.com/Yuri-Lima/resonara/releases/download/v2.2.0/Resonara-2.2.0-arm64-mac.zip) |
+| **Windows** x64 | `Resonara Setup 2.2.0.exe` | [NSIS Setup](https://github.com/Yuri-Lima/resonara/releases/download/v2.2.0/Resonara.Setup.2.2.0.exe) |
+| All assets | GitHub Releases | [v2.2.0](https://github.com/Yuri-Lima/resonara/releases/tag/v2.2.0) · [latest](https://github.com/Yuri-Lima/resonara/releases/latest) |
 
 ### macOS
 
-1. Download **`Resonara-2.1.0-arm64.dmg`** from the table above (or [Releases](https://github.com/Yuri-Lima/resonara/releases/tag/v2.1.0))  
-   *(or build with `npm run dist:mac` → `release/Resonara-2.1.0-arm64.dmg`)*
+1. Download **`Resonara-2.2.0-arm64.dmg`** from the table above (or [Releases](https://github.com/Yuri-Lima/resonara/releases/tag/v2.2.0))  
+   *(or build with `npm run dist:mac` → `release/Resonara-2.2.0-arm64.dmg`)*
 2. Open the disk image and drag **Resonara** into **Applications**
 3. Launch from Applications  
    - Unsigned builds: right-click → **Open** on first launch
@@ -93,8 +93,8 @@ Historical research (archived): [docs/history/](./docs/history/) · [reports/IND
 
 ### Windows
 
-1. Download **`Resonara Setup 2.1.0.exe`** (NSIS) from the table above  
-   *(or build with `npm run dist:win` → `release/Resonara Setup 2.1.0.exe`)*
+1. Download **`Resonara Setup 2.2.0.exe`** (NSIS) from the table above  
+   *(or build with `npm run dist:win` → `release/Resonara Setup 2.2.0.exe`)*
 2. Run the installer
 3. Launch from the Start Menu or desktop shortcut
 

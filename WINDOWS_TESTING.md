@@ -8,18 +8,18 @@ must be confirmed on a real Windows 10/11 x64 host.
 
 ```bash
 npm run download:piper   # ensures en + pt-BR models
-npm run dist:win         # → release/Resonara Setup 2.1.0.exe
+npm run dist:win         # → release/Resonara Setup 2.2.0.exe
 ```
 
 **Release asset (GitHub):**  
-`https://github.com/Yuri-Lima/resonara/releases/download/v2.1.0/Resonara.Setup.2.1.0.exe`
+`https://github.com/Yuri-Lima/resonara/releases/download/v2.2.0/Resonara.Setup.2.2.0.exe`
 
 Verification level on macOS: **build-verified** (installer exists, contains
 `resources/piper/models/*.onnx` for both languages, `piper.exe` when present).
 
 ## Install on Windows
 
-1. Copy `Resonara Setup 2.1.0.exe` to a Windows 10/11 x64 machine.
+1. Copy `Resonara Setup 2.2.0.exe` to a Windows 10/11 x64 machine.
 2. Run the installer (custom directory optional).
 3. Launch **Resonara** from Start Menu / desktop shortcut.
 4. If SmartScreen blocks: More info → Run anyway (unsigned local build).
