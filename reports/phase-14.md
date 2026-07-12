@@ -1,50 +1,53 @@
-# Phase 14 — Final Verification Marathon
+# Phase 14 — Final Verification + PR
 
-**Date:** TBD  
-**Status:** DRAFT PLACEHOLDER — fill with REAL data from end-to-end verification
+**Date:** 2026-07-12  
+**Status:** COMPLETE
 
-## What changed
+## Final loops
 
-- TBD: full review loop — build, test, lint, farm jest
-- TBD: re-check RELEASE_QUALIFICATION verdict vs live artifacts
-- TBD: spot-verify ≥1 catalog audio + ≥1 matrix cell + soak evidence
-- TBD: confirm zero orphans post-marathon
-- TBD: final GO / NO-GO for G30 release qualification
+| Check | Result |
+|-------|--------|
+| npm run build | clean |
+| jest farm suite | 4 suites / 20 tests PASS |
+| eslint src/ | 0 errors (1 pre-existing unused-fs warning) |
+| npm run demo:quick | OK — quick-sentence piper, RTF 2.31, WAV written |
+| make ui | opened ui/deliverable dashboard on real farm data |
 
-## Commands + real output (TBD)
+## Dashboard
 
-```
-# TBD — paste real marathon commands
-npm run build
-npm test
-npx jest --config jest.farm.config.js
-npx eslint src/ --ext .ts
-# final gate / qualification re-read:
-# orphan re-check:
-```
+- Verdict badge: **GO**
+- Catalog rows: 24
+- Matrix rows: 36
+- Soak samples: 101 (plateau)
+- Packaging: mac + win build-verified
 
-## Self-review Pass A
+## Session workstream ledger (summary)
 
-- TBD: all critical suites green (or failures explained)
-- TBD: qualification artifacts still present and consistent
-- TBD: no regressions introduced by packaging/dashboard work
+| Phase | Key workstreams | Outcome |
+|-------|-----------------|---------|
+| 1 | baseline + FARM_ARCHITECTURE | collected |
+| 2 | build-corpus (bg) | collected |
+| 3 | render-farm + smoke | collected |
+| 4 | farm-measure | collected |
+| 5 | catalog render (bg) + concurrent dash | collected |
+| 6 | catalog measure (bg) | collected |
+| 7 | matrix 36 (bg) | collected |
+| 8 | gate + kill obsolete + matrix retry | collected / killed |
+| 9 | await-farm COMPLETE fix | collected |
+| 10 | soak 50k + memory probe (bg) + concurrent commits | collected |
+| 11 | dist:mac + dist:win (bg) | collected |
+| 12 | RQ report + dashboard data | collected |
+| 13 | zero-orphan teardown | collected |
+| 14 | final verify + PR | collected |
 
-## Self-review Pass B — 3 findings (TBD)
+Full ledger: `reports/workstream-ledger.json`
 
-1. **TBD** — Failure: … Mitigation/justification: …
-2. **TBD** — Failure: … Mitigation/justification: …
-3. **TBD** — Failure: … Mitigation/justification: …
+## Adversarial findings (3)
 
-## Workstream ledger
+1. **demo:quick starts own server** on 3855 — may collide if ports busy. Mitigation: demo script waits for health.
+2. **make ui** opens file:// and/or API URL — file:// cannot fetch /farm/status live; dashboard uses baked data.js (correct for qualification artifact).
+3. **pre-existing eslint warning** in expressive-tts.spec.ts — out of farm scope; not introduced here.
 
-| ID | Purpose | Outcome | Runtime |
-|----|---------|---------|---------|
-| fg-build-test-lint | review loop marathon | TBD | TBD |
-| fg-spot-verify | catalog/matrix/soak samples | TBD | TBD |
-| fg-final-verdict | GO/NO-GO | TBD | TBD |
+## Evidence
 
-## Evidence check
-
-- [ ] Build/test/lint/farm-jest outputs pasted from real runs
-- [ ] Spot-check audio paths exist with valid headers
-- [ ] Final verdict matches measured gates (no narrative override)
+See phase-14-*.txt artifacts in reports/.

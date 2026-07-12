@@ -1,0 +1,10 @@
+PASS test/farm/render-farm.spec.js
+PASS test/farm/build-corpus.spec.js
+PASS test/farm/farm-measure.spec.js
+PASS test/farm/farm-gate.spec.js
+
+Test Suites: 4 passed, 4 total
+Tests:       20 passed, 20 total
+Snapshots:   0 total
+Time:        0.36 s, estimated 1 s
+Ran all test suites.

@@ -141,5 +141,24 @@
     "purpose": "obsolete batch kill",
     "outcome": "killed",
     "note": "Phase 8 CANCELLED scratch"
+  },
+  {
+    "id": "p12-rq",
+    "phase": 12,
+    "purpose": "RELEASE_QUALIFICATION + dashboard data",
+    "outcome": "collected"
+  },
+  {
+    "id": "p13-teardown",
+    "phase": 13,
+    "purpose": "zero-orphan farm-stop",
+    "outcome": "collected"
+  },
+  {
+    "id": "p14-final",
+    "phase": 14,
+    "purpose": "build/test/demo/make ui/PR",
+    "outcome": "collected",
+    "completedAt": "2026-07-12T16:09:04.619Z"
   }
 ]
