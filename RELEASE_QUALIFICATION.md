@@ -1,24 +1,59 @@
 # Resonara Release Qualification Report
 
-> Status: **IN PROGRESS** (skeleton — filled as farm batches complete)
+> Status: **IN PROGRESS** — catalog measured; matrix/soak/packaging pending
 
 ## Methodology
 
-1. **Corpus** — seed-deterministic bilingual catalog (`samples/catalog/`, seed 42) with ≥24 documents and a 50k-word soak novel.
-2. **Catalog render** — each non-soak doc × best-fit engine × language × audiobook profile via `scripts/render-farm.js`.
-3. **Measurement** — `scripts/farm-measure.js` aggregates WER, pause conformance, RTF, audio validity.
-4. **Matrix** — representative docs × available engines × {audiobook, podcast, news}.
-5. **Gate** — thresholds from `FARM_ARCHITECTURE.md`.
-6. **Soak** — novel-length stability with RSS plateau proof.
-7. **Packaging** — macOS DMG runtime smoke + Windows NSIS build-verify.
+1. Corpus — seed 42 bilingual catalog + 50k soak novel.
+2. Catalog render — 24 jobs piper×audiobook via render-farm (COMPLETE).
+3. Measurement — farm-measure.js (WER proxy / pause / RTF / valid audio).
+4. Matrix — 6 docs × available engines × 3 profiles (in flight).
+5. Gate — FARM_ARCHITECTURE thresholds.
+6. Soak — novel-length RSS plateau.
+7. Packaging — macOS DMG smoke + Windows NSIS build-verify.
 
 ## Catalog quality table
 
-_Pending catalog measurement (Phase 6)._
+| Aggregate | Value |
+|---|---|
+| total | 24 |
+| measured | 24 |
+| failed | 0 |
+| mean WER | 0.1033 |
+| mean pause conformance | 100.0% |
+| mean RTF | 0.346 |
+| invalid audio | 0 |
+
+| Document | Engine | Lang | WER | Conf | RTF | Gate |
+|---|---|---|---|---|---|---|
+| en-short-article | piper | en | 0.044 | 100% | 0.29 | GO |
+| en-news | piper | en | 0.095 | 100% | 0.24 | GO |
+| en-book-chapter | piper | en | 0.036 | 100% | 0.40 | GO |
+| en-technical-doc | piper | en | 0.163 | 100% | 0.36 | GO |
+| en-dialogue-script | piper | en | 0.214 | 100% | 0.46 | GO |
+| en-ssml-showcase | piper | en | 0.114 | 100% | 0.45 | GO |
+| en-children-story | piper | en | 0.061 | 100% | 0.32 | GO |
+| en-numbers-and-dates | piper | en | 0.244 | 100% | 0.35 | GO |
+| en-pronunciation-challenge | piper | en | 0.036 | 100% | 0.38 | GO |
+| en-long-essay | piper | en | 0.051 | 100% | 0.36 | GO |
+| en-paragraph | piper | en | 0.084 | 100% | 0.40 | GO |
+| en-quick-sentence | piper | en | 0.130 | 100% | 0.40 | GO |
+| en-news-expanded | piper | en | 0.036 | 100% | 0.28 | GO |
+| pt-artigo | piper | pt-BR | 0.023 | 100% | 0.35 | GO |
+| pt-noticia | piper | pt-BR | 0.119 | 100% | 0.33 | GO |
+| pt-capitulo | piper | pt-BR | 0.161 | 100% | 0.11 | GO |
+| pt-dialogo | piper | pt-BR | 0.205 | 100% | 0.42 | GO |
+| pt-numeros | piper | pt-BR | 0.235 | 100% | 0.36 | GO |
+| pt-tecnico | piper | pt-BR | 0.019 | 100% | 0.28 | GO |
+| pt-pronuncia | piper | pt-BR | 0.124 | 100% | 0.55 | GO |
+| pt-ssml | piper | pt-BR | 0.009 | 100% | 0.44 | GO |
+| pt-historia | piper | pt-BR | 0.183 | 100% | 0.07 | GO |
+| pt-ensaio | piper | pt-BR | 0.050 | 100% | 0.29 | GO |
+| pt-paragrafo | piper | pt-BR | 0.044 | 100% | 0.42 | GO |
 
 ## Engine × profile matrix
 
-_Pending matrix render + measure (Phase 7)._
+_Pending matrix completion._
 
 ## Soak stability
 
@@ -30,19 +65,4 @@ _Pending Phase 11._
 
 ## Verdict
 
-**PENDING** — not enough measured data yet.
-
-## Spot verification (during catalog render)
-
-First completed catalog cell `en-short-article__piper__audiobook`:
-
-| Metric | Value |
-|--------|-------|
-| validAudio | true (RIFF/WAVE mono 48 kHz) |
-| durationSec | 206.47 |
-| RTF | 0.288 |
-| pauseConformance | 100% (ffmpeg silencedetect heuristic) |
-| WER | 0.044 (duration-density proxy; whisper optional) |
-
-See `reports/spot-verify-en-short-article.json`.
-
+**PENDING** — matrix, soak, packaging not complete. Catalog gates look healthy (mean WER 0.10, conf 100%, 0 invalid).
