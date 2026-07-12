@@ -451,9 +451,10 @@ async function runOneJob(job, port, state, statePath, logStream) {
       throw new Error(`tts job ${jobId} status=${publicJob.status} err=${publicJob.error || ''}`);
     }
 
-    // Download
+    // Download (novel-length WAVs can be hundreds of MB — allow long transfer)
     fs.mkdirSync(path.dirname(job.outPath), { recursive: true });
-    const dl = await httpRequest('GET', port, `/tts/jobs/${jobId}/download`, null, 120000);
+    const dlTimeout = Number(process.env.FARM_DOWNLOAD_TIMEOUT_MS || 30 * 60 * 1000);
+    const dl = await httpRequest('GET', port, `/tts/jobs/${jobId}/download`, null, dlTimeout);
     if (dl.status >= 400 || !dl.raw || !dl.raw.length) {
       throw new Error(`download failed status=${dl.status}`);
     }
