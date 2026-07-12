@@ -2,13 +2,17 @@
 window.RESONARA_EXPRESSIVE = {
   version: '2.1.0-expressive',
   gate2: {
-    cmos: 1.0,
+    // Shipping gate = live product path (autoDirect+REM+humanize), not offline AF-only
+    cmos: 0.75,
     n: 4,
-    ci95: [0.25, 1.75],
+    ci95: [0.0, 1.5],
     anchorSanity: 'pass',
     protocol: 'CMOS-blind-v1-affect-fitness',
-    ledger: 'bench/eval/gate2-ledger.jsonl',
-    detail: 'death +2, picnic +2, dialogue 0, newscast 0 (content-type routing)',
+    ledger: 'bench/eval/gate2-product-path-ledger.jsonl',
+    source: 'product-path',
+    detail:
+      'product-path: death +1, picnic +2, dialogue 0, newscast 0 (mean +0.75). Offline directed-final filter-family evidence remains +1.0.',
+    offlineDirectedFinalCmos: 1.0,
   },
   landscape: [
     { name: 'Chatterbox Turbo', code: 'MIT', weights: 'MIT', params: '350M', ptBR: 'pack', controls: 'tags+exagg', ship: true, bench: true, score: 9.1 },

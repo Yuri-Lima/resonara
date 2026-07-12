@@ -1,0 +1,65 @@
+{
+  "at": "2026-07-12T10:44:35.218Z",
+  "metas": [
+    {
+      "fixture": "death-scene",
+      "productPath": true,
+      "styleProfile": "audiobook",
+      "affect": "grief",
+      "exaggeration": 0.58,
+      "humanize": true,
+      "autoDirect": true,
+      "engine": "expressive",
+      "af": "asetrate=24000*0.92,aresample=24000,atempo=0.95,volume=0.82,lowpass=f=4200",
+      "textChars": 465,
+      "synthLogTail": "█████▊    | 586/1000 [01:44<00:30, 13.41it/s]\rSampling:  59%|█████▊    | 586/1000 [01:44<01:13,  5.61it/s]\nexpressive_ok device=mps wall_s=133.21 out=bench/candidates/product-path/death-scene.pre.wav\n",
+      "multiControl": false,
+      "remWarnings": []
+    },
+    {
+      "fixture": "picnic",
+      "productPath": true,
+      "styleProfile": "audiobook",
+      "affect": "joy",
+      "exaggeration": 0.62,
+      "humanize": true,
+      "autoDirect": true,
+      "engine": "expressive",
+      "af": "asetrate=24000*1.07,aresample=24000,atempo=0.98,volume=1.15,treble=g=4",
+      "textChars": 472,
+      "synthLogTail": " 61%|██████▏   | 613/1000 [01:58<00:30, 12.83it/s]\rSampling:  61%|██████▏   | 613/1000 [01:58<01:14,  5.18it/s]\nexpressive_ok device=mps wall_s=151.62 out=bench/candidates/product-path/picnic.pre.wav\n",
+      "multiControl": false,
+      "remWarnings": []
+    },
+    {
+      "fixture": "dialogue-performance",
+      "productPath": true,
+      "styleProfile": "podcast",
+      "affect": "neutral",
+      "exaggeration": 0.5091549295774648,
+      "humanize": true,
+      "autoDirect": true,
+      "engine": "expressive",
+      "af": "acompressor=threshold=-20dB:ratio=1.8:attack=10:release=150,volume=1.05",
+      "textChars": 486,
+      "synthLogTail": " | 783/1000 [02:40<00:18, 11.91it/s]\rSampling:  78%|███████▊  | 783/1000 [02:40<00:44,  4.88it/s]\nexpressive_ok device=mps wall_s=185.93 out=bench/candidates/product-path/dialogue-performance.pre.wav\n",
+      "multiControl": true,
+      "remWarnings": []
+    },
+    {
+      "fixture": "newscast",
+      "productPath": true,
+      "styleProfile": "news",
+      "affect": "news",
+      "exaggeration": 0.3,
+      "humanize": true,
+      "autoDirect": true,
+      "engine": "expressive",
+      "af": "volume=1.0",
+      "textChars": 397,
+      "synthLogTail": "8%|█████▊    | 576/1000 [02:42<00:33, 12.69it/s]\rSampling:  58%|█████▊    | 577/1000 [02:42<01:58,  3.56it/s]\nexpressive_ok device=mps wall_s=184.98 out=bench/candidates/product-path/newscast.pre.wav\n",
+      "multiControl": false,
+      "remWarnings": []
+    }
+  ]
+}

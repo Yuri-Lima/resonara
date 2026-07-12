@@ -1,0 +1,5 @@
+{"trialId":"death-scene","timestamp":"2026-07-12T10:47:21.480Z","cmosAb":1,"blindFiles":{"A":"1e70513f.wav","B":"beb036bb.wav"},"pmos":{"pitch":44,"rhythm":50,"expressiveness":49},"anchor":null,"_map":{"A":"piper","B":"expressive"}}
+{"trialId":"picnic","timestamp":"2026-07-12T10:47:24.796Z","cmosAb":-2,"blindFiles":{"A":"32a2edfe.wav","B":"d0d8d340.wav"},"pmos":{"pitch":51,"rhythm":50,"expressiveness":33},"anchor":null,"_map":{"A":"expressive","B":"piper"}}
+{"trialId":"dialogue-performance","timestamp":"2026-07-12T10:47:28.309Z","cmosAb":0,"blindFiles":{"A":"7ff38aea.wav","B":"bc819cc5.wav"},"pmos":{"pitch":51,"rhythm":50,"expressiveness":59},"anchor":null,"_map":{"A":"expressive","B":"piper"}}
+{"trialId":"newscast","timestamp":"2026-07-12T10:47:31.516Z","cmosAb":0,"blindFiles":{"A":"d447d764.wav","B":"5573dab3.wav"},"pmos":{"pitch":52,"rhythm":50,"expressiveness":45},"anchor":null,"_map":{"A":"piper","B":"expressive"}}
+{"trialId":"anchor-identical","timestamp":"2026-07-12T10:47:34.794Z","cmosAb":0,"blindFiles":{"A":"ea7b0e8c.wav","B":"4b233c9a.wav"},"pmos":{"pitch":50,"rhythm":50,"expressiveness":50},"anchor":"identical","_map":{"A":"expressive","B":"piper"}}

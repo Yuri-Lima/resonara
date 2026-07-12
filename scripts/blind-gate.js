@@ -124,10 +124,13 @@ function main() {
   const argv = process.argv.slice(2);
   const gate = argv.includes('--gate2') ? 2 : 1;
   const seed = 42;
+  const rootIdx = argv.indexOf('--expr-root');
   const exprRoot =
-    gate === 2
-      ? 'bench/candidates/directed-final'
-      : 'bench/candidates/chatterbox';
+    rootIdx >= 0 && argv[rootIdx + 1]
+      ? argv[rootIdx + 1]
+      : gate === 2
+        ? 'bench/candidates/directed-final'
+        : 'bench/candidates/chatterbox';
   const pairs = [
     {
       fixture: 'death-scene',
@@ -158,11 +161,36 @@ function main() {
     anchor: 'identical',
   });
 
-  const ledgerPath = path.join(ROOT, 'bench', 'eval', `gate${gate}-ledger.jsonl`);
-  const mapPath = path.join(ROOT, 'bench', 'eval', `gate${gate}-unblind.json`);
+  // When scoring a non-default candidate root (e.g. product-path), write separate
+  // artifacts so historical directed-final Gate 2 results are not clobbered.
+  const tagIdx = argv.indexOf('--tag');
+  const tag =
+    tagIdx >= 0 && argv[tagIdx + 1]
+      ? argv[tagIdx + 1]
+      : /product-path/.test(exprRoot)
+        ? 'product-path'
+        : '';
+  const suffix = tag ? `-${tag}` : '';
+  const ledgerPath = path.join(
+    ROOT,
+    'bench',
+    'eval',
+    `gate${gate}${suffix}-ledger.jsonl`,
+  );
+  const mapPath = path.join(
+    ROOT,
+    'bench',
+    'eval',
+    `gate${gate}${suffix}-unblind.json`,
+  );
   fs.mkdirSync(path.dirname(ledgerPath), { recursive: true });
 
-  const blindDir = path.join(ROOT, 'bench', 'eval', `blind-g${gate}`);
+  const blindDir = path.join(
+    ROOT,
+    'bench',
+    'eval',
+    `blind-g${gate}${suffix ? '-' + tag : ''}`,
+  );
   fs.mkdirSync(blindDir, { recursive: true });
 
   const lines = [];
@@ -227,6 +255,8 @@ function main() {
   const mean = n ? sum / n : null;
   const summary = {
     gate,
+    exprRoot,
+    tag: tag || null,
     meanCmosExpressiveVsPiper: mean,
     n,
     pass: mean != null && mean >= 0.5,

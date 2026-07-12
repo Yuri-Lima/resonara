@@ -1,0 +1,15 @@
+{
+  "fixture": "death-scene",
+  "productPath": true,
+  "styleProfile": "audiobook",
+  "affect": "grief",
+  "exaggeration": 0.58,
+  "humanize": true,
+  "autoDirect": true,
+  "engine": "expressive",
+  "af": "asetrate=24000*0.92,aresample=24000,atempo=0.95,volume=0.82,lowpass=f=4200",
+  "textChars": 465,
+  "synthLogTail": "█████▊    | 586/1000 [01:44<00:30, 13.41it/s]\rSampling:  59%|█████▊    | 586/1000 [01:44<01:13,  5.61it/s]\nexpressive_ok device=mps wall_s=133.21 out=bench/candidates/product-path/death-scene.pre.wav\n",
+  "multiControl": false,
+  "remWarnings": []
+}

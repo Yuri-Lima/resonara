@@ -5,6 +5,7 @@ import {
   shouldApplyDirectedFilter,
   emotionToAffect,
   directedAudioFilter,
+  contentAffectFromText,
 } from './direction-runtime';
 
 describe('direction-runtime (product path)', () => {
@@ -18,7 +19,32 @@ describe('direction-runtime (product path)', () => {
     });
     expect(rt.exaggeration).toBeCloseTo(0.82);
     expect(rt.humanize).toBe(true);
-    expect(rt.affect).toBe('joy'); // animated style
+    // drama is narrative, not animated/joy
+    expect(rt.affect).toBe('neutral');
+  });
+
+  it('contentAffectFromText routes death/picnic/news monologues', () => {
+    expect(
+      contentAffectFromText('The final breath left her lips. Grief settled.'),
+    ).toBe('grief');
+    expect(
+      contentAffectFromText('A sunny picnic with laughter and celebration.'),
+    ).toBe('joy');
+    expect(
+      contentAffectFromText('Breaking news: authorities said the report.'),
+    ).toBe('news');
+  });
+
+  it('humanize + plain death monologue → grief affect (product path)', () => {
+    const rt = buildExpressionRuntime({
+      engine: 'expressive',
+      plainText:
+        'She simply let go. He held her hand until the warmth faded. Grief settled into every corner.',
+      humanize: true,
+      styleProfile: 'audiobook',
+    });
+    expect(rt.affect).toBe('grief');
+    expect(expressionAudioFilter(rt)).toMatch(/0\.92/);
   });
 
   it('aggregates REM emotion into exaggeration + affect', () => {
@@ -54,6 +80,9 @@ describe('direction-runtime (product path)', () => {
     const affects = new Set(rt.segments.map((s) => s.affect));
     expect(affects.has('grief')).toBe(true);
     expect(affects.has('joy')).toBe(true);
+    // Document-level AF stays neutral so one affect does not paint the whole clip
+    expect(rt.affect).toBe('neutral');
+    expect(expressionAudioFilter(rt)).not.toMatch(/0\.92|1\.07/);
   });
 
   it('user exaggeration overrides REM aggregate', () => {

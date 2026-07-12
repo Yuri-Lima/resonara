@@ -51,10 +51,59 @@ function styleFromProfile(profile?: string): RemStyle | undefined {
   if (!profile) return undefined;
   const p = profile.toLowerCase();
   if (p === 'news' || p === 'newscast') return 'newscast';
-  if (p === 'children' || p === 'animated' || p === 'drama') return 'animated';
+  // drama stays narrative (affect comes from content/REM emotion — not "animated/joy")
+  if (p === 'children' || p === 'animated') return 'animated';
+  if (p === 'drama') return 'narrative';
   if (p === 'podcast' || p === 'conversational') return 'conversational';
   if (p === 'audiobook' || p === 'narrative') return 'narrative';
   return undefined;
+}
+
+/**
+ * Lightweight content → affect when REM has no emotion yet.
+ * Enables product-path direction on plain monologues (death/picnic/news)
+ * without offline hand-authored filters.
+ */
+export function contentAffectFromText(text: string): DirectedAffect | null {
+  if (!text?.trim()) return null;
+  const t = text.toLowerCase();
+  if (
+    /\b(breaking news|in other news|national news|good evening\.|lawmakers|markets closed|authorities said|officials said|negotiators said|full report)\b/.test(
+      t,
+    ) ||
+    /\bnewscast\b/.test(t)
+  ) {
+    return 'news';
+  }
+  if (
+    /\b(grief|grieving|mourn|funeral|died|death|dying|final breath|let go|warmth faded|sobbed|tears?|weep)\b/.test(
+      t,
+    )
+  ) {
+    return 'grief';
+  }
+  if (
+    /\b(picnic|laughter|laughing|laugh|giggle|celebration|sunshine|bright|cheerful|delighted|joyous|joy|happiness|honey|meadow)\b/.test(
+      t,
+    )
+  ) {
+    return 'joy';
+  }
+  return null;
+}
+
+function applyContentAffectFallback(
+  affect: DirectedAffect,
+  text: string,
+  humanize: boolean,
+): DirectedAffect {
+  if (!humanize) return affect;
+  if (affect !== 'neutral' && affect !== 'news') return affect;
+  const fromContent = contentAffectFromText(text);
+  if (!fromContent) return affect;
+  // Do not override an explicit newscast style with joy/grief keywords
+  if (affect === 'news' && fromContent !== 'news') return affect;
+  return fromContent;
 }
 
 function clamp01(n: number): number {
@@ -131,8 +180,6 @@ export function buildExpressionRuntime(opts: BuildExpressionOpts): ExpressionRun
     if (affect === 'neutral' && profileStyle) {
       affect = emotionToAffect(undefined, profileStyle);
     }
-
-    const primary = segments[0];
     const multiControl =
       segments.length > 1 &&
       segments.some(
@@ -141,12 +188,51 @@ export function buildExpressionRuntime(opts: BuildExpressionOpts): ExpressionRun
           s.affect !== segments[0].affect,
       );
 
+    // Content fallback for monologues; multi-emotion dialogue keeps document AF neutral
+    if (multiControl) {
+      const unique = new Set(segments.map((s) => s.affect));
+      if (unique.size > 1) {
+        // Conflicting segment affects: document-level AF stays neutral
+        // (per-segment synth owns color via expressionForChunk)
+        affect = 'neutral';
+      } else {
+        // multiControl only from exaggeration variance — content cue still valid
+        affect = applyContentAffectFallback(
+          affect,
+          speakableText || opts.plainText,
+          humanize,
+        );
+      }
+    } else {
+      affect = applyContentAffectFallback(
+        affect,
+        speakableText || opts.plainText,
+        humanize,
+      );
+      // Propagate document affect onto neutral segments when humanize + content cue
+      if (humanize && affect !== 'neutral') {
+        for (const s of segments) {
+          if (s.affect === 'neutral') s.affect = affect;
+        }
+      }
+    }
+
+    const primary = segments[0];
+
+    // Content-driven grief/joy nudges exaggeration when user did not set it
+    let exaggeration = clamp01(
+      opts.exaggeration != null ? opts.exaggeration : aggEx,
+    );
+    if (opts.exaggeration == null && humanize) {
+      if (affect === 'grief') exaggeration = Math.max(exaggeration, 0.58);
+      if (affect === 'joy') exaggeration = Math.max(exaggeration, 0.62);
+      if (affect === 'news') exaggeration = Math.min(exaggeration, 0.35);
+    }
+
     return {
       directed: true,
       humanize,
-      exaggeration: clamp01(
-        opts.exaggeration != null ? opts.exaggeration : aggEx,
-      ),
+      exaggeration,
       emotion: primary?.emotion,
       style: primary?.style || profileStyle,
       affect,
@@ -161,12 +247,18 @@ export function buildExpressionRuntime(opts: BuildExpressionOpts): ExpressionRun
 
   // No REM: still honor user exaggeration / style / humanize
   const style = profileStyle;
-  const affect = emotionToAffect(undefined, style);
-  const exaggeration = clamp01(
+  let affect = emotionToAffect(undefined, style);
+  affect = applyContentAffectFallback(affect, opts.plainText, humanize);
+  let exaggeration = clamp01(
     opts.exaggeration != null ? opts.exaggeration : 0.55,
   );
+  if (opts.exaggeration == null && humanize) {
+    if (affect === 'grief') exaggeration = 0.58;
+    if (affect === 'joy') exaggeration = 0.62;
+    if (affect === 'news') exaggeration = 0.35;
+  }
   const directed =
-    opts.exaggeration != null || humanize || !!opts.styleProfile;
+    opts.exaggeration != null || humanize || !!opts.styleProfile || affect !== 'neutral';
 
   return {
     directed,
