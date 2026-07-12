@@ -27,11 +27,44 @@ function mean(nums) {
   return a.reduce((s, x) => s + x, 0) / a.length;
 }
 
+/**
+ * Resolve the engine that actually produced the audio.
+ *
+ * Prefer retryEngine / actualEngine (what ran) over engine (planned cell),
+ * then fall back to a bare engine field. NEVER parse the job id/filename —
+ * cell ids like `en-numbers-and-dates__piper__audiobook` can be re-rendered
+ * with engine=platform after a transient failure, and aggregating those under
+ * piper falsifies byEngine and the matrix gate.
+ */
+function resolveActualEngine(jobMeta) {
+  if (!jobMeta || typeof jobMeta !== 'object') return 'unknown';
+  if (jobMeta.retryEngine) return String(jobMeta.retryEngine);
+  if (jobMeta.actualEngine) return String(jobMeta.actualEngine);
+  if (jobMeta.engine) return String(jobMeta.engine);
+  return 'unknown';
+}
+
+/**
+ * Normalize a measured/job row so `engine` reflects the actual render engine.
+ * Mutates and returns the row for convenience.
+ */
+function applyActualEngine(row) {
+  if (!row || typeof row !== 'object') return row;
+  row.engine = resolveActualEngine(row);
+  return row;
+}
+
 function aggregateRows(rows) {
-  const ok = rows.filter((r) => r.status === 'ok' || r.status === 'measured');
-  const failed = rows.filter((r) => r.status === 'failed');
+  // Re-key engine off actual render metadata before grouping — never trust id.
+  const normalized = rows.map((r) => {
+    const copy = { ...r };
+    applyActualEngine(copy);
+    return copy;
+  });
+  const ok = normalized.filter((r) => r.status === 'ok' || r.status === 'measured');
+  const failed = normalized.filter((r) => r.status === 'failed');
   return {
-    total: rows.length,
+    total: normalized.length,
     measured: ok.length,
     failed: failed.length,
     meanWer: mean(ok.map((r) => r.wer)),
@@ -40,7 +73,7 @@ function aggregateRows(rows) {
     meanDurationSec: mean(ok.map((r) => r.durationSec)),
     meanF0Variance: mean(ok.map((r) => r.f0Variance)),
     meanSpeechRate: mean(ok.map((r) => r.speechRate)),
-    invalidAudio: rows.filter((r) => r.validAudio === false).length,
+    invalidAudio: normalized.filter((r) => r.validAudio === false).length,
     byEngine: groupBy(ok, 'engine'),
     byProfile: groupBy(ok, 'profile'),
     byContentType: groupBy(ok, 'contentType'),
@@ -241,10 +274,12 @@ function tryTranscribe(audioPath) {
 
 async function measureOne(jobMeta, corpusDoc) {
   const outPath = jobMeta.outPath;
+  const actualEngine = resolveActualEngine(jobMeta);
   const row = {
     id: jobMeta.id || jobMeta.docId,
     docId: jobMeta.docId,
-    engine: jobMeta.engine,
+    // Actual engine used for the WAV — never derived from id/filename.
+    engine: actualEngine,
     language: jobMeta.language,
     profile: jobMeta.profile,
     contentType: corpusDoc ? corpusDoc.contentType : null,
@@ -261,6 +296,12 @@ async function measureOne(jobMeta, corpusDoc) {
     validAudio: false,
     method: {},
   };
+  // Preserve retry provenance for audit (aggregator already keys off this).
+  if (jobMeta.retryEngine) {
+    row.retryEngine = jobMeta.retryEngine;
+    row.plannedEngine = jobMeta.engine && jobMeta.engine !== actualEngine ? jobMeta.engine : undefined;
+    if (jobMeta.retried != null) row.retried = jobMeta.retried;
+  }
 
   if (!outPath || !fs.existsSync(outPath)) {
     row.status = 'failed';
@@ -371,7 +412,39 @@ async function measureBatch(batchName, opts = {}) {
   );
   const byDoc = Object.fromEntries(corpus.documents.map((d) => [d.id, d]));
 
-  const jobList = Object.entries(state.jobs || {}).map(([id, j]) => ({ id, ...j }));
+  // Prefer state.jobs fields; if log.jsonl carries retryEngine, merge it in so
+  // resolveActualEngine sees the true render engine even when state.engine was
+  // left as the planned cell engine.
+  const logRetryById = {};
+  const logPath = path.join(batchDir, 'log.jsonl');
+  if (fs.existsSync(logPath)) {
+    try {
+      for (const line of fs.readFileSync(logPath, 'utf8').split('\n')) {
+        if (!line.trim()) continue;
+        try {
+          const rec = JSON.parse(line);
+          if (rec && rec.id && (rec.retryEngine || rec.actualEngine)) {
+            logRetryById[rec.id] = {
+              retryEngine: rec.retryEngine,
+              actualEngine: rec.actualEngine,
+              retried: rec.retried,
+            };
+          }
+        } catch {
+          /* skip bad line */
+        }
+      }
+    } catch {
+      /* log optional */
+    }
+  }
+
+  const jobList = Object.entries(state.jobs || {}).map(([id, j]) => {
+    const merged = { id, ...j, ...(logRetryById[id] || {}) };
+    // Force engine field to actual before measureOne / aggregate.
+    applyActualEngine(merged);
+    return merged;
+  });
   const progress = {
     status: 'RUNNING',
     batch: batchName,
@@ -494,6 +567,8 @@ module.exports = {
   mean,
   aggregateRows,
   recommendDefaults,
+  resolveActualEngine,
+  applyActualEngine,
   wordErrorRate,
   normalizeText,
   validateAudioHeader,

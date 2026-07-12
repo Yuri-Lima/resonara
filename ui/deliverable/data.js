@@ -1,241 +1,102 @@
 window.FARM_DATA = {
-  "generatedAt": "2026-07-12T16:09:04.638Z",
+  "generatedAt": "2026-07-12T16:55:17.982Z",
   "verdict": "GO",
   "gates": {
     "verdict": "GO",
-    "catalog": {
-      "verdict": "GO",
-      "findings": [],
-      "aggregates": {
-        "total": 24,
-        "measured": 24,
-        "failed": 0,
-        "meanWer": 0.10331986733574183,
-        "meanConformance": 1,
-        "meanRtf": 0.3463713175419974,
-        "meanDurationSec": 349.1412735833333,
-        "meanF0Variance": null,
-        "meanSpeechRate": null,
-        "invalidAudio": 0,
-        "byEngine": {
-          "piper": {
-            "n": 24,
-            "meanWer": 0.10331986733574183,
-            "meanConformance": 1,
-            "meanRtf": 0.3463713175419974
-          }
+    "findings": [],
+    "aggregates": {
+      "total": 36,
+      "measured": 36,
+      "failed": 0,
+      "meanWer": 0.1149412865951534,
+      "meanConformance": 1,
+      "meanRtf": 0.4140001452057462,
+      "meanDurationSec": 221.69409675000003,
+      "meanF0Variance": null,
+      "meanSpeechRate": null,
+      "invalidAudio": 0,
+      "byEngine": {
+        "piper": {
+          "n": 18,
+          "meanWer": 0.13291925285590525,
+          "meanConformance": 1,
+          "meanRtf": 0.5474386901664823
         },
-        "byProfile": {
-          "audiobook": {
-            "n": 24,
-            "meanWer": 0.10331986733574183,
-            "meanConformance": 1,
-            "meanRtf": 0.3463713175419974
-          }
-        },
-        "byContentType": {
-          "short-article": {
-            "n": 2,
-            "meanWer": 0.033329176923030744,
-            "meanConformance": 1,
-            "meanRtf": 0.3187215023987587
-          },
-          "news": {
-            "n": 3,
-            "meanWer": 0.08313104893366836,
-            "meanConformance": 1,
-            "meanRtf": 0.28512638517987127
-          },
-          "book-chapter": {
-            "n": 2,
-            "meanWer": 0.09864376131855766,
-            "meanConformance": 1,
-            "meanRtf": 0.2560149393209231
-          },
-          "technical-doc": {
-            "n": 2,
-            "meanWer": 0.09104440315187233,
-            "meanConformance": 1,
-            "meanRtf": 0.3202584609452731
-          },
-          "dialogue-script": {
-            "n": 2,
-            "meanWer": 0.20921122109804097,
-            "meanConformance": 1,
-            "meanRtf": 0.4355856393843976
-          },
-          "ssml-showcase": {
-            "n": 2,
-            "meanWer": 0.061444484159318025,
-            "meanConformance": 1,
-            "meanRtf": 0.4470778907958114
-          },
-          "children-story": {
-            "n": 2,
-            "meanWer": 0.1221522573096141,
-            "meanConformance": 1,
-            "meanRtf": 0.19324392394592504
-          },
-          "numbers-and-dates": {
-            "n": 2,
-            "meanWer": 0.23941884046246026,
-            "meanConformance": 1,
-            "meanRtf": 0.35472839597326683
-          },
-          "pronunciation-challenge": {
-            "n": 2,
-            "meanWer": 0.0800639277771682,
-            "meanConformance": 1,
-            "meanRtf": 0.4664869991263948
-          },
-          "long-form-essay": {
-            "n": 2,
-            "meanWer": 0.050665586354382564,
-            "meanConformance": 1,
-            "meanRtf": 0.3265990131412636
-          },
-          "paragraph": {
-            "n": 2,
-            "meanWer": 0.06426953407434839,
-            "meanConformance": 1,
-            "meanRtf": 0.4095968009042733
-          },
-          "quick-sentence": {
-            "n": 1,
-            "meanWer": 0.1297972839992127,
-            "meanConformance": 1,
-            "meanRtf": 0.4009053335957488
-          }
-        },
-        "byLanguage": {
-          "en": {
-            "n": 13,
-            "meanWer": 0.10061339358201046,
-            "meanConformance": 1,
-            "meanRtf": 0.3608825167449619
-          },
-          "pt-BR": {
-            "n": 11,
-            "meanWer": 0.10651842722651529,
-            "meanConformance": 1,
-            "meanRtf": 0.32922171848394854
-          }
+        "platform": {
+          "n": 18,
+          "meanWer": 0.09696332033440161,
+          "meanConformance": 1,
+          "meanRtf": 0.28056160024501015
         }
       },
-      "thresholds": {
-        "maxMeanWer": 0.35,
-        "minConformance": 0.9,
-        "maxInvalidAudio": 0,
-        "maxFailRate": 0.05,
-        "maxMeanRtf": 5
-      }
-    },
-    "matrix": {
-      "verdict": "GO",
-      "findings": [],
-      "aggregates": {
-        "total": 36,
-        "measured": 36,
-        "failed": 0,
-        "meanWer": 0.11554404863885168,
-        "meanConformance": 1,
-        "meanRtf": 0.3992139347839496,
-        "meanDurationSec": 221.7865001111111,
-        "meanF0Variance": null,
-        "meanSpeechRate": null,
-        "invalidAudio": 0,
-        "byEngine": {
-          "piper": {
-            "n": 18,
-            "meanWer": 0.1341247769433018,
-            "meanConformance": 1,
-            "meanRtf": 0.5178662693228892
-          },
-          "platform": {
-            "n": 18,
-            "meanWer": 0.09696332033440161,
-            "meanConformance": 1,
-            "meanRtf": 0.28056160024501015
-          }
+      "byProfile": {
+        "audiobook": {
+          "n": 12,
+          "meanWer": 0.11573536902175964,
+          "meanConformance": 1,
+          "meanRtf": 0.4155700094164268
         },
-        "byProfile": {
-          "audiobook": {
-            "n": 12,
-            "meanWer": 0.11596687386934375,
-            "meanConformance": 1,
-            "meanRtf": 0.3975305309762562
-          },
-          "podcast": {
-            "n": 12,
-            "meanWer": 0.1156158938738297,
-            "meanConformance": 1,
-            "meanRtf": 0.4117572128325073
-          },
-          "news": {
-            "n": 12,
-            "meanWer": 0.11504937817338168,
-            "meanConformance": 1,
-            "meanRtf": 0.38835406054308547
-          }
+        "podcast": {
+          "n": 12,
+          "meanWer": 0.1150787395122256,
+          "meanConformance": 1,
+          "meanRtf": 0.4230406033652103
         },
-        "byContentType": {
-          "short-article": {
-            "n": 12,
-            "meanWer": 0.0342979605697527,
-            "meanConformance": 1,
-            "meanRtf": 0.3188452147805087
-          },
-          "news": {
-            "n": 6,
-            "meanWer": 0.09011505408057435,
-            "meanConformance": 1,
-            "meanRtf": 0.2035268805843766
-          },
-          "dialogue-script": {
-            "n": 12,
-            "meanWer": 0.14256124755603586,
-            "meanConformance": 1,
-            "meanRtf": 0.7113417256037086
-          },
-          "numbers-and-dates": {
-            "n": 6,
-            "meanWer": 0.24943082150095877,
-            "meanConformance": 1,
-            "meanRtf": 0.13138284735088676
-          }
-        },
-        "byLanguage": {
-          "en": {
-            "n": 24,
-            "meanWer": 0.13612378894137747,
-            "meanConformance": 1,
-            "meanRtf": 0.31377969668376055
-          },
-          "pt-BR": {
-            "n": 12,
-            "meanWer": 0.07438456803380021,
-            "meanConformance": 1,
-            "meanRtf": 0.5700824109843278
-          }
+        "news": {
+          "n": 12,
+          "meanWer": 0.11400975125147507,
+          "meanConformance": 1,
+          "meanRtf": 0.40338982283560126
         }
       },
-      "thresholds": {
-        "maxMeanWer": 0.35,
-        "minConformance": 0.9,
-        "maxInvalidAudio": 0,
-        "maxFailRate": 0.05,
-        "maxMeanRtf": 5
+      "byContentType": {
+        "short-article": {
+          "n": 12,
+          "meanWer": 0.0342979605697527,
+          "meanConformance": 1,
+          "meanRtf": 0.3188452147805087
+        },
+        "news": {
+          "n": 6,
+          "meanWer": 0.09011505408057435,
+          "meanConformance": 1,
+          "meanRtf": 0.2035268805843766
+        },
+        "dialogue-script": {
+          "n": 12,
+          "meanWer": 0.14256124755603586,
+          "meanConformance": 1,
+          "meanRtf": 0.7113417256037086
+        },
+        "numbers-and-dates": {
+          "n": 6,
+          "meanWer": 0.24581424923876913,
+          "meanConformance": 1,
+          "meanRtf": 0.2201001098816658
+        }
+      },
+      "byLanguage": {
+        "en": {
+          "n": 24,
+          "meanWer": 0.13521964587583005,
+          "meanConformance": 1,
+          "meanRtf": 0.33595901231645536
+        },
+        "pt-BR": {
+          "n": 12,
+          "meanWer": 0.07438456803380021,
+          "meanConformance": 1,
+          "meanRtf": 0.5700824109843278
+        }
       }
     },
-    "generatedAt": "2026-07-12T15:42:44.028Z",
-    "soak": {
-      "verdict": "GO",
-      "plateau": true
-    },
-    "packaging": {
-      "verdict": "GO"
-    },
-    "finalAt": "2026-07-12T16:08:13.703Z"
+    "thresholds": {
+      "maxMeanWer": 0.35,
+      "minConformance": 0.9,
+      "maxInvalidAudio": 0,
+      "maxFailRate": 0.05,
+      "maxMeanRtf": 5
+    }
   },
   "catalog": {
     "rows": [
@@ -1849,79 +1710,82 @@ window.FARM_DATA = {
       },
       {
         "id": "en-numbers-and-dates__piper__audiobook",
+        "docId": "en-numbers-and-dates",
         "engine": "piper",
+        "language": "en",
+        "profile": "audiobook",
         "contentType": "numbers-and-dates",
         "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__audiobook.wav",
         "status": "measured",
-        "wer": 0.24991637828899033,
+        "wer": 0.24713832011798123,
         "pauseConformance": 1,
         "f0Variance": null,
         "speechRate": null,
-        "durationSec": 39.986625,
-        "rtf": 0.12054030566470665,
-        "ms": 4820,
-        "bytes": 5758176,
+        "durationSec": 39.547313,
+        "rtf": 0.3370140469467546,
+        "ms": 13328,
+        "bytes": 5694916,
         "validAudio": true,
         "method": {
           "pause": "ffmpeg-silencedetect",
           "wer": "duration-density-proxy"
         },
-        "docId": "en-numbers-and-dates",
-        "profile": "audiobook",
-        "language": "en",
         "werIsProxy": true
       },
       {
         "id": "en-numbers-and-dates__piper__podcast",
+        "docId": "en-numbers-and-dates",
         "engine": "piper",
+        "language": "en",
+        "profile": "podcast",
         "contentType": "numbers-and-dates",
         "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__podcast.wav",
         "status": "measured",
-        "wer": 0.2493341688861037,
+        "wer": 0.24288831654685436,
         "pauseConformance": 1,
         "f0Variance": null,
         "speechRate": null,
-        "durationSec": 39.89375,
-        "rtf": 0.1412000626664578,
-        "ms": 5633,
-        "bytes": 5744802,
+        "durationSec": 38.893604,
+        "rtf": 0.27660074905889404,
+        "ms": 10758,
+        "bytes": 5600782,
         "validAudio": true,
         "method": {
           "pause": "ffmpeg-silencedetect",
           "wer": "duration-density-proxy"
         },
-        "docId": "en-numbers-and-dates",
-        "profile": "podcast",
-        "language": "en",
         "werIsProxy": true
       },
       {
         "id": "en-numbers-and-dates__piper__news",
+        "docId": "en-numbers-and-dates",
         "engine": "piper",
+        "language": "en",
+        "profile": "news",
         "contentType": "numbers-and-dates",
         "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__news.wav",
         "status": "measured",
-        "wer": 0.2490419173277823,
+        "wer": 0.23656639426490286,
         "pauseConformance": 1,
         "f0Variance": null,
         "speechRate": null,
-        "durationSec": 39.847292,
-        "rtf": 0.08326789183064183,
-        "ms": 3318,
-        "bytes": 5738112,
+        "durationSec": 37.960229,
+        "rtf": 0.2636970393408322,
+        "ms": 10010,
+        "bytes": 5466376,
         "validAudio": true,
         "method": {
           "pause": "ffmpeg-silencedetect",
           "wer": "duration-density-proxy"
         },
-        "docId": "en-numbers-and-dates",
-        "profile": "news",
-        "language": "en",
         "werIsProxy": true
       },
       {
         "id": "en-numbers-and-dates__platform__audiobook",
+        "docId": "en-numbers-and-dates",
         "engine": "platform",
+        "language": "en",
+        "profile": "audiobook",
         "contentType": "numbers-and-dates",
         "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__audiobook.wav",
         "status": "measured",
@@ -1938,14 +1802,16 @@ window.FARM_DATA = {
           "pause": "ffmpeg-silencedetect",
           "wer": "duration-density-proxy"
         },
-        "docId": "en-numbers-and-dates",
-        "profile": "audiobook",
-        "language": "en",
+        "retryEngine": "platform",
+        "retried": true,
         "werIsProxy": true
       },
       {
         "id": "en-numbers-and-dates__platform__podcast",
+        "docId": "en-numbers-and-dates",
         "engine": "platform",
+        "language": "en",
+        "profile": "podcast",
         "contentType": "numbers-and-dates",
         "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__podcast.wav",
         "status": "measured",
@@ -1962,9 +1828,8 @@ window.FARM_DATA = {
           "pause": "ffmpeg-silencedetect",
           "wer": "duration-density-proxy"
         },
-        "docId": "en-numbers-and-dates",
-        "profile": "podcast",
-        "language": "en",
+        "retryEngine": "platform",
+        "retried": true,
         "werIsProxy": true
       },
       {
@@ -2284,19 +2149,19 @@ window.FARM_DATA = {
       "total": 36,
       "measured": 36,
       "failed": 0,
-      "meanWer": 0.11554404863885168,
+      "meanWer": 0.1149412865951534,
       "meanConformance": 1,
-      "meanRtf": 0.3992139347839496,
-      "meanDurationSec": 221.7865001111111,
+      "meanRtf": 0.4140001452057462,
+      "meanDurationSec": 221.69409675000003,
       "meanF0Variance": null,
       "meanSpeechRate": null,
       "invalidAudio": 0,
       "byEngine": {
         "piper": {
           "n": 18,
-          "meanWer": 0.1341247769433018,
+          "meanWer": 0.13291925285590525,
           "meanConformance": 1,
-          "meanRtf": 0.5178662693228892
+          "meanRtf": 0.5474386901664823
         },
         "platform": {
           "n": 18,
@@ -2308,21 +2173,21 @@ window.FARM_DATA = {
       "byProfile": {
         "audiobook": {
           "n": 12,
-          "meanWer": 0.11596687386934375,
+          "meanWer": 0.11573536902175964,
           "meanConformance": 1,
-          "meanRtf": 0.3975305309762562
+          "meanRtf": 0.4155700094164268
         },
         "podcast": {
           "n": 12,
-          "meanWer": 0.1156158938738297,
+          "meanWer": 0.1150787395122256,
           "meanConformance": 1,
-          "meanRtf": 0.4117572128325073
+          "meanRtf": 0.4230406033652103
         },
         "news": {
           "n": 12,
-          "meanWer": 0.11504937817338168,
+          "meanWer": 0.11400975125147507,
           "meanConformance": 1,
-          "meanRtf": 0.38835406054308547
+          "meanRtf": 0.40338982283560126
         }
       },
       "byContentType": {
@@ -2346,17 +2211,17 @@ window.FARM_DATA = {
         },
         "numbers-and-dates": {
           "n": 6,
-          "meanWer": 0.24943082150095877,
+          "meanWer": 0.24581424923876913,
           "meanConformance": 1,
-          "meanRtf": 0.13138284735088676
+          "meanRtf": 0.2201001098816658
         }
       },
       "byLanguage": {
         "en": {
           "n": 24,
-          "meanWer": 0.13612378894137747,
+          "meanWer": 0.13521964587583005,
           "meanConformance": 1,
-          "meanRtf": 0.31377969668376055
+          "meanRtf": 0.33595901231645536
         },
         "pt-BR": {
           "n": 12,
@@ -2843,37 +2708,76 @@ window.FARM_DATA = {
         "en-numbers-and-dates__piper__audiobook": {
           "status": "ok",
           "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__audiobook.wav",
-          "engine": "platform",
-          "ms": 4820,
-          "bytes": 5758176
+          "engine": "piper",
+          "ms": 13328,
+          "bytes": 5694916,
+          "language": "en",
+          "profile": "audiobook",
+          "docId": "en-numbers-and-dates",
+          "startedAt": "2026-07-12T16:53:33.292Z",
+          "ttsJobId": "7589f3d0-6f25-4c1c-917f-854922c3e58e",
+          "id": "en-numbers-and-dates__piper__audiobook",
+          "rtf": null,
+          "durationSec": null,
+          "retried": false,
+          "piperRerenderAt": "2026-07-12T16:54:07.390Z",
+          "piperRerenderBatch": "matrix-piper-rerender"
         },
         "en-numbers-and-dates__piper__podcast": {
           "status": "ok",
           "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__podcast.wav",
-          "engine": "platform",
-          "ms": 5633,
-          "bytes": 5744802
+          "engine": "piper",
+          "ms": 10758,
+          "bytes": 5600782,
+          "language": "en",
+          "profile": "podcast",
+          "docId": "en-numbers-and-dates",
+          "startedAt": "2026-07-12T16:53:46.621Z",
+          "ttsJobId": "4e6dea7d-b1dd-4677-9720-8311daabc8c3",
+          "id": "en-numbers-and-dates__piper__podcast",
+          "rtf": null,
+          "durationSec": null,
+          "retried": false,
+          "piperRerenderAt": "2026-07-12T16:54:07.390Z",
+          "piperRerenderBatch": "matrix-piper-rerender"
         },
         "en-numbers-and-dates__piper__news": {
           "status": "ok",
           "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__news.wav",
-          "engine": "platform",
-          "ms": 3318,
-          "bytes": 5738112
+          "engine": "piper",
+          "ms": 10010,
+          "bytes": 5466376,
+          "language": "en",
+          "profile": "news",
+          "docId": "en-numbers-and-dates",
+          "startedAt": "2026-07-12T16:53:57.379Z",
+          "ttsJobId": "0b9fcd16-071b-4c6b-8294-a38db82e7323",
+          "id": "en-numbers-and-dates__piper__news",
+          "rtf": null,
+          "durationSec": null,
+          "retried": false,
+          "piperRerenderAt": "2026-07-12T16:54:07.390Z",
+          "piperRerenderBatch": "matrix-piper-rerender"
         },
         "en-numbers-and-dates__platform__audiobook": {
           "status": "ok",
           "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__audiobook.wav",
           "engine": "platform",
           "ms": 4128,
-          "bytes": 5758176
+          "bytes": 5758176,
+          "docId": "en-numbers-and-dates",
+          "profile": "audiobook",
+          "language": "en"
         },
         "en-numbers-and-dates__platform__podcast": {
           "status": "ok",
           "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__podcast.wav",
           "engine": "platform",
           "ms": 3226,
-          "bytes": 5744802
+          "bytes": 5744802,
+          "docId": "en-numbers-and-dates",
+          "profile": "podcast",
+          "language": "en"
         },
         "en-numbers-and-dates__platform__news": {
           "status": "ok",
@@ -3076,7 +2980,16 @@ window.FARM_DATA = {
       "manifestPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/manifest.json",
       "maxInFlight": 3,
       "retryMergedAt": "2026-07-12T15:40:02.688Z",
-      "retryNote": "5 numbers cells re-rendered via platform after piper unavailability + DB reset"
+      "retryNote": "5 numbers cells re-rendered via platform after piper unavailability + DB reset",
+      "piperRerender": {
+        "batch": "matrix-piper-rerender",
+        "completedAt": "2026-07-12T16:54:07.390Z",
+        "cells": [
+          "en-numbers-and-dates__piper__audiobook",
+          "en-numbers-and-dates__piper__podcast",
+          "en-numbers-and-dates__piper__news"
+        ]
+      }
     }
   },
   "soak": {
@@ -4332,6 +4245,45 @@ window.FARM_DATA = {
       "purpose": "build/test/demo/make ui/PR",
       "outcome": "collected",
       "completedAt": "2026-07-12T16:09:04.619Z"
+    },
+    {
+      "id": "p8f-stop",
+      "phase": "8-fix",
+      "purpose": "farm-stop reap ports/orphans",
+      "outcome": "landed"
+    },
+    {
+      "id": "p8f-db-preflight",
+      "phase": "8-fix",
+      "purpose": "sqlite integrity_check",
+      "outcome": "ok"
+    },
+    {
+      "id": "p8f-aggregator-fix",
+      "phase": "8-fix",
+      "purpose": "resolveActualEngine + unit test",
+      "outcome": "landed"
+    },
+    {
+      "id": "p8f-piper-rerender",
+      "phase": "8-fix",
+      "purpose": "3-cell engine=piper re-render",
+      "outcome": "COMPLETE 3/3",
+      "kind": "background",
+      "startedAt": "2026-07-12T16:53:31.304Z",
+      "completedAt": "2026-07-12T16:54:07.390Z"
+    },
+    {
+      "id": "p8f-remeasure",
+      "phase": "8-fix",
+      "purpose": "matrix remeasure after piper fix",
+      "outcome": "landed meanWer=0.115"
+    },
+    {
+      "id": "p8f-gate",
+      "phase": "8-fix",
+      "purpose": "farm-gate corrected matrix",
+      "outcome": "GO"
     }
   ],
   "packaging": {
