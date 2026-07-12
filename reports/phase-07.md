@@ -1,47 +1,57 @@
 # Phase 7 — Engine × Profile Matrix
 
-**Date:** TBD  
-**Status:** DRAFT PLACEHOLDER — fill with REAL data when matrix render + measure complete
+**Date:** 2026-07-12
 
 ## What changed
 
-- TBD: expand + run matrix batch (representative docs × available engines × {audiobook, podcast, news})
-- TBD: measure matrix cells via `scripts/farm-measure.js`
-- TBD: record skipped cells for unavailable engines
-- TBD: engine×profile recommendation table (data-derived)
+- 36-cell matrix: 6 docs × {piper, platform} × {audiobook, podcast, news}
+- Background farm render COMPLETE; 5 isolated failures on en-numbers-and-dates (piper unavailable mid-batch + ECONNRESET)
+- Measured matrix metrics
 
-## Commands + real output (TBD)
+## Final state
 
+```json
+{
+  "status": "COMPLETE",
+  "total": 36,
+  "done": 36,
+  "failed": 5,
+  "maxInFlight": 3,
+  "startedAt": "2026-07-12T14:58:33.037Z",
+  "completedAt": "2026-07-12T15:36:12.295Z"
+}
 ```
-# TBD — paste real command invocations and stdout/stderr
-node scripts/render-farm.js run --batch matrix
-node scripts/farm-measure.js --batch matrix
-# exit codes / cell counts / skipped engines:
-```
 
-## Self-review Pass A
+## Measurement aggregates
 
-- TBD: concurrency cap respected; status via `/farm/status`
-- TBD: only available engines expanded
-- TBD: every completed cell has valid audio
-- TBD: no fabricated RTF/WER
+| Metric | Value |
+|--------|-------|
+| measured (ok rows) | 31 |
+| failed / invalid | 5 |
+| mean WER | ~0.094 |
+| mean pause conf | 100% |
+| mean RTF | ~0.447 |
 
-## Self-review Pass B — 3 findings (TBD)
+## Failures (isolated)
 
-1. **TBD** — Failure: … Mitigation/justification: …
-2. **TBD** — Failure: … Mitigation/justification: …
-3. **TBD** — Failure: … Mitigation/justification: …
+- `en-numbers-and-dates__piper__*` — Piper not available (server lost piper mid-batch)
+- `en-numbers-and-dates__platform__{audiobook,podcast}` — ECONNRESET
+- One platform news numbers cell **succeeded**
+
+## Data-derived defaults
+
+See `reports/matrix-recommendations.json` and metrics recommendations.
+
+## Self-review Pass B
+
+1. **Piper path lost mid-batch** — long matrix exhausted or env drift. *Phase 8: restart server + re-render failed cells.*
+2. **ECONNRESET** — lite server pressure under concurrent long jobs. *Failure isolation worked; batch continued.*
+3. **36 not 54 cells** — kokoro/expressive unavailable. *Documented.*
 
 ## Workstream ledger
 
 | ID | Purpose | Outcome | Runtime |
 |----|---------|---------|---------|
-| bg-matrix-farm | matrix render batch | TBD | TBD |
-| bg-matrix-measure | measure matrix WAVs | TBD | TBD |
-| fg-recommend-defaults | engine×profile table | TBD | TBD |
-
-## Evidence check
-
-- [ ] Matrix manifest path + job count from real run
-- [ ] Metrics artifacts paths listed
-- [ ] Skipped cells documented with reason (engine unavailable)
+| bg-matrix-farm | 36-cell matrix | landed COMPLETE 31ok/5fail | ~2262 s |
+| bg-matrix-measure | measure matrix | landed | ~4 s |
+| fg-report-catalog-table | concurrent docs | landed | during matrix |
