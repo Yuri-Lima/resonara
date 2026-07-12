@@ -255,10 +255,7 @@ function writeReport(summary, metas) {
   );
   if (summary) {
     lines.push('```json', JSON.stringify(summary, null, 2), '```', '');
-    const mean =
-      summary.meanProxyExpressiveVsPiper != null
-        ? summary.meanProxyExpressiveVsPiper
-        : summary.meanCmosExpressiveVsPiper;
+    const mean = summary.meanProxyExpressiveVsPiper;
     lines.push(
       `**Status:** \`${summary.gateStatus || 'NOT_CERTIFIED_AWAITING_HUMAN_PANEL'}\``,
       '',
@@ -354,7 +351,7 @@ function main() {
         gateStatus:
           (summary && summary.gateStatus) ||
           'NOT_CERTIFIED_AWAITING_HUMAN_PANEL',
-        meanProxy: summary && (summary.meanProxyExpressiveVsPiper ?? summary.meanCmosExpressiveVsPiper),
+        meanProxy: summary && summary.meanProxyExpressiveVsPiper,
         n: summary && summary.n,
         outDir: OUT_DIR,
         note: 'Product-path render diagnostic only; human CMOS not run',

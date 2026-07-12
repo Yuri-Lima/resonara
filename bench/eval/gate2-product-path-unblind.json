@@ -7,7 +7,6 @@
   "certified": false,
   "gateStatus": "NOT_CERTIFIED_AWAITING_HUMAN_PANEL",
   "meanProxyExpressiveVsPiper": -0.25,
-  "meanCmosExpressiveVsPiper": -0.25,
   "n": 4,
   "pass": false,
   "humanCmosNotRun": true,
@@ -17,25 +16,21 @@
     {
       "fixture": "death-scene",
       "proxyExpressiveVsPiper": -1,
-      "cmosExpressiveVsPiper": -1,
       "flip": false
     },
     {
       "fixture": "picnic",
       "proxyExpressiveVsPiper": 0,
-      "cmosExpressiveVsPiper": 0,
       "flip": true
     },
     {
       "fixture": "dialogue-performance",
       "proxyExpressiveVsPiper": 0,
-      "cmosExpressiveVsPiper": 0,
       "flip": true
     },
     {
       "fixture": "newscast",
       "proxyExpressiveVsPiper": 0,
-      "cmosExpressiveVsPiper": 0,
       "flip": false
     }
   ],

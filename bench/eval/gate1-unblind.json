@@ -1,28 +1,36 @@
 {
   "gate": 1,
-  "meanCmosExpressiveVsPiper": -2,
+  "exprRoot": "bench/candidates/chatterbox",
+  "tag": null,
+  "metricName": "objective-prosody-proxy-v2",
+  "isHumanCmos": false,
+  "certified": false,
+  "gateStatus": "NOT_CERTIFIED_AWAITING_HUMAN_PANEL",
+  "meanProxyExpressiveVsPiper": -1.25,
   "n": 4,
   "pass": false,
+  "humanCmosNotRun": true,
+  "note": "Objective prosody proxy only. Not CMOS. Gate 2 requires human blind panel (ui/eval-lab).",
   "ledger": "/private/tmp/trace-sweG29-20260712-013205/bench/eval/gate1-ledger.jsonl",
   "unblind": [
     {
       "fixture": "death-scene",
-      "cmosExpressiveVsPiper": -2,
+      "proxyExpressiveVsPiper": -2,
       "flip": false
     },
     {
       "fixture": "picnic",
-      "cmosExpressiveVsPiper": -2,
+      "proxyExpressiveVsPiper": -2,
       "flip": true
     },
     {
       "fixture": "dialogue-performance",
-      "cmosExpressiveVsPiper": -2,
+      "proxyExpressiveVsPiper": -1,
       "flip": true
     },
     {
       "fixture": "newscast",
-      "cmosExpressiveVsPiper": -2,
+      "proxyExpressiveVsPiper": 0,
       "flip": false
     }
   ]
