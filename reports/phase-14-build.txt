@@ -1,0 +1,13 @@
+
+> resonara@2.2.0 build
+> nest build
+
+{
+  "ok": true,
+  "out": "/private/tmp/trace-sweG30-20260712-163649/ui/deliverable/data.js",
+  "verdict": "GO",
+  "catalogRows": 24,
+  "matrixRows": 36,
+  "soakSamples": 101,
+  "ledger": 19
+}

@@ -1,0 +1,15 @@
+mac_start=2026-07-12T15:42:57Z
+mac_exit=0
+mac_end=2026-07-12T15:44:07Z
+total 2038208
+drwxr-xr-x  11 yurilima  wheel        352 12 Jul 17:44 .
+drwxr-xr-x  55 yurilima  wheel       1760 12 Jul 17:43 ..
+-rw-r--r--   1 yurilima  wheel       1232 12 Jul 17:44 builder-debug.yml
+-rw-r--r--   1 yurilima  wheel        508 12 Jul 17:44 latest-mac.yml
+drwxr-xr-x   3 yurilima  wheel         96 12 Jul 17:43 mac-arm64
+-rw-r--r--   1 yurilima  wheel  458461115 12 Jul 17:43 Resonara-2.2.0-arm64-mac.zip
+-rw-r--r--   1 yurilima  wheel     475669 12 Jul 17:44 Resonara-2.2.0-arm64-mac.zip.blockmap
+-rw-r--r--@  1 yurilima  wheel  437389861 12 Jul 17:43 Resonara-2.2.0-arm64.dmg
+-rw-r--r--   1 yurilima  wheel     457443 12 Jul 17:44 Resonara-2.2.0-arm64.dmg.blockmap
+-rw-r--r--   1 yurilima  wheel  120123578 12 Jul 17:44 resonara-2.2.0-x64.nsis.7z
+drwxr-xr-x  22 yurilima  wheel        704 12 Jul 17:43 win-unpacked

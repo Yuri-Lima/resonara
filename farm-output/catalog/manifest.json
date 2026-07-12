@@ -1,0 +1,223 @@
+{
+  "version": 1,
+  "name": "catalog",
+  "concurrency": 3,
+  "jobs": [
+    {
+      "id": "en-short-article__piper__audiobook",
+      "docId": "en-short-article",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-short-article.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-short-article__piper__audiobook.wav"
+    },
+    {
+      "id": "en-news__piper__audiobook",
+      "docId": "en-news",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-news.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-news__piper__audiobook.wav"
+    },
+    {
+      "id": "en-book-chapter__piper__audiobook",
+      "docId": "en-book-chapter",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-book-chapter.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-book-chapter__piper__audiobook.wav"
+    },
+    {
+      "id": "en-technical-doc__piper__audiobook",
+      "docId": "en-technical-doc",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-technical-doc.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-technical-doc__piper__audiobook.wav"
+    },
+    {
+      "id": "en-dialogue-script__piper__audiobook",
+      "docId": "en-dialogue-script",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-dialogue-script.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-dialogue-script__piper__audiobook.wav"
+    },
+    {
+      "id": "en-ssml-showcase__piper__audiobook",
+      "docId": "en-ssml-showcase",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-ssml-showcase.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-ssml-showcase__piper__audiobook.wav"
+    },
+    {
+      "id": "en-children-story__piper__audiobook",
+      "docId": "en-children-story",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-children-story.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-children-story__piper__audiobook.wav"
+    },
+    {
+      "id": "en-numbers-and-dates__piper__audiobook",
+      "docId": "en-numbers-and-dates",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-numbers-and-dates.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-numbers-and-dates__piper__audiobook.wav"
+    },
+    {
+      "id": "en-pronunciation-challenge__piper__audiobook",
+      "docId": "en-pronunciation-challenge",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-pronunciation-challenge.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-pronunciation-challenge__piper__audiobook.wav"
+    },
+    {
+      "id": "en-long-essay__piper__audiobook",
+      "docId": "en-long-essay",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-long-essay.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-long-essay__piper__audiobook.wav"
+    },
+    {
+      "id": "en-paragraph__piper__audiobook",
+      "docId": "en-paragraph",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-paragraph.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-paragraph__piper__audiobook.wav"
+    },
+    {
+      "id": "en-quick-sentence__piper__audiobook",
+      "docId": "en-quick-sentence",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-quick-sentence.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-quick-sentence__piper__audiobook.wav"
+    },
+    {
+      "id": "en-news-expanded__piper__audiobook",
+      "docId": "en-news-expanded",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-news-expanded.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-news-expanded__piper__audiobook.wav"
+    },
+    {
+      "id": "pt-artigo__piper__audiobook",
+      "docId": "pt-artigo",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/pt-artigo.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-artigo__piper__audiobook.wav"
+    },
+    {
+      "id": "pt-noticia__piper__audiobook",
+      "docId": "pt-noticia",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/pt-noticia.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-noticia__piper__audiobook.wav"
+    },
+    {
+      "id": "pt-capitulo__piper__audiobook",
+      "docId": "pt-capitulo",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/pt-capitulo.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-capitulo__piper__audiobook.wav"
+    },
+    {
+      "id": "pt-dialogo__piper__audiobook",
+      "docId": "pt-dialogo",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/pt-dialogo.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-dialogo__piper__audiobook.wav"
+    },
+    {
+      "id": "pt-numeros__piper__audiobook",
+      "docId": "pt-numeros",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/pt-numeros.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-numeros__piper__audiobook.wav"
+    },
+    {
+      "id": "pt-tecnico__piper__audiobook",
+      "docId": "pt-tecnico",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/pt-tecnico.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-tecnico__piper__audiobook.wav"
+    },
+    {
+      "id": "pt-pronuncia__piper__audiobook",
+      "docId": "pt-pronuncia",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/pt-pronuncia.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-pronuncia__piper__audiobook.wav"
+    },
+    {
+      "id": "pt-ssml__piper__audiobook",
+      "docId": "pt-ssml",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/pt-ssml.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-ssml__piper__audiobook.wav"
+    },
+    {
+      "id": "pt-historia__piper__audiobook",
+      "docId": "pt-historia",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/pt-historia.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-historia__piper__audiobook.wav"
+    },
+    {
+      "id": "pt-ensaio__piper__audiobook",
+      "docId": "pt-ensaio",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/pt-ensaio.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-ensaio__piper__audiobook.wav"
+    },
+    {
+      "id": "pt-paragrafo__piper__audiobook",
+      "docId": "pt-paragrafo",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/pt-paragrafo.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-paragrafo__piper__audiobook.wav"
+    }
+  ]
+}

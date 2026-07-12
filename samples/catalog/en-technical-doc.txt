@@ -1,0 +1,134 @@
+Resonara Voice Pipeline — Technical Documentation (v5.7.2)
+
+## 1. Overview
+
+This document describes how Resonara synthesizes long-form speech using NestJS, TypeORM, and local TTS engines. The API is REST-first and supports CRUD-style job management. Operators run the CLI with `npm run build` and `npm run start:lite`. Node 20.x is the supported runtime.
+
+## 2. Architecture
+
+The Voice module sits beside Audio Lab and Hybrid Piano. Jobs are persisted so a crash does not erase a multi-hour audiobook. Storage may be filesystem (lite mode) or MinIO (full mode). Queue backends are inline or BullMQ + Redis.
+
+Components:
+- TTS controller: HTTP surface for voices, synthesize, jobs, dictionary
+- TTS service: orchestration, chunking, concat, post-processing
+- Piper adapter: neural ONNX synthesis
+- Platform adapter: macOS say / Windows SAPI fallback
+- FFmpeg service: trim, crossfade, normalize, M4B chapter embed
+- Pronunciation dictionary: SSML substitutions for technical terms
+
+## 3. Endpoints
+
+1. GET /tts/voices — list engines and voices
+2. POST /tts/synthesize — enqueue long-form job
+3. GET /tts/jobs/:id — poll progress
+4. GET /tts/jobs/:id/download — fetch WAV/MP3/M4B
+5. GET/POST /tts/dictionary — pronunciation CRUD
+
+Example curl uses Content-Type application/json and posts text with engine auto and format wav.
+
+## 4. Acronyms and Terms
+
+Engineers frequently mis-hear: API, REST, CRUD, ORM, CLI, SSR, HLS, GPU, JSON, YAML, OAuth, async, PostgreSQL, TypeORM, NestJS, BullMQ, Redis, MinIO, Electron, SSML, LUFS, EBU R128, ONNX, WAV, MP3, M4B, VTT, SRT.
+
+Pronounce PostgreSQL as post-gres Q L, kubectl as kube control, nginx as engine X, Kubernetes as koo-ber-net-eez, IEEE as I triple E, GIF with a hard G, and OAuth as oh-auth.
+
+## 5. Processing Steps
+
+1. Validate input text and resolve engine (auto prefers Piper).
+2. Apply pronunciation dictionary (longest match first).
+3. Optionally parse SSML and transform per engine.
+4. Chunk text with engine-aware max sizes (Piper 4000, platform 1800).
+5. Synthesize each chunk to WAV.
+6. Trim leading/trailing silence (silenceremove, -50dB, 30ms).
+7. Insert inter-paragraph pauses (default 300ms).
+8. Crossfade adjacent chunks (20ms triangular acrossfade).
+9. Post-process: normalize to podcast LUFS, highpass 80Hz, optional compress.
+10. Emit chapter markers and optional M4B.
+
+## 6. Configuration
+
+Environment variables: RESONARA_LITE, PIPER_PATH, PIPER_MODELS_DIR, PORT.
+
+## 7. Performance Targets
+
+Piper should exceed 1x real-time factor on modern CPUs. Peak RSS should stay under 500MB for a 5000-word chapter. Platform TTS is typically faster than 5x real-time but lower quality.
+
+## 8. Failure Modes
+
+Missing Piper binary falls back to platform if available. Empty text returns 400. Interrupted jobs mark failed on restart. Disk full fails synthesis with cleanup when possible.
+
+## 9. Development Workflow
+
+Run npm run build, then npm test, then eslint. Demo scripts under npm run demo:quick exercise the live pipeline. Prefer TypeScript strict mode with noImplicitAny enabled.
+
+## 10. Appendix
+
+Commands include demo:paragraph, demo:technical, demo:pronunciation, download:piper, and benchmark. Version v5.7.2 adds crossfade seams fix.
+
+### Extended notes (section 1)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 2)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 3)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 4)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 5)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 6)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 7)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 8)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 9)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 10)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 11)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 12)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 13)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 14)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 15)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 16)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.
+
+### Extended notes (section 17)
+
+When operating Resonara Voice at scale, operators should monitor API latency, REST throughput, CRUD job churn, ORM connection pools, CLI health checks, SSR dashboards if any, and HLS delivery for previews. The NestJS modules wire TypeORM repositories for TtsJob persistence. Use `npm run build` after each change. Node 20.x keeps native modules stable. Technical terms such as GPU kernels, JSON payloads, YAML configs, OAuth tokens, async workers, PostgreSQL indexes, BullMQ queues, Redis locks, MinIO objects, Electron shells, SSML tags, LUFS targets, EBU R128 meters, ONNX models, WAV headers, MP3 bitrates, M4B chapters, VTT cues, and SRT lines must remain correctly pronounced via the dictionary. Crossfade duration of 20ms was chosen because shorter produces clicks and longer produces audible overlap. Silence trim uses -50dB with 30ms minimum. Inter-paragraph pause defaults to 300ms. Always keep platform TTS as fallback. Never call cloud TTS APIs. Offline-first is a product constraint, not a preference.

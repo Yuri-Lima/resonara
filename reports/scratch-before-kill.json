@@ -1,0 +1,60 @@
+{
+  "status": "RUNNING",
+  "batch": "scratch",
+  "total": 4,
+  "done": 0,
+  "failed": 0,
+  "inFlight": [
+    "scratch-bad-1",
+    "scratch-bad-2"
+  ],
+  "startedAt": "2026-07-12T15:36:36.002Z",
+  "updatedAt": "2026-07-12T15:36:37.993Z",
+  "completedAt": null,
+  "concurrency": 2,
+  "throughput": [
+    {
+      "t": "2026-07-12T15:36:36.002Z",
+      "done": 0
+    }
+  ],
+  "jobs": {
+    "scratch-bad-1": {
+      "status": "running",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/scratch/scratch-bad-1.wav",
+      "engine": "platform",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-quick-sentence",
+      "startedAt": "2026-07-12T15:36:37.992Z"
+    },
+    "scratch-bad-2": {
+      "status": "running",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/scratch/scratch-bad-2.wav",
+      "engine": "platform",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-paragraph",
+      "startedAt": "2026-07-12T15:36:37.993Z"
+    },
+    "scratch-bad-3": {
+      "status": "queued",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/scratch/scratch-bad-3.wav",
+      "engine": "platform",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-numbers-and-dates"
+    },
+    "scratch-bad-4": {
+      "status": "queued",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/scratch/scratch-bad-4.wav",
+      "engine": "platform",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-paragrafo"
+    }
+  },
+  "appPort": 3860,
+  "statusPort": 3861,
+  "manifestPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/scratch/manifest.json"
+}

@@ -1,0 +1,97 @@
+{
+  "verdict": "GO",
+  "findings": [],
+  "aggregates": {
+    "total": 36,
+    "measured": 36,
+    "failed": 0,
+    "meanWer": 0.11554404863885168,
+    "meanConformance": 1,
+    "meanRtf": 0.3992139347839496,
+    "meanDurationSec": 221.7865001111111,
+    "meanF0Variance": null,
+    "meanSpeechRate": null,
+    "invalidAudio": 0,
+    "byEngine": {
+      "piper": {
+        "n": 18,
+        "meanWer": 0.1341247769433018,
+        "meanConformance": 1,
+        "meanRtf": 0.5178662693228892
+      },
+      "platform": {
+        "n": 18,
+        "meanWer": 0.09696332033440161,
+        "meanConformance": 1,
+        "meanRtf": 0.28056160024501015
+      }
+    },
+    "byProfile": {
+      "audiobook": {
+        "n": 12,
+        "meanWer": 0.11596687386934375,
+        "meanConformance": 1,
+        "meanRtf": 0.3975305309762562
+      },
+      "podcast": {
+        "n": 12,
+        "meanWer": 0.1156158938738297,
+        "meanConformance": 1,
+        "meanRtf": 0.4117572128325073
+      },
+      "news": {
+        "n": 12,
+        "meanWer": 0.11504937817338168,
+        "meanConformance": 1,
+        "meanRtf": 0.38835406054308547
+      }
+    },
+    "byContentType": {
+      "short-article": {
+        "n": 12,
+        "meanWer": 0.0342979605697527,
+        "meanConformance": 1,
+        "meanRtf": 0.3188452147805087
+      },
+      "news": {
+        "n": 6,
+        "meanWer": 0.09011505408057435,
+        "meanConformance": 1,
+        "meanRtf": 0.2035268805843766
+      },
+      "dialogue-script": {
+        "n": 12,
+        "meanWer": 0.14256124755603586,
+        "meanConformance": 1,
+        "meanRtf": 0.7113417256037086
+      },
+      "numbers-and-dates": {
+        "n": 6,
+        "meanWer": 0.24943082150095877,
+        "meanConformance": 1,
+        "meanRtf": 0.13138284735088676
+      }
+    },
+    "byLanguage": {
+      "en": {
+        "n": 24,
+        "meanWer": 0.13612378894137747,
+        "meanConformance": 1,
+        "meanRtf": 0.31377969668376055
+      },
+      "pt-BR": {
+        "n": 12,
+        "meanWer": 0.07438456803380021,
+        "meanConformance": 1,
+        "meanRtf": 0.5700824109843278
+      }
+    }
+  },
+  "thresholds": {
+    "maxMeanWer": 0.35,
+    "minConformance": 0.9,
+    "maxInvalidAudio": 0,
+    "maxFailRate": 0.05,
+    "maxMeanRtf": 5
+  }
+}

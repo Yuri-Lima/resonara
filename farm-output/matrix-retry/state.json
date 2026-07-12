@@ -1,0 +1,119 @@
+{
+  "status": "COMPLETE",
+  "batch": "matrix-retry",
+  "total": 5,
+  "done": 5,
+  "failed": 0,
+  "inFlight": [],
+  "startedAt": "2026-07-12T15:39:28.920Z",
+  "updatedAt": "2026-07-12T15:39:41.799Z",
+  "completedAt": "2026-07-12T15:39:41.799Z",
+  "concurrency": 2,
+  "throughput": [
+    {
+      "t": "2026-07-12T15:39:28.920Z",
+      "done": 0
+    },
+    {
+      "t": "2026-07-12T15:39:35.254Z",
+      "done": 1
+    },
+    {
+      "t": "2026-07-12T15:39:36.067Z",
+      "done": 2
+    },
+    {
+      "t": "2026-07-12T15:39:38.572Z",
+      "done": 3
+    },
+    {
+      "t": "2026-07-12T15:39:40.195Z",
+      "done": 4
+    },
+    {
+      "t": "2026-07-12T15:39:41.799Z",
+      "done": 5
+    }
+  ],
+  "jobs": {
+    "en-numbers-and-dates__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__audiobook.wav",
+      "engine": "platform",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-numbers-and-dates",
+      "startedAt": "2026-07-12T15:39:30.434Z",
+      "ttsJobId": "89e8e13e-f9dd-4b17-9f21-3ec37bd8d775",
+      "id": "en-numbers-and-dates__piper__audiobook",
+      "ms": 4820,
+      "bytes": 5758176,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-numbers-and-dates__piper__podcast": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__podcast.wav",
+      "engine": "platform",
+      "language": "en",
+      "profile": "podcast",
+      "docId": "en-numbers-and-dates",
+      "startedAt": "2026-07-12T15:39:30.434Z",
+      "ttsJobId": "18ff3e81-ebb3-4822-9495-4babe0563036",
+      "id": "en-numbers-and-dates__piper__podcast",
+      "ms": 5633,
+      "bytes": 5744802,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-numbers-and-dates__piper__news": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__news.wav",
+      "engine": "platform",
+      "language": "en",
+      "profile": "news",
+      "docId": "en-numbers-and-dates",
+      "startedAt": "2026-07-12T15:39:35.254Z",
+      "ttsJobId": "48f1f74c-3b2b-4159-8c7b-d7ea7ac7817d",
+      "id": "en-numbers-and-dates__piper__news",
+      "ms": 3318,
+      "bytes": 5738112,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-numbers-and-dates__platform__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__audiobook.wav",
+      "engine": "platform",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-numbers-and-dates",
+      "startedAt": "2026-07-12T15:39:36.067Z",
+      "ttsJobId": "d330e8bf-e863-4da8-b36f-27deb289eebb",
+      "id": "en-numbers-and-dates__platform__audiobook",
+      "ms": 4128,
+      "bytes": 5758176,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-numbers-and-dates__platform__podcast": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__podcast.wav",
+      "engine": "platform",
+      "language": "en",
+      "profile": "podcast",
+      "docId": "en-numbers-and-dates",
+      "startedAt": "2026-07-12T15:39:38.573Z",
+      "ttsJobId": "18de5679-d038-450e-8ff6-13a3db5e2396",
+      "id": "en-numbers-and-dates__platform__podcast",
+      "ms": 3226,
+      "bytes": 5744802,
+      "rtf": null,
+      "durationSec": null
+    }
+  },
+  "appPort": 3860,
+  "statusPort": 3861,
+  "manifestPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix-retry/manifest.json",
+  "maxInFlight": 2
+}

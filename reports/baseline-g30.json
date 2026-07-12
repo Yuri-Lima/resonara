@@ -1,0 +1,24 @@
+{
+  "recordedAt": "2026-07-12",
+  "version": "2.2.0",
+  "build": "clean",
+  "tests": { "suites": 46, "passed": 273, "skipped": 1, "total": 274 },
+  "lint": { "errors": 0, "warnings": 1 },
+  "coverage": { "stmts": 76.48, "branch": 55.85, "funcs": 64.33, "lines": 78.62 },
+  "demoQuick": {
+    "engine": "platform",
+    "words": 16,
+    "elapsedMs": 3006,
+    "duration": 7.506583,
+    "realTimeFactor": 2.497,
+    "fileSize": 1081050
+  },
+  "engines": [
+    { "id": "expressive", "available": false },
+    { "id": "kokoro", "available": false },
+    { "id": "piper", "available": false, "note": "download in progress" },
+    { "id": "platform", "available": true, "voiceCount": 184, "languages": ["en", "pt-BR"] }
+  ],
+  "languages": ["en", "pt-BR"],
+  "pauseProfiles": ["audiobook", "podcast", "news"]
+}

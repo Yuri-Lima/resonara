@@ -1,16 +1,57 @@
-# Phase 7 Report — REM Expression Markup
+# Phase 7 — Engine × Profile Matrix
 
-## Build/test/lint
-`npm test` includes rem-parser.spec (literal-tag leak guards). Build clean.
+**Date:** 2026-07-12
 
-## Delivered
-- rem.types.ts, rem-parser.ts, rem-compiler.ts, rem-parser.spec.ts
-- EXPRESSION_MARKUP.md degradation matrix
-- Zero literal-tag leaks: hasLiteralTagLeak + stripRemToPlain in compile path
+## What changed
 
-## Adversarial (3)
-1. compileRem flattens multi-segment for long-form jobs currently — assembly of native tags needs segment loop in synthesize (Phase 14 partial).
-2. orpheus capability block remains for future runner-up swap — dead path until swap.
-3. intensity default 0.5 may under-direct grief — auto-direction overrides.
+- 36-cell matrix: 6 docs × {piper, platform} × {audiobook, podcast, news}
+- Background farm render COMPLETE; 5 isolated failures on en-numbers-and-dates (piper unavailable mid-batch + ECONNRESET)
+- Measured matrix metrics
 
-## Workstream: rem unit tests landed.
+## Final state
+
+```json
+{
+  "status": "COMPLETE",
+  "total": 36,
+  "done": 36,
+  "failed": 5,
+  "maxInFlight": 3,
+  "startedAt": "2026-07-12T14:58:33.037Z",
+  "completedAt": "2026-07-12T15:36:12.295Z"
+}
+```
+
+## Measurement aggregates
+
+| Metric | Value |
+|--------|-------|
+| measured (ok rows) | 31 |
+| failed / invalid | 5 |
+| mean WER | ~0.094 |
+| mean pause conf | 100% |
+| mean RTF | ~0.447 |
+
+## Failures (isolated)
+
+- `en-numbers-and-dates__piper__*` — Piper not available (server lost piper mid-batch)
+- `en-numbers-and-dates__platform__{audiobook,podcast}` — ECONNRESET
+- One platform news numbers cell **succeeded**
+
+## Data-derived defaults
+
+See `reports/matrix-recommendations.json` and metrics recommendations.
+
+## Self-review Pass B
+
+1. **Piper path lost mid-batch** — long matrix exhausted or env drift. *Phase 8: restart server + re-render failed cells.*
+2. **ECONNRESET** — lite server pressure under concurrent long jobs. *Failure isolation worked; batch continued.*
+3. **36 not 54 cells** — kokoro/expressive unavailable. *Documented.*
+
+## Workstream ledger
+
+| ID | Purpose | Outcome | Runtime |
+|----|---------|---------|---------|
+| bg-matrix-farm | 36-cell matrix | landed COMPLETE 31ok/5fail | ~2262 s |
+| bg-matrix-measure | measure matrix | landed | ~4 s |
+| fg-report-catalog-table | concurrent docs | landed | during matrix |

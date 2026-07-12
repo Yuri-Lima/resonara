@@ -1,58 +1,136 @@
-# Phase 1 Report — Landscape Verification
+# Phase 1 — Baseline + Farm Architecture
 
 **Date:** 2026-07-12  
-**Branch:** main  
-**Scope:** Research only — no engine integration.
+**Branch:** main @ 6c0652c (pre-g30)  
+**Product:** Resonara 2.2.0
 
-## Build / test / lint
+## What changed
+
+- Recorded baseline: build, test, lint, coverage, `demo:quick`, engine/voice/profile inventory.
+- Wrote `FARM_ARCHITECTURE.md` (corpus, catalog/matrix/soak split, orchestrator, measurement plan, gates).
+- Wrote `docs/farm-ops-notes.md` **verbatim** (sign-off gate waits for `FARM DONE` — Phase 9 concern).
+- Local tag `pre-g30` (never pushed).
+- `reports/baseline-g30.json` machine-readable snapshot.
+
+## Commands + real output
+
+### Build
 
 ```
-npm run build  → clean (nest build OK)
-npm test       → deferred to Phase 2 (no src changes this phase)
-npx eslint     → N/A (docs only)
+> resonara@2.2.0 build
+> nest build
+(exit 0, clean)
 ```
 
-## Deliverables
+### Test
 
-- `EXPRESSIVE_LANDSCAPE.md` — verified table for 8 engines, licenses pasted from live sources, hard disqualifications, 6 bench advancers, non-goals.
+```
+Test Suites: 46 passed, 46 total
+Tests:       1 skipped, 273 passed, 274 total
+Time:        5.738 s
+```
 
-## Key decisions
+### Lint
 
-| Decision | Rationale |
-|----------|-----------|
-| Disqualify **F5-TTS** from shipping | Weights **CC-BY-NC-4.0** on HF (verified cardData) |
-| Disqualify **StyleTTS2** from shipping | Custom weight consent terms + GPL phonemizer risk |
-| Advance 6: Chatterbox, Orpheus, Dia, CosyVoice2, Qwen3-TTS, Kokoro floor | All have commercial-OK code+weights (Apache-2.0 or MIT) |
-| pt-BR: Chatterbox dedicated pack + Qwen3 Portuguese listed | To be measured honestly in Phase 3/11 |
+```
+npx eslint src/ --ext .ts
+✖ 1 problem (0 errors, 1 warning)
+  src/tts/expressive-tts.spec.ts:1:13  warning  'fs' is defined but never used
+EXIT:0
+```
+
+### Coverage
+
+```
+All files  |  76.48 stmts | 55.85 branch | 64.33 funcs | 78.62 lines
+Jest: global coverage threshold for statements (80%) not met: 76.48%
+Jest: global coverage threshold for lines (80%) not met: 78.62%
+(tests still green; thresholds pre-existing on main)
+```
+
+### demo:quick
+
+```
+Demo: quick-sentence lang=en
+{
+  "name": "quick-sentence",
+  "language": "en",
+  "engine": "platform",
+  "voiceId": "platform:Albert",
+  "words": 16,
+  "elapsedMs": 3006,
+  "fileSize": 1081050,
+  "duration": 7.506583,
+  "realTimeFactor": 2.497199933466401
+}
+```
+
+### Engine inventory (`GET /tts/engines`)
+
+| Engine | Available | Voices | Languages |
+|--------|-----------|--------|-----------|
+| expressive | false | 0 | — |
+| kokoro | false | 0 | — |
+| piper | false (download started) | 0 | — |
+| **platform** | **true** | **184** | en (60), pt-BR (10) |
+
+### Languages
+
+- `en` — English
+- `pt-BR` — Português (Brasil)
+
+### Pause profiles (`listPauseProfiles`)
+
+- `audiobook` (default)
+- `podcast` (~20% tighter)
+- `news` (~35% tighter)
+
+### Matrix dimensions for the farm
+
+- Engines at runtime: whatever `engineStatus()` reports available (platform now; piper if install succeeds).
+- Languages: en, pt-BR
+- Profiles: audiobook, podcast, news
+- Catalog: non-soak corpus docs × best engine × language × audiobook
+- Matrix: 6-doc subset × available engines × 3 profiles
 
 ## Self-review Pass A (correctness)
 
-- License strings match curl of LICENSE files / HF API on 2026-07-12.
-- No integration code touched.
-- Kokoro correctly marked as incumbent floor, not a “win” candidate.
+- Architecture matches real API: `POST /tts/synthesize`, `GET /tts/jobs/:id`, download.
+- Status vocabulary `RUNNING|COMPLETE|CANCELLED` documented; ops mismatch deferred to Phase 9 by design.
+- Verbatim ops notes preserved (no premature "fix").
+- Baseline numbers pasted from real runs.
 
-## Self-review Pass B — 3 adversarial weaknesses
+## Self-review Pass B — 3 adversarial findings
 
-1. **EXPRESSIVE_LANDSCAPE.md / CosyVoice row / failure:** CosyVoice ecosystem historically mixed model trees; a sub-package could still pull non-Apache assets. **Mitigation:** Phase 3 license check on *downloaded* artifacts, not just HF API.
-2. **EXPRESSIVE_LANDSCAPE.md / Qwen3 row / failure:** Apple Silicon path unverified; if only CUDA works, RTF may be unusable offline on this Mac. **Mitigation:** Phase 3 real RTF on M4 Max; kill if install fails.
-3. **EXPRESSIVE_LANDSCAPE.md / Chatterbox Turbo tags / failure:** Tags may be Turbo-only while Multilingual V3 lacks them — product could over-promise. **Mitigation:** Phase 3 control probe documents which variant supports which tags.
+1. **FARM_ARCHITECTURE.md / gate thresholds vs platform RTF**  
+   Platform RTF on demo was ~2.5; long docs may exceed a tight budget.  
+   *Mitigation:* thresholds use engine-specific budgets (platform ≤ 5.0 RTF); re-validate after catalog.
 
-## Audio smoke
+2. **Piper/Kokoro unavailable at baseline**  
+   Matrix cells for missing engines will be skipped.  
+   *Mitigation:* download-piper running in background; farm expands against live availability; report must list skipped cells.
 
-N/A — research phase.
+3. **Coverage below 80% threshold on main**  
+   Pre-existing; not introduced by this phase.  
+   *Justification:* Phase 1 is design-only; farm unit tests in Phases 2–4 will raise coverage of new scripts (scripts are plain JS, not under src/ coverage).
 
 ## Workstream ledger
 
 | ID | Purpose | Outcome | Runtime |
 |----|---------|---------|---------|
-| ws-p1-web | GitHub/HF license verification (8 engines) | landed | ~3 min |
-| ws-p1-build | `npm run build` baseline | landed clean | ~15 s |
-| subagents | none this phase | n/a | — |
+| bg-download-piper | Install Piper binary + voices | running (background) | in-flight |
+| fg-build | nest build | landed (clean) | ~few s |
+| fg-test | jest suite | landed 273 pass | ~5.7 s |
+| fg-lint | eslint src | landed 0 errors | ~few s |
+| fg-cov | jest --coverage | landed 76.48% stmts | ~7.5 s |
+| fg-demo-quick | demo:quick | landed platform RTF 2.5 | ~3 s |
+| fg-inventory | /tts/engines + profiles | landed | ~10 s |
 
-## Orphans
+## Evidence check
 
-None.
+- All metrics above are pasted from command output in this session.
+- No fabricated WER/RTF from farm runs yet (farm not built).
 
-## Commit plan
+## Next
 
-`docs(voice): Phase 1 expressive TTS landscape verification`
+Phase 2: `scripts/build-corpus.js` as monitored background job; orchestrator skeleton while it runs.

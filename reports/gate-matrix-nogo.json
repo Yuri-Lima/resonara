@@ -1,0 +1,107 @@
+{
+  "verdict": "NO-GO",
+  "findings": [
+    {
+      "code": "INVALID_AUDIO",
+      "detail": 5
+    },
+    {
+      "code": "FAIL_RATE",
+      "detail": 0.1388888888888889,
+      "threshold": 0.05
+    }
+  ],
+  "aggregates": {
+    "total": 36,
+    "measured": 31,
+    "failed": 5,
+    "meanWer": 0.09393686255873195,
+    "meanConformance": 1,
+    "meanRtf": 0.44653529277099147,
+    "meanDurationSec": 251.1195471612903,
+    "meanF0Variance": null,
+    "meanSpeechRate": null,
+    "invalidAudio": 5,
+    "byEngine": {
+      "piper": {
+        "n": 15,
+        "meanWer": 0.11106356803177041,
+        "meanConformance": 1,
+        "meanRtf": 0.5984389725100132
+      },
+      "platform": {
+        "n": 16,
+        "meanWer": 0.07788057617775844,
+        "meanConformance": 1,
+        "meanRtf": 0.30412559301565845
+      }
+    },
+    "byProfile": {
+      "audiobook": {
+        "n": 10,
+        "meanWer": 0.08917697298541442,
+        "meanConformance": 1,
+        "meanRtf": 0.4546591547008063
+      },
+      "podcast": {
+        "n": 10,
+        "meanWer": 0.08887223887137491,
+        "meanConformance": 1,
+        "meanRtf": 0.4719021694206287
+      },
+      "news": {
+        "n": 11,
+        "meanWer": 0.10286823825025436,
+        "meanConformance": 1,
+        "meanRtf": 0.41608916678967117
+      }
+    },
+    "byContentType": {
+      "short-article": {
+        "n": 12,
+        "meanWer": 0.0342979605697527,
+        "meanConformance": 1,
+        "meanRtf": 0.3188452147805087
+      },
+      "news": {
+        "n": 6,
+        "meanWer": 0.09011505408057435,
+        "meanConformance": 1,
+        "meanRtf": 0.2035268805843766
+      },
+      "dialogue-script": {
+        "n": 12,
+        "meanWer": 0.14256124755603586,
+        "meanConformance": 1,
+        "meanRtf": 0.7113417256037086
+      },
+      "numbers-and-dates": {
+        "n": 1,
+        "meanWer": 0.2490419173277823,
+        "meanConformance": 1,
+        "meanRtf": 0.25918950778386646
+      }
+    },
+    "byLanguage": {
+      "en": {
+        "n": 19,
+        "meanWer": 0.10628568015342572,
+        "meanConformance": 1,
+        "meanRtf": 0.36850553389941054
+      },
+      "pt-BR": {
+        "n": 12,
+        "meanWer": 0.07438456803380021,
+        "meanConformance": 1,
+        "meanRtf": 0.5700824109843278
+      }
+    }
+  },
+  "thresholds": {
+    "maxMeanWer": 0.35,
+    "minConformance": 0.9,
+    "maxInvalidAudio": 0,
+    "maxFailRate": 0.05,
+    "maxMeanRtf": 5
+  }
+}

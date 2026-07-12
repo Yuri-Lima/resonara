@@ -1,0 +1,164 @@
+[
+  {
+    "id": "p1-baseline",
+    "phase": 1,
+    "purpose": "baseline build/test/lint/demo",
+    "outcome": "collected",
+    "startedAt": "2026-07-12T12:00:00Z"
+  },
+  {
+    "id": "p2-corpus-bg",
+    "phase": 2,
+    "purpose": "build-corpus.js 50k soak + 24 docs",
+    "outcome": "collected",
+    "kind": "background"
+  },
+  {
+    "id": "p3-farm",
+    "phase": 3,
+    "purpose": "render-farm orchestrator + smoke 4-job",
+    "outcome": "collected"
+  },
+  {
+    "id": "p4-measure",
+    "phase": 4,
+    "purpose": "farm-measure aggregator",
+    "outcome": "collected"
+  },
+  {
+    "id": "p5-catalog-bg",
+    "phase": 5,
+    "purpose": "catalog render 24 jobs",
+    "outcome": "collected",
+    "kind": "background",
+    "startedAt": "2026-07-12T14:42:16Z",
+    "completedAt": "2026-07-12T14:58:04Z"
+  },
+  {
+    "id": "p5-dash-skeleton",
+    "phase": 5,
+    "purpose": "dashboard skeleton concurrent",
+    "outcome": "collected",
+    "kind": "concurrent"
+  },
+  {
+    "id": "p5-matrix-manifest",
+    "phase": 5,
+    "purpose": "matrix manifest concurrent",
+    "outcome": "collected",
+    "kind": "concurrent"
+  },
+  {
+    "id": "p6-measure-bg",
+    "phase": 6,
+    "purpose": "catalog measurement sweep",
+    "outcome": "collected",
+    "kind": "background"
+  },
+  {
+    "id": "p7-matrix-bg",
+    "phase": 7,
+    "purpose": "engine×profile 36-cell matrix",
+    "outcome": "collected",
+    "kind": "background",
+    "startedAt": "2026-07-12T14:58:33Z",
+    "completedAt": "2026-07-12T15:36:12Z"
+  },
+  {
+    "id": "p8-scratch-kill",
+    "phase": 8,
+    "purpose": "obsolete batch cancel",
+    "outcome": "killed",
+    "kind": "background",
+    "startedAt": "2026-07-12T15:36:36Z",
+    "completedAt": "2026-07-12T15:36:38Z"
+  },
+  {
+    "id": "p8-matrix-retry",
+    "phase": 8,
+    "purpose": "retry 5 numbers cells after DB reset",
+    "outcome": "collected",
+    "kind": "background",
+    "startedAt": "2026-07-12T15:39:28Z",
+    "completedAt": "2026-07-12T15:39:41Z"
+  },
+  {
+    "id": "p9-buggy-await",
+    "phase": 9,
+    "purpose": "prove FARM DONE never fires",
+    "outcome": "collected"
+  },
+  {
+    "id": "p9-fixed-await",
+    "phase": 9,
+    "purpose": "COMPLETE accepted by await-farm",
+    "outcome": "collected"
+  },
+  {
+    "id": "p10-soak-bg",
+    "phase": 10,
+    "purpose": "50k novel soak platform+audiobook",
+    "outcome": "collected",
+    "kind": "background",
+    "startedAt": "2026-07-12T15:42:18Z",
+    "completedAt": "2026-07-12T16:07:30Z"
+  },
+  {
+    "id": "p10-memory-probe",
+    "phase": 10,
+    "purpose": "RSS/handle sampling",
+    "outcome": "collected",
+    "kind": "background",
+    "completedAt": "2026-07-12T16:07:30Z"
+  },
+  {
+    "id": "p10-body-limit-fix",
+    "phase": 10,
+    "purpose": "2mb JSON limit concurrent with soak",
+    "outcome": "collected",
+    "kind": "concurrent",
+    "startedAt": "2026-07-12T15:42:29Z"
+  },
+  {
+    "id": "p11-dist-mac",
+    "phase": 11,
+    "purpose": "dist:mac background",
+    "outcome": "collected",
+    "startedAt": "2026-07-12T15:42:57Z",
+    "completedAt": "2026-07-12T15:44:07Z"
+  },
+  {
+    "id": "p11-dist-win",
+    "phase": 11,
+    "purpose": "dist:win background",
+    "outcome": "collected",
+    "startedAt": "2026-07-12T15:42:57Z",
+    "completedAt": "2026-07-12T15:44:36Z"
+  },
+  {
+    "id": "p8-scratch-kill-mark",
+    "phase": 8,
+    "purpose": "obsolete batch kill",
+    "outcome": "killed",
+    "note": "Phase 8 CANCELLED scratch"
+  },
+  {
+    "id": "p12-rq",
+    "phase": 12,
+    "purpose": "RELEASE_QUALIFICATION + dashboard data",
+    "outcome": "collected"
+  },
+  {
+    "id": "p13-teardown",
+    "phase": 13,
+    "purpose": "zero-orphan farm-stop",
+    "outcome": "collected"
+  },
+  {
+    "id": "p14-final",
+    "phase": 14,
+    "purpose": "build/test/demo/make ui/PR",
+    "outcome": "collected",
+    "completedAt": "2026-07-12T16:09:04.619Z"
+  }
+]

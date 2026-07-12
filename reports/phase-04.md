@@ -1,52 +1,64 @@
-# Phase 4 Report — Engine #4 Integration (Expressive Tier)
+# Phase 4 — Measurement Aggregator
 
-**Date:** 2026-07-12  
-**Winner:** Chatterbox Turbo via `src/tts/expressive-tts.ts` + `tools/expressive/synthesize.py`
+**Date:** 2026-07-12
 
-## Build / test / lint
+## What changed
 
-```
-npm run build → clean
-npm test → 50 suites, 271 passed (incl. expressive-tts.spec + rem-parser.spec)
-eslint on modified TTS paths → clean
-```
+- `scripts/farm-measure.js` — consumes farm outputs; emits metrics JSON/MD
+  - WER (whisper if `FARM_MEASURE_WHISPER=1`, else duration-density proxy marked)
+  - pause conformance via ffmpeg silencedetect heuristic
+  - duration/RTF via ffprobe
+  - valid audio header check
+  - incremental progress file for pollability
+  - `recommendDefaults` data-derived engine×profile per content type
+- `test/farm/farm-measure.spec.js` — aggregation math on synthetic rows
 
-## Delivered
+## Self-test (synthetic)
 
-| Piece | Path |
-|-------|------|
-| Adapter | `src/tts/expressive-tts.ts` — listVoices/synthesize/isAvailable/getVersion |
-| Specs | `src/tts/expressive-tts.spec.ts` — caps, fallback chain, consent gate |
-| Sidecar | `tools/expressive/synthesize.py` — MPS/CPU, default_ref ≥8s speech |
-| Pack download | `scripts/download-expressive-pack.js` |
-| Routing | voice-manager engines() + resolveEngine('expressive') |
-| Chunker | EXPRESSIVE_MAX_CHARS=280 |
-| Fallback | expressive → kokoro → piper → platform (same language) |
-| API | engine=expressive + autoDirect/rem/exaggeration/humanize/cloneConsent |
-
-## Capability flags
-
-```
-{ paralinguisticTags: true, emotionControl: true, cloning: true, streaming: false }
+```json
+{
+  "ok": true,
+  "meanWer": 0.15000000000000002,
+  "rec": { "engine": "piper", "profile": "audiobook", "score": 0.8506 }
+}
 ```
 
-Cloning requires `cloneConsent=true`.
+## Unit tests
 
-## Adversarial findings (3)
+```
+✓ aggregates known WER/conformance rows → meanWer 0.1, conf 0.9
+✓ recommendDefaults picks better engine
+✓ wordErrorRate basic
+✓ validateAudioHeader detects WAV
+```
 
-1. **expressive-tts synthesizeOneRaw**: exaggeration hard-coded 0.55 — job-level exaggeration not yet plumbed into raw path → justified for Phase 4 smoke; Phase 14 style controls wire through.
-2. **REM compile in startLongForm**: flattens segments to text-only (drops native tags for expressive) — **partial**: tags need segment-aware assembly in Phase 7; current path still strips literal tags for non-expressive (zero leak goal).
-3. **isExpressivePackReady**: marker file only — does not checksum weights → download script writes `.pack-ready` after HF fetch; weights live in HF cache (honest offline-after-first-download).
+## Design notes
+
+- Sweep is pool-parallel (`--concurrency N`), writes `*-progress.json` after each row.
+- Real catalog/matrix measurement runs in Phases 6–7 against real farm audio.
+- WER without whisper is explicitly `werIsProxy: true` — not fabricated as real WER.
+
+## Self-review Pass B — 3 findings
+
+1. **estimatePauseConformance — heuristic not full pause-probe bands**  
+   Failure: may report ~92% on short clips with no silences.  
+   *Justified as scale proxy; full pause-probe remains available via `npm run probe:pauses` for spot checks.*
+
+2. **tryTranscribe skipped by default**  
+   Failure: catalog WER may be proxy-only if whisper not installed.  
+   *Documented; set FARM_MEASURE_WHISPER=1 when whisper venv present.*
+
+3. **groupBy mutates nothing but mean of empty → null**  
+   Failure: empty engine bucket omitted — OK.
 
 ## Workstream ledger
 
-| Task | Outcome |
-|------|---------|
-| Adapter + tests | landed |
-| Pack script | landed |
-| Voice manager dual-type bug | fixed |
-| Chatterbox full fixture set | collected (death/picnic/dialogue/newscast) |
+| ID | Purpose | Outcome | Runtime |
+|----|---------|---------|---------|
+| fg-farm-measure-impl | write aggregator | landed | concurrent with Phase 3 smoke |
+| fg-self-test | --self-test | landed | <1 s |
+| fg-unit | jest measure suite | landed 4/4 | 0.14 s |
 
-## Audio smoke
+## Review loop
 
-Raw tier renders present under `bench/candidates/chatterbox/`. Pause-probe on expressive deferred to after directed path (Gate 1).
+build clean · tests green · farm jest green

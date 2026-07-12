@@ -1,0 +1,236 @@
+{
+  "verdict": "GO",
+  "catalog": {
+    "verdict": "GO",
+    "findings": [],
+    "aggregates": {
+      "total": 24,
+      "measured": 24,
+      "failed": 0,
+      "meanWer": 0.10331986733574183,
+      "meanConformance": 1,
+      "meanRtf": 0.3463713175419974,
+      "meanDurationSec": 349.1412735833333,
+      "meanF0Variance": null,
+      "meanSpeechRate": null,
+      "invalidAudio": 0,
+      "byEngine": {
+        "piper": {
+          "n": 24,
+          "meanWer": 0.10331986733574183,
+          "meanConformance": 1,
+          "meanRtf": 0.3463713175419974
+        }
+      },
+      "byProfile": {
+        "audiobook": {
+          "n": 24,
+          "meanWer": 0.10331986733574183,
+          "meanConformance": 1,
+          "meanRtf": 0.3463713175419974
+        }
+      },
+      "byContentType": {
+        "short-article": {
+          "n": 2,
+          "meanWer": 0.033329176923030744,
+          "meanConformance": 1,
+          "meanRtf": 0.3187215023987587
+        },
+        "news": {
+          "n": 3,
+          "meanWer": 0.08313104893366836,
+          "meanConformance": 1,
+          "meanRtf": 0.28512638517987127
+        },
+        "book-chapter": {
+          "n": 2,
+          "meanWer": 0.09864376131855766,
+          "meanConformance": 1,
+          "meanRtf": 0.2560149393209231
+        },
+        "technical-doc": {
+          "n": 2,
+          "meanWer": 0.09104440315187233,
+          "meanConformance": 1,
+          "meanRtf": 0.3202584609452731
+        },
+        "dialogue-script": {
+          "n": 2,
+          "meanWer": 0.20921122109804097,
+          "meanConformance": 1,
+          "meanRtf": 0.4355856393843976
+        },
+        "ssml-showcase": {
+          "n": 2,
+          "meanWer": 0.061444484159318025,
+          "meanConformance": 1,
+          "meanRtf": 0.4470778907958114
+        },
+        "children-story": {
+          "n": 2,
+          "meanWer": 0.1221522573096141,
+          "meanConformance": 1,
+          "meanRtf": 0.19324392394592504
+        },
+        "numbers-and-dates": {
+          "n": 2,
+          "meanWer": 0.23941884046246026,
+          "meanConformance": 1,
+          "meanRtf": 0.35472839597326683
+        },
+        "pronunciation-challenge": {
+          "n": 2,
+          "meanWer": 0.0800639277771682,
+          "meanConformance": 1,
+          "meanRtf": 0.4664869991263948
+        },
+        "long-form-essay": {
+          "n": 2,
+          "meanWer": 0.050665586354382564,
+          "meanConformance": 1,
+          "meanRtf": 0.3265990131412636
+        },
+        "paragraph": {
+          "n": 2,
+          "meanWer": 0.06426953407434839,
+          "meanConformance": 1,
+          "meanRtf": 0.4095968009042733
+        },
+        "quick-sentence": {
+          "n": 1,
+          "meanWer": 0.1297972839992127,
+          "meanConformance": 1,
+          "meanRtf": 0.4009053335957488
+        }
+      },
+      "byLanguage": {
+        "en": {
+          "n": 13,
+          "meanWer": 0.10061339358201046,
+          "meanConformance": 1,
+          "meanRtf": 0.3608825167449619
+        },
+        "pt-BR": {
+          "n": 11,
+          "meanWer": 0.10651842722651529,
+          "meanConformance": 1,
+          "meanRtf": 0.32922171848394854
+        }
+      }
+    },
+    "thresholds": {
+      "maxMeanWer": 0.35,
+      "minConformance": 0.9,
+      "maxInvalidAudio": 0,
+      "maxFailRate": 0.05,
+      "maxMeanRtf": 5
+    }
+  },
+  "matrix": {
+    "verdict": "GO",
+    "findings": [],
+    "aggregates": {
+      "total": 36,
+      "measured": 36,
+      "failed": 0,
+      "meanWer": 0.11554404863885168,
+      "meanConformance": 1,
+      "meanRtf": 0.3992139347839496,
+      "meanDurationSec": 221.7865001111111,
+      "meanF0Variance": null,
+      "meanSpeechRate": null,
+      "invalidAudio": 0,
+      "byEngine": {
+        "piper": {
+          "n": 18,
+          "meanWer": 0.1341247769433018,
+          "meanConformance": 1,
+          "meanRtf": 0.5178662693228892
+        },
+        "platform": {
+          "n": 18,
+          "meanWer": 0.09696332033440161,
+          "meanConformance": 1,
+          "meanRtf": 0.28056160024501015
+        }
+      },
+      "byProfile": {
+        "audiobook": {
+          "n": 12,
+          "meanWer": 0.11596687386934375,
+          "meanConformance": 1,
+          "meanRtf": 0.3975305309762562
+        },
+        "podcast": {
+          "n": 12,
+          "meanWer": 0.1156158938738297,
+          "meanConformance": 1,
+          "meanRtf": 0.4117572128325073
+        },
+        "news": {
+          "n": 12,
+          "meanWer": 0.11504937817338168,
+          "meanConformance": 1,
+          "meanRtf": 0.38835406054308547
+        }
+      },
+      "byContentType": {
+        "short-article": {
+          "n": 12,
+          "meanWer": 0.0342979605697527,
+          "meanConformance": 1,
+          "meanRtf": 0.3188452147805087
+        },
+        "news": {
+          "n": 6,
+          "meanWer": 0.09011505408057435,
+          "meanConformance": 1,
+          "meanRtf": 0.2035268805843766
+        },
+        "dialogue-script": {
+          "n": 12,
+          "meanWer": 0.14256124755603586,
+          "meanConformance": 1,
+          "meanRtf": 0.7113417256037086
+        },
+        "numbers-and-dates": {
+          "n": 6,
+          "meanWer": 0.24943082150095877,
+          "meanConformance": 1,
+          "meanRtf": 0.13138284735088676
+        }
+      },
+      "byLanguage": {
+        "en": {
+          "n": 24,
+          "meanWer": 0.13612378894137747,
+          "meanConformance": 1,
+          "meanRtf": 0.31377969668376055
+        },
+        "pt-BR": {
+          "n": 12,
+          "meanWer": 0.07438456803380021,
+          "meanConformance": 1,
+          "meanRtf": 0.5700824109843278
+        }
+      }
+    },
+    "thresholds": {
+      "maxMeanWer": 0.35,
+      "minConformance": 0.9,
+      "maxInvalidAudio": 0,
+      "maxFailRate": 0.05,
+      "maxMeanRtf": 5
+    }
+  },
+  "generatedAt": "2026-07-12T15:42:44.028Z",
+  "soak": {
+    "verdict": "GO",
+    "plateau": true
+  },
+  "packaging": {
+    "verdict": "GO"
+  },
+  "finalAt": "2026-07-12T16:08:13.703Z"
+}

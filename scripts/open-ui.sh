@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
-# Open Resonara Voice (primary product UI) with a live lite API.
+# Open Resonara release-qualification dashboard (ui/deliverable) and ensure lite API if needed.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PORT="${RESONARA_UI_PORT:-3847}"
-URL="http://127.0.0.1:${PORT}/ui/voice/"
+# Prefer qualification dashboard; fall back to voice UI
+if [[ -f "$ROOT/ui/deliverable/index.html" ]]; then
+  URL="http://127.0.0.1:${PORT}/ui/deliverable/"
+else
+  URL="http://127.0.0.1:${PORT}/ui/voice/"
+fi
 
 need_build=0
 if [[ ! -f "$ROOT/dist/main.js" ]]; then
@@ -26,7 +31,6 @@ if ! curl -sf "http://127.0.0.1:${PORT}/health" >/dev/null 2>&1; then
     nohup node dist/main.js >"$ROOT/.resonara-ui.log" 2>&1 &
     echo $! >"$ROOT/.resonara-ui.pid"
   )
-  # Wait for health
   for i in $(seq 1 40); do
     if curl -sf "http://127.0.0.1:${PORT}/health" >/dev/null 2>&1; then
       break
@@ -42,11 +46,24 @@ else
   echo "API already running on :${PORT}"
 fi
 
-echo "Opening $URL"
-if command -v open >/dev/null 2>&1; then
-  open "$URL"
-elif command -v xdg-open >/dev/null 2>&1; then
-  xdg-open "$URL"
+# Also allow file:// open of deliverable if static serving not mounted
+if [[ -f "$ROOT/ui/deliverable/index.html" ]]; then
+  FILE_URL="file://${ROOT}/ui/deliverable/index.html"
+  echo "Opening dashboard $FILE_URL (and API $URL if served)"
+  if command -v open >/dev/null 2>&1; then
+    open "$FILE_URL"
+  elif command -v xdg-open >/dev/null 2>&1; then
+    xdg-open "$FILE_URL"
+  else
+    echo "Open manually: $FILE_URL"
+  fi
 else
-  echo "Open manually: $URL"
+  echo "Opening $URL"
+  if command -v open >/dev/null 2>&1; then
+    open "$URL"
+  elif command -v xdg-open >/dev/null 2>&1; then
+    xdg-open "$URL"
+  else
+    echo "Open manually: $URL"
+  fi
 fi

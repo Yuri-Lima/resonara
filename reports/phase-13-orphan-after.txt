@@ -1,0 +1,4 @@
+=== after teardown ===
+NONE of farm patterns
+port 3860 free
+port 3861 free

@@ -9,6 +9,14 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
+    // Long-form TTS (novel-length soak / book chapters) needs > default 100kb JSON body.
+    // 2mb covers ~50k-word plain text with JSON envelope headroom.
+    bodyParser: true,
+  });
+  app.useBodyParser('json', { limit: process.env.RESONARA_JSON_LIMIT || '2mb' });
+  app.useBodyParser('urlencoded', {
+    limit: process.env.RESONARA_JSON_LIMIT || '2mb',
+    extended: true,
   });
   // G28 TODO-04: drain Nest providers on SIGTERM/SIGINT
   app.enableShutdownHooks();

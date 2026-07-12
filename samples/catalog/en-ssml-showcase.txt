@@ -1,0 +1,13 @@
+<speak>
+  Welcome to <emphasis level="strong">Resonara</emphasis>.
+  <break time="500ms"/>
+  Version <say-as interpret-as="cardinal">2</say-as> point
+  <say-as interpret-as="cardinal">0</say-as>.
+  <prosody rate="slow">This part is spoken slowly.</prosody>
+  <prosody rate="fast">And this part is spoken quickly.</prosody>
+  The word <phoneme alphabet="ipa" ph="ˈnjuːklɪər">nuclear</phoneme>
+  is often mispronounced.
+  <sub alias="World Wide Web">WWW</sub> changed everything.
+  <break time="1s"/>
+  Thank you for listening.
+</speak>

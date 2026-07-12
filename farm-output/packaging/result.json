@@ -1,0 +1,44 @@
+{
+  "mac": "build-verified",
+  "macRuntime": "runtime-verified-bundle",
+  "win": "build-verified",
+  "artifacts": {
+    "Resonara Setup 2.2.0.exe": {
+      "bytes": 351801750,
+      "mb": 335.5
+    },
+    "Resonara Setup 2.2.0.exe.blockmap": {
+      "bytes": 351347,
+      "mb": 0.3
+    },
+    "Resonara-2.2.0-arm64-mac.zip": {
+      "bytes": 458461115,
+      "mb": 437.2
+    },
+    "Resonara-2.2.0-arm64-mac.zip.blockmap": {
+      "bytes": 475669,
+      "mb": 0.5
+    },
+    "Resonara-2.2.0-arm64.dmg": {
+      "bytes": 437389861,
+      "mb": 417.1
+    },
+    "Resonara-2.2.0-arm64.dmg.blockmap": {
+      "bytes": 457443,
+      "mb": 0.4
+    },
+    "builder-debug.yml": {
+      "bytes": 7867,
+      "mb": 0
+    },
+    "latest-mac.yml": {
+      "bytes": 508,
+      "mb": 0
+    },
+    "latest.yml": {
+      "bytes": 345,
+      "mb": 0
+    }
+  },
+  "completedAt": "2026-07-12T15:54:02.546Z"
+}

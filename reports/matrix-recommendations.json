@@ -1,0 +1,42 @@
+{
+  "short-article": {
+    "engine": "platform",
+    "profile": "news",
+    "language": "en",
+    "score": 0.9770380059707884,
+    "wer": 0.025478010003679153,
+    "pauseConformance": 1,
+    "rtf": 0.07313784259826521,
+    "jobId": "en-short-article__platform__news"
+  },
+  "news": {
+    "engine": "platform",
+    "profile": "news",
+    "language": "en",
+    "score": 0.9453276810779278,
+    "wer": 0.08920899660865436,
+    "pauseConformance": 1,
+    "rtf": 0.07194785832815957,
+    "jobId": "en-news__platform__news"
+  },
+  "dialogue-script": {
+    "engine": "platform",
+    "profile": "news",
+    "language": "pt-BR",
+    "score": 0.9363660385458243,
+    "wer": 0.0289822972033404,
+    "pauseConformance": 1,
+    "rtf": 0.4872514715350768,
+    "jobId": "pt-dialogo__platform__news"
+  },
+  "numbers-and-dates": {
+    "engine": "platform",
+    "profile": "podcast",
+    "language": "en",
+    "score": 0.864110679806509,
+    "wer": 0.2493341688861037,
+    "pauseConformance": 1,
+    "rtf": 0.08086479711734294,
+    "jobId": "en-numbers-and-dates__platform__podcast"
+  }
+}

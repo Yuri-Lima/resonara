@@ -1,0 +1,2 @@
+{"event":"await-farm-start","state":"/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/state.json","accept":["FARM DONE","COMPLETE"],"timeoutMs":5000}
+{"event":"await-farm-ok","status":"COMPLETE","elapsedMs":2}

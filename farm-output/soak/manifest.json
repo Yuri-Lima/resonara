@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "name": "soak",
+  "concurrency": 1,
+  "jobs": [
+    {
+      "id": "soak-novel__platform__audiobook",
+      "docId": "soak-novel",
+      "engine": "platform",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/soak-novel.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/soak/soak-novel__platform__audiobook.wav"
+    }
+  ],
+  "note": "platform primary for soak stability; piper catalog already proven"
+}

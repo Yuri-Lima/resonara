@@ -1,0 +1,3 @@
+bash scripts/open-ui.sh
+API already running on :3847
+Opening dashboard file:///private/tmp/trace-sweG30-20260712-163649/ui/deliverable/index.html (and API http://127.0.0.1:3847/ui/deliverable/ if served)

@@ -1,0 +1,15 @@
+# Documentação da API Resonara TTS
+
+O endpoint REST utiliza autenticação via OAuth 2.0 para validar o token JWT. A API retorna um status code 200 com o payload em formato JSON.
+
+## Instalação
+
+Execute `npm install` e depois `npm run build`. O serviço sobe com `npm run start:lite` na porta 3847.
+
+## Síntese
+
+POST /tts/synthesize aceita `text`, `language` (en | pt-BR | auto), `engine` (auto | piper | platform) e `voice`. Para documentos longos, o pipeline faz chunking, trim de silêncio e crossfade.
+
+## Observações
+
+Termos em inglês como software, hardware, framework e deploy mantêm pronúncia emprestada no português brasileiro. O model manager baixa vozes Piper de Hugging Face offline-first após o download inicial.
