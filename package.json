@@ -1,6 +1,6 @@
 {
   "name": "resonara",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Resonara \u2014 Offline long-form text-to-speech. Multi-engine (Piper + Kokoro + optional expressive Chatterbox), en + pt-BR, documents to chaptered audio, optional quality gates.",
   "private": true,
   "license": "MIT",
