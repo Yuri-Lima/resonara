@@ -4,14 +4,14 @@
   "concurrency": 1,
   "jobs": [
     {
-      "id": "soak-novel__platform__audiobook",
+      "id": "soak-novel__piper__audiobook",
       "docId": "soak-novel",
-      "engine": "platform",
+      "engine": "piper",
       "language": "en",
       "profile": "audiobook",
       "textPath": "samples/catalog/soak-novel.txt",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/soak/soak-novel__platform__audiobook.wav"
+      "outPath": "/tmp/trace-sweG31-20260712-185142/farm-output/soak/soak-novel__piper__audiobook.wav"
     }
   ],
-  "note": "platform primary for soak stability; piper catalog already proven"
+  "note": "piper primary for soak stability proof (product path: Node/piper-subprocess pipeline); platform soak retained under platform-secondary/"
 }

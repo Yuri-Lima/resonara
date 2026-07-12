@@ -199,5 +199,57 @@
     "phase": "8-fix",
     "purpose": "farm-gate corrected matrix",
     "outcome": "GO"
+  },
+  {
+    "id": "bg-download-whisper",
+    "purpose": "Install faster-whisper venv + tiny/base models offline-capable",
+    "outcome": "collected",
+    "runtime": "see logs/download-whisper.log",
+    "campaign": "G31"
+  },
+  {
+    "id": "bg-measure-sample",
+    "purpose": "Representative sample ASR WER (\u22651 content type \u00d7 engines)",
+    "outcome": "collected",
+    "runtime": "matrix 8 + catalog 12",
+    "campaign": "G31"
+  },
+  {
+    "id": "bg-measure-full",
+    "purpose": "Full catalog 24 + matrix 36 true WER + profile-band pause",
+    "outcome": "collected",
+    "runtime": "~7 min",
+    "campaign": "G31"
+  },
+  {
+    "id": "fg-gate-real",
+    "purpose": "Re-run farm-gate on measured WER + real pause",
+    "outcome": "collected",
+    "runtime": "NO-GO with findings",
+    "campaign": "G31"
+  },
+  {
+    "id": "fg-ssml-wer-pin",
+    "purpose": "Strip SSML markup from WER reference (measurement pin)",
+    "outcome": "collected",
+    "runtime": "ssml 0.62\u21920.15",
+    "campaign": "G31"
+  },
+  {
+    "id": "fg-pause-profile-band",
+    "purpose": "Replace silencedetect constant with pause-probe profile-band",
+    "outcome": "collected",
+    "runtime": "conf varies 0\u20130.85",
+    "campaign": "G31"
+  },
+  {
+    "id": "p10-piper-soak",
+    "phase": 10,
+    "purpose": "50k novel soak engine=piper with RSS/handle probe (primary stability proof)",
+    "outcome": "COMPLETE 1288/1288, duration 5.16h, no-leak, zero orphans",
+    "kind": "background",
+    "startedAt": "2026-07-12T17:38:06.409Z",
+    "completedAt": "2026-07-12T19:01:52.745Z",
+    "engine": "piper"
   }
 ]

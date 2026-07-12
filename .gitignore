@@ -64,3 +64,8 @@ farm-output/lite-server.log
 .resonara-baseline.pid
 .resonara-ui.pid
 .resonara-ui.log
+
+# local measure/install logs
+logs/
+
+tools/piper-venv

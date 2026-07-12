@@ -1,0 +1,655 @@
+{
+  "batch": "catalog",
+  "generatedAt": "2026-07-12T17:05:10.315Z",
+  "methodology": {
+    "wer": "faster-whisper-asr",
+    "pause": "pause-probe-profile-band",
+    "whisperEnabled": true,
+    "whisperAvailable": true,
+    "whisperModel": "tiny",
+    "note": "All WER rows are ASR-measured (werIsProxy=false)."
+  },
+  "aggregates": {
+    "total": 12,
+    "measured": 12,
+    "failed": 0,
+    "meanWer": 0.2934572251884347,
+    "meanWerMeasured": 0.2934572251884347,
+    "meanWerProxy": null,
+    "measuredWerCount": 12,
+    "proxyWerCount": 0,
+    "meanConformance": 0.308,
+    "meanConformanceReal": 0.308,
+    "realPauseCount": 12,
+    "proxyPauseCount": 0,
+    "meanRtf": 0.3417545831064028,
+    "meanDurationSec": 137.21301933333334,
+    "meanF0Variance": null,
+    "meanSpeechRate": null,
+    "invalidAudio": 0,
+    "byEngine": {
+      "piper": {
+        "n": 12,
+        "meanWer": 0.2934572251884347,
+        "meanConformance": 0.308,
+        "meanRtf": 0.3417545831064028
+      }
+    },
+    "byProfile": {
+      "audiobook": {
+        "n": 12,
+        "meanWer": 0.2934572251884347,
+        "meanConformance": 0.308,
+        "meanRtf": 0.3417545831064028
+      }
+    },
+    "byContentType": {
+      "quick-sentence": {
+        "n": 1,
+        "meanWer": 0,
+        "meanConformance": 0,
+        "meanRtf": 0.4009053335957488
+      },
+      "ssml-showcase": {
+        "n": 1,
+        "meanWer": 0.6233766233766234,
+        "meanConformance": 0.28600000000000003,
+        "meanRtf": 0.4533535665043118
+      },
+      "paragraph": {
+        "n": 1,
+        "meanWer": 0.16666666666666666,
+        "meanConformance": 0.2,
+        "meanRtf": 0.4172562463794266
+      },
+      "dialogue-script": {
+        "n": 1,
+        "meanWer": 0.2361111111111111,
+        "meanConformance": 0.42100000000000004,
+        "meanRtf": 0.4158905937069493
+      },
+      "children-story": {
+        "n": 1,
+        "meanWer": 0.013888888888888888,
+        "meanConformance": 0.395,
+        "meanRtf": 0.3162564715228045
+      },
+      "numbers-and-dates": {
+        "n": 1,
+        "meanWer": 0.36065573770491804,
+        "meanConformance": 0.14300000000000002,
+        "meanRtf": 0.3482187537982938
+      },
+      "pronunciation-challenge": {
+        "n": 1,
+        "meanWer": 0.32222222222222224,
+        "meanConformance": 0.188,
+        "meanRtf": 0.3830637981948131
+      },
+      "short-article": {
+        "n": 1,
+        "meanWer": 0.18803418803418803,
+        "meanConformance": 0.35,
+        "meanRtf": 0.34974457014076943
+      },
+      "technical-doc": {
+        "n": 1,
+        "meanWer": 0.5803571428571429,
+        "meanConformance": 0.318,
+        "meanRtf": 0.2825732786276262
+      },
+      "news": {
+        "n": 1,
+        "meanWer": 0.6178343949044586,
+        "meanConformance": 0.32,
+        "meanRtf": 0.33302303823714824
+      },
+      "long-form-essay": {
+        "n": 1,
+        "meanWer": 0.25263157894736843,
+        "meanConformance": 0.517,
+        "meanRtf": 0.28969226651597196
+      },
+      "book-chapter": {
+        "n": 1,
+        "meanWer": 0.1597081475476287,
+        "meanConformance": 0.5579999999999999,
+        "meanRtf": 0.11107708005296864
+      }
+    },
+    "byLanguage": {
+      "en": {
+        "n": 5,
+        "meanWer": 0.2640286944385305,
+        "meanConformance": 0.2024,
+        "meanRtf": 0.3803595847231944
+      },
+      "pt-BR": {
+        "n": 7,
+        "meanWer": 0.3144776042955092,
+        "meanConformance": 0.3834285714285714,
+        "meanRtf": 0.3141795819515515
+      }
+    }
+  },
+  "recommendations": {
+    "quick-sentence": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "en",
+      "score": 0.6070736161843214,
+      "wer": 0,
+      "pauseConformance": 0,
+      "rtf": 0.4009053335957488,
+      "jobId": "en-quick-sentence__piper__audiobook"
+    },
+    "ssml-showcase": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "en",
+      "score": 0.3916212606119707,
+      "wer": 0.6233766233766234,
+      "pauseConformance": 0.28600000000000003,
+      "rtf": 0.4533535665043118,
+      "jobId": "en-ssml-showcase__piper__audiobook"
+    },
+    "paragraph": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "pt-BR",
+      "score": 0.5925049724657735,
+      "wer": 0.16666666666666666,
+      "pauseConformance": 0.2,
+      "rtf": 0.4172562463794266,
+      "jobId": "pt-paragrafo__piper__audiobook"
+    },
+    "dialogue-script": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "pt-BR",
+      "score": 0.6352348332475682,
+      "wer": 0.2361111111111111,
+      "pauseConformance": 0.42100000000000004,
+      "rtf": 0.4158905937069493,
+      "jobId": "pt-dialogo__piper__audiobook"
+    },
+    "children-story": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "en",
+      "score": 0.7452651092179675,
+      "wer": 0.013888888888888888,
+      "pauseConformance": 0.395,
+      "rtf": 0.3162564715228045,
+      "jobId": "en-children-story__piper__audiobook"
+    },
+    "numbers-and-dates": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "en",
+      "score": 0.4809800405761183,
+      "wer": 0.36065573770491804,
+      "pauseConformance": 0.14300000000000002,
+      "rtf": 0.3482187537982938,
+      "jobId": "en-numbers-and-dates__piper__audiobook"
+    },
+    "pronunciation-challenge": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "en",
+      "score": 0.5131437556822944,
+      "wer": 0.32222222222222224,
+      "pauseConformance": 0.188,
+      "rtf": 0.3830637981948131,
+      "jobId": "en-pronunciation-challenge__piper__audiobook"
+    },
+    "short-article": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "pt-BR",
+      "score": 0.6396150441061628,
+      "wer": 0.18803418803418803,
+      "pauseConformance": 0.35,
+      "rtf": 0.34974457014076943,
+      "jobId": "pt-artigo__piper__audiobook"
+    },
+    "technical-doc": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "pt-BR",
+      "score": 0.43807381055189704,
+      "wer": 0.5803571428571429,
+      "pauseConformance": 0.318,
+      "rtf": 0.2825732786276262,
+      "jobId": "pt-tecnico__piper__audiobook"
+    },
+    "news": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "pt-BR",
+      "score": 0.41560898979084115,
+      "wer": 0.6178343949044586,
+      "pauseConformance": 0.32,
+      "rtf": 0.33302303823714824,
+      "jobId": "pt-noticia__piper__audiobook"
+    },
+    "long-form-essay": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "pt-BR",
+      "score": 0.6709410256437052,
+      "wer": 0.25263157894736843,
+      "pauseConformance": 0.517,
+      "rtf": 0.28969226651597196,
+      "jobId": "pt-ensaio__piper__audiobook"
+    },
+    "book-chapter": {
+      "engine": "piper",
+      "profile": "audiobook",
+      "language": "pt-BR",
+      "score": 0.7504500611263933,
+      "wer": 0.1597081475476287,
+      "pauseConformance": 0.5579999999999999,
+      "rtf": 0.11107708005296864,
+      "jobId": "pt-capitulo__piper__audiobook"
+    }
+  },
+  "rows": [
+    {
+      "id": "en-quick-sentence__piper__audiobook",
+      "docId": "en-quick-sentence",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "contentType": "quick-sentence",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-quick-sentence__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0,
+      "pauseConformance": 0,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 5.081,
+      "rtf": 0.4009053335957488,
+      "ms": 2037,
+      "bytes": 731766,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 0,
+        "totalBanded": 1,
+        "conformancePct": 0,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "The quick brown fox jumped gracefully over the lazy sleeping dog near the old stone bridge.",
+      "whisperElapsedMs": 404
+    },
+    {
+      "id": "en-ssml-showcase__piper__audiobook",
+      "docId": "en-ssml-showcase",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "contentType": "ssml-showcase",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-ssml-showcase__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.6233766233766234,
+      "pauseConformance": 0.28600000000000003,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 15.321375,
+      "rtf": 0.4533535665043118,
+      "ms": 6946,
+      "bytes": 2206380,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 2,
+        "totalBanded": 7,
+        "conformancePct": 28.6,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "Welcome to Resonara. Version 2.0. This part is spoken slowly. And this part is spoken quickly. The word in Eucleo is often mispronounced. Worldwide web changed everything. Thank you for listening.",
+      "whisperElapsedMs": 571
+    },
+    {
+      "id": "pt-paragrafo__piper__audiobook",
+      "docId": "pt-paragrafo",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "contentType": "paragraph",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-paragrafo__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.16666666666666666,
+      "pauseConformance": 0.2,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 20.217792,
+      "rtf": 0.4172562463794266,
+      "ms": 8436,
+      "bytes": 2911464,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 2,
+        "totalBanded": 10,
+        "conformancePct": 20,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "Almanhecer, o sol nascia devagar sobre as montanhas de minas dirais, torando o horizonte com o brilho suave. As nuvens baixas se afastavam, o vento trazia o cheiro de terra amulhada e café, maria abril a janela e sorril. O dia prometia ser longo, cheio de trabalho e, quem sabe, de bos notícias.",
+      "whisperElapsedMs": 770
+    },
+    {
+      "id": "pt-dialogo__piper__audiobook",
+      "docId": "pt-dialogo",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "contentType": "dialogue-script",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-dialogo__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.2361111111111111,
+      "pauseConformance": 0.42100000000000004,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 20.430854,
+      "rtf": 0.4158905937069493,
+      "ms": 8497,
+      "bytes": 2942146,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 8,
+        "totalBanded": 19,
+        "conformancePct": 42.1,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "O café estava quase vazio a aquela hora. Você acha que a apresentação foi bem? Se seramente, acho que perdemos eles no slide 7. Aquele com as projeções de receita? Não, aquele onde você mostrou o meme do gato sem querer. Mariz, quando eu o rosto nas mãos, era para ser o momento de integração da equipe. E foi, o time não que esteve tão unido na risada.",
+      "whisperElapsedMs": 792
+    },
+    {
+      "id": "en-children-story__piper__audiobook",
+      "docId": "en-children-story",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "contentType": "children-story",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-children-story__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.013888888888888888,
+      "pauseConformance": 0.395,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 102.600272,
+      "rtf": 0.3162564715228045,
+      "ms": 32448,
+      "bytes": 4524750,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 17,
+        "totalBanded": 43,
+        "conformancePct": 39.5,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "the star that learned to wait. Once there was a little star that wanted to shine brighter than all the others, it rushed to every twinkle and forgot to breathe between them. Why do you hurry so? Ask the moon in a calm voice. Because the sky is large and I am afraid of falling behind, said the star. The moon smiled. The stars that time loves most are the ones that know how to pause. When you rest, the people below have time to find you. A careful reader marks the boundaries between sentence and s",
+      "whisperElapsedMs": 2423
+    },
+    {
+      "id": "en-numbers-and-dates__piper__audiobook",
+      "docId": "en-numbers-and-dates",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "contentType": "numbers-and-dates",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-numbers-and-dates__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.36065573770491804,
+      "pauseConformance": 0.14300000000000002,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 39.104729,
+      "rtf": 0.3482187537982938,
+      "ms": 13617,
+      "bytes": 5631184,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 2,
+        "totalBanded": 14,
+        "conformancePct": 14.3,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "The company raised $4 and 20 cents M in Q3 2025. Revenue grew 847% from $12,500 to $1,118,375. The board meeting is a two, 3 p.m. on March 15, 2021. Call plus 1,55867-539 for details. The package weighs 3.7KG 8.15 pounds. Order hash a 2,847 XL ships from warehouse 14B. The ratio is 16. 9. Not 4. 3.",
+      "whisperElapsedMs": 1033
+    },
+    {
+      "id": "en-pronunciation-challenge__piper__audiobook",
+      "docId": "en-pronunciation-challenge",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "contentType": "pronunciation-challenge",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-pronunciation-challenge__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.32222222222222224,
+      "pauseConformance": 0.188,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 39.231063,
+      "rtf": 0.3830637981948131,
+      "ms": 15028,
+      "bytes": 5649376,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 3,
+        "totalBanded": 16,
+        "conformancePct": 18.8,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "Setting up the stack required post-greSQL, Kubernetes, and Cubectal on day one. The reverse proxy was EngineX, serving Chipotle's tile configs that nobody wanted to touch. For lunch, we ordered quinoa bowls. Aloo isville tradition, apparently, and debated Worcestershire sauce recipes. Someone mentioned Yosemite. Someone else said give with a hard G. We ship JSON over Cinco-Auth flows on macOS and iOS. Deciding I.E.E. and I.E. T.F. drafts. Dr. Nguyen reviewed the facade of the naive resume. Then ",
+      "whisperElapsedMs": 1186
+    },
+    {
+      "id": "pt-artigo__piper__audiobook",
+      "docId": "pt-artigo",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "contentType": "short-article",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-artigo__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.18803418803418803,
+      "pauseConformance": 0.35,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 45.132938,
+      "rtf": 0.34974457014076943,
+      "ms": 15785,
+      "bytes": 6499246,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 7,
+        "totalBanded": 20,
+        "conformancePct": 35,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "A música brasileira nasceu de muitos encontros. No Rio de Janeiro, Tom Jobin e Vinícios de Morais modaram a bossa nova com armonia sofisticada e pôsia cotidiana. No Nordeste, Luz Gonzaga levou o Bayão e o Forró para o resto do país, contando a vida do Certão. Dê que, depois, Certany de o Universitario e o Fancariócavo ocuparam as paradas de São Paulo e do Rio. A da geração reescreveu o mapa sonoro do Brasil, misturando tradição e experimentação. O resultado é um catálogo imenso. Do violão suave ",
+      "whisperElapsedMs": 1478
+    },
+    {
+      "id": "pt-tecnico__piper__audiobook",
+      "docId": "pt-tecnico",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "contentType": "technical-doc",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-tecnico__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.5803571428571429,
+      "pauseConformance": 0.318,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 47.814146,
+      "rtf": 0.2825732786276262,
+      "ms": 13511,
+      "bytes": 6885340,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 7,
+        "totalBanded": 22,
+        "conformancePct": 31.8,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "Ducumentação da P-resonara TTS, o Info-intrestiu utilizou tenticação via o A2-0 para validar o Tolkien JWT. A P-resonão-status pode 200 com o Palo-lário Informato-Song. Installação, execute NPM e instalhe depois e NPM e Rumbuí-o. Serviço só de com NPM Rumb Start, víte na porta 31847. Se viso, post-tTS-sintes-is aceita test, não guagem P-B-R-Galto, enginha autopi-perplato-form e voice. Para documentos longos, o P-P-Lenifaxion King, trindice-lêncio e cross-fade, observações termos em inglês como s",
+      "whisperElapsedMs": 1977
+    },
+    {
+      "id": "pt-noticia__piper__audiobook",
+      "docId": "pt-noticia",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "contentType": "news",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-noticia__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.6178343949044586,
+      "pauseConformance": 0.32,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 74.973792,
+      "rtf": 0.33302303823714824,
+      "ms": 24968,
+      "bytes": 10796328,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 8,
+        "totalBanded": 25,
+        "conformancePct": 32,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "25 de dezembro de 2025. A start-up feminense nexora captou 4,20 milhões de reais no 3 grau trimestre de 2025. Segundo o balanço inviado à imprensa. A receita cresceu 800 e 40 e 7% de 12.000 e 500 reais para 100 e 18.000 e 370 e 5 reais em 12 meses. Seu afirmou que a Pei-Rest do produto para o processo mais de 10.000 e que esse por segundo em picos de black feridaia. O nosso após a GPU sobre demanda e machine learning offline, se ficou em entrevista por elefone ao 5.5. 1, 9,8,7,6,5,4,3,2,1. Em pr",
+      "whisperElapsedMs": 2228
+    },
+    {
+      "id": "pt-ensaio__piper__audiobook",
+      "docId": "pt-ensaio",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "contentType": "long-form-essay",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-ensaio__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.25263157894736843,
+      "pauseConformance": 0.517,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 446.791354,
+      "rtf": 0.28969226651597196,
+      "ms": 129432,
+      "bytes": 64338058,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 31,
+        "totalBanded": 60,
+        "conformancePct": 51.7,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "longe além das colinas, um faráu pescava contra o nevoeiro, o Mercado encheus de vozes vendendo o pão, tempéros e notícias, o Mercado encheus e de vozes vendendo o pão, tempéros e notícias, o arquivo preservava cartas escritas com letra fina e paciente, exudiosos se uniam anotações de cada prateleira na biblioteca que eta, o rio ser pintava pelo vale sob um céu pálido de manhã, as crianças seiam enquanto o contador de histórias erguiam fantóche, trovam com uma vez e a chuva começou de verdade, a",
+      "whisperElapsedMs": 13015
+    },
+    {
+      "id": "pt-capitulo__piper__audiobook",
+      "docId": "pt-capitulo",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "contentType": "book-chapter",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-capitulo__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.1597081475476287,
+      "pauseConformance": 0.5579999999999999,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 789.856917,
+      "rtf": 0.11107708005296864,
+      "ms": 87735,
+      "bytes": 113739498,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 43,
+        "totalBanded": 77,
+        "conformancePct": 55.8,
+        "note": "farm-adaptive-window"
+      },
+      "werIsProxy": false,
+      "hypothesis": "capítulo 1, a tempestade, a casa na colina estava quieta, o relógio da sala marcava quase menoite quando o primeiro trovão e colno vale. Você acha que vai chover? Acho que sim, silêncio tomou conta da sala enquanto os dois observavam as nuvens. E se estrada a lagar de novo, aí a gente espera, não vale o risco, la fora, o vento do bravo às árvores. Dentro, o cheiro de café frio misturava se ao medo de uma noite sem luz, Maria apertou o cháli nos ombros, João acendeu um lumpião a queirosene por pr",
+      "whisperElapsedMs": 26164
+    }
+  ]
+}

@@ -1,0 +1,389 @@
+{
+  "status": "COMPLETE",
+  "batch": "catalog",
+  "total": 24,
+  "done": 24,
+  "startedAt": "2026-07-12T17:08:49.654Z",
+  "whisper": true,
+  "whisperAvailable": true,
+  "sampleRepresentative": false,
+  "rows": [
+    {
+      "id": "en-quick-sentence__piper__audiobook",
+      "wer": 0,
+      "werIsProxy": false,
+      "pauseConformance": 0,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "quick-sentence",
+      "status": "measured"
+    },
+    {
+      "id": "en-ssml-showcase__piper__audiobook",
+      "wer": 0.15151515151515152,
+      "werIsProxy": false,
+      "pauseConformance": 0.28600000000000003,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "ssml-showcase",
+      "status": "measured"
+    },
+    {
+      "id": "pt-ssml__piper__audiobook",
+      "wer": 0.2631578947368421,
+      "werIsProxy": false,
+      "pauseConformance": 0.444,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "ssml-showcase",
+      "status": "measured"
+    },
+    {
+      "id": "pt-paragrafo__piper__audiobook",
+      "wer": 0.16666666666666666,
+      "werIsProxy": false,
+      "pauseConformance": 0.2,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "paragraph",
+      "status": "measured"
+    },
+    {
+      "id": "pt-dialogo__piper__audiobook",
+      "wer": 0.2361111111111111,
+      "werIsProxy": false,
+      "pauseConformance": 0.42100000000000004,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "dialogue-script",
+      "status": "measured"
+    },
+    {
+      "id": "en-dialogue-script__piper__audiobook",
+      "wer": 0.11842105263157894,
+      "werIsProxy": false,
+      "pauseConformance": 0.474,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "dialogue-script",
+      "status": "measured"
+    },
+    {
+      "id": "en-paragraph__piper__audiobook",
+      "wer": 0.0684931506849315,
+      "werIsProxy": false,
+      "pauseConformance": 0.1,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "paragraph",
+      "status": "measured"
+    },
+    {
+      "id": "en-children-story__piper__audiobook",
+      "wer": 0.013888888888888888,
+      "werIsProxy": false,
+      "pauseConformance": 0.395,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "children-story",
+      "status": "measured"
+    },
+    {
+      "id": "en-numbers-and-dates__piper__audiobook",
+      "wer": 0.36065573770491804,
+      "werIsProxy": false,
+      "pauseConformance": 0.14300000000000002,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "numbers-and-dates",
+      "status": "measured"
+    },
+    {
+      "id": "en-pronunciation-challenge__piper__audiobook",
+      "wer": 0.32222222222222224,
+      "werIsProxy": false,
+      "pauseConformance": 0.188,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "pronunciation-challenge",
+      "status": "measured"
+    },
+    {
+      "id": "pt-artigo__piper__audiobook",
+      "wer": 0.18803418803418803,
+      "werIsProxy": false,
+      "pauseConformance": 0.35,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "pt-pronuncia__piper__audiobook",
+      "wer": 0.6627906976744186,
+      "werIsProxy": false,
+      "pauseConformance": 0.14300000000000002,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "pronunciation-challenge",
+      "status": "measured"
+    },
+    {
+      "id": "pt-tecnico__piper__audiobook",
+      "wer": 0.5803571428571429,
+      "werIsProxy": false,
+      "pauseConformance": 0.318,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "technical-doc",
+      "status": "measured"
+    },
+    {
+      "id": "pt-numeros__piper__audiobook",
+      "wer": 0.7708333333333334,
+      "werIsProxy": false,
+      "pauseConformance": 0.278,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "numbers-and-dates",
+      "status": "measured"
+    },
+    {
+      "id": "pt-noticia__piper__audiobook",
+      "wer": 0.6178343949044586,
+      "werIsProxy": false,
+      "pauseConformance": 0.32,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "news",
+      "status": "measured"
+    },
+    {
+      "id": "pt-historia__piper__audiobook",
+      "wer": 0.2638888888888889,
+      "werIsProxy": false,
+      "pauseConformance": 0.06,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "children-story",
+      "status": "measured"
+    },
+    {
+      "id": "en-short-article__piper__audiobook",
+      "wer": 0.056133056133056136,
+      "werIsProxy": false,
+      "pauseConformance": 0.361,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "pt-ensaio__piper__audiobook",
+      "wer": 0.25263157894736843,
+      "werIsProxy": false,
+      "pauseConformance": 0.517,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "long-form-essay",
+      "status": "measured"
+    },
+    {
+      "id": "en-long-essay__piper__audiobook",
+      "wer": 0.059870550161812294,
+      "werIsProxy": false,
+      "pauseConformance": 0.382,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "long-form-essay",
+      "status": "measured"
+    },
+    {
+      "id": "en-news-expanded__piper__audiobook",
+      "wer": 0.032242063492063495,
+      "werIsProxy": false,
+      "pauseConformance": 0.364,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "news",
+      "status": "measured"
+    },
+    {
+      "id": "pt-capitulo__piper__audiobook",
+      "wer": 0.1597081475476287,
+      "werIsProxy": false,
+      "pauseConformance": 0.5579999999999999,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "book-chapter",
+      "status": "measured"
+    },
+    {
+      "id": "en-news__piper__audiobook",
+      "wer": 0.15217391304347827,
+      "werIsProxy": false,
+      "pauseConformance": 0.662,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "news",
+      "status": "measured"
+    },
+    {
+      "id": "en-technical-doc__piper__audiobook",
+      "wer": 0.4539411206077873,
+      "werIsProxy": false,
+      "pauseConformance": 0.628,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "technical-doc",
+      "status": "measured"
+    },
+    {
+      "id": "en-book-chapter__piper__audiobook",
+      "wer": 0.09826018189007513,
+      "werIsProxy": false,
+      "pauseConformance": 0.564,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "book-chapter",
+      "status": "measured"
+    }
+  ],
+  "completedAt": "2026-07-12T17:12:34.523Z",
+  "methodology": {
+    "wer": "faster-whisper-asr",
+    "pause": "pause-probe-profile-band",
+    "whisperEnabled": true,
+    "whisperAvailable": true,
+    "whisperModel": "tiny",
+    "note": "All WER rows are ASR-measured (werIsProxy=false)."
+  },
+  "aggregates": {
+    "meanWer": 0.2520762972365838,
+    "meanWerMeasured": 0.2520762972365838,
+    "measuredWerCount": 24,
+    "proxyWerCount": 0,
+    "meanConformance": 0.33983333333333327,
+    "realPauseCount": 24
+  }
+}

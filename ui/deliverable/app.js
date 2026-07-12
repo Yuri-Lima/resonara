@@ -10,7 +10,24 @@
     el.className = 'badge ' + (v === 'GO' ? 'go' : v === 'NO-GO' ? 'nogo' : 'pending');
   }
 
+  function werKind(r) {
+    if (r.wer == null) return '—';
+    if (r.werIsProxy) return 'proxy';
+    return 'measured';
+  }
+
+  function pauseKind(r) {
+    if (r.pauseConformance == null) return '—';
+    if (r.pauseIsProxy) return 'proxy';
+    if (r.method && r.method.pause === 'pause-probe-profile-band') return 'profile-band';
+    if (r.method && r.method.pause === 'ffmpeg-silencedetect') return 'proxy';
+    return r.pauseIsProxy === false ? 'profile-band' : 'unknown';
+  }
+
   function gateRow(r) {
+    // Proxy WER cannot clear the cell gate
+    if (r.werIsProxy) return 'NO-GO';
+    if (r.pauseIsProxy) return 'NO-GO';
     const werOk = r.wer == null || r.wer <= 0.35;
     const confOk = r.pauseConformance == null || r.pauseConformance >= 0.9;
     const audioOk = r.validAudio !== false;
@@ -23,16 +40,23 @@
     if (!tbody) return;
     tbody.innerHTML = '';
     let go = 0, nogo = 0;
+    let measuredN = 0, proxyN = 0;
     for (const r of rows) {
       const g = gateRow(r);
       if (g === 'GO') go++; else nogo++;
+      if (r.werIsProxy) proxyN++;
+      else if (r.wer != null) measuredN++;
       const tr = document.createElement('tr');
+      const wk = werKind(r);
+      const pk = pauseKind(r);
       tr.innerHTML = [
         `<td>${esc(r.docId || r.id)}</td>`,
         `<td>${esc(r.engine)}</td>`,
         `<td>${esc(r.language)}</td>`,
         `<td>${fmt(r.wer, 3)}</td>`,
+        `<td class="${wk === 'measured' ? 'kind-measured' : wk === 'proxy' ? 'kind-proxy' : ''}">${wk}</td>`,
         `<td>${r.pauseConformance != null ? (r.pauseConformance * 100).toFixed(0) + '%' : '—'}</td>`,
+        `<td class="${pk === 'profile-band' ? 'kind-measured' : pk === 'proxy' ? 'kind-proxy' : ''}">${pk}</td>`,
         `<td>${fmt(r.rtf, 2)}</td>`,
         `<td class="${g === 'GO' ? 'gate-go' : 'gate-nogo'}">${g}</td>`,
       ].join('');
@@ -41,8 +65,9 @@
     const meta = $('#catalog-meta');
     if (meta) {
       const a = (data.catalog && data.catalog.aggregates) || {};
+      const meth = (data.catalog && data.catalog.methodology) || data.methodology || {};
       meta.textContent = rows.length
-        ? `Rows ${rows.length} · mean WER ${fmt(a.meanWer, 3)} · conf ${fmtPct(a.meanConformance)} · GO ${go} / NO-GO ${nogo}`
+        ? `Rows ${rows.length} · ASR WER ${fmt(a.meanWerMeasured != null ? a.meanWerMeasured : a.meanWer, 3)} (${measuredN} measured / ${proxyN} proxy) · conf ${fmtPct(a.meanConformance)} · pause=${meth.pause || pauseKind(rows[0]) || '—'} · GO ${go} / NO-GO ${nogo}`
         : 'Waiting for catalog measurement…';
     }
   }
@@ -57,8 +82,12 @@
         cell.className = 'heat-cell';
         const conf = r.pauseConformance != null ? r.pauseConformance : 0;
         const alpha = 0.25 + conf * 0.75;
-        cell.style.background = `rgba(61, 203, 122, ${alpha.toFixed(2)})`;
-        cell.innerHTML = `<strong>${esc(r.engine)} · ${esc(r.profile)}</strong>${esc(r.docId || '')}<br>WER ${fmt(r.wer, 2)} · RTF ${fmt(r.rtf, 2)}`;
+        const wk = werKind(r);
+        const pk = pauseKind(r);
+        cell.style.background = r.werIsProxy
+          ? `rgba(240, 180, 41, ${alpha.toFixed(2)})`
+          : `rgba(61, 203, 122, ${alpha.toFixed(2)})`;
+        cell.innerHTML = `<strong>${esc(r.engine)} · ${esc(r.profile)}</strong>${esc(r.docId || '')}<br>WER ${fmt(r.wer, 2)} <em>${wk}</em> · conf ${(conf * 100).toFixed(0)}% <em>${pk}</em> · RTF ${fmt(r.rtf, 2)}`;
         heat.appendChild(cell);
       }
     }

@@ -1,0 +1,399 @@
+{
+  "batch": "matrix",
+  "generatedAt": "2026-07-12T17:04:12.303Z",
+  "methodology": {
+    "wer": "faster-whisper-asr",
+    "pause": "pause-probe-profile-band",
+    "whisperEnabled": true,
+    "whisperAvailable": true,
+    "whisperModel": "tiny",
+    "note": "All WER rows are ASR-measured (werIsProxy=false)."
+  },
+  "aggregates": {
+    "total": 8,
+    "measured": 8,
+    "failed": 0,
+    "meanWer": 0.25260944702630983,
+    "meanWerMeasured": 0.25260944702630983,
+    "meanWerProxy": null,
+    "measuredWerCount": 8,
+    "proxyWerCount": 0,
+    "meanConformance": 0.29775,
+    "meanConformanceReal": 0.29775,
+    "realPauseCount": 8,
+    "proxyPauseCount": 0,
+    "meanRtf": 0.42483500743654296,
+    "meanDurationSec": 273.496950625,
+    "meanF0Variance": null,
+    "meanSpeechRate": null,
+    "invalidAudio": 0,
+    "byEngine": {
+      "piper": {
+        "n": 4,
+        "meanWer": 0.24073138071044342,
+        "meanConformance": 0.18625,
+        "meanRtf": 0.547496404098727
+      },
+      "platform": {
+        "n": 4,
+        "meanWer": 0.2644875133421763,
+        "meanConformance": 0.40925,
+        "meanRtf": 0.30217361077435895
+      }
+    },
+    "byProfile": {
+      "audiobook": {
+        "n": 2,
+        "meanWer": 0.1911549707602339,
+        "meanConformance": 0.5,
+        "meanRtf": 0.7918123952438266
+      },
+      "news": {
+        "n": 6,
+        "meanWer": 0.2730942724483352,
+        "meanConformance": 0.23033333333333336,
+        "meanRtf": 0.30250921150078175
+      }
+    },
+    "byContentType": {
+      "dialogue-script": {
+        "n": 2,
+        "meanWer": 0.1911549707602339,
+        "meanConformance": 0.5,
+        "meanRtf": 0.7918123952438266
+      },
+      "numbers-and-dates": {
+        "n": 2,
+        "meanWer": 0.2459016393442623,
+        "meanConformance": 0.3215,
+        "meanRtf": 0.2614432735623493
+      },
+      "short-article": {
+        "n": 2,
+        "meanWer": 0.43162393162393164,
+        "meanConformance": 0.275,
+        "meanRtf": 0.4411459391805381
+      },
+      "news": {
+        "n": 2,
+        "meanWer": 0.14175724637681159,
+        "meanConformance": 0.0945,
+        "meanRtf": 0.20493842175945778
+      }
+    },
+    "byLanguage": {
+      "pt-BR": {
+        "n": 3,
+        "meanWer": 0.37571225071225073,
+        "meanConformance": 0.3236666666666667,
+        "meanRtf": 0.5696757821885532
+      },
+      "en": {
+        "n": 5,
+        "meanWer": 0.17874776481474533,
+        "meanConformance": 0.2822,
+        "meanRtf": 0.33793054258533683
+      }
+    }
+  },
+  "recommendations": {
+    "dialogue-script": {
+      "engine": "platform",
+      "profile": "audiobook",
+      "language": "en",
+      "score": 0.7288176463997664,
+      "wer": 0.11842105263157894,
+      "pauseConformance": 0.579,
+      "rtf": 0.7568893222830698,
+      "jobId": "en-dialogue-script__platform__audiobook"
+    },
+    "numbers-and-dates": {
+      "engine": "platform",
+      "profile": "news",
+      "language": "en",
+      "score": 0.7121570323405588,
+      "wer": 0.16393442622950818,
+      "pauseConformance": 0.5,
+      "rtf": 0.25918950778386646,
+      "jobId": "en-numbers-and-dates__platform__news"
+    },
+    "short-article": {
+      "engine": "piper",
+      "profile": "news",
+      "language": "pt-BR",
+      "score": 0.5047640823344323,
+      "wer": 0.23076923076923078,
+      "pauseConformance": 0.1,
+      "rtf": 0.7616241236587364,
+      "jobId": "pt-artigo__piper__news"
+    },
+    "news": {
+      "engine": "platform",
+      "profile": "news",
+      "language": "en",
+      "score": 0.6061742083677621,
+      "wer": 0.1431159420289855,
+      "pauseConformance": 0.10800000000000001,
+      "rtf": 0.07194785832815957,
+      "jobId": "en-news__platform__news"
+    }
+  },
+  "rows": [
+    {
+      "id": "pt-dialogo__piper__audiobook",
+      "docId": "pt-dialogo",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "contentType": "dialogue-script",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.2638888888888889,
+      "pauseConformance": 0.42100000000000004,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 20.590625,
+      "rtf": 0.8267354682045834,
+      "ms": 17023,
+      "bytes": 2965152,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 8,
+        "totalBanded": 19,
+        "conformancePct": 42.1
+      },
+      "werIsProxy": false,
+      "hypothesis": "O café estava quase vazio a aquela hora. Você acha que a apresentação foi bem? Sinciramente, acho que perdemos eles nos lá de sete. Aquele com as projeções de receita? Não, aquele onde você mostrou o memidogato sem querer. Mariz, com deu o rosto nas mãos. Era para ser um momento de integração da equipe. E foi, o time nunca esteve tão unido na risada.",
+      "whisperElapsedMs": 809
+    },
+    {
+      "id": "en-dialogue-script__platform__audiobook",
+      "docId": "en-dialogue-script",
+      "engine": "platform",
+      "language": "en",
+      "profile": "audiobook",
+      "contentType": "dialogue-script",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__platform__audiobook.wav",
+      "status": "measured",
+      "wer": 0.11842105263157894,
+      "pauseConformance": 0.579,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 23.290063,
+      "rtf": 0.7568893222830698,
+      "ms": 17628,
+      "bytes": 3353872,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 11,
+        "totalBanded": 19,
+        "conformancePct": 57.9
+      },
+      "werIsProxy": false,
+      "hypothesis": "the coffee shop was nearly empty at this hour. Do you think the presentation went well? Honestly, I think we lost them at slide 7. The one with the revenue projections? No, the one where you accidentally showed the cat meme. Alice buried her face in her hands. That was supposed to be a team building moment. It was, the team has never been more united in laughter.",
+      "whisperElapsedMs": 714
+    },
+    {
+      "id": "en-numbers-and-dates__piper__news",
+      "docId": "en-numbers-and-dates",
+      "engine": "piper",
+      "language": "en",
+      "profile": "news",
+      "contentType": "numbers-and-dates",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__news.wav",
+      "status": "measured",
+      "wer": 0.32786885245901637,
+      "pauseConformance": 0.14300000000000002,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 37.960229,
+      "rtf": 0.2636970393408322,
+      "ms": 10010,
+      "bytes": 5466376,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 2,
+        "totalBanded": 14,
+        "conformancePct": 14.3
+      },
+      "werIsProxy": false,
+      "hypothesis": "The company raised $4 and $0.27 and Q3 2025. Revenue grew 847% from $12,500 to $118,375. The board meeting is a two. 30pm on March 15, 2021. Call plus 1,55867-5,309 for details. The package weighs 3.7 KG8.15 pounds. Order hash A, 2018 47XL ships from warehouse 14B. The ratio is 16, 9, not 4, 3.",
+      "whisperElapsedMs": 950
+    },
+    {
+      "id": "en-numbers-and-dates__platform__news",
+      "docId": "en-numbers-and-dates",
+      "engine": "platform",
+      "language": "en",
+      "profile": "news",
+      "contentType": "numbers-and-dates",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__news.wav",
+      "status": "measured",
+      "wer": 0.16393442622950818,
+      "pauseConformance": 0.5,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 39.847292,
+      "rtf": 0.25918950778386646,
+      "ms": 10328,
+      "bytes": 5738112,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 7,
+        "totalBanded": 14,
+        "conformancePct": 50
+      },
+      "werIsProxy": false,
+      "hypothesis": "The company raised $4.20 sum in Q3 2025, revenue grew 847% from $12,500 to $118,375. The board meeting is at 2.30pm on 15 March, 2021. Call, plus 1, 555, 867, 5309 for details. The package weighs 3.7 kg, 8.15 LBS, order 82847 XL ships from warehouse 14B. The ratio is 16, 9, not 4, 3.",
+      "whisperElapsedMs": 914
+    },
+    {
+      "id": "pt-artigo__piper__news",
+      "docId": "pt-artigo",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "news",
+      "contentType": "short-article",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__piper__news.wav",
+      "status": "measured",
+      "wer": 0.23076923076923078,
+      "pauseConformance": 0.1,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 43.609438,
+      "rtf": 0.7616241236587364,
+      "ms": 33214,
+      "bytes": 6279862,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 2,
+        "totalBanded": 20,
+        "conformancePct": 10
+      },
+      "werIsProxy": false,
+      "hypothesis": "A música brasileira nasceu de muitos encontros. No Rio de Janeiro, Tom Jobin e Vinícios de Morais moldaram a bosta nova com harmonia sofisticada e pôsia cotidiana. No Mordeste, Luz Gonzaga levou Bayão e o forró para o resto do país, contando a vida do Certão. Decras depois, Cercanijo Universitario e o Fancarióca ocuparam as paradas de São Paulo e do Rio. A da geração reescrevel o mapa sonoro do Brasil, misturando tradição e experimentação. O resultado é um catálogo imenso. Duviam lanço a Vuelba ",
+      "whisperElapsedMs": 1447
+    },
+    {
+      "id": "pt-artigo__platform__news",
+      "docId": "pt-artigo",
+      "engine": "platform",
+      "language": "pt-BR",
+      "profile": "news",
+      "contentType": "short-article",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__platform__news.wav",
+      "status": "measured",
+      "wer": 0.6324786324786325,
+      "pauseConformance": 0.45,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 50.842083,
+      "rtf": 0.12066775470233979,
+      "ms": 6135,
+      "bytes": 7321362,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 9,
+        "totalBanded": 20,
+        "conformancePct": 45
+      },
+      "werIsProxy": false,
+      "hypothesis": "a música brasileira na pseudomutas encontras, no Rio de Janeiro, Tom Jobim e Vinicias de Morais Moldora Mabassanova com harmonia sofistica da hiposa cotidiana, no Nordest, Luís Gonzágaleva a Obeio e Oio Faraparo o resto do Paloise, contando a Vida do Seteio. Dê que o destepoise, o sertoneijo universitário e o fonte carioca a Cúpera Mas de Paradaça de São Paulo e do Rio, cada geráceo reescrivo ao mapoço de Norro do Brasil, Mr. Ando tradiceo e experimentáceo, o resultado ao amcatelago e menso, do ",
+      "whisperElapsedMs": 1801
+    },
+    {
+      "id": "en-news__piper__news",
+      "docId": "en-news",
+      "engine": "piper",
+      "language": "en",
+      "profile": "news",
+      "contentType": "news",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__piper__news.wav",
+      "status": "measured",
+      "wer": 0.1403985507246377,
+      "pauseConformance": 0.081,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 979.116958,
+      "rtf": 0.337928985190756,
+      "ms": 330872,
+      "bytes": 140992944,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 6,
+        "totalBanded": 74,
+        "conformancePct": 8.1
+      },
+      "werIsProxy": false,
+      "hypothesis": "Apex Compute and Veil's Nova 9. The latency warres into a new phase, Silicon Valley. March 15, 206. In a move that sent GPU futures higher by 12.40%. Apex Compute announced its Nova 9 accelerator with a claimed 47% reduction in inference latency for large language models. We rebuilt the memory hierarchy from scratch. Setsio Miracin and a press call streamed at HTTPS. Slash Slash Apex. Example. Comp slash Nova 9. Media in time to first token fell from 210ms to 110ms on our internal API suite. Ana",
+      "whisperElapsedMs": 22424
+    },
+    {
+      "id": "en-news__platform__news",
+      "docId": "en-news",
+      "engine": "platform",
+      "language": "en",
+      "profile": "news",
+      "contentType": "news",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__platform__news.wav",
+      "status": "measured",
+      "wer": 0.1431159420289855,
+      "pauseConformance": 0.10800000000000001,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 992.718917,
+      "rtf": 0.07194785832815957,
+      "ms": 71424,
+      "bytes": 142951626,
+      "validAudio": true,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "pauseIsProxy": false,
+      "pauseDetail": {
+        "passed": 8,
+        "totalBanded": 74,
+        "conformancePct": 10.8
+      },
+      "werIsProxy": false,
+      "hypothesis": "Apex Compute on Veil's Novenine, the Latency Wars enter a new phase Silicon Valley, the 15th of March, 2026, in a move that sent GPU futures higher by 12.40%. Apex Compute announced its Novenine accelerator with acclaimed 47% reduction in inference latency for large language models. We removed the memory hierarchy from scratch, said CEO Mira Chen in a press called Streamed at HTTPS, Apex Example Com Novenine, median time to first token fell from 210 milliseconds to 110 milliseconds on our intern",
+      "whisperElapsedMs": 21203
+    }
+  ]
+}

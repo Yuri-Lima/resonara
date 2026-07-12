@@ -1,90 +1,103 @@
-# Phase 10 — Novel-Length Soak
+# Phase 10 — Novel-Length Soak (Piper primary)
 
 **Date:** 2026-07-12  
-**Status:** COMPLETE
+**Status:** COMPLETE  
+**Primary engine:** **piper** (product path: Node → piper subprocess per chunk)  
+**Secondary:** platform (macOS `say`) retained under `farm-output/soak/platform-secondary/`
 
 ## What changed
 
-- Expanded soak job for `samples/catalog/soak-novel.txt` (50,152 words).
-- Fixed Nest JSON body limit (100kb → 2mb) after 413 on novel POST.
-- Ran soak as monitored background farm job (platform × audiobook).
-- Memory probe sampled RSS every 15s across the full run.
-- TTS completed 1288/1288 chunks + concat; farm HTTP download hit Node Buffer 2GB limit — recovered via local `outputPath` copy; render-farm fixed to prefer `fs.copyFileSync`.
+- Re-ran `samples/catalog/soak-novel.txt` (50,152 words) end-to-end with **engine=piper** as the primary stability proof.
+- Monitored background farm job + RSS/handle probe every 15s on the lite-server PID.
+- Platform soak from earlier G30 remains a secondary data point only (OS-process TTS; does not exercise the Node/piper-subprocess pipeline used by long-form product renders).
 
-## Soak results (real)
+## Primary soak results (piper × audiobook) — real
 
 | Metric | Value |
 |--------|-------|
 | Words | 50,152 |
 | Chunks | 1288 |
-| Wall time (TTS) | ~1,475,363 ms (~24.6 min) |
-| Audio duration | 17,934.36 s (~4.98 h) |
-| Output bytes | 2,582,548,002 (~2.4 GB) |
-| WAV header | RIFF/WAVE valid |
-| Engine/profile | platform / audiobook |
-| Farm status | COMPLETE (recovered ok) |
+| TTS job | `3bb01783-4de7-4fae-99e6-eeb3b4184597` |
+| Wall time (farm job) | 5,023,907 ms (~83.7 min) |
+| Audio duration | 18,588.85 s (~5.16 h) |
+| Output bytes | 2,676,794,950 (~2.5 GB) |
+| WAV header | RIFF/WAVE valid (`pcm_s24le` 48 kHz mono) |
+| Engine/profile | **piper** / audiobook (voice `piper:en_US-lessac-medium`) |
+| Farm status | COMPLETE (ok) |
+| Orphans at end | **0** piper / ffmpeg children |
 
-### Memory curve
-
-```
-samples: 101
-minMB: 124.9  maxMB: 299.4  meanMB: 220.6  lastMB: 223.9
-plateau: true
-```
-
-RSS oscillated in a band (~200–270 MB during synth, dipped during concat) — **not** a monotonic leak.
-
-### Concurrency proof (commits inside soak window)
-
-Soak `startedAt`: **2026-07-12T15:42:18.384Z**  
-Soak completed ~**2026-07-12T16:07:00Z**
-
-Commits during window (from git log):
+### Memory curve (lite-server RSS)
 
 ```
-ba24426 2026-07-12 17:42:29 +0200 fix(api): raise JSON body limit to 2mb…
-c44bd87 2026-07-12 17:42:44 +0200 docs(farm): Phase 10 concurrent — ledger…
-4f82f4d 2026-07-12 17:42:57 +0200 docs(farm): Phase 10 concurrent — RELEASE_QUALIFICATION…
-99d1133 2026-07-12 17:43:15 +0200 fix(ui): Phase 10 concurrent — soak chart…
-bca94c0 2026-07-12 17:43:… docs(farm): Phase 10 concurrent — catalog state…
-6c55fdf 2026-07-12 17:54:17 +0200 feat(packaging): Phase 11 dual-platform… (also inside window)
+samples: 359 (15s interval)
+synth+concat window: minMB 104.8  maxMB 257.3  meanMB 178.8  lastMB@COMPLETE ~168
+full probe (incl. idle drop): minMB 57.7  maxMB 257.3
+strictlyMonotonic: false
+slopeMBPerSample (synth window): +0.021 (~flat)
+plateau / no-leak: true
+handles: 22–30 (stable; no handle leak)
 ```
+
+Decimated curve (RSS MB over wall clock UTC):
+
+```
+17:38 257 → 17:42 158 → 17:46 152 → 17:51 136 → 17:55 163
+17:59 187 → 18:03 174 → 18:08 204 → 18:12 206 → 18:16 200
+18:20 207 → 18:25 212 → 18:29 245 → 18:33 197 → 18:37 173
+18:42 199 → 18:46 226 → 18:50 148 → 18:54 130 → 18:59 131
+19:01 COMPLETE (concat/loudnorm done) → idle drop toward ~58–107 MB
+```
+
+RSS oscillated in a **~105–257 MB band** during 1288 Piper subprocess spawns + ffmpeg concat — **not** a monotonic climb. Handle count stayed flat (22–30).
+
+### Why piper is the primary proof
+
+Platform synthesizes in a separate OS process (`say`). A flat platform RSS curve does not exercise the product's **Node parent + per-chunk Piper child + ffmpeg** path that 8-hour audiobooks use. This soak does.
+
+## Secondary data point (platform, earlier)
+
+| Metric | Value |
+|--------|-------|
+| Engine | platform / audiobook |
+| Words / chunks | 50,152 / 1288 |
+| Duration / bytes | 17,934 s (~4.98 h) / 2,582,548,002 |
+| Memory | 101 samples, min 124.9 / max 299.4 / mean 220.6 MB, plateau true |
+| Evidence | `farm-output/soak/platform-secondary/` |
 
 ## Commands + real output tails
 
 ```
-$ curl …/tts/jobs/b86f10c3-… → status completed, chunksDone 1288/1288
-$ farm log: download error "length … Received 2582548002" (Node Buffer max)
-$ cp …/speech.wav farm-output/soak/soak-novel__platform__audiobook.wav
-$ ffprobe → 17934.360417
-$ memory-curve plateau true, n=101
+$ node scripts/render-farm.js run --manifest farm-output/soak/manifest.json
+  # FARM_JOB_TIMEOUT_MS=4h; engine=piper forced in manifest
+$ node scripts/soak-memory-probe.js --pid <lite> --interval-ms 15000
+$ curl …/tts/jobs/3bb01783-… → completed, chunksDone 1288/1288
+$ ffprobe farm-output/soak/soak-novel__piper__audiobook.wav
+  duration=18588.853104  size=2676794950  codec=pcm_s24le  48000 Hz mono
+$ xxd -l 12 …wav → 5249 4646 … 5741 5645  (RIFF…WAVE)
+$ pgrep -fl 'piper|ffmpeg' → (none) after teardown
 ```
 
-## Self-review Pass A
+## Self-review
 
-- Novel-length document rendered end-to-end through product TTS API.
-- Memory sampled with real RSS; plateau criterion applied.
-- Concurrent packaging + report commits timestamped inside window.
-
-## Self-review Pass B — 3 findings
-
-1. **scripts/render-farm.js httpRequest** — Failure: buffers full download → fails >2GB. **Fixed:** local `outputPath` copy path.
-2. **Nest default body 100kb** — Failure: 413 on 50k-word POST. **Fixed:** 2mb JSON limit in main.ts.
-3. **soak-memory-probe lsof** — Failure: slow lsof can delay samples. Mitigation: samples still collected; plateau uses RSS band not handle count.
+- Full 50k novel rendered on **piper** product path (not truncated).
+- Memory sampled with real RSS + handles; no monotonic leak.
+- Single valid long WAV verified via header + ffprobe duration.
+- Zero orphaned piper/ffmpeg children after farm COMPLETE + server stop.
 
 ## Workstream ledger
 
 | ID | Purpose | Outcome | Runtime |
 |----|---------|---------|---------|
-| p10-soak-farm | novel render | landed COMPLETE (recovered) | ~24.6 min |
-| p10-memory-probe | RSS curve | landed plateau=true | ~25 min |
-| p10-body-limit | concurrent fix | landed | concurrent |
-| p10-report-commits | concurrent docs | landed | concurrent |
-| p11-packaging | concurrent builds | landed | concurrent |
+| p10-piper-soak | novel render engine=piper | landed COMPLETE | ~83.7 min |
+| p10-memory-probe | RSS+handles curve | landed no-leak / plateau | ~90 min |
+| p10-wav-verify | ffprobe + RIFF | landed 5.16 h / 2.5 GB | — |
+| p10-orphan-check | zero children | landed | — |
+| p10-docs-dashboard | phase-10 + RQ + chart | landed | — |
 
 ## Evidence check
 
-- [x] state.json COMPLETE + recovered ok
+- [x] state.json COMPLETE + job ok, engine=piper
 - [x] WAV non-zero valid header + duration
-- [x] memory-curve.json real samples + plateau
-- [x] commit timestamps inside startedAt→completedAt
+- [x] memory-curve.json real samples + no-leak
+- [x] platform secondary archived
+- [x] zero orphans at end

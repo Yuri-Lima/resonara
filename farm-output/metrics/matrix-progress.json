@@ -3,876 +3,567 @@
   "batch": "matrix",
   "total": 36,
   "done": 36,
-  "startedAt": "2026-07-12T16:54:44.158Z",
+  "startedAt": "2026-07-12T17:05:18.089Z",
+  "whisper": true,
+  "whisperAvailable": true,
+  "sampleRepresentative": false,
   "rows": [
     {
-      "id": "en-short-article__piper__audiobook",
-      "docId": "en-short-article",
+      "id": "pt-dialogo__piper__audiobook",
+      "wer": 0.2638888888888889,
+      "werIsProxy": false,
+      "pauseConformance": 0.42100000000000004,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
       "engine": "piper",
-      "language": "en",
-      "profile": "audiobook",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__piper__audiobook.wav",
-      "status": "measured",
-      "wer": 0.044967104309770176,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 207.018,
-      "rtf": 0.28101904182245024,
-      "ms": 58176,
-      "bytes": 29810694,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-short-article__piper__podcast",
-      "docId": "en-short-article",
-      "engine": "piper",
-      "language": "en",
-      "profile": "podcast",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__piper__podcast.wav",
-      "status": "measured",
-      "wer": 0.03556717763907615,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 202.828042,
-      "rtf": 0.2802324542481162,
-      "ms": 56839,
-      "bytes": 29207340,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-short-article__piper__news",
-      "docId": "en-short-article",
-      "engine": "piper",
-      "language": "en",
-      "profile": "news",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__piper__news.wav",
-      "status": "measured",
-      "wer": 0.027546219559011754,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 199.384583,
-      "rtf": 0.30019873703073624,
-      "ms": 59855,
-      "bytes": 28711482,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-short-article__platform__audiobook",
-      "docId": "en-short-article",
-      "engine": "platform",
-      "language": "en",
-      "profile": "audiobook",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__platform__audiobook.wav",
-      "status": "measured",
-      "wer": 0.03575753193485491,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 202.911208,
-      "rtf": 0.08244985658948914,
-      "ms": 16730,
-      "bytes": 29219316,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-short-article__platform__podcast",
-      "docId": "en-short-article",
-      "engine": "platform",
-      "language": "en",
-      "profile": "podcast",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__platform__podcast.wav",
-      "status": "measured",
-      "wer": 0.029591686632678103,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 200.251563,
-      "rtf": 0.08091322613047469,
-      "ms": 16203,
-      "bytes": 28836328,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-short-article__platform__news",
-      "docId": "en-short-article",
-      "engine": "platform",
-      "language": "en",
-      "profile": "news",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__platform__news.wav",
-      "status": "measured",
-      "wer": 0.025478010003679153,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 198.515563,
-      "rtf": 0.07313784259826521,
-      "ms": 14519,
-      "bytes": 28586344,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-news__piper__audiobook",
-      "docId": "en-news",
-      "engine": "piper",
-      "language": "en",
-      "profile": "audiobook",
-      "contentType": "news",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__piper__audiobook.wav",
-      "status": "measured",
-      "wer": 0.09528426295021361,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 1007.620813,
-      "rtf": 0.3312674725387991,
-      "ms": 333792,
-      "bytes": 145097500,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-news__piper__podcast",
-      "docId": "en-news",
-      "engine": "piper",
-      "language": "en",
-      "profile": "podcast",
-      "contentType": "news",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__piper__podcast.wav",
-      "status": "measured",
-      "wer": 0.08906581358986783,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 992.373021,
-      "rtf": 0.33345021780877293,
-      "ms": 330907,
-      "bytes": 142901818,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-news__piper__news",
-      "docId": "en-news",
-      "engine": "piper",
-      "language": "en",
-      "profile": "news",
-      "contentType": "news",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__piper__news.wav",
-      "status": "measured",
-      "wer": 0.08350226020699765,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 979.116958,
-      "rtf": 0.337928985190756,
-      "ms": 330872,
-      "bytes": 140992944,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-news__platform__audiobook",
-      "docId": "en-news",
-      "engine": "platform",
-      "language": "en",
-      "profile": "audiobook",
-      "contentType": "news",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__platform__audiobook.wav",
-      "status": "measured",
-      "wer": 0.09295268137305604,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 1001.849125,
-      "rtf": 0.07337931247881262,
-      "ms": 73515,
-      "bytes": 144266376,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-news__platform__podcast",
-      "docId": "en-news",
-      "engine": "platform",
-      "language": "en",
-      "profile": "podcast",
-      "contentType": "news",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__platform__podcast.wav",
-      "status": "measured",
-      "wer": 0.09067630975465671,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 996.277542,
-      "rtf": 0.07318743716095931,
-      "ms": 72915,
-      "bytes": 143464068,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-news__platform__news",
-      "docId": "en-news",
-      "engine": "platform",
-      "language": "en",
-      "profile": "news",
-      "contentType": "news",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__platform__news.wav",
-      "status": "measured",
-      "wer": 0.08920899660865436,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 992.718917,
-      "rtf": 0.07194785832815957,
-      "ms": 71424,
-      "bytes": 142951626,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-dialogue-script__piper__audiobook",
-      "docId": "en-dialogue-script",
-      "engine": "piper",
-      "language": "en",
       "profile": "audiobook",
       "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__piper__audiobook.wav",
-      "status": "measured",
-      "wer": 0.18765805533877772,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 21.813167,
-      "rtf": 0.7200238278100561,
-      "ms": 15706,
-      "bytes": 3141198,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-dialogue-script__piper__podcast",
-      "docId": "en-dialogue-script",
-      "engine": "piper",
-      "language": "en",
-      "profile": "podcast",
-      "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__piper__podcast.wav",
-      "status": "measured",
-      "wer": 0.1992259848038615,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 21.452292,
-      "rtf": 0.8357615121032288,
-      "ms": 17929,
-      "bytes": 3089232,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-dialogue-script__piper__news",
-      "docId": "en-dialogue-script",
-      "engine": "piper",
-      "language": "en",
-      "profile": "news",
-      "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__piper__news.wav",
-      "status": "measured",
-      "wer": 0.21174941220174787,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 21.074833,
-      "rtf": 0.7171587077344812,
-      "ms": 15114,
-      "bytes": 3034878,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
+      "status": "measured"
     },
     {
       "id": "en-dialogue-script__platform__audiobook",
-      "docId": "en-dialogue-script",
+      "wer": 0.11842105263157894,
+      "werIsProxy": false,
+      "pauseConformance": 0.526,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
       "engine": "platform",
-      "language": "en",
       "profile": "audiobook",
       "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__platform__audiobook.wav",
-      "status": "measured",
-      "wer": 0.1440514995601343,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 23.290063,
-      "rtf": 0.7568893222830698,
-      "ms": 17628,
-      "bytes": 3353872,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-dialogue-script__platform__podcast",
-      "docId": "en-dialogue-script",
-      "engine": "platform",
-      "language": "en",
-      "profile": "podcast",
-      "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__platform__podcast.wav",
-      "status": "measured",
-      "wer": 0.1440514995601343,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 23.290063,
-      "rtf": 0.7566746384498831,
-      "ms": 17623,
-      "bytes": 3353872,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-dialogue-script__platform__news",
-      "docId": "en-dialogue-script",
-      "engine": "platform",
-      "language": "en",
-      "profile": "news",
-      "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__platform__news.wav",
-      "status": "measured",
-      "wer": 0.1440514995601343,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 23.290063,
-      "rtf": 0.6367951859984234,
-      "ms": 14831,
-      "bytes": 3353872,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-numbers-and-dates__piper__audiobook",
-      "docId": "en-numbers-and-dates",
-      "engine": "piper",
-      "language": "en",
-      "profile": "audiobook",
-      "contentType": "numbers-and-dates",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__audiobook.wav",
-      "status": "measured",
-      "wer": 0.24713832011798123,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 39.547313,
-      "rtf": 0.3370140469467546,
-      "ms": 13328,
-      "bytes": 5694916,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-numbers-and-dates__piper__podcast",
-      "docId": "en-numbers-and-dates",
-      "engine": "piper",
-      "language": "en",
-      "profile": "podcast",
-      "contentType": "numbers-and-dates",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__podcast.wav",
-      "status": "measured",
-      "wer": 0.24288831654685436,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 38.893604,
-      "rtf": 0.27660074905889404,
-      "ms": 10758,
-      "bytes": 5600782,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-numbers-and-dates__piper__news",
-      "docId": "en-numbers-and-dates",
-      "engine": "piper",
-      "language": "en",
-      "profile": "news",
-      "contentType": "numbers-and-dates",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__news.wav",
-      "status": "measured",
-      "wer": 0.23656639426490286,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 37.960229,
-      "rtf": 0.2636970393408322,
-      "ms": 10010,
-      "bytes": 5466376,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "en-numbers-and-dates__platform__audiobook",
-      "docId": "en-numbers-and-dates",
-      "engine": "platform",
-      "language": "en",
-      "profile": "audiobook",
-      "contentType": "numbers-and-dates",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__audiobook.wav",
-      "status": "measured",
-      "wer": 0.24991637828899033,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 39.986625,
-      "rtf": 0.10323451904230478,
-      "ms": 4128,
-      "bytes": 5758176,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "retryEngine": "platform",
-      "retried": true,
-      "werIsProxy": true
-    },
-    {
-      "id": "en-numbers-and-dates__platform__podcast",
-      "docId": "en-numbers-and-dates",
-      "engine": "platform",
-      "language": "en",
-      "profile": "podcast",
-      "contentType": "numbers-and-dates",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__podcast.wav",
-      "status": "measured",
-      "wer": 0.2493341688861037,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 39.89375,
-      "rtf": 0.08086479711734294,
-      "ms": 3226,
-      "bytes": 5744802,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "retryEngine": "platform",
-      "retried": true,
-      "werIsProxy": true
-    },
-    {
-      "id": "en-numbers-and-dates__platform__news",
-      "docId": "en-numbers-and-dates",
-      "engine": "platform",
-      "language": "en",
-      "profile": "news",
-      "contentType": "numbers-and-dates",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__news.wav",
-      "status": "measured",
-      "wer": 0.2490419173277823,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 39.847292,
-      "rtf": 0.25918950778386646,
-      "ms": 10328,
-      "bytes": 5738112,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "pt-artigo__piper__audiobook",
-      "docId": "pt-artigo",
-      "engine": "piper",
-      "language": "pt-BR",
-      "profile": "audiobook",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__piper__audiobook.wav",
-      "status": "measured",
-      "wer": 0.021918451922641413,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 45.217792,
-      "rtf": 0.7681710774378367,
-      "ms": 34735,
-      "bytes": 6511464,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "pt-artigo__piper__podcast",
-      "docId": "pt-artigo",
-      "engine": "piper",
-      "language": "pt-BR",
-      "profile": "podcast",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__piper__podcast.wav",
-      "status": "measured",
-      "wer": 0.035301391581745986,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 44.087313,
-      "rtf": 0.7877549715946626,
-      "ms": 34730,
-      "bytes": 6348676,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "pt-artigo__piper__news",
-      "docId": "pt-artigo",
-      "engine": "piper",
-      "language": "pt-BR",
-      "profile": "news",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__piper__news.wav",
-      "status": "measured",
-      "wer": 0.04116725833522557,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 43.609438,
-      "rtf": 0.7616241236587364,
-      "ms": 33214,
-      "bytes": 6279862,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "pt-artigo__platform__audiobook",
-      "docId": "pt-artigo",
-      "engine": "platform",
-      "language": "pt-BR",
-      "profile": "audiobook",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__platform__audiobook.wav",
-      "status": "measured",
-      "wer": 0.04085044808424225,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 51.399375,
-      "rtf": 0.13311445907659383,
-      "ms": 6842,
-      "bytes": 7401612,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "pt-artigo__platform__podcast",
-      "docId": "pt-artigo",
-      "engine": "platform",
-      "language": "pt-BR",
-      "profile": "podcast",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__platform__podcast.wav",
-      "status": "measured",
-      "wer": 0.03761264471107824,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 51.039458,
-      "rtf": 0.15685903247640287,
-      "ms": 8006,
-      "bytes": 7349784,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "pt-artigo__platform__news",
-      "docId": "pt-artigo",
-      "engine": "platform",
-      "language": "pt-BR",
-      "profile": "news",
-      "contentType": "short-article",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__platform__news.wav",
-      "status": "measured",
-      "wer": 0.035817602123028716,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 50.842083,
-      "rtf": 0.12066775470233979,
-      "ms": 6135,
-      "bytes": 7321362,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
-    },
-    {
-      "id": "pt-dialogo__piper__audiobook",
-      "docId": "pt-dialogo",
-      "engine": "piper",
-      "language": "pt-BR",
-      "profile": "audiobook",
-      "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__piper__audiobook.wav",
-      "status": "measured",
-      "wer": 0.19934739717711336,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 20.590625,
-      "rtf": 0.8267354682045834,
-      "ms": 17023,
-      "bytes": 2965152,
-      "validAudio": true,
-      "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
-      },
-      "werIsProxy": true
+      "status": "measured"
     },
     {
       "id": "pt-dialogo__piper__podcast",
-      "docId": "pt-dialogo",
+      "wer": 0.2777777777777778,
+      "werIsProxy": false,
+      "pauseConformance": 0.474,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
       "engine": "piper",
-      "language": "pt-BR",
       "profile": "podcast",
       "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__piper__podcast.wav",
-      "status": "measured",
-      "wer": 0.1986475832373098,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 20.61125,
-      "rtf": 0.8841773303414399,
-      "ms": 18224,
-      "bytes": 2968122,
-      "validAudio": true,
+      "status": "measured"
+    },
+    {
+      "id": "en-dialogue-script__platform__podcast",
+      "wer": 0.11842105263157894,
+      "werIsProxy": false,
+      "pauseConformance": 0.526,
+      "pauseIsProxy": false,
       "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
       },
-      "werIsProxy": true
+      "engine": "platform",
+      "profile": "podcast",
+      "contentType": "dialogue-script",
+      "status": "measured"
     },
     {
       "id": "pt-dialogo__piper__news",
-      "docId": "pt-dialogo",
+      "wer": 0.2638888888888889,
+      "werIsProxy": false,
+      "pauseConformance": 0.526,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
       "engine": "piper",
-      "language": "pt-BR",
       "profile": "news",
       "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__piper__news.wav",
-      "status": "measured",
-      "wer": 0.19500514762319582,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 20.719271,
-      "rtf": 0.811080660125542,
-      "ms": 16805,
-      "bytes": 2983678,
-      "validAudio": true,
+      "status": "measured"
+    },
+    {
+      "id": "en-dialogue-script__platform__news",
+      "wer": 0.11842105263157894,
+      "werIsProxy": false,
+      "pauseConformance": 0.474,
+      "pauseIsProxy": false,
       "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
       },
-      "werIsProxy": true
+      "engine": "platform",
+      "profile": "news",
+      "contentType": "dialogue-script",
+      "status": "measured"
+    },
+    {
+      "id": "en-dialogue-script__piper__news",
+      "wer": 0.13157894736842105,
+      "werIsProxy": false,
+      "pauseConformance": 0.42100000000000004,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "news",
+      "contentType": "dialogue-script",
+      "status": "measured"
     },
     {
       "id": "pt-dialogo__platform__audiobook",
-      "docId": "pt-dialogo",
+      "wer": 0.6527777777777778,
+      "werIsProxy": false,
+      "pauseConformance": 0.526,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
       "engine": "platform",
-      "language": "pt-BR",
       "profile": "audiobook",
       "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__platform__audiobook.wav",
-      "status": "measured",
-      "wer": 0.0289822972033404,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 27.222083,
-      "rtf": 0.5735417087663717,
-      "ms": 15613,
-      "bytes": 3920082,
-      "validAudio": true,
+      "status": "measured"
+    },
+    {
+      "id": "en-dialogue-script__piper__podcast",
+      "wer": 0.11842105263157894,
+      "werIsProxy": false,
+      "pauseConformance": 0.474,
+      "pauseIsProxy": false,
       "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
       },
-      "werIsProxy": true
+      "engine": "piper",
+      "profile": "podcast",
+      "contentType": "dialogue-script",
+      "status": "measured"
     },
     {
       "id": "pt-dialogo__platform__podcast",
-      "docId": "pt-dialogo",
+      "wer": 0.6527777777777778,
+      "werIsProxy": false,
+      "pauseConformance": 0.474,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
       "engine": "platform",
-      "language": "pt-BR",
       "profile": "podcast",
       "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__platform__podcast.wav",
-      "status": "measured",
-      "wer": 0.0289822972033404,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 27.222083,
-      "rtf": 0.5300108738923469,
-      "ms": 14428,
-      "bytes": 3920082,
-      "validAudio": true,
+      "status": "measured"
+    },
+    {
+      "id": "en-dialogue-script__piper__audiobook",
+      "wer": 0.17105263157894737,
+      "werIsProxy": false,
+      "pauseConformance": 0.474,
+      "pauseIsProxy": false,
       "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
       },
-      "werIsProxy": true
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "dialogue-script",
+      "status": "measured"
     },
     {
       "id": "pt-dialogo__platform__news",
-      "docId": "pt-dialogo",
+      "wer": 0.6527777777777778,
+      "werIsProxy": false,
+      "pauseConformance": 0.474,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
       "engine": "platform",
-      "language": "pt-BR",
       "profile": "news",
       "contentType": "dialogue-script",
-      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__platform__news.wav",
-      "status": "measured",
-      "wer": 0.0289822972033404,
-      "pauseConformance": 1,
-      "f0Variance": null,
-      "speechRate": null,
-      "durationSec": 27.222083,
-      "rtf": 0.4872514715350768,
-      "ms": 13264,
-      "bytes": 3920082,
-      "validAudio": true,
+      "status": "measured"
+    },
+    {
+      "id": "en-numbers-and-dates__piper__news",
+      "wer": 0.32786885245901637,
+      "werIsProxy": false,
+      "pauseConformance": 0.14300000000000002,
+      "pauseIsProxy": false,
       "method": {
-        "pause": "ffmpeg-silencedetect",
-        "wer": "duration-density-proxy"
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
       },
-      "werIsProxy": true
+      "engine": "piper",
+      "profile": "news",
+      "contentType": "numbers-and-dates",
+      "status": "measured"
+    },
+    {
+      "id": "en-numbers-and-dates__platform__news",
+      "wer": 0.16393442622950818,
+      "werIsProxy": false,
+      "pauseConformance": 0.5,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "news",
+      "contentType": "numbers-and-dates",
+      "status": "measured"
+    },
+    {
+      "id": "en-numbers-and-dates__piper__podcast",
+      "wer": 0.29508196721311475,
+      "werIsProxy": false,
+      "pauseConformance": 0.071,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "podcast",
+      "contentType": "numbers-and-dates",
+      "status": "measured"
+    },
+    {
+      "id": "en-numbers-and-dates__platform__podcast",
+      "wer": 0.19672131147540983,
+      "werIsProxy": false,
+      "pauseConformance": 0.5,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "podcast",
+      "contentType": "numbers-and-dates",
+      "status": "measured"
+    },
+    {
+      "id": "en-numbers-and-dates__piper__audiobook",
+      "wer": 0.29508196721311475,
+      "werIsProxy": false,
+      "pauseConformance": 0.14300000000000002,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "numbers-and-dates",
+      "status": "measured"
+    },
+    {
+      "id": "en-numbers-and-dates__platform__audiobook",
+      "wer": 0.16393442622950818,
+      "werIsProxy": false,
+      "pauseConformance": 0.28600000000000003,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "audiobook",
+      "contentType": "numbers-and-dates",
+      "status": "measured"
+    },
+    {
+      "id": "pt-artigo__piper__news",
+      "wer": 0.23076923076923078,
+      "werIsProxy": false,
+      "pauseConformance": 0.3,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "news",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "pt-artigo__platform__news",
+      "wer": 0.6324786324786325,
+      "werIsProxy": false,
+      "pauseConformance": 0.7,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "news",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "pt-artigo__piper__podcast",
+      "wer": 0.2222222222222222,
+      "werIsProxy": false,
+      "pauseConformance": 0.3,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "podcast",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "pt-artigo__platform__podcast",
+      "wer": 0.9230769230769231,
+      "werIsProxy": false,
+      "pauseConformance": 0.65,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "podcast",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "pt-artigo__piper__audiobook",
+      "wer": 0.24786324786324787,
+      "werIsProxy": false,
+      "pauseConformance": 0.45,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "pt-artigo__platform__audiobook",
+      "wer": 0.5897435897435898,
+      "werIsProxy": false,
+      "pauseConformance": 0.4,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "audiobook",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "en-short-article__piper__news",
+      "wer": 0.056133056133056136,
+      "werIsProxy": false,
+      "pauseConformance": 0.264,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "news",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "en-short-article__platform__news",
+      "wer": 0.06860706860706861,
+      "werIsProxy": false,
+      "pauseConformance": 0.792,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "news",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "en-short-article__piper__podcast",
+      "wer": 0.07692307692307693,
+      "werIsProxy": false,
+      "pauseConformance": 0.292,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "podcast",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "en-short-article__platform__podcast",
+      "wer": 0.06652806652806653,
+      "werIsProxy": false,
+      "pauseConformance": 0.847,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "podcast",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "en-short-article__piper__audiobook",
+      "wer": 0.04781704781704782,
+      "werIsProxy": false,
+      "pauseConformance": 0.40299999999999997,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "en-short-article__platform__audiobook",
+      "wer": 0.06444906444906445,
+      "werIsProxy": false,
+      "pauseConformance": 0.653,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "audiobook",
+      "contentType": "short-article",
+      "status": "measured"
+    },
+    {
+      "id": "en-news__piper__news",
+      "wer": 0.1403985507246377,
+      "werIsProxy": false,
+      "pauseConformance": 0.595,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "news",
+      "contentType": "news",
+      "status": "measured"
+    },
+    {
+      "id": "en-news__platform__news",
+      "wer": 0.1431159420289855,
+      "werIsProxy": false,
+      "pauseConformance": 0.8109999999999999,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "news",
+      "contentType": "news",
+      "status": "measured"
+    },
+    {
+      "id": "en-news__piper__podcast",
+      "wer": 0.15579710144927536,
+      "werIsProxy": false,
+      "pauseConformance": 0.635,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "podcast",
+      "contentType": "news",
+      "status": "measured"
+    },
+    {
+      "id": "en-news__platform__podcast",
+      "wer": 0.14945652173913043,
+      "werIsProxy": false,
+      "pauseConformance": 0.743,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "podcast",
+      "contentType": "news",
+      "status": "measured"
+    },
+    {
+      "id": "en-news__piper__audiobook",
+      "wer": 0.15443840579710144,
+      "werIsProxy": false,
+      "pauseConformance": 0.649,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "piper",
+      "profile": "audiobook",
+      "contentType": "news",
+      "status": "measured"
+    },
+    {
+      "id": "en-news__platform__audiobook",
+      "wer": 0.14221014492753623,
+      "werIsProxy": false,
+      "pauseConformance": 0.5539999999999999,
+      "pauseIsProxy": false,
+      "method": {
+        "pause": "pause-probe-profile-band",
+        "wer": "faster-whisper-tiny"
+      },
+      "engine": "platform",
+      "profile": "audiobook",
+      "contentType": "news",
+      "status": "measured"
     }
   ],
-  "completedAt": "2026-07-12T16:54:47.661Z"
+  "completedAt": "2026-07-12T17:08:49.610Z",
+  "methodology": {
+    "wer": "faster-whisper-asr",
+    "pause": "pause-probe-profile-band",
+    "whisperEnabled": true,
+    "whisperAvailable": true,
+    "whisperModel": "tiny",
+    "note": "All WER rows are ASR-measured (werIsProxy=false)."
+  },
+  "aggregates": {
+    "meanWer": 0.25263487562389275,
+    "meanWerMeasured": 0.25263487562389275,
+    "measuredWerCount": 36,
+    "proxyWerCount": 0,
+    "meanConformance": 0.48530555555555555,
+    "realPauseCount": 36
+  }
 }
