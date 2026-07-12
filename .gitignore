@@ -54,3 +54,4 @@ reports/probe-out/
 reports/probe-logs/
 reports/ab-baseline/**/*.wav
 reports/ab-baseline/work/
+bench/eval/adversarial/*.wav

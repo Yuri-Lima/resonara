@@ -1,31 +1,20 @@
 {
   "gate": 2,
   "exprRoot": "bench/candidates/directed-final",
-  "tag": null,
-  "meanCmosExpressiveVsPiper": 1,
-  "n": 4,
-  "pass": true,
-  "ledger": "/private/tmp/trace-sweG29-20260712-013205/bench/eval/gate2-ledger.jsonl",
-  "unblind": [
-    {
-      "fixture": "death-scene",
-      "cmosExpressiveVsPiper": 2,
-      "flip": false
-    },
-    {
-      "fixture": "picnic",
-      "cmosExpressiveVsPiper": 2,
-      "flip": true
-    },
-    {
-      "fixture": "dialogue-performance",
-      "cmosExpressiveVsPiper": 0,
-      "flip": true
-    },
-    {
-      "fixture": "newscast",
-      "cmosExpressiveVsPiper": 0,
-      "flip": false
-    }
-  ]
+  "tag": "directed-final-HISTORICAL",
+  "metricName": "LEGACY_CIRCULAR_affectFitness",
+  "isHumanCmos": false,
+  "certified": false,
+  "pass": false,
+  "gateStatus": "INVALID_POST_HOC_DSP",
+  "quarantine": "INVALID — post-hoc offline DSP scored by circular F0-band proxy. Do not cite as PASS.",
+  "historicalInvalidClaim": {
+    "meanCmosExpressiveVsPiper": 1,
+    "claimedPass": true,
+    "reason": "Circular affectFitness absolute F0 bands + offline DSP"
+  },
+  "note": "Superseded by gate2-status.json. See INVALID-QUARANTINE.md",
+  "meanProxyExpressiveVsPiper": null,
+  "n": 0,
+  "unblind": []
 }

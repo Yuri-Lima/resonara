@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 /**
- * Build blind eval session manifests + aggregate CMOS from JSONL ledgers.
+ * Build blind eval session manifests + aggregate human CMOS from JSONL ledgers.
  *
  *   node scripts/eval-session.js build --seed 42 --out ui/eval-lab/session-manifest.json
- *   node scripts/eval-session.js aggregate --ledger bench/eval/results.jsonl
+ *   node scripts/eval-session.js build --gate2 --seed 42 --out ui/eval-lab/session-manifest-gate2.json
+ *   node scripts/eval-session.js aggregate --ledger bench/eval/human-sessions/session.jsonl
+ *
+ * Gate 2 certification is HUMAN-ONLY. Automated proxy scores never certify.
  */
 'use strict';
 
@@ -62,10 +65,53 @@ function buildManifest(opts) {
     sessionId: opts.sessionId || `eval-${seed}-${Date.now()}`,
     seed,
     createdAt: new Date().toISOString(),
-    protocol: 'CMOS-blind-v1',
+    protocol: opts.protocol || 'human-CMOS-blind-v1',
+    certifiesGate2: !!opts.certifiesGate2,
+    instructions:
+      opts.instructions ||
+      'Score A/B without knowing system identity. Commit every trial before unblinding. Identical-anchor |CMOS| must be ≤1.',
     trials: ordered,
   };
   return manifest;
+}
+
+/** Gate 2 shipping pairs: product-path expressive vs Piper + identical anchor. */
+function gate2Pairs(exprRootRel) {
+  const root = exprRootRel || 'candidates/product-path';
+  const fixtures = [
+    'death-scene',
+    'picnic',
+    'dialogue-performance',
+    'newscast',
+  ];
+  const pairs = [];
+  for (const f of fixtures) {
+    const exprFs = path.join(ROOT, 'bench', root, `${f}.wav`);
+    const piperFs = path.join(ROOT, 'bench', 'baseline', 'piper', `${f}.wav`);
+    if (!fs.existsSync(exprFs) || !fs.existsSync(piperFs)) {
+      console.error(`WARN missing audio for ${f}: expr=${fs.existsSync(exprFs)} piper=${fs.existsSync(piperFs)}`);
+    }
+    pairs.push({
+      fixture: f,
+      label: f,
+      a: { system: 'piper', url: `/bench/baseline/piper/${f}.wav` },
+      b: { system: 'expressive', url: `/bench/${root}/${f}.wav` },
+    });
+  }
+  pairs.push({
+    fixture: 'death-scene',
+    label: 'ANCHOR identical (must score ~0)',
+    anchor: 'identical',
+    a: {
+      system: 'piper',
+      url: '/bench/baseline/piper/death-scene.wav',
+    },
+    b: {
+      system: 'piper',
+      url: '/bench/baseline/piper/death-scene.wav',
+    },
+  });
+  return pairs;
 }
 
 function defaultPairs() {
@@ -172,15 +218,43 @@ function main() {
     let seed = 42;
     let out = path.join(ROOT, 'ui', 'eval-lab', 'session-manifest.json');
     let sessionId;
+    let gate2 = false;
+    let exprRoot = 'candidates/product-path';
     for (let i = 1; i < argv.length; i++) {
       if (argv[i] === '--seed') seed = parseInt(argv[++i], 10);
       else if (argv[i] === '--out') out = path.resolve(argv[++i]);
       else if (argv[i] === '--session') sessionId = argv[++i];
+      else if (argv[i] === '--gate2') gate2 = true;
+      else if (argv[i] === '--expr-root') exprRoot = argv[++i];
     }
-    const man = buildManifest({ seed, sessionId });
+    if (gate2 && out.endsWith('session-manifest.json')) {
+      out = path.join(ROOT, 'ui', 'eval-lab', 'session-manifest-gate2.json');
+    }
+    const man = buildManifest({
+      seed,
+      sessionId: sessionId || (gate2 ? `gate2-human-${seed}` : undefined),
+      pairs: gate2 ? gate2Pairs(exprRoot) : undefined,
+      protocol: gate2 ? 'human-CMOS-blind-v1-gate2' : 'human-CMOS-blind-v1',
+      certifiesGate2: gate2,
+      instructions: gate2
+        ? 'Gate 2 human panel: expressive (product-path) vs Piper. Identities hidden. Score CMOS −3..+3. Identical anchor must be ~0. Download ledger to bench/eval/human-sessions/ BEFORE trusting any PASS claim.'
+        : undefined,
+    });
     fs.mkdirSync(path.dirname(out), { recursive: true });
     fs.writeFileSync(out, JSON.stringify(man, null, 2));
-    console.log(JSON.stringify({ wrote: out, trials: man.trials.length, seed }, null, 2));
+    console.log(
+      JSON.stringify(
+        {
+          wrote: out,
+          trials: man.trials.length,
+          seed,
+          certifiesGate2: !!man.certifiesGate2,
+          protocol: man.protocol,
+        },
+        null,
+        2,
+      ),
+    );
   } else if (cmd === 'aggregate') {
     let ledger = path.join(ROOT, 'bench', 'eval', 'results.jsonl');
     for (let i = 1; i < argv.length; i++) {
@@ -222,4 +296,11 @@ function main() {
 }
 
 if (require.main === module) main();
-module.exports = { buildManifest, aggregate, mulberry32, shuffle };
+module.exports = {
+  buildManifest,
+  aggregate,
+  mulberry32,
+  shuffle,
+  gate2Pairs,
+  defaultPairs,
+};

@@ -181,7 +181,7 @@ All 12 KEEP features probe-verified WORKING. Zero DESCOPE.
 | Offline only | TRUE | no cloud API keys |
 | REM markup + degradation | SHIPPED | `src/tts/expression/` |
 | Auto-direction default OFF | TRUE | `autoDirect` opt-in |
-| Blind CMOS Gate 2 ≥ +0.5 | MEASURED **+0.75 product-path** | `bench/eval/gate2-product-path-unblind.json` (offline directed-final +1.0 is filter-family only) |
+| Blind human CMOS Gate 2 ≥ +0.5 | **NOT CERTIFIED — awaiting human panel** | `bench/eval/gate2-status.json`; prior +0.75/+1.0 PASS claims INVALID (circular proxy / post-hoc DSP) |
 | Product direction path wired | SHIPPED | `direction-runtime.ts` + `tts.service` exaggeration/AF |
 | Installer size unchanged | TRUE | pack not bundled |
 | pt-BR expressive parity | NOT CLAIMED | best-effort |

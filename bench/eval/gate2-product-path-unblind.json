@@ -2,32 +2,42 @@
   "gate": 2,
   "exprRoot": "bench/candidates/product-path",
   "tag": "product-path",
-  "meanCmosExpressiveVsPiper": 0.75,
+  "metricName": "objective-prosody-proxy-v2",
+  "isHumanCmos": false,
+  "certified": false,
+  "gateStatus": "NOT_CERTIFIED_AWAITING_HUMAN_PANEL",
+  "meanProxyExpressiveVsPiper": -0.25,
+  "meanCmosExpressiveVsPiper": -0.25,
   "n": 4,
-  "pass": true,
+  "pass": false,
+  "humanCmosNotRun": true,
+  "note": "Objective prosody proxy only on product-path WAVs. NOT human CMOS. NOT a Gate 2 pass.",
   "ledger": "/private/tmp/trace-sweG29-20260712-013205/bench/eval/gate2-product-path-ledger.jsonl",
   "unblind": [
     {
       "fixture": "death-scene",
-      "cmosExpressiveVsPiper": 1,
+      "proxyExpressiveVsPiper": -1,
+      "cmosExpressiveVsPiper": -1,
       "flip": false
     },
     {
       "fixture": "picnic",
-      "cmosExpressiveVsPiper": 2,
+      "proxyExpressiveVsPiper": 0,
+      "cmosExpressiveVsPiper": 0,
       "flip": true
     },
     {
       "fixture": "dialogue-performance",
+      "proxyExpressiveVsPiper": 0,
       "cmosExpressiveVsPiper": 0,
       "flip": true
     },
     {
       "fixture": "newscast",
+      "proxyExpressiveVsPiper": 0,
       "cmosExpressiveVsPiper": 0,
       "flip": false
     }
   ],
-  "source": "product-path",
-  "note": "Scored from product direction path (autoDirect+REM+humanize AF), not offline directed-final."
+  "source": "product-path"
 }

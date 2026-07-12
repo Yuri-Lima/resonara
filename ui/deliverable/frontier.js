@@ -8,9 +8,21 @@
   function fillGate() {
     const el = $('#gate2-cmos');
     if (!el) return;
-    el.textContent = (D.gate2.cmos >= 0 ? '+' : '') + D.gate2.cmos.toFixed(2);
-    $('#gate2-meta').textContent =
-      `n=${D.gate2.n} · CI95 [${D.gate2.ci95.join(', ')}] · anchors ${D.gate2.anchorSanity}`;
+    const g = D.gate2 || {};
+    if (g.certified && g.cmos != null) {
+      el.textContent = (g.cmos >= 0 ? '+' : '') + Number(g.cmos).toFixed(2);
+      el.style.color = g.pass ? 'var(--ok)' : 'var(--bad)';
+      $('#gate2-meta').textContent =
+        `${g.gateStatus || (g.pass ? 'CERTIFIED_PASS' : 'CERTIFIED_FAIL')} · human CMOS n=${g.n}` +
+        (g.ci95 ? ` · CI95 [${g.ci95.join(', ')}]` : '');
+    } else {
+      el.textContent = 'NOT CERTIFIED';
+      el.style.color = 'var(--warn, #fcc419)';
+      el.style.fontSize = '1.35rem';
+      $('#gate2-meta').textContent =
+        g.detail ||
+        'Awaiting human blind panel (eval-lab). Automated proxy is not CMOS.';
+    }
     $('#engine-winner').textContent = D.winner;
     $('#engine-runner').textContent = 'Runner-up: ' + D.runnerUp;
   }

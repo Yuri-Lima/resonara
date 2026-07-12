@@ -1,0 +1,94 @@
+{
+  "gate": 2,
+  "path": 1,
+  "pathDescription": "Human blind CMOS panel (eval-lab) is the only certifying measurement",
+  "gateStatus": "NOT_CERTIFIED_AWAITING_HUMAN_PANEL",
+  "certified": false,
+  "pass": false,
+  "humanSessions": [],
+  "proxyDiagnostics": {
+    "productPath": {
+      "gate": 2,
+      "exprRoot": "bench/candidates/product-path",
+      "tag": "product-path",
+      "metricName": "objective-prosody-proxy-v2",
+      "isHumanCmos": false,
+      "certified": false,
+      "gateStatus": "NOT_CERTIFIED_AWAITING_HUMAN_PANEL",
+      "meanProxyExpressiveVsPiper": -0.25,
+      "meanCmosExpressiveVsPiper": -0.25,
+      "n": 4,
+      "pass": false,
+      "humanCmosNotRun": true,
+      "note": "Objective prosody proxy only on product-path WAVs. NOT human CMOS. NOT a Gate 2 pass.",
+      "ledger": "/private/tmp/trace-sweG29-20260712-013205/bench/eval/gate2-product-path-ledger.jsonl",
+      "unblind": [
+        {
+          "fixture": "death-scene",
+          "proxyExpressiveVsPiper": -1,
+          "cmosExpressiveVsPiper": -1,
+          "flip": false
+        },
+        {
+          "fixture": "picnic",
+          "proxyExpressiveVsPiper": 0,
+          "cmosExpressiveVsPiper": 0,
+          "flip": true
+        },
+        {
+          "fixture": "dialogue-performance",
+          "proxyExpressiveVsPiper": 0,
+          "cmosExpressiveVsPiper": 0,
+          "flip": true
+        },
+        {
+          "fixture": "newscast",
+          "proxyExpressiveVsPiper": 0,
+          "cmosExpressiveVsPiper": 0,
+          "flip": false
+        }
+      ],
+      "source": "product-path"
+    },
+    "directedFinal": {
+      "gate": 2,
+      "exprRoot": "bench/candidates/directed-final",
+      "tag": "directed-final-HISTORICAL",
+      "metricName": "LEGACY_CIRCULAR_affectFitness",
+      "isHumanCmos": false,
+      "certified": false,
+      "pass": false,
+      "gateStatus": "INVALID_POST_HOC_DSP",
+      "quarantine": "INVALID — post-hoc offline DSP scored by circular F0-band proxy. Do not cite as PASS.",
+      "historicalInvalidClaim": {
+        "meanCmosExpressiveVsPiper": 1,
+        "claimedPass": true,
+        "reason": "Circular affectFitness absolute F0 bands + offline DSP"
+      },
+      "note": "Superseded by gate2-status.json. See INVALID-QUARANTINE.md",
+      "meanProxyExpressiveVsPiper": null,
+      "n": 0,
+      "unblind": []
+    }
+  },
+  "invalidClaims": [
+    {
+      "claim": "Offline Gate 2 CMOS +1.0 PASS (directed-final)",
+      "status": "INVALID_POST_HOC_DSP",
+      "reason": "Post-hoc offline ffmpeg AF on raw Chatterbox; not product path; scored by circular proxy"
+    },
+    {
+      "claim": "Product-path Gate 2 CMOS +0.75 PASS",
+      "status": "INVALID_CIRCULAR_PROXY",
+      "reason": "Automated affectFitness() used absolute F0 bands reverse-engineered from target audio; not human CMOS"
+    }
+  ],
+  "howToCertify": [
+    "1. npm run eval:gate2:manifest  # builds ui/eval-lab/session-manifest-gate2.json",
+    "2. Start Resonara (serves /bench + /ui); open /ui/eval-lab/",
+    "3. Load Gate 2 manifest; score all trials including identical anchor",
+    "4. Download ledger JSONL → bench/eval/human-sessions/<id>.jsonl",
+    "5. node scripts/gate2-status.js --write  # recompute certification"
+  ],
+  "updatedAt": "2026-07-12T11:01:49.366Z"
+}

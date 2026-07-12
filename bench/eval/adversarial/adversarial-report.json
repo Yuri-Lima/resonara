@@ -1,0 +1,35 @@
+{
+  "title": "Adversarial proxy sanity",
+  "principle": "DSP-doctored audio that only hits absolute F0 reward bands must not be preferred over natural Piper.",
+  "legacyCircularInvalid": true,
+  "legacyNote": "INVALID — circular scorer rewards F0-band doctor (as expected of the bug)",
+  "v2Valid": true,
+  "v2Note": "OK — v2 does not prefer F0-band doctor over Piper",
+  "results": [
+    {
+      "case": "grief-band-doctor-vs-piper",
+      "doctor": "bench/eval/adversarial/doctor-grief-band.wav",
+      "doctorF0Mean": 157.13,
+      "piperF0Mean": 190.84,
+      "legacyCircularPrefersDoctor": true,
+      "legacyProxyScoreDoctorVsPiper": 2,
+      "legacyRaw": 4,
+      "v2PrefersDoctor": false,
+      "v2ProxyScoreDoctorVsPiper": -1,
+      "v2Raw": -1.49424
+    },
+    {
+      "case": "joy-band-doctor-vs-piper",
+      "doctor": "bench/eval/adversarial/doctor-joy-band.wav",
+      "doctorF0Mean": 222.79,
+      "piperF0Mean": 195.7,
+      "legacyCircularPrefersDoctor": true,
+      "legacyProxyScoreDoctorVsPiper": 2,
+      "legacyRaw": 4,
+      "v2PrefersDoctor": false,
+      "v2ProxyScoreDoctorVsPiper": -1,
+      "v2Raw": -0.9629599999999998
+    }
+  ],
+  "conclusion": "objective-prosody-proxy-v2 passes adversarial sanity; still NOT human CMOS and NOT a Gate 2 pass"
+}
