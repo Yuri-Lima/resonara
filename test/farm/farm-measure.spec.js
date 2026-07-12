@@ -39,6 +39,13 @@ describe('farm-measure aggregation math', () => {
     expect(wordErrorRate('hello world', 'hello')).toBeCloseTo(0.5, 5);
   });
 
+  it('wordErrorRate strips SSML tags from reference (not spoken)', () => {
+    const ref =
+      '<speak>Welcome to <emphasis level="strong">Resonara</emphasis>. <break time="500ms"/>Thanks.</speak>';
+    const hyp = 'Welcome to Resonara. Thanks.';
+    expect(wordErrorRate(ref, hyp)).toBeLessThan(0.15);
+  });
+
   it('validateAudioHeader detects WAV', () => {
     const wav = Buffer.alloc(44);
     wav.write('RIFF', 0);

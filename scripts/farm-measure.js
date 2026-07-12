@@ -63,12 +63,32 @@ function aggregateRows(rows) {
   });
   const ok = normalized.filter((r) => r.status === 'ok' || r.status === 'measured');
   const failed = normalized.filter((r) => r.status === 'failed');
+  const measuredWerRows = ok.filter((r) => r.wer != null && !r.werIsProxy);
+  const proxyWerRows = ok.filter((r) => r.wer != null && r.werIsProxy);
+  const realPauseRows = ok.filter(
+    (r) => r.pauseConformance != null && r.method && r.method.pause === 'pause-probe-profile-band',
+  );
+  const proxyPauseRows = ok.filter(
+    (r) =>
+      r.pauseConformance != null &&
+      r.method &&
+      r.method.pause &&
+      r.method.pause !== 'pause-probe-profile-band',
+  );
   return {
     total: normalized.length,
     measured: ok.length,
     failed: failed.length,
-    meanWer: mean(ok.map((r) => r.wer)),
+    // meanWer prefers measured ASR WER; falls back to all rows (incl. proxy) only if none measured
+    meanWer: mean(measuredWerRows.length ? measuredWerRows.map((r) => r.wer) : ok.map((r) => r.wer)),
+    meanWerMeasured: mean(measuredWerRows.map((r) => r.wer)),
+    meanWerProxy: mean(proxyWerRows.map((r) => r.wer)),
+    measuredWerCount: measuredWerRows.length,
+    proxyWerCount: proxyWerRows.length,
     meanConformance: mean(ok.map((r) => r.pauseConformance)),
+    meanConformanceReal: mean(realPauseRows.map((r) => r.pauseConformance)),
+    realPauseCount: realPauseRows.length,
+    proxyPauseCount: proxyPauseRows.length,
     meanRtf: mean(ok.map((r) => r.rtf)),
     meanDurationSec: mean(ok.map((r) => r.durationSec)),
     meanF0Variance: mean(ok.map((r) => r.f0Variance)),
@@ -159,12 +179,34 @@ function validateAudioHeader(buf) {
 
 // ── WER helpers (mirror src/tts/qa/wer when dist available) ───────────────
 
+/**
+ * Strip SSML/XML/markdown markup so WER compares spoken content, not tags.
+ * (Pin: en-ssml-showcase raw ref WER≈0.62 was dominated by <speak>/<break> tokens.)
+ */
+function stripMarkupForWer(s) {
+  let t = String(s || '');
+  // <sub alias="spoken">written</sub> → spoken form
+  t = t.replace(/<sub\b[^>]*\balias\s*=\s*["']([^"']+)["'][^>]*>[^<]*<\/sub>/gi, ' $1 ');
+  // <break .../> and other empty tags
+  t = t.replace(/<break\b[^>]*\/?>/gi, ' ');
+  // Generic SSML/XML tags
+  t = t.replace(/<\/?[^>]+>/g, ' ');
+  // Markdown headings / horizontal rules
+  t = t.replace(/^#{1,6}\s+/gm, '');
+  t = t.replace(/^---+\s*$/gm, ' ');
+  return t;
+}
+
 function normalizeText(s) {
   return String(s || '')
     .toLowerCase()
     .replace(/[^\p{L}\p{N}\s]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function normalizeRefForWer(s) {
+  return normalizeText(stripMarkupForWer(s));
 }
 
 function levenshtein(a, b) {
@@ -183,7 +225,7 @@ function levenshtein(a, b) {
 }
 
 function wordErrorRate(ref, hyp) {
-  const r = normalizeText(ref).split(' ').filter(Boolean);
+  const r = normalizeRefForWer(ref).split(' ').filter(Boolean);
   const h = normalizeText(hyp).split(' ').filter(Boolean);
   if (!r.length) return h.length ? 1 : 0;
   return levenshtein(r, h) / r.length;
@@ -215,10 +257,10 @@ function probeDurationSec(audioPath) {
 }
 
 /**
- * Lightweight pause-conformance proxy from silence detection via ffmpeg.
- * Falls back to null if ffmpeg silencedetect fails.
+ * Legacy silencedetect heuristic — kept only as explicit fallback when
+ * FARM_MEASURE_PAUSE_PROXY=1. Never the default gate path.
  */
-function estimatePauseConformance(audioPath) {
+function estimatePauseConformanceLegacy(audioPath) {
   try {
     const r = spawnSync(
       'ffmpeg',
@@ -229,10 +271,8 @@ function estimatePauseConformance(audioPath) {
     const starts = (err.match(/silence_start/g) || []).length;
     const ends = (err.match(/silence_end/g) || []).length;
     if (starts === 0 && ends === 0) {
-      // short clips may have no long silences — neutral score
       return 0.92;
     }
-    // Heuristic: more balanced start/end pairs → better structure
     const pairs = Math.min(starts, ends);
     const ratio = pairs / Math.max(starts, ends, 1);
     return Math.max(0, Math.min(1, 0.7 + 0.3 * ratio));
@@ -241,32 +281,136 @@ function estimatePauseConformance(audioPath) {
   }
 }
 
-/**
- * Optional whisper transcription for WER. If whisper unavailable, leave WER null
- * and mark method.
- */
-function tryTranscribe(audioPath) {
-  // Prefer existing whisper helper if present
-  const whisperJs = path.join(ROOT, 'scripts/download-whisper.js');
-  const venvPy = path.join(ROOT, 'tools/whisper-venv/bin/python');
-  if (!fs.existsSync(venvPy)) {
-    return { text: null, method: 'unavailable' };
+function loadPauseProbe() {
+  try {
+    return require('./pause-probe');
+  } catch {
+    return null;
   }
-  // Too heavy for default path — skip auto unless FARM_MEASURE_WHISPER=1
+}
+
+/**
+ * Real profile-band pause conformance via pause-probe harness.
+ * Falls back to legacy only when FARM_MEASURE_PAUSE_PROXY=1.
+ */
+function measurePauseConformance(audioPath, refText, profile) {
+  if (process.env.FARM_MEASURE_PAUSE_PROXY === '1') {
+    return {
+      pauseConformance: estimatePauseConformanceLegacy(audioPath),
+      method: 'ffmpeg-silencedetect',
+      pauseIsProxy: true,
+    };
+  }
+  const probe = loadPauseProbe();
+  if (!probe || typeof probe.scoreProfileBandConformance !== 'function') {
+    return {
+      pauseConformance: null,
+      method: 'pause-probe-unavailable',
+      pauseIsProxy: true,
+    };
+  }
+  const scored = probe.scoreProfileBandConformance(audioPath, refText || '', profile || 'audiobook');
+  return {
+    pauseConformance: scored.pauseConformance,
+    method: scored.method || 'pause-probe-profile-band',
+    pauseIsProxy: false,
+    pauseDetail: {
+      passed: scored.passed,
+      totalBanded: scored.totalBanded,
+      conformancePct: scored.conformancePct,
+      note: scored.note,
+    },
+  };
+}
+
+function whisperPaths() {
+  const bin = process.platform === 'win32' ? 'Scripts' : 'bin';
+  const py = path.join(
+    ROOT,
+    'tools/whisper-venv',
+    bin,
+    process.platform === 'win32' ? 'python.exe' : 'python',
+  );
+  const helper = path.join(ROOT, 'tools/whisper/transcribe.py');
+  const modelDir = path.join(ROOT, 'tools/whisper/models');
+  return { py, helper, modelDir };
+}
+
+function whisperAvailable() {
+  const { py, helper } = whisperPaths();
+  return fs.existsSync(py) && fs.existsSync(helper);
+}
+
+/**
+ * True ASR transcription via faster-whisper (tools/whisper/transcribe.py).
+ * Requires FARM_MEASURE_WHISPER=1 and an installed whisper venv.
+ */
+function tryTranscribe(audioPath, language) {
+  const { py, helper, modelDir } = whisperPaths();
+  if (!fs.existsSync(py) || !fs.existsSync(helper)) {
+    return { text: null, method: 'unavailable', offlineCapable: false };
+  }
   if (process.env.FARM_MEASURE_WHISPER !== '1') {
     return { text: null, method: 'skipped' };
   }
+  const model = process.env.FARM_MEASURE_WHISPER_MODEL || 'tiny';
+  const langRaw = String(language || 'en');
+  const lang = langRaw.toLowerCase().startsWith('pt') ? 'pt' : langRaw.toLowerCase().startsWith('en') ? 'en' : langRaw;
   try {
-    const r = spawnSync(
-      venvPy,
-      ['-c',
-        `import whisper,sys; m=whisper.load_model("base"); r=m.transcribe(sys.argv[1], fp16=False); print(r["text"])`,
-        audioPath,
-      ],
-      { encoding: 'utf8', timeout: 300000 },
-    );
-    if (r.status === 0) return { text: r.stdout.trim(), method: 'whisper-base' };
-    return { text: null, method: 'whisper-error', error: r.stderr };
+    const args = [
+      helper,
+      audioPath,
+      '--model',
+      model,
+      '--language',
+      lang,
+      '--device',
+      process.env.FARM_MEASURE_WHISPER_DEVICE || 'cpu',
+      '--compute-type',
+      process.env.FARM_MEASURE_WHISPER_COMPUTE || 'int8',
+      '--no-word-timestamps',
+    ];
+    if (fs.existsSync(modelDir)) {
+      args.push('--model-dir', modelDir);
+    }
+    const timeoutMs = Number(process.env.FARM_MEASURE_WHISPER_TIMEOUT_MS || 3_600_000);
+    const r = spawnSync(py, args, {
+      encoding: 'utf8',
+      timeout: timeoutMs,
+      maxBuffer: 64 << 20,
+      env: {
+        ...process.env,
+        HF_HOME: modelDir,
+        HUGGINGFACE_HUB_CACHE: path.join(modelDir, 'hub'),
+        // Prefer offline after models are cached
+        HF_HUB_OFFLINE: process.env.HF_HUB_OFFLINE || '1',
+        TRANSFORMERS_OFFLINE: process.env.TRANSFORMERS_OFFLINE || '1',
+      },
+    });
+    if (r.status === 0 && r.stdout) {
+      try {
+        const j = JSON.parse(r.stdout.trim().split('\n').filter(Boolean).pop());
+        if (j.error) {
+          return { text: null, method: 'whisper-error', error: j.error };
+        }
+        return {
+          text: (j.text || '').trim(),
+          method: `faster-whisper-${model}`,
+          elapsedMs: j.elapsedMs,
+          language: j.language,
+        };
+      } catch (e) {
+        // Plain text fallback
+        const text = r.stdout.trim();
+        if (text) return { text, method: `faster-whisper-${model}-raw` };
+        return { text: null, method: 'whisper-error', error: e.message };
+      }
+    }
+    return {
+      text: null,
+      method: 'whisper-error',
+      error: (r.stderr || r.stdout || 'whisper failed').slice(0, 500),
+    };
   } catch (e) {
     return { text: null, method: 'whisper-error', error: e.message };
   }
@@ -323,41 +467,62 @@ async function measureOne(jobMeta, corpusDoc) {
     row.rtf = jobMeta.ms / 1000 / row.durationSec;
   }
 
-  row.pauseConformance = estimatePauseConformance(outPath);
-  row.method.pause = 'ffmpeg-silencedetect';
-
-  // WER: if reference text available
+  // Reference text (needed for both pause-band annotation and WER)
+  let ref = '';
   if (corpusDoc) {
     const textPath = path.isAbsolute(corpusDoc.path)
       ? corpusDoc.path
       : path.join(ROOT, corpusDoc.path);
-    let ref = '';
     try {
       ref = fs.readFileSync(textPath, 'utf8');
     } catch {
       /* */
     }
-    // Prefer QA data from TTS job if present
-    if (jobMeta.qa && jobMeta.qa.aggregateWer != null) {
+  }
+
+  // REAL profile-band pause probe (not silencedetect constant)
+  const pause = measurePauseConformance(outPath, ref, jobMeta.profile || 'audiobook');
+  row.pauseConformance = pause.pauseConformance;
+  row.method.pause = pause.method;
+  row.pauseIsProxy = !!pause.pauseIsProxy;
+  if (pause.pauseDetail) row.pauseDetail = pause.pauseDetail;
+
+  // WER: true ASR when whisper enabled; otherwise explicit proxy (never presented as measured)
+  if (corpusDoc) {
+    if (jobMeta.qa && jobMeta.qa.aggregateWer != null && !jobMeta.qa.werIsProxy) {
       row.wer = jobMeta.qa.aggregateWer;
       row.method.wer = 'tts-job-qa';
+      row.werIsProxy = false;
     } else {
-      const tr = tryTranscribe(outPath);
+      const tr = tryTranscribe(outPath, jobMeta.language || (corpusDoc && corpusDoc.language));
       row.method.wer = tr.method;
       if (tr.text && ref) {
-        const werLib = loadWerLib();
-        const fn = werLib.wordErrorRate || wordErrorRate;
-        row.wer = fn(ref, tr.text);
+        // Always strip SSML/markdown from reference before WER (spoken content only)
+        const refSpoken = stripMarkupForWer(ref);
+        row.wer = wordErrorRate(refSpoken, tr.text);
+        row.werIsProxy = false;
+        row.hypothesis = tr.text.slice(0, 500);
+        if (tr.elapsedMs != null) row.whisperElapsedMs = tr.elapsedMs;
       } else if (ref && row.durationSec) {
-        // Proxy: without whisper, use a synthetic confidence based on valid audio + duration density
-        // NOT a real WER — marked as proxy so gates can treat separately
+        // Proxy: duration-density — NOT a real WER. Gate must not treat as measured.
         const words = ref.trim().split(/\s+/).length;
         const wps = words / Math.max(row.durationSec, 0.1);
-        // expected ~2.5 wps speech; far off → higher "proxy error"
         const proxy = Math.min(1, Math.abs(wps - 2.5) / 5);
         row.wer = proxy;
         row.method.wer = 'duration-density-proxy';
         row.werIsProxy = true;
+        if (tr.method === 'unavailable') {
+          row.method.werNote = 'whisper-unavailable-offline';
+        } else if (tr.method === 'skipped') {
+          row.method.werNote = 'FARM_MEASURE_WHISPER not set';
+        } else if (tr.method === 'whisper-error') {
+          row.method.werNote = tr.error || 'whisper-error';
+          row.method.wer = 'duration-density-proxy';
+        }
+      } else {
+        row.wer = null;
+        row.werIsProxy = null;
+        row.method.wer = tr.method || 'no-reference';
       }
     }
   }
@@ -439,40 +604,85 @@ async function measureBatch(batchName, opts = {}) {
     }
   }
 
-  const jobList = Object.entries(state.jobs || {}).map(([id, j]) => {
+  let jobList = Object.entries(state.jobs || {}).map(([id, j]) => {
     const merged = { id, ...j, ...(logRetryById[id] || {}) };
     // Force engine field to actual before measureOne / aggregate.
     applyActualEngine(merged);
     return merged;
   });
+
+  // Optional id filter
+  if (opts.ids && opts.ids.length) {
+    const want = new Set(opts.ids);
+    jobList = jobList.filter((j) => want.has(j.id) || want.has(j.docId));
+  }
+
+  // Representative sample: ≥1 doc per content type × each engine present
+  if (opts.sampleRepresentative) {
+    jobList = selectRepresentativeSample(jobList, byDoc);
+  }
+
+  // Interleave by engine/content so partial progress is diverse & pollable
+  if (opts.interleave !== false) {
+    jobList = interleaveJobs(jobList, byDoc);
+  }
+
+  // Prefer shorter audio first within interleave buckets when duration known
+  if (opts.shortFirst) {
+    jobList = [...jobList].sort((a, b) => (a.bytes || 0) - (b.bytes || 0));
+  }
+
+  const progressPath = opts.progressPath
+    || path.join(FARM_ROOT, 'metrics', `${batchName}-progress.json`);
   const progress = {
     status: 'RUNNING',
     batch: batchName,
     total: jobList.length,
     done: 0,
     startedAt: new Date().toISOString(),
+    whisper: process.env.FARM_MEASURE_WHISPER === '1',
+    whisperAvailable: whisperAvailable(),
+    sampleRepresentative: !!opts.sampleRepresentative,
     rows: [],
   };
-  const progressPath = path.join(FARM_ROOT, 'metrics', `${batchName}-progress.json`);
   const writeProgress = () => {
     fs.writeFileSync(progressPath, JSON.stringify(progress, null, 2) + '\n');
   };
   writeProgress();
 
-  const concurrency = opts.concurrency || 3;
+  // Whisper is memory-heavy; default concurrency 1 when ASR enabled
+  const concurrency =
+    opts.concurrency ||
+    (process.env.FARM_MEASURE_WHISPER === '1' ? 1 : 3);
   const rows = await runWithPool(jobList, concurrency, async (job) => {
     const row = await measureOne(job, byDoc[job.docId]);
     progress.done += 1;
-    progress.rows.push(row);
+    progress.rows.push({
+      id: row.id,
+      wer: row.wer,
+      werIsProxy: row.werIsProxy,
+      pauseConformance: row.pauseConformance,
+      pauseIsProxy: row.pauseIsProxy,
+      method: row.method,
+      engine: row.engine,
+      profile: row.profile,
+      contentType: row.contentType,
+      status: row.status,
+    });
     writeProgress();
     console.log(
       JSON.stringify({
         event: 'measured',
         id: row.id,
         wer: row.wer,
+        werIsProxy: row.werIsProxy,
         conf: row.pauseConformance,
+        pauseIsProxy: row.pauseIsProxy,
         rtf: row.rtf,
         valid: row.validAudio,
+        method: row.method,
+        done: progress.done,
+        total: progress.total,
       }),
     );
     return row;
@@ -480,21 +690,56 @@ async function measureBatch(batchName, opts = {}) {
 
   const aggregates = aggregateRows(rows);
   const recommendations = recommendDefaults(rows);
+  const methodology = {
+    wer:
+      aggregates.measuredWerCount > 0
+        ? aggregates.proxyWerCount > 0
+          ? 'mixed-measured-and-proxy'
+          : 'faster-whisper-asr'
+        : aggregates.proxyWerCount > 0
+          ? 'duration-density-proxy-only'
+          : 'unavailable',
+    pause:
+      aggregates.realPauseCount > 0
+        ? 'pause-probe-profile-band'
+        : aggregates.proxyPauseCount > 0
+          ? 'ffmpeg-silencedetect-proxy'
+          : 'unavailable',
+    whisperEnabled: process.env.FARM_MEASURE_WHISPER === '1',
+    whisperAvailable: whisperAvailable(),
+    whisperModel: process.env.FARM_MEASURE_WHISPER_MODEL || 'tiny',
+    note:
+      aggregates.proxyWerCount > 0
+        ? 'Proxy WER rows are labeled werIsProxy=true and must not be presented as measured gate WER.'
+        : 'All WER rows are ASR-measured (werIsProxy=false).',
+  };
   const out = {
     batch: batchName,
     generatedAt: new Date().toISOString(),
+    methodology,
     aggregates,
     recommendations,
     rows,
   };
-  fs.writeFileSync(metricsPath, JSON.stringify(out, null, 2) + '\n');
-  fs.writeFileSync(mdPath, toMarkdown(out), 'utf8');
+  const outMetricsPath = opts.metricsPath || metricsPath;
+  const outMdPath = opts.mdPath || mdPath;
+  fs.writeFileSync(outMetricsPath, JSON.stringify(out, null, 2) + '\n');
+  fs.writeFileSync(outMdPath, toMarkdown(out), 'utf8');
   progress.status = 'COMPLETE';
   progress.completedAt = new Date().toISOString();
+  progress.methodology = methodology;
+  progress.aggregates = {
+    meanWer: aggregates.meanWer,
+    meanWerMeasured: aggregates.meanWerMeasured,
+    measuredWerCount: aggregates.measuredWerCount,
+    proxyWerCount: aggregates.proxyWerCount,
+    meanConformance: aggregates.meanConformance,
+    realPauseCount: aggregates.realPauseCount,
+  };
   writeProgress();
 
   // Also write combined farm-metrics if catalog
-  if (batchName === 'catalog' || opts.asPrimary) {
+  if ((batchName === 'catalog' || opts.asPrimary) && !opts.metricsPath) {
     fs.writeFileSync(path.join(FARM_ROOT, 'metrics/farm-metrics.json'), JSON.stringify(out, null, 2) + '\n');
     fs.writeFileSync(path.join(FARM_ROOT, 'metrics/farm-metrics.md'), toMarkdown(out), 'utf8');
   }
@@ -504,9 +749,14 @@ async function measureBatch(batchName, opts = {}) {
       {
         event: 'measure-complete',
         batch: batchName,
-        metricsPath,
+        metricsPath: outMetricsPath,
+        methodology,
         meanWer: aggregates.meanWer,
+        meanWerMeasured: aggregates.meanWerMeasured,
+        measuredWerCount: aggregates.measuredWerCount,
+        proxyWerCount: aggregates.proxyWerCount,
         meanConformance: aggregates.meanConformance,
+        realPauseCount: aggregates.realPauseCount,
         meanRtf: aggregates.meanRtf,
         invalidAudio: aggregates.invalidAudio,
       },
@@ -517,23 +767,82 @@ async function measureBatch(batchName, opts = {}) {
   return out;
 }
 
+/**
+ * ≥1 job per (contentType × engine). Prefers shorter audio (bytes) so sample is fast.
+ */
+function selectRepresentativeSample(jobList, byDoc) {
+  const best = new Map();
+  for (const j of jobList) {
+    const doc = byDoc[j.docId] || {};
+    const ct = doc.contentType || j.contentType || 'unknown';
+    const eng = j.engine || 'unknown';
+    const key = `${ct}||${eng}`;
+    const prev = best.get(key);
+    if (!prev || (j.bytes || Infinity) < (prev.bytes || Infinity)) {
+      best.set(key, j);
+    }
+  }
+  return [...best.values()];
+}
+
+/**
+ * Fan/interleave jobs by engine so progress streams mixed engines/content types.
+ */
+function interleaveJobs(jobList, byDoc) {
+  const buckets = new Map();
+  for (const j of jobList) {
+    const eng = j.engine || 'unknown';
+    if (!buckets.has(eng)) buckets.set(eng, []);
+    buckets.get(eng).push(j);
+  }
+  // Within each engine, short-first for faster partial WER
+  for (const list of buckets.values()) {
+    list.sort((a, b) => (a.bytes || 0) - (b.bytes || 0));
+  }
+  const keys = [...buckets.keys()];
+  const out = [];
+  let added = true;
+  while (added) {
+    added = false;
+    for (const k of keys) {
+      const list = buckets.get(k);
+      if (list && list.length) {
+        out.push(list.shift());
+        added = true;
+      }
+    }
+  }
+  return out;
+}
+
 function toMarkdown(out) {
   const a = out.aggregates;
+  const m = out.methodology || {};
   let md = `# Farm metrics — ${out.batch}\n\n`;
   md += `Generated: ${out.generatedAt}\n\n`;
+  md += `## Methodology (measured vs proxy)\n\n`;
+  md += `| Signal | Method |\n|---|---|\n`;
+  md += `| WER | ${m.wer || 'n/a'} (measured rows: ${a.measuredWerCount ?? '—'}, proxy rows: ${a.proxyWerCount ?? '—'}) |\n`;
+  md += `| Pause conformance | ${m.pause || 'n/a'} (real: ${a.realPauseCount ?? '—'}, proxy: ${a.proxyPauseCount ?? '—'}) |\n`;
+  md += `| Whisper available | ${m.whisperAvailable} · enabled=${m.whisperEnabled} · model=${m.whisperModel || '—'} |\n\n`;
+  if (m.note) md += `> ${m.note}\n\n`;
   md += `## Aggregates\n\n`;
   md += `| Metric | Value |\n|---|---|\n`;
   md += `| total | ${a.total} |\n`;
   md += `| measured | ${a.measured} |\n`;
   md += `| failed | ${a.failed} |\n`;
-  md += `| mean WER | ${a.meanWer != null ? a.meanWer.toFixed(4) : 'n/a'} |\n`;
+  md += `| mean WER (gate key) | ${a.meanWer != null ? a.meanWer.toFixed(4) : 'n/a'} |\n`;
+  md += `| mean WER measured (ASR) | ${a.meanWerMeasured != null ? a.meanWerMeasured.toFixed(4) : 'n/a'} |\n`;
+  md += `| mean WER proxy | ${a.meanWerProxy != null ? a.meanWerProxy.toFixed(4) : 'n/a'} |\n`;
   md += `| mean pause conformance | ${a.meanConformance != null ? (a.meanConformance * 100).toFixed(1) + '%' : 'n/a'} |\n`;
   md += `| mean RTF | ${a.meanRtf != null ? a.meanRtf.toFixed(3) : 'n/a'} |\n`;
   md += `| invalid audio | ${a.invalidAudio} |\n\n`;
   md += `## Per row\n\n`;
-  md += `| id | engine | profile | lang | WER | conf | RTF | valid |\n|---|---|---|---|---|---|---|---|\n`;
+  md += `| id | engine | profile | lang | WER | wer kind | conf | pause kind | RTF | valid |\n|---|---|---|---|---|---|---|---|---|---|\n`;
   for (const r of out.rows) {
-    md += `| ${r.id} | ${r.engine} | ${r.profile} | ${r.language} | ${r.wer != null ? r.wer.toFixed(3) : '—'} | ${r.pauseConformance != null ? (r.pauseConformance * 100).toFixed(0) + '%' : '—'} | ${r.rtf != null ? r.rtf.toFixed(2) : '—'} | ${r.validAudio} |\n`;
+    const werKind = r.wer == null ? '—' : r.werIsProxy ? 'proxy' : 'measured';
+    const pauseKind = r.pauseConformance == null ? '—' : r.pauseIsProxy ? 'proxy' : 'profile-band';
+    md += `| ${r.id} | ${r.engine} | ${r.profile} | ${r.language} | ${r.wer != null ? r.wer.toFixed(3) : '—'} | ${werKind} | ${r.pauseConformance != null ? (r.pauseConformance * 100).toFixed(0) + '%' : '—'} | ${pauseKind} | ${r.rtf != null ? r.rtf.toFixed(2) : '—'} | ${r.validAudio} |\n`;
   }
   if (out.recommendations && Object.keys(out.recommendations).length) {
     md += `\n## Recommended defaults (data-derived)\n\n`;
@@ -571,9 +880,16 @@ module.exports = {
   applyActualEngine,
   wordErrorRate,
   normalizeText,
+  stripMarkupForWer,
+  normalizeRefForWer,
   validateAudioHeader,
   measureBatch,
   measureOne,
+  tryTranscribe,
+  measurePauseConformance,
+  whisperAvailable,
+  selectRepresentativeSample,
+  interleaveJobs,
 };
 
 if (require.main === module) {
@@ -583,17 +899,23 @@ if (require.main === module) {
     process.exit(0);
   }
   let batch = 'catalog';
-  let concurrency = 3;
+  let concurrency = null;
+  let ids = null;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--batch') batch = args[++i];
     else if (args[i] === '--concurrency') concurrency = Number(args[++i]);
+    else if (args[i] === '--ids') ids = args[++i].split(',').map((s) => s.trim()).filter(Boolean);
     else if (args[i] === '--primary') {
       /* flag */
     }
   }
   measureBatch(batch, {
-    concurrency,
+    concurrency: concurrency || undefined,
     asPrimary: args.includes('--primary'),
+    sampleRepresentative: args.includes('--sample-representative'),
+    interleave: !args.includes('--no-interleave'),
+    shortFirst: args.includes('--short-first'),
+    ids,
   }).catch((e) => {
     console.error(e);
     process.exit(1);

@@ -92,6 +92,8 @@ table.data th { color: var(--muted); font-weight: 600; }
 table.data tr:hover td { background: rgba(91, 159, 212, 0.08); }
 .gate-go { color: var(--go); font-weight: 700; }
 .gate-nogo { color: var(--nogo); font-weight: 700; }
+.kind-measured { color: var(--go); font-weight: 600; }
+.kind-proxy { color: var(--pending); font-weight: 600; }
 .heatmap {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));

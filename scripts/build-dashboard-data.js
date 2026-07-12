@@ -34,14 +34,21 @@ function main() {
     generatedAt: new Date().toISOString(),
     verdict: (gate && gate.verdict) || 'PENDING',
     gates: gate || {},
+    methodology: {
+      catalog: (catalogMetrics && catalogMetrics.methodology) || null,
+      matrix: (matrixMetrics && matrixMetrics.methodology) || null,
+      gate: (gate && gate.methodology) || null,
+    },
     catalog: {
       rows: (catalogMetrics && catalogMetrics.rows) || [],
       aggregates: (catalogMetrics && catalogMetrics.aggregates) || {},
+      methodology: (catalogMetrics && catalogMetrics.methodology) || null,
       state: catalogState,
     },
     matrix: {
       rows: (matrixMetrics && matrixMetrics.rows) || [],
       aggregates: (matrixMetrics && matrixMetrics.aggregates) || {},
+      methodology: (matrixMetrics && matrixMetrics.methodology) || null,
       recommendations: recs,
       state: matrixState,
     },

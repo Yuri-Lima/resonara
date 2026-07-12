@@ -1,0 +1,146 @@
+=== download-whisper tail ===
+transcribe helper present: /private/tmp/trace-sweG31-20260712-185142/tools/whisper/transcribe.py
+Downloading Whisper model: tiny → /private/tmp/trace-sweG31-20260712-185142/tools/whisper/models
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+loaded tiny
+Model tiny ready
+Downloading Whisper model: base → /private/tmp/trace-sweG31-20260712-185142/tools/whisper/models
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+loaded base
+Model base ready
+Done. Python: /private/tmp/trace-sweG31-20260712-185142/tools/whisper-venv/bin/python
+Models dir: /private/tmp/trace-sweG31-20260712-185142/tools/whisper/models
+Transcribe helper: /private/tmp/trace-sweG31-20260712-185142/tools/whisper/transcribe.py
+=== matrix full measure-complete ===
+{"event":"measured","id":"en-news__piper__podcast","wer":0.15579710144927536,"werIsProxy":false,"conf":0.635,"pauseIsProxy":false,"rtf":0.33345021780877293,"valid":true,"method":{"pause":"pause-probe-profile-band","wer":"faster-whisper-tiny"},"done":33,"total":36}
+{"event":"measured","id":"en-news__platform__podcast","wer":0.14945652173913043,"werIsProxy":false,"conf":0.743,"pauseIsProxy":false,"rtf":0.07318743716095931,"valid":true,"method":{"pause":"pause-probe-profile-band","wer":"faster-whisper-tiny"},"done":34,"total":36}
+{"event":"measured","id":"en-news__piper__audiobook","wer":0.15443840579710144,"werIsProxy":false,"conf":0.649,"pauseIsProxy":false,"rtf":0.3312674725387991,"valid":true,"method":{"pause":"pause-probe-profile-band","wer":"faster-whisper-tiny"},"done":35,"total":36}
+{"event":"measured","id":"en-news__platform__audiobook","wer":0.14221014492753623,"werIsProxy":false,"conf":0.5539999999999999,"pauseIsProxy":false,"rtf":0.07337931247881262,"valid":true,"method":{"pause":"pause-probe-profile-band","wer":"faster-whisper-tiny"},"done":36,"total":36}
+{
+  "event": "measure-complete",
+  "batch": "matrix",
+  "metricsPath": "/private/tmp/trace-sweG31-20260712-185142/farm-output/metrics/matrix-metrics.json",
+  "methodology": {
+    "wer": "faster-whisper-asr",
+    "pause": "pause-probe-profile-band",
+    "whisperEnabled": true,
+    "whisperAvailable": true,
+    "whisperModel": "tiny",
+    "note": "All WER rows are ASR-measured (werIsProxy=false)."
+  },
+  "meanWer": 0.25263487562389275,
+  "meanWerMeasured": 0.25263487562389275,
+  "measuredWerCount": 36,
+  "proxyWerCount": 0,
+  "meanConformance": 0.48530555555555555,
+  "realPauseCount": 36,
+  "meanRtf": 0.414000145205746,
+  "invalidAudio": 0
+}
+=== catalog full measure-complete ===
+{"event":"measured","id":"pt-capitulo__piper__audiobook","wer":0.1597081475476287,"werIsProxy":false,"conf":0.5579999999999999,"pauseIsProxy":false,"rtf":0.11107708005296864,"valid":true,"method":{"pause":"pause-probe-profile-band","wer":"faster-whisper-tiny"},"done":21,"total":24}
+{"event":"measured","id":"en-news__piper__audiobook","wer":0.15217391304347827,"werIsProxy":false,"conf":0.662,"pauseIsProxy":false,"rtf":0.24312404216058883,"valid":true,"method":{"pause":"pause-probe-profile-band","wer":"faster-whisper-tiny"},"done":22,"total":24}
+{"event":"measured","id":"en-technical-doc__piper__audiobook","wer":0.4539411206077873,"werIsProxy":false,"conf":0.628,"pauseIsProxy":false,"rtf":0.35794364326291994,"valid":true,"method":{"pause":"pause-probe-profile-band","wer":"faster-whisper-tiny"},"done":23,"total":24}
+{"event":"measured","id":"en-book-chapter__piper__audiobook","wer":0.09826018189007513,"werIsProxy":false,"conf":0.564,"pauseIsProxy":false,"rtf":0.40095279858887756,"valid":true,"method":{"pause":"pause-probe-profile-band","wer":"faster-whisper-tiny"},"done":24,"total":24}
+{
+  "event": "measure-complete",
+  "batch": "catalog",
+  "metricsPath": "/private/tmp/trace-sweG31-20260712-185142/farm-output/metrics/catalog-metrics.json",
+  "methodology": {
+    "wer": "faster-whisper-asr",
+    "pause": "pause-probe-profile-band",
+    "whisperEnabled": true,
+    "whisperAvailable": true,
+    "whisperModel": "tiny",
+    "note": "All WER rows are ASR-measured (werIsProxy=false)."
+  },
+  "meanWer": 0.2520762972365838,
+  "meanWerMeasured": 0.2520762972365838,
+  "measuredWerCount": 24,
+  "proxyWerCount": 0,
+  "meanConformance": 0.33983333333333327,
+  "realPauseCount": 24,
+  "meanRtf": 0.3463713175419974,
+  "invalidAudio": 0
+}
+=== gate-result ===
+{
+  "verdict": "NO-GO",
+  "findings": [
+    {
+      "code": "WER_CELL_BREACH",
+      "detail": [
+        {
+          "id": "en-numbers-and-dates__piper__audiobook",
+          "wer": 0.36065573770491804,
+          "engine": "piper",
+          "profile": "audiobook",
+          "contentType": "numbers-and-dates"
+        },
+        {
+          "id": "pt-pronuncia__piper__audiobook",
+          "wer": 0.6627906976744186,
+          "engine": "piper",
+          "profile": "audiobook",
+          "contentType": "pronunciation-challenge"
+        },
+        {
+          "id": "pt-tecnico__piper__audiobook",
+          "wer": 0.5803571428571429,
+          "engine": "piper",
+          "profile": "audiobook",
+          "contentType": "technical-doc"
+        },
+        {
+          "id": "pt-numeros__piper__audiobook",
+          "wer": 0.7708333333333334,
+          "engine": "piper",
+          "profile": "audiobook",
+          "contentType": "numbers-and-dates"
+        },
+        {
+          "id": "pt-noticia__piper__audiobook",
+          "wer": 0.6178343949044586,
+          "engine": "piper",
+          "profile": "audiobook",
+          "contentType": "news"
+        },
+        {
+          "id": "en-technical-doc__piper__audiobook",
+          "wer": 0.4539411206077873,
+          "engine": "piper",
+          "profile": "audiobook",
+          "contentType": "technical-doc"
+        }
+      ],
+      "threshold": 0.35
+    },
+    {
+      "code": "PAUSE_CONFORMANCE",
+      "detail": 0.33983333333333327,
+      "threshold": 0.9,
+      "source": "meanConformanceReal"
+    },
+    {
+      "code": "PAUSE_CELL_BREACH",
+      "detail": [
+        {
+          "id": "en-quick-sentence__piper__audiobook",
+          "pauseConformance": 0,
+          "engine": "piper",
+          "profile": "audiobook"
+        },
+        {
+          "id": "en-ssml-showcase__piper__audiobook",
+          "pauseConformance": 0.28600000000000003,
+          "engine": "piper",
+          "profile": "audiobook"
+        },
+        {
+          "id": "pt-ssml__piper__audiobook",
+          "pauseConformance": 0.444,
+          "engine": "piper",
+          "profile": "audiobook"
+        },
+        {
+          "id": "pt-paragrafo__piper__audiobook",

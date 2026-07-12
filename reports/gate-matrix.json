@@ -1,91 +1,390 @@
 {
-  "verdict": "GO",
-  "findings": [],
+  "verdict": "NO-GO",
+  "findings": [
+    {
+      "code": "WER_CELL_BREACH",
+      "detail": [
+        {
+          "id": "pt-dialogo__platform__audiobook",
+          "wer": 0.6527777777777778,
+          "engine": "platform",
+          "profile": "audiobook",
+          "contentType": "dialogue-script"
+        },
+        {
+          "id": "pt-dialogo__platform__podcast",
+          "wer": 0.6527777777777778,
+          "engine": "platform",
+          "profile": "podcast",
+          "contentType": "dialogue-script"
+        },
+        {
+          "id": "pt-dialogo__platform__news",
+          "wer": 0.6527777777777778,
+          "engine": "platform",
+          "profile": "news",
+          "contentType": "dialogue-script"
+        },
+        {
+          "id": "pt-artigo__platform__news",
+          "wer": 0.6324786324786325,
+          "engine": "platform",
+          "profile": "news",
+          "contentType": "short-article"
+        },
+        {
+          "id": "pt-artigo__platform__podcast",
+          "wer": 0.9230769230769231,
+          "engine": "platform",
+          "profile": "podcast",
+          "contentType": "short-article"
+        },
+        {
+          "id": "pt-artigo__platform__audiobook",
+          "wer": 0.5897435897435898,
+          "engine": "platform",
+          "profile": "audiobook",
+          "contentType": "short-article"
+        }
+      ],
+      "threshold": 0.35
+    },
+    {
+      "code": "PAUSE_CONFORMANCE",
+      "detail": 0.48530555555555555,
+      "threshold": 0.9,
+      "source": "meanConformanceReal"
+    },
+    {
+      "code": "PAUSE_CELL_BREACH",
+      "detail": [
+        {
+          "id": "pt-dialogo__piper__audiobook",
+          "pauseConformance": 0.42100000000000004,
+          "engine": "piper",
+          "profile": "audiobook"
+        },
+        {
+          "id": "en-dialogue-script__platform__audiobook",
+          "pauseConformance": 0.526,
+          "engine": "platform",
+          "profile": "audiobook"
+        },
+        {
+          "id": "pt-dialogo__piper__podcast",
+          "pauseConformance": 0.474,
+          "engine": "piper",
+          "profile": "podcast"
+        },
+        {
+          "id": "en-dialogue-script__platform__podcast",
+          "pauseConformance": 0.526,
+          "engine": "platform",
+          "profile": "podcast"
+        },
+        {
+          "id": "pt-dialogo__piper__news",
+          "pauseConformance": 0.526,
+          "engine": "piper",
+          "profile": "news"
+        },
+        {
+          "id": "en-dialogue-script__platform__news",
+          "pauseConformance": 0.474,
+          "engine": "platform",
+          "profile": "news"
+        },
+        {
+          "id": "en-dialogue-script__piper__news",
+          "pauseConformance": 0.42100000000000004,
+          "engine": "piper",
+          "profile": "news"
+        },
+        {
+          "id": "pt-dialogo__platform__audiobook",
+          "pauseConformance": 0.526,
+          "engine": "platform",
+          "profile": "audiobook"
+        },
+        {
+          "id": "en-dialogue-script__piper__podcast",
+          "pauseConformance": 0.474,
+          "engine": "piper",
+          "profile": "podcast"
+        },
+        {
+          "id": "pt-dialogo__platform__podcast",
+          "pauseConformance": 0.474,
+          "engine": "platform",
+          "profile": "podcast"
+        },
+        {
+          "id": "en-dialogue-script__piper__audiobook",
+          "pauseConformance": 0.474,
+          "engine": "piper",
+          "profile": "audiobook"
+        },
+        {
+          "id": "pt-dialogo__platform__news",
+          "pauseConformance": 0.474,
+          "engine": "platform",
+          "profile": "news"
+        },
+        {
+          "id": "en-numbers-and-dates__piper__news",
+          "pauseConformance": 0.14300000000000002,
+          "engine": "piper",
+          "profile": "news"
+        },
+        {
+          "id": "en-numbers-and-dates__platform__news",
+          "pauseConformance": 0.5,
+          "engine": "platform",
+          "profile": "news"
+        },
+        {
+          "id": "en-numbers-and-dates__piper__podcast",
+          "pauseConformance": 0.071,
+          "engine": "piper",
+          "profile": "podcast"
+        },
+        {
+          "id": "en-numbers-and-dates__platform__podcast",
+          "pauseConformance": 0.5,
+          "engine": "platform",
+          "profile": "podcast"
+        },
+        {
+          "id": "en-numbers-and-dates__piper__audiobook",
+          "pauseConformance": 0.14300000000000002,
+          "engine": "piper",
+          "profile": "audiobook"
+        },
+        {
+          "id": "en-numbers-and-dates__platform__audiobook",
+          "pauseConformance": 0.28600000000000003,
+          "engine": "platform",
+          "profile": "audiobook"
+        },
+        {
+          "id": "pt-artigo__piper__news",
+          "pauseConformance": 0.3,
+          "engine": "piper",
+          "profile": "news"
+        },
+        {
+          "id": "pt-artigo__platform__news",
+          "pauseConformance": 0.7,
+          "engine": "platform",
+          "profile": "news"
+        },
+        {
+          "id": "pt-artigo__piper__podcast",
+          "pauseConformance": 0.3,
+          "engine": "piper",
+          "profile": "podcast"
+        },
+        {
+          "id": "pt-artigo__platform__podcast",
+          "pauseConformance": 0.65,
+          "engine": "platform",
+          "profile": "podcast"
+        },
+        {
+          "id": "pt-artigo__piper__audiobook",
+          "pauseConformance": 0.45,
+          "engine": "piper",
+          "profile": "audiobook"
+        },
+        {
+          "id": "pt-artigo__platform__audiobook",
+          "pauseConformance": 0.4,
+          "engine": "platform",
+          "profile": "audiobook"
+        },
+        {
+          "id": "en-short-article__piper__news",
+          "pauseConformance": 0.264,
+          "engine": "piper",
+          "profile": "news"
+        },
+        {
+          "id": "en-short-article__platform__news",
+          "pauseConformance": 0.792,
+          "engine": "platform",
+          "profile": "news"
+        },
+        {
+          "id": "en-short-article__piper__podcast",
+          "pauseConformance": 0.292,
+          "engine": "piper",
+          "profile": "podcast"
+        },
+        {
+          "id": "en-short-article__platform__podcast",
+          "pauseConformance": 0.847,
+          "engine": "platform",
+          "profile": "podcast"
+        },
+        {
+          "id": "en-short-article__piper__audiobook",
+          "pauseConformance": 0.40299999999999997,
+          "engine": "piper",
+          "profile": "audiobook"
+        },
+        {
+          "id": "en-short-article__platform__audiobook",
+          "pauseConformance": 0.653,
+          "engine": "platform",
+          "profile": "audiobook"
+        },
+        {
+          "id": "en-news__piper__news",
+          "pauseConformance": 0.595,
+          "engine": "piper",
+          "profile": "news"
+        },
+        {
+          "id": "en-news__platform__news",
+          "pauseConformance": 0.8109999999999999,
+          "engine": "platform",
+          "profile": "news"
+        },
+        {
+          "id": "en-news__piper__podcast",
+          "pauseConformance": 0.635,
+          "engine": "piper",
+          "profile": "podcast"
+        },
+        {
+          "id": "en-news__platform__podcast",
+          "pauseConformance": 0.743,
+          "engine": "platform",
+          "profile": "podcast"
+        },
+        {
+          "id": "en-news__piper__audiobook",
+          "pauseConformance": 0.649,
+          "engine": "piper",
+          "profile": "audiobook"
+        },
+        {
+          "id": "en-news__platform__audiobook",
+          "pauseConformance": 0.5539999999999999,
+          "engine": "platform",
+          "profile": "audiobook"
+        }
+      ],
+      "threshold": 0.9
+    }
+  ],
   "aggregates": {
     "total": 36,
     "measured": 36,
     "failed": 0,
-    "meanWer": 0.1149412865951534,
-    "meanConformance": 1,
-    "meanRtf": 0.4140001452057462,
-    "meanDurationSec": 221.69409675000003,
+    "meanWer": 0.25263487562389275,
+    "meanWerMeasured": 0.25263487562389275,
+    "meanWerProxy": null,
+    "measuredWerCount": 36,
+    "proxyWerCount": 0,
+    "meanConformance": 0.48530555555555555,
+    "meanConformanceReal": 0.48530555555555555,
+    "realPauseCount": 36,
+    "proxyPauseCount": 0,
+    "meanRtf": 0.414000145205746,
+    "meanDurationSec": 221.69409675,
     "meanF0Variance": null,
     "meanSpeechRate": null,
     "invalidAudio": 0,
     "byEngine": {
       "piper": {
         "n": 18,
-        "meanWer": 0.13291925285590525,
-        "meanConformance": 1,
-        "meanRtf": 0.5474386901664823
+        "meanWer": 0.19316682853992473,
+        "meanConformance": 0.3908333333333333,
+        "meanRtf": 0.5474386901664822
       },
       "platform": {
         "n": 18,
-        "meanWer": 0.09696332033440161,
-        "meanConformance": 1,
-        "meanRtf": 0.28056160024501015
+        "meanWer": 0.3121029227078608,
+        "meanConformance": 0.5797777777777778,
+        "meanRtf": 0.2805616002450101
       }
     },
     "byProfile": {
       "audiobook": {
         "n": 12,
-        "meanWer": 0.11573536902175964,
-        "meanConformance": 1,
+        "meanWer": 0.24263985374311695,
+        "meanConformance": 0.45708333333333334,
         "meanRtf": 0.4155700094164268
       },
       "podcast": {
         "n": 12,
-        "meanWer": 0.1150787395122256,
-        "meanConformance": 1,
+        "meanWer": 0.27110040428716103,
+        "meanConformance": 0.4988333333333333,
         "meanRtf": 0.4230406033652103
       },
       "news": {
         "n": 12,
-        "meanWer": 0.11400975125147507,
-        "meanConformance": 1,
-        "meanRtf": 0.40338982283560126
+        "meanWer": 0.24416436884140016,
+        "meanConformance": 0.5,
+        "meanRtf": 0.4033898228356012
       }
     },
     "byContentType": {
-      "short-article": {
-        "n": 12,
-        "meanWer": 0.0342979605697527,
-        "meanConformance": 1,
-        "meanRtf": 0.3188452147805087
-      },
-      "news": {
-        "n": 6,
-        "meanWer": 0.09011505408057435,
-        "meanConformance": 1,
-        "meanRtf": 0.2035268805843766
-      },
       "dialogue-script": {
         "n": 12,
-        "meanWer": 0.14256124755603586,
-        "meanConformance": 1,
+        "meanWer": 0.2950170565302144,
+        "meanConformance": 0.4825000000000001,
         "meanRtf": 0.7113417256037086
       },
       "numbers-and-dates": {
         "n": 6,
-        "meanWer": 0.24581424923876913,
-        "meanConformance": 1,
+        "meanWer": 0.24043715846994537,
+        "meanConformance": 0.2738333333333333,
         "meanRtf": 0.2201001098816658
+      },
+      "short-article": {
+        "n": 12,
+        "meanWer": 0.2688842688842689,
+        "meanConformance": 0.5042499999999999,
+        "meanRtf": 0.3188452147805087
+      },
+      "news": {
+        "n": 6,
+        "meanWer": 0.14756944444444445,
+        "meanConformance": 0.6645,
+        "meanRtf": 0.20352688058437662
       }
     },
     "byLanguage": {
-      "en": {
-        "n": 24,
-        "meanWer": 0.13521964587583005,
-        "meanConformance": 1,
-        "meanRtf": 0.33595901231645536
-      },
       "pt-BR": {
         "n": 12,
-        "meanWer": 0.07438456803380021,
-        "meanConformance": 1,
+        "meanWer": 0.46750356125356124,
+        "meanConformance": 0.4745833333333334,
         "meanRtf": 0.5700824109843278
+      },
+      "en": {
+        "n": 24,
+        "meanWer": 0.14520053280905848,
+        "meanConformance": 0.49066666666666675,
+        "meanRtf": 0.33595901231645536
       }
-    }
+    },
+    "werForGate": 0.25263487562389275,
+    "confForGate": 0.48530555555555555
+  },
+  "methodology": {
+    "wer": "faster-whisper-asr",
+    "pause": "pause-probe-profile-band",
+    "whisperEnabled": true,
+    "whisperAvailable": true,
+    "whisperModel": "tiny",
+    "note": "All WER rows are ASR-measured (werIsProxy=false).",
+    "measuredWerCount": 36,
+    "proxyWerCount": 0,
+    "realPauseCount": 36,
+    "proxyPauseCount": 0,
+    "honesty": "gate-on-measured-wer-and-profile-band-pause"
   },
   "thresholds": {
     "maxMeanWer": 0.35,

@@ -1,91 +1,156 @@
 # RELEASE QUALIFICATION — Resonara Voice Farm
 
 **Product:** Resonara 2.2.0  
-**Campaign:** G30 release-qualification voice farm  
-**Generated:** 2026-07-12T16:54:47.661Z  
-**Overall verdict:** **GO**
+**Campaign:** G30 release-qualification voice farm · **G31 quality-metrics honesty fix**  
+**Generated:** 2026-07-12T17:12:34Z  
+**Overall verdict:** **NO-GO** (real ASR WER + real profile-band pause — floors breached; not a proxy pass)
 
 ## Executive summary
 
-Resonara Voice was qualified at **catalog scale** (24 documents), **engine×profile matrix** (36 cells), **novel-length soak** (50,152 words → 2.4 GB / ~5 h audio), and **dual-platform packaging** (DMG + NSIS). Catalog and matrix gates are **GO**. Soak completed with a **flat memory curve** (plateau). Installers are **build-verified**.
+Resonara Voice was qualified at **catalog scale** (24 documents), **engine×profile matrix** (36 cells), **novel-length soak** (50,152 words → 2.4 GB / ~5 h audio), and **dual-platform packaging** (DMG + NSIS).
+
+**G31 measurement honesty:** WER is now **faster-whisper ASR** (`werIsProxy=false` on 24/24 catalog + 36/36 matrix). Pause conformance is the **pause-probe profile-band** harness (not ffmpeg-silencedetect constant 1.0). With real metrics, **catalog and matrix quality gates are NO-GO**. Soak and packaging remain GO from G30.
 
 | Gate | Verdict | Evidence |
 |------|---------|----------|
-| Catalog (24) | **GO** | meanWer=0.103, conf=1, invalid=0, fail=0/24 |
-| Matrix (36) | **GO** | meanWer=0.115, conf=1, invalid=0, fail=0/36 — **real Piper** on all 18 piper cells (Phase 8 fix) |
+| Catalog (24) | **NO-GO** | meanWerMeasured=0.252 (ASR), meanConf=0.340 (profile-band); 6 WER cell breaches; pause mean ≪ 0.9 |
+| Matrix (36) | **NO-GO** | meanWerMeasured=0.253 (ASR), meanConf=0.485 (profile-band); 6 WER cell breaches (mostly platform×pt-BR) |
 | Soak 50k | **GO** | duration=4.98h audio, bytes=2582548002, plateau=true |
 | Packaging | **GO** | mac=build-verified, win=build-verified |
 | Sign-off await-farm | **FIXED** | accepts COMPLETE (Phase 9) |
 
 ### GO/NO-GO argument
 
-All measured quality gates (WER proxy ≤0.35, pause conf ≥0.9, invalid audio 0, fail rate ≤5%, RTF ≤5) pass on catalog and matrix. Soak proves long-form stability: RSS mean ~221 MB (max 299 MB) with plateau=true over 101 samples — no unbounded growth. Packaging produced Resonara-2.2.0-arm64.dmg (417 MB) and Resonara Setup 2.2.0.exe (336 MB).
+**Quality gates use measured signals only.** Proxy WER cannot clear the WER floor (`WER_PROXY_ONLY` → NO-GO). Pause must be `pause-probe-profile-band` (`PAUSE_PROXY_ONLY` → NO-GO).
 
-**Matrix honesty (Phase 8 fix):** The three `en-numbers-and-dates__piper__{audiobook,podcast,news}` cells were originally platform-substituted under piper labels after a transient sqljs DB corruption. They were **re-rendered with actual Piper** (batch `matrix-piper-rerender`, 3/3 valid WAVs, byte-distinct from platform twins). Gate **GO** now stands on real Piper data. Aggregator keys `engine` off actual render metadata (`retryEngine` / `engine`), never the job id.
+With whisper installed offline (`tools/whisper-venv` + cached tiny/base models) and `FARM_MEASURE_WHISPER=1`:
 
-**Caveats (honest):**
-- WER is primarily duration-density proxy unless whisper enabled (`FARM_MEASURE_WHISPER=1`).
-- Windows NSIS is cross-built on darwin (build-verified, not runtime-tested on Windows).
-- macOS installers are unsigned (not notarized).
+- Catalog mean **ASR** WER = **0.252** (≤0.35 mean OK) but **6 cells >0.35**
+- Matrix mean **ASR** WER = **0.253** (mean OK) but **6 cells >0.35** (platform Portuguese systematic)
+- Pause profile-band mean catalog **0.340** / matrix **0.485** — **both below minConformance 0.9**
+- Invalid audio 0, fail rate 0, RTF within cap
 
-## Catalog quality
+**Verdict: NO-GO** until pause profile-band conformance and high-WER cells are addressed. Thresholds were **not** loosened to accommodate former proxies.
+
+**Matrix honesty (Phase 8, retained):** Piper cells are real Piper renders. Aggregator keys `engine` off actual render metadata.
+
+**Whisper offline status:** Whisper **does run offline** in this environment after `node scripts/download-whisper.js` (faster-whisper + model markers under `tools/whisper/models`). Full sweeps used `HF_HUB_OFFLINE=1`.
+
+### Methodology (measured vs proxy)
+
+| Signal | Method | Status |
+|--------|--------|--------|
+| WER | `faster-whisper-tiny` ASR transcription vs spoken reference | **Measured** (`werIsProxy=false`) on all 60 rows |
+| Pause conformance | `pause-probe` profile-band (audiobook/podcast/news gap targets) | **Measured** (`pauseIsProxy=false`, method=`pause-probe-profile-band`) |
+| Prosody (f0Variance, speechRate) | optional `FARM_MEASURE_PROSODY=1` | **Not run** (null) |
+| RTF / duration / valid audio | ffprobe + WAV header | Measured |
+
+> A duration-density number labeled as WER is a **gate failure**, not a pass. G31 removed that path from the gate.
+
+## Catalog quality (24 docs, ASR WER)
 
 - 24 docs measured, 0 failed, mean RTF 0.346
+- **mean WER (ASR measured):** 0.252 · proxy rows: **0**
+- **mean pause conformance (profile-band):** 34.0% (range 0%–66.2%, 23 distinct values — not a constant)
 
-## Engine × profile matrix
+| id | WER | kind | pause conf | pause kind |
+|----|-----|------|------------|------------|
+| en-quick-sentence__piper__audiobook | 0.000 | measured | 0.0% | profile-band |
+| en-ssml-showcase__piper__audiobook | 0.152 | measured | 28.6% | profile-band |
+| pt-ssml__piper__audiobook | 0.263 | measured | 44.4% | profile-band |
+| pt-paragrafo__piper__audiobook | 0.167 | measured | 20.0% | profile-band |
+| pt-dialogo__piper__audiobook | 0.236 | measured | 42.1% | profile-band |
+| en-dialogue-script__piper__audiobook | 0.118 | measured | 47.4% | profile-band |
+| en-paragraph__piper__audiobook | 0.068 | measured | 10.0% | profile-band |
+| en-children-story__piper__audiobook | 0.014 | measured | 39.5% | profile-band |
+| en-numbers-and-dates__piper__audiobook | **0.361** | measured | 14.3% | profile-band |
+| en-pronunciation-challenge__piper__audiobook | 0.322 | measured | 18.8% | profile-band |
+| pt-artigo__piper__audiobook | 0.188 | measured | 35.0% | profile-band |
+| pt-pronuncia__piper__audiobook | **0.663** | measured | 14.3% | profile-band |
+| pt-tecnico__piper__audiobook | **0.580** | measured | 31.8% | profile-band |
+| pt-numeros__piper__audiobook | **0.771** | measured | 27.8% | profile-band |
+| pt-noticia__piper__audiobook | **0.618** | measured | 32.0% | profile-band |
+| pt-historia__piper__audiobook | 0.264 | measured | 6.0% | profile-band |
+| en-short-article__piper__audiobook | 0.056 | measured | 36.1% | profile-band |
+| pt-ensaio__piper__audiobook | 0.253 | measured | 51.7% | profile-band |
+| en-long-essay__piper__audiobook | 0.060 | measured | 38.2% | profile-band |
+| en-news-expanded__piper__audiobook | 0.032 | measured | 36.4% | profile-band |
+| pt-capitulo__piper__audiobook | 0.160 | measured | 55.8% | profile-band |
+| en-news__piper__audiobook | 0.152 | measured | 66.2% | profile-band |
+| en-technical-doc__piper__audiobook | **0.454** | measured | 62.8% | profile-band |
+| en-book-chapter__piper__audiobook | 0.098 | measured | 56.4% | profile-band |
 
-- 36 cells, 0 failed, mean WER 0.115, mean RTF 0.414, invalid audio 0
+Full table: `farm-output/metrics/catalog-metrics.md`.
+
+## Engine × profile matrix (36 cells, ASR WER)
+
+- 36 cells, 0 failed, mean WER **0.253 (ASR)**, mean RTF 0.414, invalid audio 0
+- Pause conf range **7.1%–84.7%** (24 distinct values)
 - **byEngine (actual render engine):**
-  - piper: n=18, meanWer=0.133, meanRtf=0.547
-  - platform: n=18, meanWer=0.097, meanRtf=0.281
-- Numbers×Piper cells (post re-render): audiobook WER≈0.247 / 5.69 MB; podcast WER≈0.243 / 5.60 MB; news WER≈0.237 / 5.47 MB — all `engine=piper`, valid WAV
+  - piper: n=18, meanWer=0.193, meanConf=0.391, meanRtf=0.547
+  - platform: n=18, meanWer=0.312, meanConf=0.580, meanRtf=0.281
 
-### Recommended defaults (data-derived)
+### WER cell breaches (>0.35)
+
+| id | WER | engine | profile |
+|----|-----|--------|---------|
+| pt-artigo__platform__podcast | 0.923 | platform | podcast |
+| pt-dialogo__platform__{audiobook,podcast,news} | 0.653 | platform | * |
+| pt-artigo__platform__news | 0.632 | platform | news |
+| pt-artigo__platform__audiobook | 0.590 | platform | audiobook |
+
+**Systematic cause (pinned):** macOS `say` (platform) on **pt-BR** content produces high ASR WER vs orthographic reference — not a single-cell flake. Piper pt-BR on the same docs is lower (e.g. pt-artigo piper ~0.22–0.25).
+
+### Recommended defaults (data-derived, measured metrics)
 
 ```json
 {
   "short-article": {
     "engine": "platform",
-    "profile": "news",
+    "profile": "podcast",
     "language": "en",
-    "score": 0.9770380059707884,
-    "wer": 0.025478010003679153,
-    "pauseConformance": 1,
-    "rtf": 0.07313784259826521,
-    "jobId": "en-short-article__platform__news"
+    "score": 0.902,
+    "wer": 0.067,
+    "pauseConformance": 0.847,
+    "jobId": "en-short-article__platform__podcast"
   },
   "news": {
     "engine": "platform",
     "profile": "news",
     "language": "en",
-    "score": 0.9453276810779278,
-    "wer": 0.08920899660865436,
-    "pauseConformance": 1,
-    "rtf": 0.07194785832815957,
+    "score": 0.852,
+    "wer": 0.143,
+    "pauseConformance": 0.811,
     "jobId": "en-news__platform__news"
   },
   "dialogue-script": {
     "engine": "platform",
-    "profile": "news",
-    "language": "pt-BR",
-    "score": 0.9363660385458243,
-    "wer": 0.0289822972033404,
-    "pauseConformance": 1,
-    "rtf": 0.4872514715350768,
-    "jobId": "pt-dialogo__platform__news"
+    "profile": "podcast",
+    "language": "en",
+    "score": 0.710,
+    "wer": 0.118,
+    "pauseConformance": 0.526,
+    "jobId": "en-dialogue-script__platform__podcast"
   },
   "numbers-and-dates": {
     "engine": "platform",
     "profile": "podcast",
     "language": "en",
-    "score": 0.864110679806509,
-    "wer": 0.2493341688861037,
-    "pauseConformance": 1,
-    "rtf": 0.08086479711734294,
+    "score": 0.715,
+    "wer": 0.197,
+    "pauseConformance": 0.500,
     "jobId": "en-numbers-and-dates__platform__podcast"
   }
 }
 ```
+
+## Findings (do not loosen thresholds)
+
+1. **Pause profile-band systematically below 0.9** — silence histograms are dominated by short inter-word gaps (piper p50≈56 ms); contract sentence/paragraph bands are under-hit. Real probe, real NO-GO.
+2. **Platform × pt-BR high WER** — all platform Portuguese matrix cells breached 0.35; prefer piper for pt-BR or improve platform path.
+3. **Hard content types** — numbers/dates, pronunciation, technical docs (en+pt) remain high-WER under tiny ASR; treat as content-type debt, not gate relaxation.
+
+**Measurement pin (not a product pass):** SSML references are stripped of markup before WER (`stripMarkupForWer`) so tags are not scored as spoken words (en-ssml raw ~0.62 → measured ~0.15).
 
 ## Soak stability
 
@@ -111,7 +176,7 @@ Runbook `FARM DONE` vs orchestrator `COMPLETE` — fixed in `scripts/await-farm.
 
 ## Workstream ledger
 
-See `reports/workstream-ledger.json` and dashboard.
+See `reports/workstream-ledger.json` and dashboard. G31 entries: `bg-download-whisper`, `bg-measure-sample`, `bg-measure-full`, `fg-gate-real`, `fg-ssml-wer-pin`, `fg-pause-profile-band`.
 
 ## Zero-orphan
 

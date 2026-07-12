@@ -58,7 +58,7 @@
   {
     "id": "p7-matrix-bg",
     "phase": 7,
-    "purpose": "engine\u00d7profile 36-cell matrix",
+    "purpose": "engine×profile 36-cell matrix",
     "outcome": "collected",
     "kind": "background",
     "startedAt": "2026-07-12T14:58:33Z",
@@ -199,5 +199,47 @@
     "phase": "8-fix",
     "purpose": "farm-gate corrected matrix",
     "outcome": "GO"
+  },
+  {
+    "id": "bg-download-whisper",
+    "purpose": "Install faster-whisper venv + tiny/base models offline-capable",
+    "outcome": "collected",
+    "runtime": "see logs/download-whisper.log",
+    "campaign": "G31"
+  },
+  {
+    "id": "bg-measure-sample",
+    "purpose": "Representative sample ASR WER (≥1 content type × engines)",
+    "outcome": "collected",
+    "runtime": "matrix 8 + catalog 12",
+    "campaign": "G31"
+  },
+  {
+    "id": "bg-measure-full",
+    "purpose": "Full catalog 24 + matrix 36 true WER + profile-band pause",
+    "outcome": "collected",
+    "runtime": "~7 min",
+    "campaign": "G31"
+  },
+  {
+    "id": "fg-gate-real",
+    "purpose": "Re-run farm-gate on measured WER + real pause",
+    "outcome": "collected",
+    "runtime": "NO-GO with findings",
+    "campaign": "G31"
+  },
+  {
+    "id": "fg-ssml-wer-pin",
+    "purpose": "Strip SSML markup from WER reference (measurement pin)",
+    "outcome": "collected",
+    "runtime": "ssml 0.62→0.15",
+    "campaign": "G31"
+  },
+  {
+    "id": "fg-pause-profile-band",
+    "purpose": "Replace silencedetect constant with pause-probe profile-band",
+    "outcome": "collected",
+    "runtime": "conf varies 0–0.85",
+    "campaign": "G31"
   }
 ]

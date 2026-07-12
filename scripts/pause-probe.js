@@ -802,7 +802,271 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+/**
+ * Build pause-probe style annotations from raw document text.
+ * Boundaries use audiobook-scale expectedBandMs; probeWav scales for podcast/news.
+ */
+function buildAnnotationFromText(text, profileName = 'audiobook') {
+  const src = String(text || '');
+  const boundaries = [];
+  // Audiobook-scale bands (probeWav multiplies for podcast/news profiles)
+  const BANDS = {
+    paragraph: [700, 1000],
+    sentence: [350, 600],
+    comma: [150, 250],
+    semicolon: [200, 300],
+    colon: [200, 300],
+    'em-dash': [200, 350],
+    ellipsis: [450, 750],
+    header: [900, 1300],
+    'pre-header': [250, 400],
+    chapter: [1600, 2400],
+  };
+
+  // Paragraph breaks
+  let idx = 0;
+  while (idx < src.length) {
+    const m = src.indexOf('\n\n', idx);
+    if (m < 0) break;
+    // Skip pure whitespace-only gaps
+    if (m > 0 && /[\p{L}\p{N}]/u.test(src.slice(Math.max(0, m - 40), m))) {
+      boundaries.push({
+        type: 'paragraph',
+        offset: m,
+        char: '\\n\\n',
+        context: src.slice(Math.max(0, m - 20), Math.min(src.length, m + 20)).replace(/\n/g, '↵'),
+        expectedBandMs: BANDS.paragraph,
+      });
+    }
+    idx = m + 2;
+  }
+
+  // Micro / sentence punctuation
+  const re = /(\.{3}|…)|([,;:—–])|([.!?])/g;
+  let match;
+  while ((match = re.exec(src)) !== null) {
+    const offset = match.index;
+    let type = null;
+    if (match[1]) type = 'ellipsis';
+    else if (match[2] === ',') type = 'comma';
+    else if (match[2] === ';') type = 'semicolon';
+    else if (match[2] === ':') type = 'colon';
+    else if (match[2] === '—' || match[2] === '–') type = 'em-dash';
+    else if (match[3]) {
+      // Skip decimal points like 3.14
+      const before = src[offset - 1] || '';
+      const after = src[offset + 1] || '';
+      if (/\d/.test(before) && /\d/.test(after)) continue;
+      type = 'sentence';
+    }
+    if (!type) continue;
+    boundaries.push({
+      type,
+      offset,
+      char: match[0],
+      context: src.slice(Math.max(0, offset - 18), Math.min(src.length, offset + 18)).replace(/\n/g, '↵'),
+      expectedBandMs: BANDS[type] || BANDS.sentence,
+    });
+  }
+
+  // Cap density on very long docs — keep structural + sample of micro for runtime
+  boundaries.sort((a, b) => a.offset - b.offset);
+  let capped = boundaries;
+  if (boundaries.length > 80) {
+    const structural = boundaries.filter((b) =>
+      ['paragraph', 'header', 'chapter', 'sentence'].includes(b.type),
+    );
+    const micro = boundaries.filter((b) => !['paragraph', 'header', 'chapter', 'sentence'].includes(b.type));
+    // Keep all structural (up to 40) + evenly spaced micro
+    const structKeep = structural.slice(0, 40);
+    const microKeep = [];
+    const step = Math.max(1, Math.ceil(micro.length / 40));
+    for (let i = 0; i < micro.length; i += step) microKeep.push(micro[i]);
+    capped = [...structKeep, ...microKeep].sort((a, b) => a.offset - b.offset);
+  }
+
+  return {
+    fixture: 'farm-derived',
+    profile: profileName,
+    charCount: src.length,
+    boundaries: capped,
+  };
+}
+
+/**
+ * Scale audiobook-band to profile (mirrors probeWav podcast/news factors).
+ */
+function scaleBandForProfile(band, profileName) {
+  if (!band) return band;
+  if (profileName === 'podcast') return band.map((x) => Math.round(x * 0.8));
+  if (profileName === 'news') return band.map((x) => Math.round(x * 0.65));
+  return band;
+}
+
+/**
+ * Real profile-band pause conformance for an arbitrary farm WAV + source text.
+ *
+ * Uses the same expectedBandMs contract as pause-probe fixtures, with farm-audio
+ * alignment: linear char→time estimate + adaptive search window + sequential
+ * silence assignment so long documents are not systematically zeroed by ±1s windows.
+ *
+ * Returns 0..1 conformance (fraction of banded boundaries in-band).
+ */
+function scoreProfileBandConformance(wavPath, text, profileName = 'audiobook') {
+  if (!wavPath || !fs.existsSync(wavPath)) {
+    return {
+      pauseConformance: null,
+      method: 'pause-probe-profile-band',
+      error: 'missing wav',
+    };
+  }
+  const ann = buildAnnotationFromText(text || '', profileName);
+  const durationSec = wavDurationSec(wavPath);
+  const silences = detectSilences(wavPath);
+
+  if (!ann.boundaries.length) {
+    const prof = PROFILES[profileName] || PROFILES.audiobook;
+    const targetMs = Math.round(prof.gaps.sentence * 1000);
+    if (!silences.length) {
+      return {
+        pauseConformance: 0.5,
+        method: 'pause-probe-profile-band',
+        totalBanded: 0,
+        passed: 0,
+        note: 'no-boundaries-no-silence',
+      };
+    }
+    const inRange = silences.filter((s) => {
+      const ms = s.duration * 1000;
+      return ms >= targetMs * 0.5 && ms <= targetMs * 2.0;
+    }).length;
+    return {
+      pauseConformance: Math.max(0, Math.min(1, inRange / silences.length)),
+      method: 'pause-probe-profile-band',
+      totalBanded: silences.length,
+      passed: inRange,
+      note: 'silence-distribution-fallback',
+    };
+  }
+
+  const charCount = Math.max(1, ann.charCount || (text || '').length || 1);
+  // Adaptive window grows with duration so long farm docs still find nearby silences
+  const adaptiveWin = Math.max(1.2, Math.min(12, durationSec * 0.02));
+  const usedSilence = new Set();
+  let passed = 0;
+  const byType = {};
+  const results = [];
+
+  for (const b of ann.boundaries) {
+    const band = scaleBandForProfile(
+      b.expectedBandMs ? [...b.expectedBandMs] : null,
+      profileName,
+    );
+    const estimatedTimeSec = durationSec * (b.offset / charCount);
+    const baseWin = MICRO.has(b.type) ? 0.55 : b.type === 'sentence' ? 0.9 : 1.2;
+    const win = Math.max(baseWin, adaptiveWin);
+
+    let best = null;
+    let bestScore = -Infinity;
+    for (let si = 0; si < silences.length; si++) {
+      if (usedSilence.has(si)) continue;
+      const sil = silences[si];
+      const mid = (sil.start + sil.end) / 2;
+      const dt = Math.abs(mid - estimatedTimeSec);
+      const covers = sil.start <= estimatedTimeSec && sil.end >= estimatedTimeSec;
+      if (dt > win && !covers) continue;
+      const ms = Math.round(sil.duration * 1000);
+      // Prefer silences in-band; secondarily prefer nearer midpoints
+      let score = -dt;
+      if (band && inBand(ms, band)) score += 1000;
+      else if (band) {
+        // Partial credit for near-band
+        const lo = band[0];
+        const hi = band[1];
+        const dist = ms < lo ? lo - ms : ms > hi ? ms - hi : 0;
+        score += Math.max(0, 400 - dist);
+      }
+      if (score > bestScore) {
+        bestScore = score;
+        best = { si, ms, mid };
+      }
+    }
+
+    let measuredMs = 0;
+    let source = 'none';
+    if (best) {
+      measuredMs = best.ms;
+      source = 'silencedetect-adaptive';
+      usedSilence.add(best.si);
+    }
+
+    const pass2 = band ? inBand(measuredMs, band) === true : null;
+    // Intentional profile gap match (same as probeWav)
+    let pass = pass2 === true;
+    if (!pass && measuredMs > 0 && band) {
+      const gapVals = Object.entries(PROFILES[profileName]?.gaps || PROFILES.audiobook.gaps);
+      for (const [, gv] of gapVals) {
+        const ms = Math.round(gv * 1000);
+        if (Math.abs(measuredMs - ms) <= Math.max(25, ms * 0.1)) {
+          if (measuredMs >= band[0] * 0.85 && measuredMs <= band[1] * 1.2) pass = true;
+        }
+      }
+    }
+
+    if (!byType[b.type]) byType[b.type] = { count: 0, sumMs: 0, pass: 0, fail: 0 };
+    byType[b.type].count++;
+    byType[b.type].sumMs += measuredMs;
+    if (pass) {
+      byType[b.type].pass++;
+      passed++;
+    } else if (band) {
+      byType[b.type].fail++;
+    }
+    results.push({
+      type: b.type,
+      offset: b.offset,
+      expectedBandMs: band,
+      measuredMs,
+      estimatedTimeSec: Math.round(estimatedTimeSec * 1000) / 1000,
+      source,
+      pass,
+    });
+  }
+
+  const banded = results.filter((r) => r.expectedBandMs);
+  const conformancePct = banded.length
+    ? Math.round((passed / banded.length) * 1000) / 10
+    : 0;
+  for (const k of Object.keys(byType)) {
+    byType[k].avgMs = Math.round(byType[k].sumMs / byType[k].count);
+  }
+
+  return {
+    pauseConformance: conformancePct / 100,
+    method: 'pause-probe-profile-band',
+    conformancePct,
+    passed,
+    totalBanded: banded.length,
+    byType,
+    silenceRegions: silences.length,
+    note: 'farm-adaptive-window',
+  };
+}
+
+module.exports = {
+  PROFILES,
+  detectSilences,
+  inBand,
+  probeWav,
+  buildAnnotationFromText,
+  scoreProfileBandConformance,
+  wavDurationSec,
+  FIXTURES,
+};
+
+if (require.main === module) {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}
