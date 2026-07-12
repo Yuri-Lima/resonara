@@ -5,26 +5,26 @@
   var RELEASES_URL = 'https://github.com/' + REPO + '/releases';
   var LATEST_API = 'https://api.github.com/repos/' + REPO + '/releases/latest';
   // Static fallbacks if API is rate-limited (updated with each release tag)
-  var FALLBACK_TAG = 'v1.0.0';
+  var FALLBACK_TAG = 'v2.1.0';
   var FALLBACK = {
     macDmg:
       'https://github.com/' +
       REPO +
       '/releases/download/' +
       FALLBACK_TAG +
-      '/Resonara-1.0.0-arm64.dmg',
+      '/Resonara-2.1.0-arm64.dmg',
     macZip:
       'https://github.com/' +
       REPO +
       '/releases/download/' +
       FALLBACK_TAG +
-      '/Resonara-1.0.0-arm64-mac.zip',
+      '/Resonara-2.1.0-arm64-mac.zip',
     winSetup:
       'https://github.com/' +
       REPO +
       '/releases/download/' +
       FALLBACK_TAG +
-      '/Resonara.Setup.1.0.0.exe',
+      '/Resonara.Setup.2.1.0.exe',
     page: RELEASES_URL + '/tag/' + FALLBACK_TAG,
   };
 
@@ -156,7 +156,7 @@
       applyLinks(pickAssets(release));
     })
     .catch(function () {
-      // Keep static fallbacks — still point at real v1.0.0 asset URLs
+      // Keep static fallbacks — still point at real v2.1.0 asset URLs
       applyLinks(pickAssets(null));
     });
 })();

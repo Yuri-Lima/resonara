@@ -1,4 +1,4 @@
-/* Resonara v2.0 release dashboard */
+/* Resonara v2.1 release dashboard */
 (function () {
   const FEATURES = [
     { n: 1, name: 'Kokoro engine', probe: 'WORKING', post: 'WORKING', decision: 'KEEP', evidence: 'reports/probes/01-kokoro.md' },
@@ -21,15 +21,16 @@
     { label: 'Cold start', value: '1930 ms', note: 'target < 3000 · pass' },
     { label: 'Library scale', value: '45 ms list', note: '~187 jobs · page limit 50' },
     { label: 'Stability synth', value: '8k done', note: '46.2k source · 39 chunks' },
-    { label: 'Installer (mac)', value: 'DMG 421 MB', note: 'en+pt onnx bundled' },
+    { label: 'Installer (mac)', value: '2.1.0 DMG', note: 'Resonara-2.1.0-arm64.dmg' },
+    { label: 'Installer (win)', value: '2.1.0 NSIS', note: 'Resonara Setup 2.1.0.exe' },
   ];
 
   const DELTA = [
-    { k: 'Version', v: '1.0.0 → 2.0.0' },
-    { k: 'LOC (src)', v: '~15,900' },
-    { k: 'Spec files', v: '44' },
+    { k: 'Version', v: '1.0.0 → 2.1.0' },
+    { k: 'LOC (src)', v: '~15,900+' },
+    { k: 'Spec files', v: '44+' },
     { k: 'Modules', v: '14+' },
-    { k: 'Engines', v: 'platform → +Piper +Kokoro' },
+    { k: 'Engines', v: '+Piper +Kokoro +expressive' },
     { k: 'Languages', v: 'en → en + pt-BR' },
   ];
 
@@ -55,6 +56,8 @@
     'CLI + watch-folder daemon with debounce',
     'Typed error taxonomy, diagnostics bundle, crash-resume',
     'Library-first Voice IA, onboarding, keyboard map, WCAG AA dark theme',
+    'v2.1: optional expressive TTS (Chatterbox), REM markup, frontier dashboard',
+    'v2.1 installers: Resonara-2.1.0-arm64.dmg · Resonara Setup 2.1.0.exe',
   ];
 
   function pill(v) {
@@ -83,7 +86,7 @@
     (d) => `<div><span class="muted">${d.k}</span><strong>${d.v}</strong></div>`,
   ).join('');
   document.getElementById('delta-notes').textContent =
-    'Major bump: competitive parity wave (PRs #2–#9) is the product surface of v2.0.';
+    'v2.0 competitive parity (PRs #2–#9) + v2.1 Human-Voice Frontier (expressive tier, mac/Windows installers).';
 
   document.getElementById('fleet-timeline').innerHTML = FLEET.map(
     (w) => `<div class="tl-item ${w.state}"><strong>${w.name}</strong> · <span class="pill ${w.state === 'landed' ? 'ok' : 'bad'}">${w.state}</span><div class="muted">${w.detail}</div></div>`,
