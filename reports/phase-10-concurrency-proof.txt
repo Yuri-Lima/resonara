@@ -1,0 +1,2 @@
+soak_startedAt=2026-07-12T15:42:18.384Z concurrent_work_at=2026-07-12T15:42:29Z
+ba244269cf635057c5dad523d028ad4bb7c97893 2026-07-12 17:42:29 +0200 fix(api): raise JSON body limit to 2mb for novel-length synthesize
