@@ -1,0 +1,15 @@
+{
+  "fixture": "picnic",
+  "productPath": true,
+  "styleProfile": "audiobook",
+  "affect": "joy",
+  "exaggeration": 0.62,
+  "humanize": true,
+  "autoDirect": true,
+  "engine": "expressive",
+  "af": "asetrate=24000*1.07,aresample=24000,atempo=0.98,volume=1.15,treble=g=4",
+  "textChars": 472,
+  "synthLogTail": " 61%|██████▏   | 613/1000 [01:58<00:30, 12.83it/s]\rSampling:  61%|██████▏   | 613/1000 [01:58<01:14,  5.18it/s]\nexpressive_ok device=mps wall_s=151.62 out=bench/candidates/product-path/picnic.pre.wav\n",
+  "multiControl": false,
+  "remWarnings": []
+}

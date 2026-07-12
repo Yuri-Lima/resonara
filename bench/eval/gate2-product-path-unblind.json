@@ -1,15 +1,15 @@
 {
   "gate": 2,
-  "exprRoot": "bench/candidates/directed-final",
-  "tag": null,
-  "meanCmosExpressiveVsPiper": 1,
+  "exprRoot": "bench/candidates/product-path",
+  "tag": "product-path",
+  "meanCmosExpressiveVsPiper": 0.75,
   "n": 4,
   "pass": true,
-  "ledger": "/private/tmp/trace-sweG29-20260712-013205/bench/eval/gate2-ledger.jsonl",
+  "ledger": "/private/tmp/trace-sweG29-20260712-013205/bench/eval/gate2-product-path-ledger.jsonl",
   "unblind": [
     {
       "fixture": "death-scene",
-      "cmosExpressiveVsPiper": 2,
+      "cmosExpressiveVsPiper": 1,
       "flip": false
     },
     {
@@ -27,5 +27,7 @@
       "cmosExpressiveVsPiper": 0,
       "flip": false
     }
-  ]
+  ],
+  "source": "product-path",
+  "note": "Scored from product direction path (autoDirect+REM+humanize AF), not offline directed-final."
 }

@@ -440,7 +440,9 @@ export class TtsService implements OnModuleInit {
       }
     }
 
-    // Expression direction layer (opt-in): autoDirect → REM, then compile for engine
+    // Expression direction layer (opt-in): autoDirect → humanize breaths → REM compile
+    // Runtime controls are persisted on job.metadata.expression and honored at synth time.
+    let expressionMeta: TtsJobMetadata['expression'] | undefined;
     if (opts.autoDirect) {
       try {
         const { applyAutoDirection } = await import('./expression/auto-direction');
@@ -466,27 +468,88 @@ export class TtsService implements OnModuleInit {
         this.logger.warn(`Auto-direction failed: ${(e as Error).message}`);
       }
     }
-    // Strip/compile REM so non-expressive engines never speak tags as words
-    if (
-      opts.rem !== false &&
-      (/\[(laugh|sigh|breath|chuckle|gasp|cough)\]|\{emotion:|\{style:/i.test(
-        text,
-      ) ||
-        opts.autoDirect)
-    ) {
+    if (opts.humanize) {
       try {
-        const { compileRem } = await import('./expression/rem-compiler');
-        const compiled = compileRem(text, engine);
-        // Join speakable text only; paralinguistic events handled in expressive path
-        text = compiled.segments
-          .map((s) => s.text)
-          .filter(Boolean)
-          .join(' ');
-        if (compiled.warnings?.length) {
-          this.logger.debug(`REM compile: ${compiled.warnings.join('; ')}`);
+        const { injectBreathMarkers } = await import('./expression/humanization');
+        const profile =
+          opts.styleProfile === 'news'
+            ? 'news'
+            : opts.styleProfile === 'podcast'
+              ? 'podcast'
+              : 'audiobook';
+        const breathed = injectBreathMarkers(text, {
+          profile: profile as 'audiobook' | 'podcast' | 'news',
+          breaths: profile !== 'news',
+        });
+        if (breathed.count > 0) {
+          text = breathed.text;
+          this.logger.log(`Humanize: injected ${breathed.count} breath markers`);
         }
       } catch (e) {
-        this.logger.warn(`REM compile failed: ${(e as Error).message}`);
+        this.logger.warn(`Humanize breath inject failed: ${(e as Error).message}`);
+      }
+    }
+    // Compile REM: expressive keeps native tags + per-segment controls;
+    // other engines get speakable-only (never read tags aloud).
+    {
+      const wantsRem =
+        opts.rem !== false &&
+        (/\[(laugh|sigh|breath|chuckle|gasp|cough)\]|\{emotion:|\{style:/i.test(
+          text,
+        ) ||
+          opts.autoDirect ||
+          opts.humanize ||
+          opts.exaggeration != null ||
+          !!opts.styleProfile);
+      try {
+        const { compileRem } = await import('./expression/rem-compiler');
+        const { buildExpressionRuntime } = await import(
+          './expression/direction-runtime'
+        );
+        const compiled = wantsRem ? compileRem(text, engine) : null;
+        const runtime = buildExpressionRuntime({
+          engine,
+          plainText: text,
+          exaggeration: opts.exaggeration,
+          humanize: opts.humanize === true,
+          styleProfile: opts.styleProfile,
+          compiled,
+        });
+        // Persist engine-facing text (tags kept for expressive)
+        text =
+          engine === 'expressive'
+            ? runtime.engineText
+            : runtime.speakableText || runtime.engineText;
+        expressionMeta = {
+          directed: runtime.directed,
+          humanize: runtime.humanize,
+          exaggeration: runtime.exaggeration,
+          emotion: runtime.emotion as string | undefined,
+          style: runtime.style as string | undefined,
+          affect: runtime.affect,
+          multiControl: runtime.multiControl,
+          remWarnings: runtime.remWarnings,
+          remDegraded: runtime.remDegraded,
+          segments: runtime.segments.map((s) => ({
+            text: s.text,
+            speakable: s.speakable,
+            exaggeration: s.exaggeration,
+            emotion: s.emotion as string | undefined,
+            style: s.style as string | undefined,
+            affect: s.affect,
+            rate: s.rate,
+          })),
+        };
+        if (runtime.remWarnings?.length) {
+          this.logger.debug(`REM compile: ${runtime.remWarnings.join('; ')}`);
+        }
+        this.logger.log(
+          `Expression runtime: exaggeration=${runtime.exaggeration.toFixed(2)} ` +
+            `affect=${runtime.affect} humanize=${runtime.humanize} ` +
+            `segments=${runtime.segments.length} multiControl=${runtime.multiControl}`,
+        );
+      } catch (e) {
+        this.logger.warn(`Expression runtime failed: ${(e as Error).message}`);
       }
     }
 
@@ -524,6 +587,7 @@ export class TtsService implements OnModuleInit {
         postProcess: { ...post, preset },
         language: primaryLang,
         languageBlocks,
+        expression: expressionMeta,
       } as TtsJobMetadata & {
         language?: string;
         languageBlocks?: Array<{
@@ -989,6 +1053,7 @@ export class TtsService implements OnModuleInit {
           highpass: opts.highpass,
           compress: opts.compress,
           ssml: opts.ssml || job.ssml,
+          expression: job.metadata?.expression,
         });
       } else if (chaptersSrc && chaptersSrc.length > 1) {
         chapterMeta = await this.synthesizeByChapter(
@@ -1005,6 +1070,7 @@ export class TtsService implements OnModuleInit {
             highpass: opts.highpass,
             compress: opts.compress,
             outputPath,
+            expression: job.metadata?.expression,
           },
         );
       } else {
@@ -1022,10 +1088,62 @@ export class TtsService implements OnModuleInit {
           pauseProfile: pauseProfile.name,
           pauseBands: pauseProfile.bands,
         };
-        const chunks = chunkTextForTts(job.text, {
-          engine,
-          language: lang as import('./language/language.types').LanguageCode,
-        });
+        // Prefer persisted expression from startLongForm; also merge request opts
+        let expression: TtsJobMetadata['expression'] | undefined =
+          job.metadata?.expression ||
+          (opts.exaggeration != null ||
+          opts.humanize ||
+          opts.styleProfile ||
+          opts.autoDirect
+            ? {
+                directed: true,
+                humanize: opts.humanize === true,
+                exaggeration: opts.exaggeration,
+                style: opts.styleProfile,
+              }
+            : undefined);
+
+        // Multi-control REM: expand each directed segment into chunks and map controls
+        let chunks: TextChunk[];
+        let chunkSegmentMap: number[] | undefined;
+        if (
+          engine === 'expressive' &&
+          expression?.multiControl &&
+          expression.segments &&
+          expression.segments.length > 1
+        ) {
+          chunks = [];
+          chunkSegmentMap = [];
+          let idx = 0;
+          for (let si = 0; si < expression.segments.length; si++) {
+            const seg = expression.segments[si];
+            const piece = (seg.text || seg.speakable || '').trim();
+            if (!piece) continue;
+            const sub = chunkTextForTts(piece, {
+              engine,
+              language: lang as import('./language/language.types').LanguageCode,
+            });
+            for (const c of sub) {
+              chunks.push({ ...c, index: idx });
+              chunkSegmentMap[idx] = si;
+              idx++;
+            }
+          }
+          if (!chunks.length) {
+            chunks = chunkTextForTts(job.text, {
+              engine,
+              language: lang as import('./language/language.types').LanguageCode,
+            });
+            chunkSegmentMap = undefined;
+          } else {
+            expression = { ...expression, chunkSegmentMap };
+          }
+        } else {
+          chunks = chunkTextForTts(job.text, {
+            engine,
+            language: lang as import('./language/language.types').LanguageCode,
+          });
+        }
         job.totalChunks = chunks.length;
         job.status = TtsJobStatus.SYNTHESIZING;
         await this.jobsRepo.save(job);
@@ -1045,6 +1163,7 @@ export class TtsService implements OnModuleInit {
           qaMode: opts.qa,
           pauseProfile,
           language: lang,
+          expression,
           onProgress: async (pct, chunksDone) => {
             job.progress = Math.round(pct);
             job.completedChunks = chunksDone;
@@ -1151,6 +1270,7 @@ export class TtsService implements OnModuleInit {
       highpass?: boolean;
       compress?: boolean;
       ssml?: boolean;
+      expression?: NonNullable<TtsJobMetadata['expression']>;
     },
   ) {
     const parsed = parseDialogue(job.text);
@@ -1183,6 +1303,8 @@ export class TtsService implements OnModuleInit {
         opts.engine,
         voice,
         opts.rate,
+        undefined,
+        opts.expression || job.metadata?.expression,
       );
       const trimmed = path.join(opts.workDir, `dlg-${i}-trim.wav`);
       try {
@@ -1262,6 +1384,7 @@ export class TtsService implements OnModuleInit {
       highpass?: boolean;
       compress?: boolean;
       outputPath: string;
+      expression?: NonNullable<TtsJobMetadata['expression']>;
     },
   ): Promise<TtsChapterMeta[]> {
     const chapterFiles: string[] = [];
@@ -1290,6 +1413,7 @@ export class TtsService implements OnModuleInit {
         normalize: opts.normalize,
         highpass: opts.highpass,
         compress: opts.compress,
+        expression: opts.expression || job.metadata?.expression,
         onProgress: async () => undefined,
       });
       chapterFiles.push(chOut);
@@ -1375,6 +1499,8 @@ export class TtsService implements OnModuleInit {
       qaMode?: QaMode;
       pauseProfile?: PauseProfile;
       language?: string;
+      /** Expression runtime from job.metadata.expression — threaded to synth. */
+      expression?: NonNullable<TtsJobMetadata['expression']>;
       onProgress: (pct: number, chunksDone: number) => Promise<void>;
       onChunkMap?: (
         map: NonNullable<TtsJobMetadata['chunkMap']>,
@@ -1431,6 +1557,9 @@ export class TtsService implements OnModuleInit {
         opts.workDir,
         `part-${String(i).padStart(4, '0')}-raw.wav`,
       );
+      // Per-chunk expression: multiControl maps rem segments by order when available
+      const chunkExpr = this.expressionForChunk(opts.expression, i, chunks.length);
+
       await this.synthesizeOne(
         pieceText,
         rawPart,
@@ -1438,6 +1567,7 @@ export class TtsService implements OnModuleInit {
         opts.voice,
         opts.rate,
         profile,
+        chunkExpr,
       );
 
       // Boundary-aware trim: keep trailing silence except at forced seams
@@ -1482,6 +1612,7 @@ export class TtsService implements OnModuleInit {
                 voice,
                 rate,
                 profile,
+                chunkExpr,
               );
               const retryTrim = path.join(
                 opts.workDir,
@@ -1663,6 +1794,7 @@ export class TtsService implements OnModuleInit {
     voice?: UnifiedVoice,
     rate?: number,
     pauseProfile?: PauseProfile,
+    expression?: NonNullable<TtsJobMetadata['expression']>,
   ): Promise<void> {
     // Intra-chunk micro-pauses for piper/kokoro/expressive (platform uses [[slnc]] upstream)
     if (
@@ -1679,12 +1811,21 @@ export class TtsService implements OnModuleInit {
           voice,
           rate,
           pauseProfile,
+          expression,
         );
         return;
       }
     }
 
-    await this.synthesizeOneRaw(text, outPath, engine, voice, rate, pauseProfile);
+    await this.synthesizeOneRaw(
+      text,
+      outPath,
+      engine,
+      voice,
+      rate,
+      pauseProfile,
+      expression,
+    );
   }
 
   /** Single-utterance engine call (no micro-split). */
@@ -1695,6 +1836,7 @@ export class TtsService implements OnModuleInit {
     voice?: UnifiedVoice,
     rate?: number,
     pauseProfile?: PauseProfile,
+    expression?: NonNullable<TtsJobMetadata['expression']>,
   ): Promise<void> {
     if (engine === 'expressive') {
       const { synthesizeWithExpressive, isExpressiveAvailable } = await import(
@@ -1726,15 +1868,52 @@ export class TtsService implements OnModuleInit {
         }
         throw new Error('Expressive unavailable and no fallback engine');
       }
+      // Honor job/REM exaggeration — never silently force 0.55 over user/REM controls
+      const exaggeration =
+        expression?.exaggeration != null &&
+        Number.isFinite(expression.exaggeration)
+          ? Math.max(0, Math.min(1, expression.exaggeration))
+          : 0.55;
+      const prePath = expression?.humanize
+        ? path.join(
+            path.dirname(outPath),
+            `${path.basename(outPath, path.extname(outPath))}-pre-dir.wav`,
+          )
+        : outPath;
       await synthesizeWithExpressive({
         text,
-        outputPath: outPath,
+        outputPath: prePath,
         voiceId: voice?.id || voice?.nativeId,
         rate,
-        exaggeration: 0.55,
-        // cloneConsent / referenceAudioPath passed via env for long-form jobs
-        // when set on the job options (see startLongForm expression fields).
+        exaggeration,
       });
+      if (expression?.humanize) {
+        const { expressionAudioFilter } = await import(
+          './expression/direction-runtime'
+        );
+        const af = expressionAudioFilter({
+          humanize: true,
+          affect: expression.affect || 'neutral',
+        });
+        if (af) {
+          try {
+            await this.ffmpeg.applyAudioFilter(prePath, outPath, af);
+            await fs.unlink(prePath).catch(() => undefined);
+            this.logger.debug(
+              `Directed AF applied affect=${expression.affect} exaggeration=${exaggeration}`,
+            );
+          } catch (e) {
+            this.logger.warn(
+              `Directed AF failed, using raw synth: ${(e as Error).message}`,
+            );
+            await fs.copyFile(prePath, outPath).catch(() => undefined);
+            await fs.unlink(prePath).catch(() => undefined);
+          }
+        } else if (prePath !== outPath) {
+          await fs.copyFile(prePath, outPath);
+          await fs.unlink(prePath).catch(() => undefined);
+        }
+      }
       return;
     }
     if (engine === 'kokoro') {
@@ -1795,6 +1974,7 @@ export class TtsService implements OnModuleInit {
     voice: UnifiedVoice | undefined,
     rate: number | undefined,
     pauseProfile: PauseProfile,
+    expression?: NonNullable<TtsJobMetadata['expression']>,
   ): Promise<void> {
     const workDir = path.dirname(outPath);
     const parts: string[] = [];
@@ -1814,7 +1994,15 @@ export class TtsService implements OnModuleInit {
                 pauseProfile.piperSentenceSilenceSec,
               ),
             };
-      await this.synthesizeOneRaw(seg.text, segPath, engine, voice, rate, prof);
+      await this.synthesizeOneRaw(
+        seg.text,
+        segPath,
+        engine,
+        voice,
+        rate,
+        prof,
+        expression,
+      );
       parts.push(segPath);
       if (seg.gapAfterMs >= 15) {
         const gapPath = path.join(workDir, `${uid}-gap-${i}.wav`);
@@ -1830,6 +2018,50 @@ export class TtsService implements OnModuleInit {
       return;
     }
     await this.ffmpeg.concatAudioFiles(parts, outPath, { format: 'wav' });
+  }
+
+  /**
+   * Resolve per-chunk expression controls.
+   * When multiControl + chunkSegmentMap, each chunk inherits its REM segment's
+   * exaggeration/affect; otherwise the document-level expression is used.
+   */
+  private expressionForChunk(
+    expression: NonNullable<TtsJobMetadata['expression']> | undefined,
+    chunkIndex: number,
+    _chunkCount: number,
+  ): NonNullable<TtsJobMetadata['expression']> | undefined {
+    if (!expression) return undefined;
+    const map = expression.chunkSegmentMap;
+    const segs = expression.segments;
+    if (map && segs?.length) {
+      const si = map[chunkIndex];
+      const seg =
+        si != null && segs[si]
+          ? segs[si]
+          : segs[Math.min(chunkIndex, segs.length - 1)];
+      if (seg) {
+        return {
+          ...expression,
+          exaggeration: seg.exaggeration,
+          emotion: seg.emotion,
+          style: seg.style,
+          affect: seg.affect,
+        };
+      }
+    }
+    if (expression.multiControl && segs?.length) {
+      const seg = segs[Math.min(chunkIndex, segs.length - 1)];
+      if (seg) {
+        return {
+          ...expression,
+          exaggeration: seg.exaggeration,
+          emotion: seg.emotion,
+          style: seg.style,
+          affect: seg.affect,
+        };
+      }
+    }
+    return expression;
   }
 
   private resolveVoice(

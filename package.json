@@ -70,6 +70,8 @@
     "metrics:self-test": "node scripts/prosody-metrics.js --self-test",
     "render:expressive": "node scripts/render-expressive-fixtures.js",
     "eval:session": "node scripts/eval-session.js",
+    "recert:gate2": "node scripts/recert-gate2-product-path.js",
+    "recert:gate2:score": "node scripts/recert-gate2-product-path.js --skip-render",
     "download:expressive": "node scripts/download-expressive-pack.js",
     "probe:prosody": "node scripts/prosody-metrics.js --self-test"
   },

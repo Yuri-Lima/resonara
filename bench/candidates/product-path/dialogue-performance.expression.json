@@ -1,0 +1,15 @@
+{
+  "fixture": "dialogue-performance",
+  "productPath": true,
+  "styleProfile": "podcast",
+  "affect": "neutral",
+  "exaggeration": 0.5091549295774648,
+  "humanize": true,
+  "autoDirect": true,
+  "engine": "expressive",
+  "af": "acompressor=threshold=-20dB:ratio=1.8:attack=10:release=150,volume=1.05",
+  "textChars": 486,
+  "synthLogTail": " | 783/1000 [02:40<00:18, 11.91it/s]\rSampling:  78%|███████▊  | 783/1000 [02:40<00:44,  4.88it/s]\nexpressive_ok device=mps wall_s=185.93 out=bench/candidates/product-path/dialogue-performance.pre.wav\n",
+  "multiControl": true,
+  "remWarnings": []
+}

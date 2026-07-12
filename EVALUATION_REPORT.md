@@ -9,7 +9,8 @@
 | Gate | Comparison | Mean CMOS | n | Pass (≥+0.5) |
 |------|------------|-----------|---|--------------|
 | Gate 1 | Raw expressive vs Piper | see `bench/eval/gate1-unblind.json` | 4 | multi-factor proxy |
-| Gate 2 | Directed expressive vs Piper default | see `bench/eval/gate2-unblind.json` | ≥4 | **shipping gate** |
+| Gate 2 (offline AF) | Directed-final vs Piper | **+1.0** (`gate2-unblind.json`) | 4 | filter-family evidence |
+| Gate 2 (**product path**) | Live autoDirect+REM+humanize vs Piper | **+0.75** (`gate2-product-path-unblind.json`) | 4 | **shipping gate** |
 
 Ledgers written **before** unblinding (`bench/eval/gate*-ledger.jsonl`).
 
@@ -102,3 +103,58 @@ Installer size **unchanged** — Expressive Pack is optional download (`node scr
 Affect contrast (F0 mean death vs picnic): Piper **4.86 Hz** → Directed **45.1 Hz** (~9×).
 
 Gate 1 raw Turbo (no direction): **FAIL** mean −2 — proves model-only is insufficient; direction+humanization is required (claim rebuttal).
+
+## Honesty note — Gate 2 vs product path (2026-07-12 revision)
+
+Gate 2 WAVs under `bench/candidates/directed-final/` were originally produced by an
+**offline ffmpeg directed-affect filter** applied to raw Chatterbox renders (same
+graphs as `directedAudioFilter()` in `src/tts/expression/humanization.ts`).
+
+**Before this fix**, the product path did **not** reproduce that pipeline:
+- `exaggeration` was hardcoded to `0.55` in `synthesizeOneRaw`
+- REM was flattened to plain text (controls discarded)
+- `directedAudioFilter` / `emotionToAffect` were never called from `src/`
+
+**After the product-path fix** (`direction-runtime` + `tts.service` wiring):
+- Job `exaggeration` and REM-derived exaggeration are passed to Chatterbox
+- REM native tags are kept for the expressive engine
+- When `humanize=true`, the same directed AF graph runs via `FfmpegService.applyAudioFilter`
+- Multi-emotion REM documents synth per-segment controls (`multiControl`)
+- Plain monologues get content→affect fallback (`contentAffectFromText`) when humanize is on
+
+## Gate 2 product-path re-certification (measured 2026-07-12)
+
+Pipeline: `autoDirect → breath markers → REM compile → buildExpressionRuntime → Chatterbox (runtime exaggeration) → expressionAudioFilter`.
+
+Harness: `npm run recert:gate2` → `scripts/recert-gate2-product-path.js`  
+Artifacts: `bench/candidates/product-path/`, `bench/eval/gate2-product-path-*`
+
+```json
+{
+  "gate": 2,
+  "exprRoot": "bench/candidates/product-path",
+  "tag": "product-path",
+  "meanCmosExpressiveVsPiper": 0.75,
+  "n": 4,
+  "pass": true,
+  "unblind": [
+    { "fixture": "death-scene", "cmosExpressiveVsPiper": 1 },
+    { "fixture": "picnic", "cmosExpressiveVsPiper": 2 },
+    { "fixture": "dialogue-performance", "cmosExpressiveVsPiper": 0 },
+    { "fixture": "newscast", "cmosExpressiveVsPiper": 0 }
+  ]
+}
+```
+
+| Fixture | Affect | Exaggeration | Notes |
+|---------|--------|--------------|-------|
+| death-scene | grief | 0.58 | content affect + grief AF (`asetrate*0.92`) |
+| picnic | joy | 0.62 | content affect + joy AF (`asetrate*1.07`) |
+| dialogue-performance | neutral | ~0.51 | multiControl; document AF neutral |
+| newscast | news | 0.30 | style profile caps expression |
+
+**PASS** — product-path mean CMOS **+0.75** ≥ +0.5.
+
+Offline `directed-final` Gate 2 (**+1.0**) remains filter-family evidence and is **not clobbered** by product-path scoring (`blind-gate.js --tag product-path`).
+
+

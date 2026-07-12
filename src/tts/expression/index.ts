@@ -5,3 +5,4 @@ export * from './delivery-lexicon';
 export * from './auto-direction';
 export * from './casting';
 export * from './humanization';
+export * from './direction-runtime';

@@ -1,0 +1,15 @@
+{
+  "fixture": "newscast",
+  "productPath": true,
+  "styleProfile": "news",
+  "affect": "news",
+  "exaggeration": 0.3,
+  "humanize": true,
+  "autoDirect": true,
+  "engine": "expressive",
+  "af": "volume=1.0",
+  "textChars": 397,
+  "synthLogTail": "8%|█████▊    | 576/1000 [02:42<00:33, 12.69it/s]\rSampling:  58%|█████▊    | 577/1000 [02:42<01:58,  3.56it/s]\nexpressive_ok device=mps wall_s=184.98 out=bench/candidates/product-path/newscast.pre.wav\n",
+  "multiControl": false,
+  "remWarnings": []
+}

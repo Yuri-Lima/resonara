@@ -115,10 +115,11 @@ function synthExpressive(text, outWav, opts = {}) {
   if (!fs.existsSync(py) || !fs.existsSync(synthPy)) {
     throw new Error('Expressive engine not installed');
   }
-  const args = [synthPy, '--text', text, '--out', outWav];
+  // synthesize.py accepts --output (not --out); emotion is REM/runtime, not a CLI flag
+  const args = [synthPy, '--text', text, '--output', outWav];
   if (opts.exaggeration != null) args.push('--exaggeration', String(opts.exaggeration));
-  if (opts.emotion) args.push('--emotion', opts.emotion);
   if (opts.refAudio) args.push('--ref', opts.refAudio);
+  if (opts.voice) args.push('--voice', opts.voice);
   const r = spawnSync(py, args, {
     encoding: 'utf8',
     maxBuffer: 50 * 1024 * 1024,

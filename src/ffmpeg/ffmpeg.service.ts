@@ -1033,6 +1033,38 @@ export class FfmpegService implements OnModuleInit {
   }
 
   /**
+   * Apply an arbitrary ffmpeg audio filter graph (-af) and write PCM WAV.
+   * Used by expressive directed-affect humanization (asetrate/atempo/EQ).
+   */
+  async applyAudioFilter(
+    inputPath: string,
+    outputPath: string,
+    filterGraph: string,
+  ): Promise<string> {
+    if (!filterGraph?.trim()) {
+      await fs.promises.copyFile(inputPath, outputPath);
+      return outputPath;
+    }
+    await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
+    await this.runFfmpegRaw([
+      '-hide_banner',
+      '-y',
+      '-i',
+      inputPath,
+      '-af',
+      filterGraph,
+      '-acodec',
+      'pcm_s16le',
+      outputPath,
+    ]);
+    const outStat = await fs.promises.stat(outputPath).catch(() => null);
+    if (!outStat || outStat.size < 256) {
+      await fs.promises.copyFile(inputPath, outputPath);
+    }
+    return outputPath;
+  }
+
+  /**
    * Generate a silent WAV of the given duration (seconds).
    * Used for inter-paragraph / inter-speaker pauses.
    */

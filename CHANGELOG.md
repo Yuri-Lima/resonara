@@ -14,11 +14,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Blind evaluation lab + prosody metrics + CMOS gates
 - Human-Voice Frontier deliverable dashboard section
 - macOS / Windows installer targets for the expressive release (`Resonara-2.1.0-arm64.dmg`, `Resonara Setup 2.1.0.exe`)
+- **Product-path direction runtime** (`direction-runtime.ts`): job `exaggeration`, REM per-segment controls, and `humanize` directed AF are applied at synth time (not scaffolding)
+- Content→affect fallback for plain monologues (`contentAffectFromText`) when `humanize=true`
+- Gate 2 product-path re-cert harness (`npm run recert:gate2`) and scored artifacts (`bench/eval/gate2-product-path-*`, mean CMOS **+0.75** PASS)
+- `blind-gate.js --expr-root` / `--tag` so product-path scoring does not clobber offline Gate 2 ledgers
 
 ### Changed
 
 - Product version **2.0.0 → 2.1.0** (package, OpenAPI, GitHub Pages download fallbacks)
 - Marketing/docs download URLs now point at **v2.1.0** macOS DMG/ZIP and Windows NSIS assets
+- Expressive synth no longer hardcodes `exaggeration: 0.55` over the request/REM value
+- REM compile keeps native tags for expressive; non-expressive still gets speakable-only text
+- Frontier dashboard Gate 2 figure uses **product-path +0.75** (shipping path), not offline directed-final alone
+- `styleProfile: drama` maps to narrative affect (not animated/joy); emotion comes from content/REM
+
+### Fixed
+
+- Dead `directedAudioFilter` / `emotionToAffect` — now invoked via `FfmpegService.applyAudioFilter` when `humanize=true`
+- Gate 2 honesty: offline directed-final (+1.0) vs product-path re-cert (+0.75)
+- `render-expressive-fixtures.js` expressive CLI flag `--out` → `--output` (matches `synthesize.py`)
+- Multi-emotion dialogue: document-level AF stays neutral (`multiControl`) so grief/joy do not paint the whole clip
 
 ## [2.0.0] — 2026-07-12
 
