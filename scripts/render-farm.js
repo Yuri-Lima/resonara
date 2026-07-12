@@ -451,17 +451,30 @@ async function runOneJob(job, port, state, statePath, logStream) {
       throw new Error(`tts job ${jobId} status=${publicJob.status} err=${publicJob.error || ''}`);
     }
 
-    // Download (novel-length WAVs can be hundreds of MB — allow long transfer)
+    // Collect audio: prefer local copy when lite server wrote outputPath on this host
+    // (HTTP download buffers entire body — fails for >~2GB Node Buffer limit on soak novels).
     fs.mkdirSync(path.dirname(job.outPath), { recursive: true });
-    const dlTimeout = Number(process.env.FARM_DOWNLOAD_TIMEOUT_MS || 30 * 60 * 1000);
-    const dl = await httpRequest('GET', port, `/tts/jobs/${jobId}/download`, null, dlTimeout);
-    if (dl.status >= 400 || !dl.raw || !dl.raw.length) {
-      throw new Error(`download failed status=${dl.status}`);
+    let bytes = 0;
+    const localOut =
+      publicJob.outputPath &&
+      typeof publicJob.outputPath === 'string' &&
+      fs.existsSync(publicJob.outputPath)
+        ? publicJob.outputPath
+        : null;
+    if (localOut) {
+      fs.copyFileSync(localOut, job.outPath);
+      bytes = fs.statSync(job.outPath).size;
+    } else {
+      const dlTimeout = Number(process.env.FARM_DOWNLOAD_TIMEOUT_MS || 30 * 60 * 1000);
+      const dl = await httpRequest('GET', port, `/tts/jobs/${jobId}/download`, null, dlTimeout);
+      if (dl.status >= 400 || !dl.raw || !dl.raw.length) {
+        throw new Error(`download failed status=${dl.status}`);
+      }
+      fs.writeFileSync(job.outPath, dl.raw);
+      bytes = dl.raw.length;
     }
-    fs.writeFileSync(job.outPath, dl.raw);
 
     const ms = Date.now() - started;
-    const bytes = dl.raw.length;
     const durationSec =
       publicJob.durationSec ||
       publicJob.duration ||

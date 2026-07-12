@@ -224,5 +224,13 @@
       "maxMeanRtf": 5
     }
   },
-  "generatedAt": "2026-07-12T15:42:44.028Z"
+  "generatedAt": "2026-07-12T15:42:44.028Z",
+  "soak": {
+    "verdict": "GO",
+    "plateau": true
+  },
+  "packaging": {
+    "verdict": "GO"
+  },
+  "finalAt": "2026-07-12T16:08:13.703Z"
 }

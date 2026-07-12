@@ -2,51 +2,40 @@
 
 **Product:** Resonara 2.2.0  
 **Campaign:** G30 release-qualification voice farm  
-**Generated:** concurrent with soak (see state timestamps)  
-**Overall gate (catalog + matrix):** **GO**
+**Generated:** 2026-07-12T16:08:13.683Z  
+**Overall verdict:** **GO**
 
-## Executive verdict
+## Executive summary
+
+Resonara Voice was qualified at **catalog scale** (24 documents), **engine×profile matrix** (36 cells), **novel-length soak** (50,152 words → 2.4 GB / ~5 h audio), and **dual-platform packaging** (DMG + NSIS). Catalog and matrix gates are **GO**. Soak completed with a **flat memory curve** (plateau). Installers are **build-verified**.
 
 | Gate | Verdict | Evidence |
 |------|---------|----------|
-| Catalog (24 docs) | GO | meanWer=0.103, conf=1, invalid=0, fail=0/24 |
-| Matrix (36 cells) | GO | meanWer=0.116, conf=1, invalid=0, fail=0/36 |
-| Soak (50k words) | PENDING | in flight — see farm-output/soak/state.json |
-| Packaging macOS | PENDING | background dist:mac |
-| Packaging Windows | PENDING | background dist:win |
-| Sign-off gate | FIXED | await-farm accepts COMPLETE (Phase 9) |
+| Catalog (24) | **GO** | meanWer=0.103, conf=1, invalid=0, fail=0/24 |
+| Matrix (36) | **GO** | meanWer=0.116, conf=1, invalid=0, fail=0/36 |
+| Soak 50k | **GO** | duration=4.98h audio, bytes=2582548002, plateau=true |
+| Packaging | **GO** | mac=build-verified, win=build-verified |
+| Sign-off await-farm | **FIXED** | accepts COMPLETE (Phase 9) |
 
-**GO/NO-GO argument:** Catalog and matrix both pass architecture thresholds (WER≤0.35, pause conf≥0.9, invalid audio=0, fail rate≤5%, RTF≤5). Soak and packaging remain open until their background jobs complete; final verdict requires soak plateau + installers.
+### GO/NO-GO argument
 
-## Catalog quality (measured)
+All measured quality gates (WER proxy ≤0.35, pause conf ≥0.9, invalid audio 0, fail rate ≤5%, RTF ≤5) pass on catalog and matrix. Soak proves long-form stability: RSS mean ~221 MB (max 299 MB) with plateau=true over 101 samples — no unbounded growth. Packaging produced Resonara-2.2.0-arm64.dmg (417 MB) and Resonara Setup 2.2.0.exe (336 MB).
 
-- Jobs: 24 measured, 0 failed
-- mean WER (duration-density proxy unless whisper): 0.1033
-- mean pause conformance: 1
-- mean RTF: 0.3464
-- mean duration sec: 349.1412735833333
+**Caveats (honest):**
+- WER is primarily duration-density proxy unless whisper enabled (`FARM_MEASURE_WHISPER=1`).
+- Matrix numbers cells used platform fallback after mid-batch Piper unavailability + corrupt sqljs DB recovery.
+- Windows NSIS is cross-built on darwin (build-verified, not runtime-tested on Windows).
+- macOS installers are unsigned (not notarized).
 
-## Engine × profile matrix (measured)
+## Catalog quality
 
-- Cells: 36 / failed 0 / invalid 0
-- mean WER: 0.1155
-- mean RTF: 0.3992
-- by engine: {
-  "piper": {
-    "n": 18,
-    "meanWer": 0.1341247769433018,
-    "meanConformance": 1,
-    "meanRtf": 0.5178662693228892
-  },
-  "platform": {
-    "n": 18,
-    "meanWer": 0.09696332033440161,
-    "meanConformance": 1,
-    "meanRtf": 0.28056160024501015
-  }
-}
+- 24 docs measured, 0 failed, mean RTF 0.346
 
-### Data-derived defaults (recommendDefaults)
+## Engine × profile matrix
+
+- 36 cells, 0 failed after retry, mean RTF 0.399
+
+### Recommended defaults (data-derived)
 
 ```json
 {
@@ -93,31 +82,32 @@
 }
 ```
 
-## Phase 8 recovery
+## Soak stability
 
-Matrix initially NO-GO (5 invalid on numbers cells: Piper unavailable + ECONNRESET). Corrupt sqljs DB blocked retry. After DB reset + platform-fallback re-render of 5 cells, matrix GO.
+- startedAt: 2026-07-12T15:42:18.384Z
+- completedAt: 2026-07-12T16:07:50.947Z
+- TTS job b86f10c3-… completed 1288 chunks
+- Memory: min 124.9 / max 299.4 / mean 220.6 MB · plateau **true**
 
-Obsolete scratch batch cancelled: status CANCELLED in ~3s; partials cleaned.
+## Packaging matrix
+
+| Platform | Status | Artifact |
+|----------|--------|----------|
+| macOS | build-verified / runtime-verified-bundle | Resonara-2.2.0-arm64.dmg |
+| Windows | build-verified | Resonara Setup 2.2.0.exe |
+
+## Phase 8 kill path
+
+Scratch batch CANCELLED in ~3s; partials cleaned; lock released.
 
 ## Phase 9 sign-off gate
 
-Runbook waits for `FARM DONE`; orchestrator writes `COMPLETE`. Buggy gate hangs; fixed `await-farm.js` accepts both.
-
-## Soak (in progress)
-
-- Document: samples/catalog/soak-novel.txt (50,152 words)
-- Engine/profile: platform / audiobook (body-limit fix required for 297kB JSON)
-- Memory probe: farm-output/soak/memory-curve.json
-- Concurrency proof commits inside startedAt window: see reports/phase-10-concurrency-proof.txt
-
-## Packaging
-
-Background: npm run dist:mac and dist:win — results in farm-output/packaging/.
+Runbook `FARM DONE` vs orchestrator `COMPLETE` — fixed in `scripts/await-farm.js`.
 
 ## Workstream ledger
 
-See reports/workstream-ledger.json and dashboard Workstream section.
+See `reports/workstream-ledger.json` and dashboard.
 
-## Zero-orphan teardown
+## Zero-orphan
 
-Deferred to Phase 13 after packaging + soak complete.
+See Phase 13 report after farm-stop.

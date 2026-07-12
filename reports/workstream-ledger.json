@@ -98,16 +98,18 @@
     "id": "p10-soak-bg",
     "phase": 10,
     "purpose": "50k novel soak platform+audiobook",
-    "outcome": "running",
+    "outcome": "collected",
     "kind": "background",
-    "startedAt": "2026-07-12T15:42:18Z"
+    "startedAt": "2026-07-12T15:42:18Z",
+    "completedAt": "2026-07-12T16:07:30Z"
   },
   {
     "id": "p10-memory-probe",
     "phase": 10,
     "purpose": "RSS/handle sampling",
-    "outcome": "running",
-    "kind": "background"
+    "outcome": "collected",
+    "kind": "background",
+    "completedAt": "2026-07-12T16:07:30Z"
   },
   {
     "id": "p10-body-limit-fix",
@@ -116,5 +118,28 @@
     "outcome": "collected",
     "kind": "concurrent",
     "startedAt": "2026-07-12T15:42:29Z"
+  },
+  {
+    "id": "p11-dist-mac",
+    "phase": 11,
+    "purpose": "dist:mac background",
+    "outcome": "collected",
+    "startedAt": "2026-07-12T15:42:57Z",
+    "completedAt": "2026-07-12T15:44:07Z"
+  },
+  {
+    "id": "p11-dist-win",
+    "phase": 11,
+    "purpose": "dist:win background",
+    "outcome": "collected",
+    "startedAt": "2026-07-12T15:42:57Z",
+    "completedAt": "2026-07-12T15:44:36Z"
+  },
+  {
+    "id": "p8-scratch-kill-mark",
+    "phase": 8,
+    "purpose": "obsolete batch kill",
+    "outcome": "killed",
+    "note": "Phase 8 CANCELLED scratch"
   }
 ]

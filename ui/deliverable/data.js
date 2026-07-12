@@ -1,5 +1,5 @@
 window.FARM_DATA = {
-  "generatedAt": "2026-07-12T15:42:44.051Z",
+  "generatedAt": "2026-07-12T16:08:13.720Z",
   "verdict": "GO",
   "gates": {
     "verdict": "GO",
@@ -227,7 +227,15 @@ window.FARM_DATA = {
         "maxMeanRtf": 5
       }
     },
-    "generatedAt": "2026-07-12T15:42:44.028Z"
+    "generatedAt": "2026-07-12T15:42:44.028Z",
+    "soak": {
+      "verdict": "GO",
+      "plateau": true
+    },
+    "packaging": {
+      "verdict": "GO"
+    },
+    "finalAt": "2026-07-12T16:08:13.703Z"
   },
   "catalog": {
     "rows": [
@@ -3080,45 +3088,761 @@ window.FARM_DATA = {
           "rssKB": 220512,
           "rssMB": 215.34375,
           "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:42:52.471Z",
+          "pid": 45849,
+          "rssKB": 205616,
+          "rssMB": 200.796875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:43:07.479Z",
+          "pid": 45849,
+          "rssKB": 214272,
+          "rssMB": 209.25,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:43:22.458Z",
+          "pid": 45849,
+          "rssKB": 219584,
+          "rssMB": 214.4375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:43:37.464Z",
+          "pid": 45849,
+          "rssKB": 222416,
+          "rssMB": 217.203125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:43:52.462Z",
+          "pid": 45849,
+          "rssKB": 228720,
+          "rssMB": 223.359375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:44:07.483Z",
+          "pid": 45849,
+          "rssKB": 222752,
+          "rssMB": 217.53125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:44:22.469Z",
+          "pid": 45849,
+          "rssKB": 220880,
+          "rssMB": 215.703125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:44:37.470Z",
+          "pid": 45849,
+          "rssKB": 223328,
+          "rssMB": 218.09375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:44:52.482Z",
+          "pid": 45849,
+          "rssKB": 228240,
+          "rssMB": 222.890625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:45:07.472Z",
+          "pid": 45849,
+          "rssKB": 233408,
+          "rssMB": 227.9375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:45:22.475Z",
+          "pid": 45849,
+          "rssKB": 218640,
+          "rssMB": 213.515625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:45:37.476Z",
+          "pid": 45849,
+          "rssKB": 225056,
+          "rssMB": 219.78125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:45:52.492Z",
+          "pid": 45849,
+          "rssKB": 218720,
+          "rssMB": 213.59375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:46:07.477Z",
+          "pid": 45849,
+          "rssKB": 219680,
+          "rssMB": 214.53125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:46:22.476Z",
+          "pid": 45849,
+          "rssKB": 218784,
+          "rssMB": 213.65625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:46:37.480Z",
+          "pid": 45849,
+          "rssKB": 218816,
+          "rssMB": 213.6875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:46:52.480Z",
+          "pid": 45849,
+          "rssKB": 223680,
+          "rssMB": 218.4375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:47:07.481Z",
+          "pid": 45849,
+          "rssKB": 227920,
+          "rssMB": 222.578125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:47:22.518Z",
+          "pid": 45849,
+          "rssKB": 230608,
+          "rssMB": 225.203125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:47:37.483Z",
+          "pid": 45849,
+          "rssKB": 225936,
+          "rssMB": 220.640625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:47:52.482Z",
+          "pid": 45849,
+          "rssKB": 226000,
+          "rssMB": 220.703125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:48:07.485Z",
+          "pid": 45849,
+          "rssKB": 228576,
+          "rssMB": 223.21875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:48:22.485Z",
+          "pid": 45849,
+          "rssKB": 252128,
+          "rssMB": 246.21875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:48:37.485Z",
+          "pid": 45849,
+          "rssKB": 249440,
+          "rssMB": 243.59375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:48:52.487Z",
+          "pid": 45849,
+          "rssKB": 246800,
+          "rssMB": 241.015625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:49:07.488Z",
+          "pid": 45849,
+          "rssKB": 267008,
+          "rssMB": 260.75,
+          "handles": 23
+        },
+        {
+          "t": "2026-07-12T15:49:22.491Z",
+          "pid": 45849,
+          "rssKB": 275408,
+          "rssMB": 268.953125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:49:37.488Z",
+          "pid": 45849,
+          "rssKB": 256656,
+          "rssMB": 250.640625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:49:52.490Z",
+          "pid": 45849,
+          "rssKB": 276224,
+          "rssMB": 269.75,
+          "handles": 23
+        },
+        {
+          "t": "2026-07-12T15:50:07.511Z",
+          "pid": 45849,
+          "rssKB": 250096,
+          "rssMB": 244.234375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:50:22.503Z",
+          "pid": 45849,
+          "rssKB": 255504,
+          "rssMB": 249.515625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:50:37.501Z",
+          "pid": 45849,
+          "rssKB": 264672,
+          "rssMB": 258.46875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:50:52.503Z",
+          "pid": 45849,
+          "rssKB": 257216,
+          "rssMB": 251.1875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:51:07.528Z",
+          "pid": 45849,
+          "rssKB": 248336,
+          "rssMB": 242.515625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:51:22.546Z",
+          "pid": 45849,
+          "rssKB": 274464,
+          "rssMB": 268.03125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:51:37.551Z",
+          "pid": 45849,
+          "rssKB": 262816,
+          "rssMB": 256.65625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:51:52.556Z",
+          "pid": 45849,
+          "rssKB": 265024,
+          "rssMB": 258.8125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:52:07.575Z",
+          "pid": 45849,
+          "rssKB": 258720,
+          "rssMB": 252.65625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:52:22.559Z",
+          "pid": 45849,
+          "rssKB": 243328,
+          "rssMB": 237.625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:52:37.558Z",
+          "pid": 45849,
+          "rssKB": 270928,
+          "rssMB": 264.578125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:52:52.561Z",
+          "pid": 45849,
+          "rssKB": 263504,
+          "rssMB": 257.328125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:53:07.561Z",
+          "pid": 45849,
+          "rssKB": 281744,
+          "rssMB": 275.140625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:53:22.563Z",
+          "pid": 45849,
+          "rssKB": 263392,
+          "rssMB": 257.21875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:53:37.566Z",
+          "pid": 45849,
+          "rssKB": 262256,
+          "rssMB": 256.109375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:53:52.570Z",
+          "pid": 45849,
+          "rssKB": 293472,
+          "rssMB": 286.59375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:54:07.566Z",
+          "pid": 45849,
+          "rssKB": 269664,
+          "rssMB": 263.34375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:54:22.570Z",
+          "pid": 45849,
+          "rssKB": 256496,
+          "rssMB": 250.484375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:54:37.573Z",
+          "pid": 45849,
+          "rssKB": 270192,
+          "rssMB": 263.859375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:54:52.575Z",
+          "pid": 45849,
+          "rssKB": 292256,
+          "rssMB": 285.40625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:55:07.573Z",
+          "pid": 45849,
+          "rssKB": 306592,
+          "rssMB": 299.40625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:55:22.578Z",
+          "pid": 45849,
+          "rssKB": 264784,
+          "rssMB": 258.578125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:55:37.583Z",
+          "pid": 45849,
+          "rssKB": 244288,
+          "rssMB": 238.5625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:55:52.579Z",
+          "pid": 45849,
+          "rssKB": 259712,
+          "rssMB": 253.625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:56:07.580Z",
+          "pid": 45849,
+          "rssKB": 264128,
+          "rssMB": 257.9375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:56:22.581Z",
+          "pid": 45849,
+          "rssKB": 256144,
+          "rssMB": 250.140625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:56:37.582Z",
+          "pid": 45849,
+          "rssKB": 254048,
+          "rssMB": 248.09375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:56:52.583Z",
+          "pid": 45849,
+          "rssKB": 278400,
+          "rssMB": 271.875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:57:07.601Z",
+          "pid": 45849,
+          "rssKB": 272384,
+          "rssMB": 266,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:57:22.589Z",
+          "pid": 45849,
+          "rssKB": 280160,
+          "rssMB": 273.59375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:57:37.611Z",
+          "pid": 45849,
+          "rssKB": 255744,
+          "rssMB": 249.75,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:57:52.593Z",
+          "pid": 45849,
+          "rssKB": 265568,
+          "rssMB": 259.34375,
+          "handles": 23
+        },
+        {
+          "t": "2026-07-12T15:58:07.591Z",
+          "pid": 45849,
+          "rssKB": 271376,
+          "rssMB": 265.015625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:58:22.593Z",
+          "pid": 45849,
+          "rssKB": 213936,
+          "rssMB": 208.921875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:58:37.593Z",
+          "pid": 45849,
+          "rssKB": 203232,
+          "rssMB": 198.46875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:58:52.595Z",
+          "pid": 45849,
+          "rssKB": 207888,
+          "rssMB": 203.015625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:59:07.597Z",
+          "pid": 45849,
+          "rssKB": 211552,
+          "rssMB": 206.59375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:59:22.595Z",
+          "pid": 45849,
+          "rssKB": 211632,
+          "rssMB": 206.671875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:59:37.599Z",
+          "pid": 45849,
+          "rssKB": 211648,
+          "rssMB": 206.6875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T15:59:52.600Z",
+          "pid": 45849,
+          "rssKB": 208928,
+          "rssMB": 204.03125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:00:07.602Z",
+          "pid": 45849,
+          "rssKB": 211232,
+          "rssMB": 206.28125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:00:22.602Z",
+          "pid": 45849,
+          "rssKB": 212688,
+          "rssMB": 207.703125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:00:37.602Z",
+          "pid": 45849,
+          "rssKB": 210576,
+          "rssMB": 205.640625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:00:52.603Z",
+          "pid": 45849,
+          "rssKB": 207872,
+          "rssMB": 203,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:01:07.604Z",
+          "pid": 45849,
+          "rssKB": 210848,
+          "rssMB": 205.90625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:01:22.607Z",
+          "pid": 45849,
+          "rssKB": 212976,
+          "rssMB": 207.984375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:01:37.607Z",
+          "pid": 45849,
+          "rssKB": 210864,
+          "rssMB": 205.921875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:01:52.613Z",
+          "pid": 45849,
+          "rssKB": 212256,
+          "rssMB": 207.28125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:02:07.609Z",
+          "pid": 45849,
+          "rssKB": 208608,
+          "rssMB": 203.71875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:02:22.614Z",
+          "pid": 45849,
+          "rssKB": 214080,
+          "rssMB": 209.0625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:02:37.610Z",
+          "pid": 45849,
+          "rssKB": 216240,
+          "rssMB": 211.171875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:02:52.618Z",
+          "pid": 45849,
+          "rssKB": 214768,
+          "rssMB": 209.734375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:03:07.614Z",
+          "pid": 45849,
+          "rssKB": 217808,
+          "rssMB": 212.703125,
+          "handles": 26
+        },
+        {
+          "t": "2026-07-12T16:03:22.618Z",
+          "pid": 45849,
+          "rssKB": 217808,
+          "rssMB": 212.703125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:03:37.619Z",
+          "pid": 45849,
+          "rssKB": 214416,
+          "rssMB": 209.390625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:03:52.637Z",
+          "pid": 45849,
+          "rssKB": 127904,
+          "rssMB": 124.90625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:04:07.619Z",
+          "pid": 45849,
+          "rssKB": 131856,
+          "rssMB": 128.765625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:04:22.624Z",
+          "pid": 45849,
+          "rssKB": 128528,
+          "rssMB": 125.515625,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:04:37.622Z",
+          "pid": 45849,
+          "rssKB": 131264,
+          "rssMB": 128.1875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:04:52.624Z",
+          "pid": 45849,
+          "rssKB": 134432,
+          "rssMB": 131.28125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:05:07.624Z",
+          "pid": 45849,
+          "rssKB": 134432,
+          "rssMB": 131.28125,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:05:22.626Z",
+          "pid": 45849,
+          "rssKB": 137328,
+          "rssMB": 134.109375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:05:37.625Z",
+          "pid": 45849,
+          "rssKB": 138672,
+          "rssMB": 135.421875,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:05:52.629Z",
+          "pid": 45849,
+          "rssKB": 133488,
+          "rssMB": 130.359375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:06:07.627Z",
+          "pid": 45849,
+          "rssKB": 133488,
+          "rssMB": 130.359375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:06:22.629Z",
+          "pid": 45849,
+          "rssKB": 133488,
+          "rssMB": 130.359375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:06:37.630Z",
+          "pid": 45849,
+          "rssKB": 136560,
+          "rssMB": 133.359375,
+          "handles": 25
+        },
+        {
+          "t": "2026-07-12T16:06:52.633Z",
+          "pid": 45849,
+          "rssKB": 151552,
+          "rssMB": 148,
+          "handles": 23
+        },
+        {
+          "t": "2026-07-12T16:07:07.616Z",
+          "pid": 45849,
+          "rssKB": 225232,
+          "rssMB": 219.953125,
+          "handles": 22
+        },
+        {
+          "t": "2026-07-12T16:07:22.609Z",
+          "pid": 45849,
+          "rssKB": 225232,
+          "rssMB": 219.953125,
+          "handles": 22
+        },
+        {
+          "t": "2026-07-12T16:07:37.606Z",
+          "pid": 45849,
+          "rssKB": 229280,
+          "rssMB": 223.90625,
+          "handles": 22
         }
       ],
-      "plateau": false,
-      "startedAt": "2026-07-12T15:42:22.399Z"
+      "plateau": true,
+      "startedAt": "2026-07-12T15:42:22.399Z",
+      "completedAt": "2026-07-12T16:07:50.969Z",
+      "summary": {
+        "n": 101,
+        "minMB": 124.90625,
+        "maxMB": 299.40625,
+        "lastMB": 223.90625,
+        "meanMB": 220.62391707920793
+      }
     },
     "state": {
-      "status": "RUNNING",
+      "status": "COMPLETE",
       "batch": "soak",
       "total": 1,
-      "done": 0,
+      "done": 1,
       "failed": 0,
-      "inFlight": [
-        "soak-novel__platform__audiobook"
-      ],
+      "inFlight": [],
       "startedAt": "2026-07-12T15:42:18.384Z",
-      "updatedAt": "2026-07-12T15:42:21.083Z",
-      "completedAt": null,
+      "updatedAt": "2026-07-12T16:07:50.947Z",
+      "completedAt": "2026-07-12T16:07:50.947Z",
       "concurrency": 1,
       "throughput": [
         {
           "t": "2026-07-12T15:42:18.384Z",
           "done": 0
+        },
+        {
+          "t": "2026-07-12T16:06:55.586Z",
+          "done": 1
         }
       ],
       "jobs": {
         "soak-novel__platform__audiobook": {
-          "status": "running",
+          "status": "ok",
           "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/soak/soak-novel__platform__audiobook.wav",
           "engine": "platform",
           "language": "en",
           "profile": "audiobook",
           "docId": "soak-novel",
           "startedAt": "2026-07-12T15:42:20.223Z",
-          "ttsJobId": "b86f10c3-0af1-458f-ba96-8a1066320662"
+          "ttsJobId": "b86f10c3-0af1-458f-ba96-8a1066320662",
+          "id": "soak-novel__platform__audiobook",
+          "ms": 1475363,
+          "bytes": 2582548002,
+          "recoveredFrom": "local-outputPath-copy",
+          "note": "TTS job completed 1288/1288; farm HTTP download hit Node 2GB Buffer limit; recovered via fs copy"
         }
       },
       "appPort": 3860,
       "statusPort": 3861,
-      "manifestPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/soak/manifest.json"
+      "manifestPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/soak/manifest.json",
+      "maxInFlight": 1
     }
   },
   "throughput": {
@@ -3437,6 +4161,11 @@ window.FARM_DATA = {
         "t": "2026-07-12T15:42:18.384Z",
         "done": 0,
         "batch": "soak"
+      },
+      {
+        "t": "2026-07-12T16:06:55.586Z",
+        "done": 1,
+        "batch": "soak"
       }
     ],
     "concurrency": 3
@@ -3541,16 +4270,18 @@ window.FARM_DATA = {
       "id": "p10-soak-bg",
       "phase": 10,
       "purpose": "50k novel soak platform+audiobook",
-      "outcome": "running",
+      "outcome": "collected",
       "kind": "background",
-      "startedAt": "2026-07-12T15:42:18Z"
+      "startedAt": "2026-07-12T15:42:18Z",
+      "completedAt": "2026-07-12T16:07:30Z"
     },
     {
       "id": "p10-memory-probe",
       "phase": 10,
       "purpose": "RSS/handle sampling",
-      "outcome": "running",
-      "kind": "background"
+      "outcome": "collected",
+      "kind": "background",
+      "completedAt": "2026-07-12T16:07:30Z"
     },
     {
       "id": "p10-body-limit-fix",
@@ -3559,14 +4290,73 @@ window.FARM_DATA = {
       "outcome": "collected",
       "kind": "concurrent",
       "startedAt": "2026-07-12T15:42:29Z"
+    },
+    {
+      "id": "p11-dist-mac",
+      "phase": 11,
+      "purpose": "dist:mac background",
+      "outcome": "collected",
+      "startedAt": "2026-07-12T15:42:57Z",
+      "completedAt": "2026-07-12T15:44:07Z"
+    },
+    {
+      "id": "p11-dist-win",
+      "phase": 11,
+      "purpose": "dist:win background",
+      "outcome": "collected",
+      "startedAt": "2026-07-12T15:42:57Z",
+      "completedAt": "2026-07-12T15:44:36Z"
+    },
+    {
+      "id": "p8-scratch-kill-mark",
+      "phase": 8,
+      "purpose": "obsolete batch kill",
+      "outcome": "killed",
+      "note": "Phase 8 CANCELLED scratch"
     }
   ],
   "packaging": {
-    "mac": "pending",
-    "win": "pending",
-    "macArtifact": null,
-    "winArtifact": null,
-    "macSmoke": null,
-    "notes": "Filled in Phase 11"
+    "mac": "build-verified",
+    "macRuntime": "runtime-verified-bundle",
+    "win": "build-verified",
+    "artifacts": {
+      "Resonara Setup 2.2.0.exe": {
+        "bytes": 351801750,
+        "mb": 335.5
+      },
+      "Resonara Setup 2.2.0.exe.blockmap": {
+        "bytes": 351347,
+        "mb": 0.3
+      },
+      "Resonara-2.2.0-arm64-mac.zip": {
+        "bytes": 458461115,
+        "mb": 437.2
+      },
+      "Resonara-2.2.0-arm64-mac.zip.blockmap": {
+        "bytes": 475669,
+        "mb": 0.5
+      },
+      "Resonara-2.2.0-arm64.dmg": {
+        "bytes": 437389861,
+        "mb": 417.1
+      },
+      "Resonara-2.2.0-arm64.dmg.blockmap": {
+        "bytes": 457443,
+        "mb": 0.4
+      },
+      "builder-debug.yml": {
+        "bytes": 7867,
+        "mb": 0
+      },
+      "latest-mac.yml": {
+        "bytes": 508,
+        "mb": 0
+      },
+      "latest.yml": {
+        "bytes": 345,
+        "mb": 0
+      }
+    },
+    "completedAt": "2026-07-12T15:54:02.546Z"
   }
 };
