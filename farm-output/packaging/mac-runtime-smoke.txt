@@ -1,0 +1,14 @@
+bundle_ok=1
+release/mac-arm64/Resonara.app/Contents/MacOS/Resonara: Mach-O 64-bit executable arm64
+{
+  "CFBundleDisplayName" => "Resonara"
+  "CFBundleExecutable" => "Resonara"
+  "CFBundleIconFile" => "electron.icns"
+  "CFBundleIdentifier" => "app.resonara.desktop"
+  "CFBundleInfoDictionaryVersion" => "6.0"
+  "CFBundleName" => "Resonara"
+  "CFBundlePackageType" => "APPL"
+  "CFBundleShortVersionString" => "2.2.0"
+  "CFBundleVersion" => "2.2.0"
+  "DTCompiler" => "com.apple.compilers.llvm.clang.1_0"
+  "DTSDKBuild" => "24F74"
