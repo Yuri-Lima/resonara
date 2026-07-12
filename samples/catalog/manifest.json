@@ -1,0 +1,235 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-12T14:39:29.866Z",
+  "seed": 42,
+  "soakWords": 50000,
+  "documentCount": 25,
+  "nonSoakCount": 24,
+  "documents": [
+    {
+      "id": "en-short-article",
+      "path": "samples/catalog/en-short-article.txt",
+      "language": "en",
+      "contentType": "short-article",
+      "wordCount": 471,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "en-news",
+      "path": "samples/catalog/en-news.txt",
+      "language": "en",
+      "contentType": "news",
+      "wordCount": 2039,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "en-book-chapter",
+      "path": "samples/catalog/en-book-chapter.txt",
+      "language": "en",
+      "contentType": "book-chapter",
+      "wordCount": 5164,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "en-technical-doc",
+      "path": "samples/catalog/en-technical-doc.txt",
+      "language": "en",
+      "contentType": "technical-doc",
+      "wordCount": 3102,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "en-dialogue-script",
+      "path": "samples/catalog/en-dialogue-script.txt",
+      "language": "en",
+      "contentType": "dialogue-script",
+      "wordCount": 75,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "en-ssml-showcase",
+      "path": "samples/catalog/en-ssml-showcase.txt",
+      "language": "en",
+      "contentType": "ssml-showcase",
+      "wordCount": 47,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "en-children-story",
+      "path": "samples/catalog/en-children-story.txt",
+      "language": "en",
+      "contentType": "children-story",
+      "wordCount": 288,
+      "source": "generated",
+      "soak": false
+    },
+    {
+      "id": "en-numbers-and-dates",
+      "path": "samples/catalog/en-numbers-and-dates.txt",
+      "language": "en",
+      "contentType": "numbers-and-dates",
+      "wordCount": 50,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "en-pronunciation-challenge",
+      "path": "samples/catalog/en-pronunciation-challenge.txt",
+      "language": "en",
+      "contentType": "pronunciation-challenge",
+      "wordCount": 91,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "en-long-essay",
+      "path": "samples/catalog/en-long-essay.txt",
+      "language": "en",
+      "contentType": "long-form-essay",
+      "wordCount": 1233,
+      "source": "generated",
+      "soak": false
+    },
+    {
+      "id": "en-paragraph",
+      "path": "samples/catalog/en-paragraph.txt",
+      "language": "en",
+      "contentType": "paragraph",
+      "wordCount": 74,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "en-quick-sentence",
+      "path": "samples/catalog/en-quick-sentence.txt",
+      "language": "en",
+      "contentType": "quick-sentence",
+      "wordCount": 16,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "en-news-expanded",
+      "path": "samples/catalog/en-news-expanded.txt",
+      "language": "en",
+      "contentType": "news",
+      "wordCount": 2012,
+      "source": "generated",
+      "soak": false
+    },
+    {
+      "id": "pt-artigo",
+      "path": "samples/catalog/pt-artigo.txt",
+      "language": "pt-BR",
+      "contentType": "short-article",
+      "wordCount": 118,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "pt-noticia",
+      "path": "samples/catalog/pt-noticia.txt",
+      "language": "pt-BR",
+      "contentType": "news",
+      "wordCount": 143,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "pt-capitulo",
+      "path": "samples/catalog/pt-capitulo.txt",
+      "language": "pt-BR",
+      "contentType": "book-chapter",
+      "wordCount": 2612,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "pt-dialogo",
+      "path": "samples/catalog/pt-dialogo.txt",
+      "language": "pt-BR",
+      "contentType": "dialogue-script",
+      "wordCount": 72,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "pt-numeros",
+      "path": "samples/catalog/pt-numeros.txt",
+      "language": "pt-BR",
+      "contentType": "numbers-and-dates",
+      "wordCount": 77,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "pt-tecnico",
+      "path": "samples/catalog/pt-tecnico.txt",
+      "language": "pt-BR",
+      "contentType": "technical-doc",
+      "wordCount": 115,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "pt-pronuncia",
+      "path": "samples/catalog/pt-pronuncia.txt",
+      "language": "pt-BR",
+      "contentType": "pronunciation-challenge",
+      "wordCount": 85,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "pt-ssml",
+      "path": "samples/catalog/pt-ssml.txt",
+      "language": "pt-BR",
+      "contentType": "ssml-showcase",
+      "wordCount": 51,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "pt-historia",
+      "path": "samples/catalog/pt-historia.txt",
+      "language": "pt-BR",
+      "contentType": "children-story",
+      "wordCount": 292,
+      "source": "generated",
+      "soak": false
+    },
+    {
+      "id": "pt-ensaio",
+      "path": "samples/catalog/pt-ensaio.txt",
+      "language": "pt-BR",
+      "contentType": "long-form-essay",
+      "wordCount": 1229,
+      "source": "generated",
+      "soak": false
+    },
+    {
+      "id": "pt-paragrafo",
+      "path": "samples/catalog/pt-paragrafo.txt",
+      "language": "pt-BR",
+      "contentType": "paragraph",
+      "wordCount": 55,
+      "source": "fixture",
+      "soak": false
+    },
+    {
+      "id": "soak-novel",
+      "path": "samples/catalog/soak-novel.txt",
+      "language": "en",
+      "contentType": "soak-novel",
+      "wordCount": 50152,
+      "source": "generated",
+      "soak": true
+    }
+  ]
+}
