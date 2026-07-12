@@ -31,12 +31,12 @@
   },
   "numbers-and-dates": {
     "engine": "platform",
-    "profile": "news",
+    "profile": "podcast",
     "language": "en",
-    "score": 0.8446032867914218,
-    "wer": 0.2490419173277823,
+    "score": 0.864110679806509,
+    "wer": 0.2493341688861037,
     "pauseConformance": 1,
-    "rtf": 0.25918950778386646,
-    "jobId": "en-numbers-and-dates__platform__news"
+    "rtf": 0.08086479711734294,
+    "jobId": "en-numbers-and-dates__platform__podcast"
   }
 }

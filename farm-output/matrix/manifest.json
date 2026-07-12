@@ -10,7 +10,7 @@
       "language": "en",
       "profile": "audiobook",
       "textPath": "samples/catalog/en-short-article.txt",
-      "outPath": "farm-output/matrix/en-short-article__piper__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__piper__audiobook.wav"
     },
     {
       "id": "en-short-article__piper__podcast",
@@ -19,7 +19,7 @@
       "language": "en",
       "profile": "podcast",
       "textPath": "samples/catalog/en-short-article.txt",
-      "outPath": "farm-output/matrix/en-short-article__piper__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__piper__podcast.wav"
     },
     {
       "id": "en-short-article__piper__news",
@@ -28,7 +28,7 @@
       "language": "en",
       "profile": "news",
       "textPath": "samples/catalog/en-short-article.txt",
-      "outPath": "farm-output/matrix/en-short-article__piper__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__piper__news.wav"
     },
     {
       "id": "en-short-article__platform__audiobook",
@@ -37,7 +37,7 @@
       "language": "en",
       "profile": "audiobook",
       "textPath": "samples/catalog/en-short-article.txt",
-      "outPath": "farm-output/matrix/en-short-article__platform__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__platform__audiobook.wav"
     },
     {
       "id": "en-short-article__platform__podcast",
@@ -46,7 +46,7 @@
       "language": "en",
       "profile": "podcast",
       "textPath": "samples/catalog/en-short-article.txt",
-      "outPath": "farm-output/matrix/en-short-article__platform__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__platform__podcast.wav"
     },
     {
       "id": "en-short-article__platform__news",
@@ -55,7 +55,7 @@
       "language": "en",
       "profile": "news",
       "textPath": "samples/catalog/en-short-article.txt",
-      "outPath": "farm-output/matrix/en-short-article__platform__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-short-article__platform__news.wav"
     },
     {
       "id": "en-news__piper__audiobook",
@@ -64,7 +64,7 @@
       "language": "en",
       "profile": "audiobook",
       "textPath": "samples/catalog/en-news.txt",
-      "outPath": "farm-output/matrix/en-news__piper__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__piper__audiobook.wav"
     },
     {
       "id": "en-news__piper__podcast",
@@ -73,7 +73,7 @@
       "language": "en",
       "profile": "podcast",
       "textPath": "samples/catalog/en-news.txt",
-      "outPath": "farm-output/matrix/en-news__piper__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__piper__podcast.wav"
     },
     {
       "id": "en-news__piper__news",
@@ -82,7 +82,7 @@
       "language": "en",
       "profile": "news",
       "textPath": "samples/catalog/en-news.txt",
-      "outPath": "farm-output/matrix/en-news__piper__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__piper__news.wav"
     },
     {
       "id": "en-news__platform__audiobook",
@@ -91,7 +91,7 @@
       "language": "en",
       "profile": "audiobook",
       "textPath": "samples/catalog/en-news.txt",
-      "outPath": "farm-output/matrix/en-news__platform__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__platform__audiobook.wav"
     },
     {
       "id": "en-news__platform__podcast",
@@ -100,7 +100,7 @@
       "language": "en",
       "profile": "podcast",
       "textPath": "samples/catalog/en-news.txt",
-      "outPath": "farm-output/matrix/en-news__platform__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__platform__podcast.wav"
     },
     {
       "id": "en-news__platform__news",
@@ -109,7 +109,7 @@
       "language": "en",
       "profile": "news",
       "textPath": "samples/catalog/en-news.txt",
-      "outPath": "farm-output/matrix/en-news__platform__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-news__platform__news.wav"
     },
     {
       "id": "en-dialogue-script__piper__audiobook",
@@ -118,7 +118,7 @@
       "language": "en",
       "profile": "audiobook",
       "textPath": "samples/catalog/en-dialogue-script.txt",
-      "outPath": "farm-output/matrix/en-dialogue-script__piper__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__piper__audiobook.wav"
     },
     {
       "id": "en-dialogue-script__piper__podcast",
@@ -127,7 +127,7 @@
       "language": "en",
       "profile": "podcast",
       "textPath": "samples/catalog/en-dialogue-script.txt",
-      "outPath": "farm-output/matrix/en-dialogue-script__piper__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__piper__podcast.wav"
     },
     {
       "id": "en-dialogue-script__piper__news",
@@ -136,7 +136,7 @@
       "language": "en",
       "profile": "news",
       "textPath": "samples/catalog/en-dialogue-script.txt",
-      "outPath": "farm-output/matrix/en-dialogue-script__piper__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__piper__news.wav"
     },
     {
       "id": "en-dialogue-script__platform__audiobook",
@@ -145,7 +145,7 @@
       "language": "en",
       "profile": "audiobook",
       "textPath": "samples/catalog/en-dialogue-script.txt",
-      "outPath": "farm-output/matrix/en-dialogue-script__platform__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__platform__audiobook.wav"
     },
     {
       "id": "en-dialogue-script__platform__podcast",
@@ -154,7 +154,7 @@
       "language": "en",
       "profile": "podcast",
       "textPath": "samples/catalog/en-dialogue-script.txt",
-      "outPath": "farm-output/matrix/en-dialogue-script__platform__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__platform__podcast.wav"
     },
     {
       "id": "en-dialogue-script__platform__news",
@@ -163,7 +163,7 @@
       "language": "en",
       "profile": "news",
       "textPath": "samples/catalog/en-dialogue-script.txt",
-      "outPath": "farm-output/matrix/en-dialogue-script__platform__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-dialogue-script__platform__news.wav"
     },
     {
       "id": "en-numbers-and-dates__piper__audiobook",
@@ -172,7 +172,7 @@
       "language": "en",
       "profile": "audiobook",
       "textPath": "samples/catalog/en-numbers-and-dates.txt",
-      "outPath": "farm-output/matrix/en-numbers-and-dates__piper__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__audiobook.wav"
     },
     {
       "id": "en-numbers-and-dates__piper__podcast",
@@ -181,7 +181,7 @@
       "language": "en",
       "profile": "podcast",
       "textPath": "samples/catalog/en-numbers-and-dates.txt",
-      "outPath": "farm-output/matrix/en-numbers-and-dates__piper__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__podcast.wav"
     },
     {
       "id": "en-numbers-and-dates__piper__news",
@@ -190,7 +190,7 @@
       "language": "en",
       "profile": "news",
       "textPath": "samples/catalog/en-numbers-and-dates.txt",
-      "outPath": "farm-output/matrix/en-numbers-and-dates__piper__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__news.wav"
     },
     {
       "id": "en-numbers-and-dates__platform__audiobook",
@@ -199,7 +199,7 @@
       "language": "en",
       "profile": "audiobook",
       "textPath": "samples/catalog/en-numbers-and-dates.txt",
-      "outPath": "farm-output/matrix/en-numbers-and-dates__platform__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__audiobook.wav"
     },
     {
       "id": "en-numbers-and-dates__platform__podcast",
@@ -208,7 +208,7 @@
       "language": "en",
       "profile": "podcast",
       "textPath": "samples/catalog/en-numbers-and-dates.txt",
-      "outPath": "farm-output/matrix/en-numbers-and-dates__platform__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__podcast.wav"
     },
     {
       "id": "en-numbers-and-dates__platform__news",
@@ -217,7 +217,7 @@
       "language": "en",
       "profile": "news",
       "textPath": "samples/catalog/en-numbers-and-dates.txt",
-      "outPath": "farm-output/matrix/en-numbers-and-dates__platform__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__news.wav"
     },
     {
       "id": "pt-artigo__piper__audiobook",
@@ -226,7 +226,7 @@
       "language": "pt-BR",
       "profile": "audiobook",
       "textPath": "samples/catalog/pt-artigo.txt",
-      "outPath": "farm-output/matrix/pt-artigo__piper__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__piper__audiobook.wav"
     },
     {
       "id": "pt-artigo__piper__podcast",
@@ -235,7 +235,7 @@
       "language": "pt-BR",
       "profile": "podcast",
       "textPath": "samples/catalog/pt-artigo.txt",
-      "outPath": "farm-output/matrix/pt-artigo__piper__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__piper__podcast.wav"
     },
     {
       "id": "pt-artigo__piper__news",
@@ -244,7 +244,7 @@
       "language": "pt-BR",
       "profile": "news",
       "textPath": "samples/catalog/pt-artigo.txt",
-      "outPath": "farm-output/matrix/pt-artigo__piper__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__piper__news.wav"
     },
     {
       "id": "pt-artigo__platform__audiobook",
@@ -253,7 +253,7 @@
       "language": "pt-BR",
       "profile": "audiobook",
       "textPath": "samples/catalog/pt-artigo.txt",
-      "outPath": "farm-output/matrix/pt-artigo__platform__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__platform__audiobook.wav"
     },
     {
       "id": "pt-artigo__platform__podcast",
@@ -262,7 +262,7 @@
       "language": "pt-BR",
       "profile": "podcast",
       "textPath": "samples/catalog/pt-artigo.txt",
-      "outPath": "farm-output/matrix/pt-artigo__platform__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__platform__podcast.wav"
     },
     {
       "id": "pt-artigo__platform__news",
@@ -271,7 +271,7 @@
       "language": "pt-BR",
       "profile": "news",
       "textPath": "samples/catalog/pt-artigo.txt",
-      "outPath": "farm-output/matrix/pt-artigo__platform__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-artigo__platform__news.wav"
     },
     {
       "id": "pt-dialogo__piper__audiobook",
@@ -280,7 +280,7 @@
       "language": "pt-BR",
       "profile": "audiobook",
       "textPath": "samples/catalog/pt-dialogo.txt",
-      "outPath": "farm-output/matrix/pt-dialogo__piper__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__piper__audiobook.wav"
     },
     {
       "id": "pt-dialogo__piper__podcast",
@@ -289,7 +289,7 @@
       "language": "pt-BR",
       "profile": "podcast",
       "textPath": "samples/catalog/pt-dialogo.txt",
-      "outPath": "farm-output/matrix/pt-dialogo__piper__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__piper__podcast.wav"
     },
     {
       "id": "pt-dialogo__piper__news",
@@ -298,7 +298,7 @@
       "language": "pt-BR",
       "profile": "news",
       "textPath": "samples/catalog/pt-dialogo.txt",
-      "outPath": "farm-output/matrix/pt-dialogo__piper__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__piper__news.wav"
     },
     {
       "id": "pt-dialogo__platform__audiobook",
@@ -307,7 +307,7 @@
       "language": "pt-BR",
       "profile": "audiobook",
       "textPath": "samples/catalog/pt-dialogo.txt",
-      "outPath": "farm-output/matrix/pt-dialogo__platform__audiobook.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__platform__audiobook.wav"
     },
     {
       "id": "pt-dialogo__platform__podcast",
@@ -316,7 +316,7 @@
       "language": "pt-BR",
       "profile": "podcast",
       "textPath": "samples/catalog/pt-dialogo.txt",
-      "outPath": "farm-output/matrix/pt-dialogo__platform__podcast.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__platform__podcast.wav"
     },
     {
       "id": "pt-dialogo__platform__news",
@@ -325,7 +325,7 @@
       "language": "pt-BR",
       "profile": "news",
       "textPath": "samples/catalog/pt-dialogo.txt",
-      "outPath": "farm-output/matrix/pt-dialogo__platform__news.wav"
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/pt-dialogo__platform__news.wav"
     }
   ]
 }

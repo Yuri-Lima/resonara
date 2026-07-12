@@ -1,0 +1,15 @@
+{
+  "event": "cancel",
+  "killed": [
+    35586,
+    35611
+  ],
+  "partialsDeleted": [
+    "/private/tmp/trace-sweG30-20260712-163649/farm-output/scratch/scratch-bad-1.wav",
+    "/private/tmp/trace-sweG30-20260712-163649/farm-output/scratch/scratch-bad-2.wav",
+    "/private/tmp/trace-sweG30-20260712-163649/farm-output/scratch/scratch-bad-3.wav",
+    "/private/tmp/trace-sweG30-20260712-163649/farm-output/scratch/scratch-bad-4.wav"
+  ],
+  "statePath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/scratch/state.json",
+  "status": "CANCELLED"
+}

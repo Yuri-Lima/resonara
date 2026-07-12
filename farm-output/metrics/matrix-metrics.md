@@ -1,18 +1,18 @@
 # Farm metrics — matrix
 
-Generated: 2026-07-12T15:36:20.477Z
+Generated: 2026-07-12T15:40:06.258Z
 
 ## Aggregates
 
 | Metric | Value |
 |---|---|
 | total | 36 |
-| measured | 31 |
-| failed | 5 |
+| measured | 36 |
+| failed | 0 |
 | mean WER | 0.0939 |
 | mean pause conformance | 100.0% |
-| mean RTF | 0.447 |
-| invalid audio | 5 |
+| mean RTF | 0.399 |
+| invalid audio | 0 |
 
 ## Per row
 
@@ -36,11 +36,11 @@ Generated: 2026-07-12T15:36:20.477Z
 | en-dialogue-script__platform__audiobook | platform | audiobook | en | 0.144 | 100% | 0.76 | true |
 | en-dialogue-script__platform__podcast | platform | podcast | en | 0.144 | 100% | 0.76 | true |
 | en-dialogue-script__platform__news | platform | news | en | 0.144 | 100% | 0.64 | true |
-| en-numbers-and-dates__piper__audiobook | piper | audiobook | en | — | — | — | false |
-| en-numbers-and-dates__piper__podcast | piper | podcast | en | — | — | — | false |
-| en-numbers-and-dates__piper__news | piper | news | en | — | — | — | false |
-| en-numbers-and-dates__platform__audiobook | platform | audiobook | en | — | — | — | false |
-| en-numbers-and-dates__platform__podcast | platform | podcast | en | — | — | — | false |
+| en-numbers-and-dates__piper__audiobook | platform | undefined | undefined | — | 100% | 0.12 | true |
+| en-numbers-and-dates__piper__podcast | platform | undefined | undefined | — | 100% | 0.14 | true |
+| en-numbers-and-dates__piper__news | platform | undefined | undefined | — | 100% | 0.08 | true |
+| en-numbers-and-dates__platform__audiobook | platform | undefined | undefined | — | 100% | 0.10 | true |
+| en-numbers-and-dates__platform__podcast | platform | undefined | undefined | — | 100% | 0.08 | true |
 | en-numbers-and-dates__platform__news | platform | news | en | 0.249 | 100% | 0.26 | true |
 | pt-artigo__piper__audiobook | piper | audiobook | pt-BR | 0.022 | 100% | 0.77 | true |
 | pt-artigo__piper__podcast | piper | podcast | pt-BR | 0.035 | 100% | 0.79 | true |
@@ -62,4 +62,5 @@ Generated: 2026-07-12T15:36:20.477Z
 | short-article | platform | news | 0.977 |
 | news | platform | news | 0.945 |
 | dialogue-script | platform | news | 0.936 |
+| unknown | platform | undefined | 0.739 |
 | numbers-and-dates | platform | news | 0.845 |
