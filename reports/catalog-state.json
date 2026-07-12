@@ -1,0 +1,480 @@
+{
+  "status": "COMPLETE",
+  "batch": "catalog",
+  "total": 24,
+  "done": 24,
+  "failed": 0,
+  "inFlight": [],
+  "startedAt": "2026-07-12T14:42:16.200Z",
+  "updatedAt": "2026-07-12T14:58:04.851Z",
+  "completedAt": "2026-07-12T14:58:04.850Z",
+  "concurrency": 3,
+  "throughput": [
+    {
+      "t": "2026-07-12T14:42:16.200Z",
+      "done": 0
+    },
+    {
+      "t": "2026-07-12T14:43:17.417Z",
+      "done": 1
+    },
+    {
+      "t": "2026-07-12T14:46:22.667Z",
+      "done": 2
+    },
+    {
+      "t": "2026-07-12T14:46:32.237Z",
+      "done": 3
+    },
+    {
+      "t": "2026-07-12T14:46:39.183Z",
+      "done": 4
+    },
+    {
+      "t": "2026-07-12T14:47:11.632Z",
+      "done": 5
+    },
+    {
+      "t": "2026-07-12T14:47:25.250Z",
+      "done": 6
+    },
+    {
+      "t": "2026-07-12T14:47:40.279Z",
+      "done": 7
+    },
+    {
+      "t": "2026-07-12T14:50:22.911Z",
+      "done": 8
+    },
+    {
+      "t": "2026-07-12T14:50:33.090Z",
+      "done": 9
+    },
+    {
+      "t": "2026-07-12T14:50:35.127Z",
+      "done": 10
+    },
+    {
+      "t": "2026-07-12T14:54:04.715Z",
+      "done": 11
+    },
+    {
+      "t": "2026-07-12T14:54:16.604Z",
+      "done": 12
+    },
+    {
+      "t": "2026-07-12T14:54:20.501Z",
+      "done": 13
+    },
+    {
+      "t": "2026-07-12T14:54:41.572Z",
+      "done": 14
+    },
+    {
+      "t": "2026-07-12T14:54:50.069Z",
+      "done": 15
+    },
+    {
+      "t": "2026-07-12T14:55:11.029Z",
+      "done": 16
+    },
+    {
+      "t": "2026-07-12T14:55:24.540Z",
+      "done": 17
+    },
+    {
+      "t": "2026-07-12T14:55:48.237Z",
+      "done": 18
+    },
+    {
+      "t": "2026-07-12T14:55:49.406Z",
+      "done": 19
+    },
+    {
+      "t": "2026-07-12T14:55:55.413Z",
+      "done": 20
+    },
+    {
+      "t": "2026-07-12T14:55:57.065Z",
+      "done": 21
+    },
+    {
+      "t": "2026-07-12T14:56:05.501Z",
+      "done": 22
+    },
+    {
+      "t": "2026-07-12T14:57:10.294Z",
+      "done": 23
+    },
+    {
+      "t": "2026-07-12T14:58:04.845Z",
+      "done": 24
+    }
+  ],
+  "jobs": {
+    "en-short-article__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-short-article__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-short-article",
+      "startedAt": "2026-07-12T14:42:18.016Z",
+      "ttsJobId": "d40c6a3a-6f39-4f0b-9118-3351fb80308a",
+      "id": "en-short-article__piper__audiobook",
+      "ms": 59401,
+      "bytes": 29731734,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-news__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-news__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-news",
+      "startedAt": "2026-07-12T14:42:18.016Z",
+      "ttsJobId": "d69bfcba-7594-4c44-909e-0555b18c4a88",
+      "id": "en-news__piper__audiobook",
+      "ms": 244650,
+      "bytes": 144903912,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-book-chapter__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-book-chapter__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-book-chapter",
+      "startedAt": "2026-07-12T14:42:18.017Z",
+      "ttsJobId": "644b63e1-b75e-454f-b20b-2ce8cd57b5fc",
+      "id": "en-book-chapter__piper__audiobook",
+      "ms": 892277,
+      "bytes": 320456496,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-technical-doc__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-technical-doc__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-technical-doc",
+      "startedAt": "2026-07-12T14:43:17.417Z",
+      "ttsJobId": "efb5cef6-e3c7-477c-b5c6-f1510bdd5799",
+      "id": "en-technical-doc__piper__audiobook",
+      "ms": 659187,
+      "bytes": 265189692,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-dialogue-script__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-dialogue-script__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-dialogue-script",
+      "startedAt": "2026-07-12T14:46:22.667Z",
+      "ttsJobId": "10a0b3b1-85e0-40c1-957a-7aba84c4ea03",
+      "id": "en-dialogue-script__piper__audiobook",
+      "ms": 9570,
+      "bytes": 3026982,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-ssml-showcase__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-ssml-showcase__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-ssml-showcase",
+      "startedAt": "2026-07-12T14:46:32.237Z",
+      "ttsJobId": "38ce36e9-ab71-4b26-a3aa-1099a2cb2e20",
+      "id": "en-ssml-showcase__piper__audiobook",
+      "ms": 6946,
+      "bytes": 2206380,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-children-story__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-children-story__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-children-story",
+      "startedAt": "2026-07-12T14:46:39.184Z",
+      "ttsJobId": "bd8effc4-bb89-4d52-aa54-18c96c170408",
+      "id": "en-children-story__piper__audiobook",
+      "ms": 32448,
+      "bytes": 4524750,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-numbers-and-dates__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-numbers-and-dates__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-numbers-and-dates",
+      "startedAt": "2026-07-12T14:47:11.633Z",
+      "ttsJobId": "66d51485-6342-40c6-b30f-784cf05b81c6",
+      "id": "en-numbers-and-dates__piper__audiobook",
+      "ms": 13617,
+      "bytes": 5631184,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-pronunciation-challenge__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-pronunciation-challenge__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-pronunciation-challenge",
+      "startedAt": "2026-07-12T14:47:25.251Z",
+      "ttsJobId": "b6dcdc2f-8ac5-4ddd-87b8-4072bfc22818",
+      "id": "en-pronunciation-challenge__piper__audiobook",
+      "ms": 15028,
+      "bytes": 5649376,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-long-essay__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-long-essay__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-long-essay",
+      "startedAt": "2026-07-12T14:47:40.279Z",
+      "ttsJobId": "37b10c6f-da97-43c4-97b5-a86c10eacf17",
+      "id": "en-long-essay__piper__audiobook",
+      "ms": 162632,
+      "bytes": 64425514,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-paragraph__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-paragraph__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-paragraph",
+      "startedAt": "2026-07-12T14:50:22.912Z",
+      "ttsJobId": "48999bb2-60b1-458c-a553-4ad95ae7f1fa",
+      "id": "en-paragraph__piper__audiobook",
+      "ms": 10178,
+      "bytes": 3646522,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-quick-sentence__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-quick-sentence__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-quick-sentence",
+      "startedAt": "2026-07-12T14:50:33.090Z",
+      "ttsJobId": "88b9002a-9747-4e3f-aa86-79d8d3cbd78a",
+      "id": "en-quick-sentence__piper__audiobook",
+      "ms": 2037,
+      "bytes": 731766,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-news-expanded__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-news-expanded__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-news-expanded",
+      "startedAt": "2026-07-12T14:50:35.128Z",
+      "ttsJobId": "bc144ce3-5703-42ab-adea-7addd8045857",
+      "id": "en-news-expanded__piper__audiobook",
+      "ms": 209587,
+      "bytes": 108084132,
+      "rtf": null,
+      "durationSec": null
+    },
+    "pt-artigo__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-artigo__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-artigo",
+      "startedAt": "2026-07-12T14:54:04.716Z",
+      "ttsJobId": "975c021b-c3ce-4fef-95b1-b0bdd8cb58c1",
+      "id": "pt-artigo__piper__audiobook",
+      "ms": 15785,
+      "bytes": 6499246,
+      "rtf": null,
+      "durationSec": null
+    },
+    "pt-noticia__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-noticia__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-noticia",
+      "startedAt": "2026-07-12T14:54:16.604Z",
+      "ttsJobId": "d900eac4-a4ee-4983-9c5a-5f831d001f47",
+      "id": "pt-noticia__piper__audiobook",
+      "ms": 24968,
+      "bytes": 10796328,
+      "rtf": null,
+      "durationSec": null
+    },
+    "pt-capitulo__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-capitulo__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-capitulo",
+      "startedAt": "2026-07-12T14:54:20.502Z",
+      "ttsJobId": "0e9ab86e-fd43-49ab-abe7-159697ee97fc",
+      "id": "pt-capitulo__piper__audiobook",
+      "ms": 87735,
+      "bytes": 113739498,
+      "rtf": null,
+      "durationSec": null
+    },
+    "pt-dialogo__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-dialogo__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-dialogo",
+      "startedAt": "2026-07-12T14:54:41.572Z",
+      "ttsJobId": "3f539a46-71f2-4c89-b68c-b1f75447018d",
+      "id": "pt-dialogo__piper__audiobook",
+      "ms": 8497,
+      "bytes": 2942146,
+      "rtf": null,
+      "durationSec": null
+    },
+    "pt-numeros__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-numeros__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-numeros",
+      "startedAt": "2026-07-12T14:54:50.070Z",
+      "ttsJobId": "8fba70a4-3f03-4df7-8940-a820874db3d4",
+      "id": "pt-numeros__piper__audiobook",
+      "ms": 20958,
+      "bytes": 8354572,
+      "rtf": null,
+      "durationSec": null
+    },
+    "pt-tecnico__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-tecnico__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-tecnico",
+      "startedAt": "2026-07-12T14:55:11.029Z",
+      "ttsJobId": "7ac38b87-1afe-49b2-93cd-f143c8edd2c0",
+      "id": "pt-tecnico__piper__audiobook",
+      "ms": 13511,
+      "bytes": 6885340,
+      "rtf": null,
+      "durationSec": null
+    },
+    "pt-pronuncia__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-pronuncia__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-pronuncia",
+      "startedAt": "2026-07-12T14:55:24.540Z",
+      "ttsJobId": "597892cf-02ab-479f-9c35-0e5b01a4f7b2",
+      "id": "pt-pronuncia__piper__audiobook",
+      "ms": 24866,
+      "bytes": 6511536,
+      "rtf": null,
+      "durationSec": null
+    },
+    "pt-ssml__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-ssml__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-ssml",
+      "startedAt": "2026-07-12T14:55:48.238Z",
+      "ttsJobId": "2895b7f5-3f70-4009-b526-c564a91979d8",
+      "id": "pt-ssml__piper__audiobook",
+      "ms": 8827,
+      "bytes": 2883682,
+      "rtf": null,
+      "durationSec": null
+    },
+    "pt-historia__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-historia__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-historia",
+      "startedAt": "2026-07-12T14:55:49.407Z",
+      "ttsJobId": "0356edba-37dc-406e-a295-97b1216a8124",
+      "id": "pt-historia__piper__audiobook",
+      "ms": 6006,
+      "bytes": 12314598,
+      "rtf": null,
+      "durationSec": null
+    },
+    "pt-ensaio__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-ensaio__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-ensaio",
+      "startedAt": "2026-07-12T14:55:55.413Z",
+      "ttsJobId": "f45c6384-8bc2-4ab8-a85a-22cb0bcc9045",
+      "id": "pt-ensaio__piper__audiobook",
+      "ms": 129432,
+      "bytes": 64338058,
+      "rtf": null,
+      "durationSec": null
+    },
+    "pt-paragrafo__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/pt-paragrafo__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "pt-BR",
+      "profile": "audiobook",
+      "docId": "pt-paragrafo",
+      "startedAt": "2026-07-12T14:55:57.065Z",
+      "ttsJobId": "c31f6fba-61f3-4844-bbd5-514363b1d794",
+      "id": "pt-paragrafo__piper__audiobook",
+      "ms": 8436,
+      "bytes": 2911464,
+      "rtf": null,
+      "durationSec": null
+    }
+  },
+  "appPort": 3860,
+  "statusPort": 3861,
+  "manifestPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/manifest.json",
+  "maxInFlight": 3
+}

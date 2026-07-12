@@ -1,0 +1,13 @@
+{
+  "valid": 24,
+  "invalid": [],
+  "state": {
+    "status": "COMPLETE",
+    "total": 24,
+    "done": 24,
+    "failed": 0,
+    "startedAt": "2026-07-12T14:42:16.200Z",
+    "completedAt": "2026-07-12T14:58:04.850Z",
+    "maxInFlight": 3
+  }
+}
