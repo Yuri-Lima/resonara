@@ -1,0 +1,81 @@
+{
+  "status": "COMPLETE",
+  "batch": "matrix-piper-rerender",
+  "total": 3,
+  "done": 3,
+  "failed": 0,
+  "inFlight": [],
+  "startedAt": "2026-07-12T16:53:31.304Z",
+  "updatedAt": "2026-07-12T16:54:07.390Z",
+  "completedAt": "2026-07-12T16:54:07.390Z",
+  "concurrency": 1,
+  "throughput": [
+    {
+      "t": "2026-07-12T16:53:31.304Z",
+      "done": 0
+    },
+    {
+      "t": "2026-07-12T16:53:46.620Z",
+      "done": 1
+    },
+    {
+      "t": "2026-07-12T16:53:57.379Z",
+      "done": 2
+    },
+    {
+      "t": "2026-07-12T16:54:07.389Z",
+      "done": 3
+    }
+  ],
+  "jobs": {
+    "en-numbers-and-dates__piper__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__audiobook.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "en-numbers-and-dates",
+      "startedAt": "2026-07-12T16:53:33.292Z",
+      "ttsJobId": "7589f3d0-6f25-4c1c-917f-854922c3e58e",
+      "id": "en-numbers-and-dates__piper__audiobook",
+      "ms": 13328,
+      "bytes": 5694916,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-numbers-and-dates__piper__podcast": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__podcast.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "podcast",
+      "docId": "en-numbers-and-dates",
+      "startedAt": "2026-07-12T16:53:46.621Z",
+      "ttsJobId": "4e6dea7d-b1dd-4677-9720-8311daabc8c3",
+      "id": "en-numbers-and-dates__piper__podcast",
+      "ms": 10758,
+      "bytes": 5600782,
+      "rtf": null,
+      "durationSec": null
+    },
+    "en-numbers-and-dates__piper__news": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__news.wav",
+      "engine": "piper",
+      "language": "en",
+      "profile": "news",
+      "docId": "en-numbers-and-dates",
+      "startedAt": "2026-07-12T16:53:57.379Z",
+      "ttsJobId": "0b9fcd16-071b-4c6b-8294-a38db82e7323",
+      "id": "en-numbers-and-dates__piper__news",
+      "ms": 10010,
+      "bytes": 5466376,
+      "rtf": null,
+      "durationSec": null
+    }
+  },
+  "appPort": 3860,
+  "statusPort": 3861,
+  "manifestPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix-piper-rerender/manifest.json",
+  "maxInFlight": 1
+}

@@ -2,7 +2,7 @@
 
 **Product:** Resonara 2.2.0  
 **Campaign:** G30 release-qualification voice farm  
-**Generated:** 2026-07-12T16:08:13.683Z  
+**Generated:** 2026-07-12T16:54:47.661Z  
 **Overall verdict:** **GO**
 
 ## Executive summary
@@ -12,7 +12,7 @@ Resonara Voice was qualified at **catalog scale** (24 documents), **engine×prof
 | Gate | Verdict | Evidence |
 |------|---------|----------|
 | Catalog (24) | **GO** | meanWer=0.103, conf=1, invalid=0, fail=0/24 |
-| Matrix (36) | **GO** | meanWer=0.116, conf=1, invalid=0, fail=0/36 |
+| Matrix (36) | **GO** | meanWer=0.115, conf=1, invalid=0, fail=0/36 — **real Piper** on all 18 piper cells (Phase 8 fix) |
 | Soak 50k | **GO** | duration=4.98h audio, bytes=2582548002, plateau=true |
 | Packaging | **GO** | mac=build-verified, win=build-verified |
 | Sign-off await-farm | **FIXED** | accepts COMPLETE (Phase 9) |
@@ -21,9 +21,10 @@ Resonara Voice was qualified at **catalog scale** (24 documents), **engine×prof
 
 All measured quality gates (WER proxy ≤0.35, pause conf ≥0.9, invalid audio 0, fail rate ≤5%, RTF ≤5) pass on catalog and matrix. Soak proves long-form stability: RSS mean ~221 MB (max 299 MB) with plateau=true over 101 samples — no unbounded growth. Packaging produced Resonara-2.2.0-arm64.dmg (417 MB) and Resonara Setup 2.2.0.exe (336 MB).
 
+**Matrix honesty (Phase 8 fix):** The three `en-numbers-and-dates__piper__{audiobook,podcast,news}` cells were originally platform-substituted under piper labels after a transient sqljs DB corruption. They were **re-rendered with actual Piper** (batch `matrix-piper-rerender`, 3/3 valid WAVs, byte-distinct from platform twins). Gate **GO** now stands on real Piper data. Aggregator keys `engine` off actual render metadata (`retryEngine` / `engine`), never the job id.
+
 **Caveats (honest):**
 - WER is primarily duration-density proxy unless whisper enabled (`FARM_MEASURE_WHISPER=1`).
-- Matrix numbers cells used platform fallback after mid-batch Piper unavailability + corrupt sqljs DB recovery.
 - Windows NSIS is cross-built on darwin (build-verified, not runtime-tested on Windows).
 - macOS installers are unsigned (not notarized).
 
@@ -33,7 +34,11 @@ All measured quality gates (WER proxy ≤0.35, pause conf ≥0.9, invalid audio 
 
 ## Engine × profile matrix
 
-- 36 cells, 0 failed after retry, mean RTF 0.399
+- 36 cells, 0 failed, mean WER 0.115, mean RTF 0.414, invalid audio 0
+- **byEngine (actual render engine):**
+  - piper: n=18, meanWer=0.133, meanRtf=0.547
+  - platform: n=18, meanWer=0.097, meanRtf=0.281
+- Numbers×Piper cells (post re-render): audiobook WER≈0.247 / 5.69 MB; podcast WER≈0.243 / 5.60 MB; news WER≈0.237 / 5.47 MB — all `engine=piper`, valid WAV
 
 ### Recommended defaults (data-derived)
 

@@ -58,7 +58,7 @@
   {
     "id": "p7-matrix-bg",
     "phase": 7,
-    "purpose": "engine×profile 36-cell matrix",
+    "purpose": "engine\u00d7profile 36-cell matrix",
     "outcome": "collected",
     "kind": "background",
     "startedAt": "2026-07-12T14:58:33Z",
@@ -160,5 +160,44 @@
     "purpose": "build/test/demo/make ui/PR",
     "outcome": "collected",
     "completedAt": "2026-07-12T16:09:04.619Z"
+  },
+  {
+    "id": "p8f-stop",
+    "phase": "8-fix",
+    "purpose": "farm-stop reap ports/orphans",
+    "outcome": "landed"
+  },
+  {
+    "id": "p8f-db-preflight",
+    "phase": "8-fix",
+    "purpose": "sqlite integrity_check",
+    "outcome": "ok"
+  },
+  {
+    "id": "p8f-aggregator-fix",
+    "phase": "8-fix",
+    "purpose": "resolveActualEngine + unit test",
+    "outcome": "landed"
+  },
+  {
+    "id": "p8f-piper-rerender",
+    "phase": "8-fix",
+    "purpose": "3-cell engine=piper re-render",
+    "outcome": "COMPLETE 3/3",
+    "kind": "background",
+    "startedAt": "2026-07-12T16:53:31.304Z",
+    "completedAt": "2026-07-12T16:54:07.390Z"
+  },
+  {
+    "id": "p8f-remeasure",
+    "phase": "8-fix",
+    "purpose": "matrix remeasure after piper fix",
+    "outcome": "landed meanWer=0.115"
+  },
+  {
+    "id": "p8f-gate",
+    "phase": "8-fix",
+    "purpose": "farm-gate corrected matrix",
+    "outcome": "GO"
   }
 ]

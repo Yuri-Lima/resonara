@@ -1,0 +1,95 @@
+{
+  "capturedAt": "2026-07-12T15:40:06.258Z",
+  "byEngine": {
+    "piper": {
+      "n": 18,
+      "meanWer": 0.1341247769433018,
+      "meanConformance": 1,
+      "meanRtf": 0.5178662693228892
+    },
+    "platform": {
+      "n": 18,
+      "meanWer": 0.09696332033440161,
+      "meanConformance": 1,
+      "meanRtf": 0.28056160024501015
+    }
+  },
+  "meanWer": 0.11554404863885168,
+  "invalidAudio": 0,
+  "failed": 0,
+  "total": 36,
+  "defectCells": [
+    {
+      "id": "en-numbers-and-dates__piper__audiobook",
+      "engine": "piper",
+      "contentType": "numbers-and-dates",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__audiobook.wav",
+      "status": "measured",
+      "wer": 0.24991637828899033,
+      "pauseConformance": 1,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 39.986625,
+      "rtf": 0.12054030566470665,
+      "ms": 4820,
+      "bytes": 5758176,
+      "validAudio": true,
+      "method": {
+        "pause": "ffmpeg-silencedetect",
+        "wer": "duration-density-proxy"
+      },
+      "docId": "en-numbers-and-dates",
+      "profile": "audiobook",
+      "language": "en",
+      "werIsProxy": true
+    },
+    {
+      "id": "en-numbers-and-dates__piper__podcast",
+      "engine": "piper",
+      "contentType": "numbers-and-dates",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__podcast.wav",
+      "status": "measured",
+      "wer": 0.2493341688861037,
+      "pauseConformance": 1,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 39.89375,
+      "rtf": 0.1412000626664578,
+      "ms": 5633,
+      "bytes": 5744802,
+      "validAudio": true,
+      "method": {
+        "pause": "ffmpeg-silencedetect",
+        "wer": "duration-density-proxy"
+      },
+      "docId": "en-numbers-and-dates",
+      "profile": "podcast",
+      "language": "en",
+      "werIsProxy": true
+    },
+    {
+      "id": "en-numbers-and-dates__piper__news",
+      "engine": "piper",
+      "contentType": "numbers-and-dates",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__news.wav",
+      "status": "measured",
+      "wer": 0.2490419173277823,
+      "pauseConformance": 1,
+      "f0Variance": null,
+      "speechRate": null,
+      "durationSec": 39.847292,
+      "rtf": 0.08326789183064183,
+      "ms": 3318,
+      "bytes": 5738112,
+      "validAudio": true,
+      "method": {
+        "pause": "ffmpeg-silencedetect",
+        "wer": "duration-density-proxy"
+      },
+      "docId": "en-numbers-and-dates",
+      "profile": "news",
+      "language": "en",
+      "werIsProxy": true
+    }
+  ]
+}
