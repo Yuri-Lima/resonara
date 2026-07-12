@@ -2,20 +2,20 @@
 
 **Product:** Resonara 2.2.0  
 **Campaign:** G30 release-qualification voice farm · **G31 quality-metrics honesty fix**  
-**Generated:** 2026-07-12T17:12:34Z  
+**Generated:** 2026-07-12T19:10:00Z · soak re-proven on piper  
 **Overall verdict:** **NO-GO** (real ASR WER + real profile-band pause — floors breached; not a proxy pass)
 
 ## Executive summary
 
-Resonara Voice was qualified at **catalog scale** (24 documents), **engine×profile matrix** (36 cells), **novel-length soak** (50,152 words → 2.4 GB / ~5 h audio), and **dual-platform packaging** (DMG + NSIS).
+Resonara Voice was qualified at **catalog scale** (24 documents), **engine×profile matrix** (36 cells), **novel-length soak** (50,152 words → **piper** 2.5 GB / ~5.16 h audio; platform secondary), and **dual-platform packaging** (DMG + NSIS).
 
-**G31 measurement honesty:** WER is now **faster-whisper ASR** (`werIsProxy=false` on 24/24 catalog + 36/36 matrix). Pause conformance is the **pause-probe profile-band** harness (not ffmpeg-silencedetect constant 1.0). With real metrics, **catalog and matrix quality gates are NO-GO**. Soak and packaging remain GO from G30.
+**G31 measurement honesty:** WER is now **faster-whisper ASR** (`werIsProxy=false` on 24/24 catalog + 36/36 matrix). Pause conformance is the **pause-probe profile-band** harness (not ffmpeg-silencedetect constant 1.0). With real metrics, **catalog and matrix quality gates are NO-GO**. Soak (piper primary) and packaging remain GO; catalog/matrix quality still NO-GO from G31 measured metrics.
 
 | Gate | Verdict | Evidence |
 |------|---------|----------|
 | Catalog (24) | **NO-GO** | meanWerMeasured=0.252 (ASR), meanConf=0.340 (profile-band); 6 WER cell breaches; pause mean ≪ 0.9 |
 | Matrix (36) | **NO-GO** | meanWerMeasured=0.253 (ASR), meanConf=0.485 (profile-band); 6 WER cell breaches (mostly platform×pt-BR) |
-| Soak 50k | **GO** | duration=4.98h audio, bytes=2582548002, plateau=true |
+| Soak 50k | **GO** | **piper** primary: duration=5.16h, bytes=2676794950, 1288 chunks, RSS no-leak; platform secondary 4.98h |
 | Packaging | **GO** | mac=build-verified, win=build-verified |
 | Sign-off await-farm | **FIXED** | accepts COMPLETE (Phase 9) |
 
@@ -154,10 +154,24 @@ Full table: `farm-output/metrics/catalog-metrics.md`.
 
 ## Soak stability
 
-- startedAt: 2026-07-12T15:42:18.384Z
-- completedAt: 2026-07-12T16:07:50.947Z
-- TTS job b86f10c3-… completed 1288 chunks
-- Memory: min 124.9 / max 299.4 / mean 220.6 MB · plateau **true**
+### Primary — piper (product path)
+
+- startedAt: 2026-07-12T17:38:06.409Z
+- completedAt: 2026-07-12T19:01:52.745Z
+- TTS job `3bb01783-4de7-4fae-99e6-eeb3b4184597` completed **1288/1288** chunks on **engine=piper**
+- Audio: duration=**18588.85 s (~5.16 h)**, bytes=**2676794950**, RIFF/WAVE `pcm_s24le` 48 kHz mono
+- Wall: ~83.7 min (farm job ms=5023907)
+- Memory (lite-server RSS, 359 samples @ 15s): synth window min **104.8** / max **257.3** / mean **178.8** MB · strictlyMonotonic=false · slope≈0 · **no-leak / plateau true**
+- Handles: 22–30 stable
+- Orphans after teardown: **0** piper/ffmpeg
+- Evidence: `farm-output/soak/state.json`, `memory-curve.json`, `manifest.json` (engine=piper)
+
+### Secondary — platform (earlier G30)
+
+- startedAt: 2026-07-12T15:42:18.384Z → completedAt: 2026-07-12T16:07:50.947Z
+- TTS job b86f10c3-… completed 1288 chunks on platform (`say`)
+- Memory: min 124.9 / max 299.4 / mean 220.6 MB · plateau true
+- Note: platform runs TTS in a separate OS process; retained as secondary only under `farm-output/soak/platform-secondary/`
 
 ## Packaging matrix
 

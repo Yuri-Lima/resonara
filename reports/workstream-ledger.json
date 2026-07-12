@@ -58,7 +58,7 @@
   {
     "id": "p7-matrix-bg",
     "phase": 7,
-    "purpose": "engine×profile 36-cell matrix",
+    "purpose": "engine\u00d7profile 36-cell matrix",
     "outcome": "collected",
     "kind": "background",
     "startedAt": "2026-07-12T14:58:33Z",
@@ -209,7 +209,7 @@
   },
   {
     "id": "bg-measure-sample",
-    "purpose": "Representative sample ASR WER (≥1 content type × engines)",
+    "purpose": "Representative sample ASR WER (\u22651 content type \u00d7 engines)",
     "outcome": "collected",
     "runtime": "matrix 8 + catalog 12",
     "campaign": "G31"
@@ -232,14 +232,24 @@
     "id": "fg-ssml-wer-pin",
     "purpose": "Strip SSML markup from WER reference (measurement pin)",
     "outcome": "collected",
-    "runtime": "ssml 0.62→0.15",
+    "runtime": "ssml 0.62\u21920.15",
     "campaign": "G31"
   },
   {
     "id": "fg-pause-profile-band",
     "purpose": "Replace silencedetect constant with pause-probe profile-band",
     "outcome": "collected",
-    "runtime": "conf varies 0–0.85",
+    "runtime": "conf varies 0\u20130.85",
     "campaign": "G31"
+  },
+  {
+    "id": "p10-piper-soak",
+    "phase": 10,
+    "purpose": "50k novel soak engine=piper with RSS/handle probe (primary stability proof)",
+    "outcome": "COMPLETE 1288/1288, duration 5.16h, no-leak, zero orphans",
+    "kind": "background",
+    "startedAt": "2026-07-12T17:38:06.409Z",
+    "completedAt": "2026-07-12T19:01:52.745Z",
+    "engine": "piper"
   }
 ]

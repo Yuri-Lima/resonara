@@ -1,0 +1,43 @@
+{
+  "status": "COMPLETE",
+  "batch": "soak",
+  "total": 1,
+  "done": 1,
+  "failed": 0,
+  "inFlight": [],
+  "startedAt": "2026-07-12T15:42:18.384Z",
+  "updatedAt": "2026-07-12T16:07:50.947Z",
+  "completedAt": "2026-07-12T16:07:50.947Z",
+  "concurrency": 1,
+  "throughput": [
+    {
+      "t": "2026-07-12T15:42:18.384Z",
+      "done": 0
+    },
+    {
+      "t": "2026-07-12T16:06:55.586Z",
+      "done": 1
+    }
+  ],
+  "jobs": {
+    "soak-novel__platform__audiobook": {
+      "status": "ok",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/soak/soak-novel__platform__audiobook.wav",
+      "engine": "platform",
+      "language": "en",
+      "profile": "audiobook",
+      "docId": "soak-novel",
+      "startedAt": "2026-07-12T15:42:20.223Z",
+      "ttsJobId": "b86f10c3-0af1-458f-ba96-8a1066320662",
+      "id": "soak-novel__platform__audiobook",
+      "ms": 1475363,
+      "bytes": 2582548002,
+      "recoveredFrom": "local-outputPath-copy",
+      "note": "TTS job completed 1288/1288; farm HTTP download hit Node 2GB Buffer limit; recovered via fs copy"
+    }
+  },
+  "appPort": 3860,
+  "statusPort": 3861,
+  "manifestPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/soak/manifest.json",
+  "maxInFlight": 1
+}
