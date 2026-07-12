@@ -31,3 +31,18 @@ _Pending Phase 11._
 ## Verdict
 
 **PENDING** — not enough measured data yet.
+
+## Spot verification (during catalog render)
+
+First completed catalog cell `en-short-article__piper__audiobook`:
+
+| Metric | Value |
+|--------|-------|
+| validAudio | true (RIFF/WAVE mono 48 kHz) |
+| durationSec | 206.47 |
+| RTF | 0.288 |
+| pauseConformance | 100% (ffmpeg silencedetect heuristic) |
+| WER | 0.044 (duration-density proxy; whisper optional) |
+
+See `reports/spot-verify-en-short-article.json`.
+
