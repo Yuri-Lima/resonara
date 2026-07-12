@@ -136,9 +136,8 @@ function main() {
     const entry = {
       trialId: p.fixture,
       timestamp: new Date().toISOString(),
-      // Historical field name kept for ledger continuity; value is PROXY not CMOS
-      cmosAb: proxyAb,
-      proxyScoreAb: proxyAb,
+      // Automated proxy only — never labeled CMOS (human CMOS lives in eval-lab ledgers)
+      proxyAb,
       proxyRawScore: sc.rawScore,
       metricName: 'objective-prosody-proxy-v2',
       isHumanCmos: false,
@@ -164,8 +163,6 @@ function main() {
       unblind.push({
         fixture: p.fixture,
         proxyExpressiveVsPiper: s,
-        // deprecated alias — do not interpret as human CMOS
-        cmosExpressiveVsPiper: s,
         flip,
       });
     }
@@ -183,8 +180,6 @@ function main() {
     // Explicit: automated proxy never certifies Gate 2
     gateStatus: 'NOT_CERTIFIED_AWAITING_HUMAN_PANEL',
     meanProxyExpressiveVsPiper: mean,
-    // Deprecated field kept for tooling that still reads the name — NOT CMOS
-    meanCmosExpressiveVsPiper: mean,
     n,
     // Never true from automated proxy
     pass: false,

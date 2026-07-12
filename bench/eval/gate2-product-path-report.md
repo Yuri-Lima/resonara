@@ -1,6 +1,6 @@
 # Gate 2 product-path — diagnostic render + proxy (NOT certified)
 
-**Date:** 2026-07-12T11:01:49.345Z
+**Date:** 2026-07-12T11:12:40.860Z
 **Source:** `bench/candidates/product-path/` (live product direction path)
 
 ## Pipeline
@@ -34,7 +34,6 @@ Automated relative proxy only. **Does not certify Gate 2.**
   "certified": false,
   "gateStatus": "NOT_CERTIFIED_AWAITING_HUMAN_PANEL",
   "meanProxyExpressiveVsPiper": -0.25,
-  "meanCmosExpressiveVsPiper": -0.25,
   "n": 4,
   "pass": false,
   "humanCmosNotRun": true,
@@ -44,25 +43,21 @@ Automated relative proxy only. **Does not certify Gate 2.**
     {
       "fixture": "death-scene",
       "proxyExpressiveVsPiper": -1,
-      "cmosExpressiveVsPiper": -1,
       "flip": false
     },
     {
       "fixture": "picnic",
       "proxyExpressiveVsPiper": 0,
-      "cmosExpressiveVsPiper": 0,
       "flip": true
     },
     {
       "fixture": "dialogue-performance",
       "proxyExpressiveVsPiper": 0,
-      "cmosExpressiveVsPiper": 0,
       "flip": true
     },
     {
       "fixture": "newscast",
       "proxyExpressiveVsPiper": 0,
-      "cmosExpressiveVsPiper": 0,
       "flip": false
     }
   ],
