@@ -1,0 +1,24 @@
+{
+  "id": "en-short-article__piper__audiobook",
+  "docId": "en-short-article",
+  "engine": "piper",
+  "language": "en",
+  "profile": "audiobook",
+  "contentType": "short-article",
+  "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/catalog/en-short-article__piper__audiobook.wav",
+  "status": "measured",
+  "wer": 0.043758648092361165,
+  "pauseConformance": 1,
+  "f0Variance": null,
+  "speechRate": null,
+  "durationSec": 206.469667,
+  "rtf": 0.28769843465674794,
+  "ms": 59401,
+  "bytes": 29731734,
+  "validAudio": true,
+  "method": {
+    "pause": "ffmpeg-silencedetect",
+    "wer": "duration-density-proxy"
+  },
+  "werIsProxy": true
+}
