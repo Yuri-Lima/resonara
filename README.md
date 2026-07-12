@@ -37,7 +37,7 @@ Most “AI audio” tools push speech and processing to the cloud. Resonara keep
 |--------|----------------|
 | **Audio Lab** | Import · transcode · two-pass EBU R128 loudnorm · trim · silence detect · waveform · stream & export |
 | **Hybrid Piano** | Sample-pack piano · take recording · analyze & export into the same job model |
-| **Voice** | Long-form TTS with **Kokoro**, **Piper**, and platform voices · **English + pt-BR** · document import · read-along · library · CLI |
+| **Voice** | Long-form TTS with **Kokoro**, **Piper**, optional **expressive** (Chatterbox), and platform voices · **English + pt-BR** · document import · read-along · library · CLI |
 
 End users install a normal **macOS** or **Windows** app. No Docker, no Node, no terminal required.
 
@@ -51,7 +51,7 @@ End users install a normal **macOS** or **Windows** app. No Docker, no Node, no 
 - ffmpeg path resolution for GUI apps that strip `PATH`
 
 ### Voice / long-form TTS
-- **Three engines** behind one interface: **Kokoro-82M** · **Piper** · platform (`say` / SAPI)
+- **Engines** behind one interface: **Kokoro-82M** · **Piper** · optional **expressive** (Chatterbox) · platform (`say` / SAPI)
 - Language-aware routing: English prefers Kokoro when available; **pt-BR never falls back to English Kokoro**
 - SSML subset, pronunciation dictionary, dialogue multi-speaker, seamless chunk concat
 - Document import: EPUB, PDF, DOCX, Markdown, plain text with configurable preprocessing
@@ -77,25 +77,44 @@ Competitive research and roadmap: [COMPETITIVE_ANALYSIS.md](./COMPETITIVE_ANALYS
 
 ## Install
 
+**Current release:** [v2.1.0](https://github.com/Yuri-Lima/resonara/releases/tag/v2.1.0) — expressive TTS tier + macOS / Windows installers.
+
+| Platform | Asset | Direct download |
+|----------|--------|-----------------|
+| **macOS** (Apple Silicon) | `Resonara-2.1.0-arm64.dmg` | [DMG](https://github.com/Yuri-Lima/resonara/releases/download/v2.1.0/Resonara-2.1.0-arm64.dmg) |
+| **macOS** (portable) | `Resonara-2.1.0-arm64-mac.zip` | [ZIP](https://github.com/Yuri-Lima/resonara/releases/download/v2.1.0/Resonara-2.1.0-arm64-mac.zip) |
+| **Windows** x64 | `Resonara Setup 2.1.0.exe` | [NSIS Setup](https://github.com/Yuri-Lima/resonara/releases/download/v2.1.0/Resonara.Setup.2.1.0.exe) |
+| All assets | GitHub Releases | [v2.1.0](https://github.com/Yuri-Lima/resonara/releases/tag/v2.1.0) · [latest](https://github.com/Yuri-Lima/resonara/releases/latest) |
+
 ### macOS
 
-1. Download the latest **Resonara** `.dmg` from [Releases](https://github.com/Yuri-Lima/resonara/releases)  
-   *(or build with `npm run dist:mac`)*
+1. Download **`Resonara-2.1.0-arm64.dmg`** from the table above (or [Releases](https://github.com/Yuri-Lima/resonara/releases/tag/v2.1.0))  
+   *(or build with `npm run dist:mac` → `release/Resonara-2.1.0-arm64.dmg`)*
 2. Open the disk image and drag **Resonara** into **Applications**
 3. Launch from Applications  
    - Unsigned builds: right-click → **Open** on first launch
 4. The app starts a local engine and opens the studio UI
 
-**Requirements:** macOS 12+ · Apple Silicon or Intel (via electron-builder targets)
+**Requirements:** macOS 12+ · Apple Silicon (arm64 DMG; Intel via local electron-builder if needed)
 
 ### Windows
 
-1. Download **Resonara Setup** (NSIS `.exe`) from [Releases](https://github.com/Yuri-Lima/resonara/releases)  
-   *(or build with `npm run dist:win`)*
+1. Download **`Resonara Setup 2.1.0.exe`** (NSIS) from the table above  
+   *(or build with `npm run dist:win` → `release/Resonara Setup 2.1.0.exe`)*
 2. Run the installer
 3. Launch from the Start Menu or desktop shortcut
 
 **Requirements:** Windows 10 / 11 · x64
+
+### Optional expressive pack (v2.1+)
+
+Neural **expressive** voices (Chatterbox) are **not** in the base installer. After install:
+
+```bash
+npm run download:expressive   # optional multi-GB pack → ~/.resonara/expressive-pack
+```
+
+Or use Settings → models when available. Piper + Kokoro remain the default offline path.
 
 ### Host dependencies
 
@@ -149,12 +168,13 @@ npm run test:e2e # multilingual + lite e2e (when configured)
 ### Neural models (optional, offline)
 
 ```bash
-npm run download:piper    # Piper binary/venv + en + pt-BR voices
-npm run download:kokoro   # Kokoro ONNX + voices
-npm run download:whisper  # faster-whisper venv + tiny/base (QA & alignment)
+npm run download:piper       # Piper binary/venv + en + pt-BR voices
+npm run download:kokoro      # Kokoro ONNX + voices
+npm run download:whisper     # faster-whisper venv + tiny/base (QA & alignment)
+npm run download:expressive  # optional Chatterbox pack (v2.1+, multi-GB)
 ```
 
-Models are gitignored and cached under `tools/` / `resources/`. Re-running download scripts is idempotent.
+Models are gitignored and cached under `tools/` / `resources/` / `~/.resonara/`. Re-running download scripts is idempotent.
 
 ### Full stack (server mode)
 
@@ -173,6 +193,7 @@ npm run start:dev    # API :3000 + workers as needed
 |--------|------|--------|
 | **Kokoro-82M** | Default for English when available | High naturalness, CPU ONNX, ~real-time |
 | **Piper** | Default for pt-BR; strong EN fallback | Offline ONNX, packaged with installers |
+| **Expressive** (optional) | Directed / dramatic long-form (v2.1+) | Chatterbox Turbo/full via `npm run download:expressive` |
 | **Platform** | Last-resort fallback | macOS `say` / Windows SAPI — language-safe selection |
 
 Auto selection is **language-aware**: Portuguese jobs never route to English-only Kokoro voices.

@@ -157,9 +157,9 @@ All 12 KEEP features probe-verified WORKING. Zero DESCOPE.
 | Cold start | **1930–2581 ms** ready (`reports/cold-start.json`) — pass &lt; 3s |
 | Library list | **45 ms**, paginated, total ~187 |
 | Stability | 46.2k-word source; 8k-word monitored job **completed** |
-| Installer | `Resonara-2.0.0-arm64.dmg` with en_US-lessac + pt_BR-faber |
+| Installer | `Resonara-2.1.0-arm64.dmg` with en_US-lessac + pt_BR-faber |
 | Tests | 45 suites, **226 passed**, 1 skipped |
-| Version | **2.0.0** |
+| Version | **2.1.0** |
 | DESCOPE rows | **none** |
 
 ## Final workstream hygiene

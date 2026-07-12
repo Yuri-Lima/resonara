@@ -1,17 +1,24 @@
-## [2.1.0] — 2026-07-12
-
-### Added
-- Optional **expressive** TTS tier (Chatterbox Turbo/full, MIT) with Expressive Pack download
-- REM expression markup, auto-direction, casting, humanization micro-layer
-- Blind evaluation lab + prosody metrics + CMOS gates
-- Human-Voice Frontier deliverable dashboard section
-
 # Changelog
 
 All notable changes to Resonara are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [2.1.0] — 2026-07-12
+
+### Added
+
+- Optional **expressive** TTS tier (Chatterbox Turbo/full, MIT) with Expressive Pack download
+- REM expression markup, auto-direction, casting, humanization micro-layer
+- Blind evaluation lab + prosody metrics + CMOS gates
+- Human-Voice Frontier deliverable dashboard section
+- macOS / Windows installer targets for the expressive release (`Resonara-2.1.0-arm64.dmg`, `Resonara Setup 2.1.0.exe`)
+
+### Changed
+
+- Product version **2.0.0 → 2.1.0** (package, OpenAPI, GitHub Pages download fallbacks)
+- Marketing/docs download URLs now point at **v2.1.0** macOS DMG/ZIP and Windows NSIS assets
 
 ## [2.0.0] — 2026-07-12
 
@@ -56,5 +63,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Resonara desktop audio lab, piano, platform TTS long-form, FFmpeg pipeline.
 
+[2.1.0]: https://github.com/Yuri-Lima/resonara/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/Yuri-Lima/resonara/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/Yuri-Lima/resonara/releases/tag/v1.0.0
