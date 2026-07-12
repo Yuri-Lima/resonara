@@ -1,0 +1,9 @@
+[
+  {"id": "bg-download-piper", "purpose": "Install Piper + voices", "outcome": "collected", "runtime": "~90s", "phase": 1},
+  {"id": "fg-phase1-baseline", "purpose": "build/test/lint/cov/demo inventory", "outcome": "landed", "runtime": "~20s", "phase": 1},
+  {"id": "bg-build-corpus", "purpose": "Generate catalog + 50k soak", "outcome": "landed", "runtime": "14ms", "phase": 2},
+  {"id": "bg-smoke-farm", "purpose": "4-job mini-matrix", "outcome": "landed", "runtime": "~23s", "phase": 3},
+  {"id": "bg-catalog-farm", "purpose": "Full catalog render 24 jobs", "outcome": "running", "runtime": "in-flight", "phase": 5},
+  {"id": "fg-dashboard-skeleton", "purpose": "UI deliverable skeleton during catalog", "outcome": "landed", "runtime": "during catalog", "phase": 5},
+  {"id": "fg-matrix-manifest", "purpose": "36-cell matrix prep during catalog", "outcome": "landed", "runtime": "during catalog", "phase": 5}
+]

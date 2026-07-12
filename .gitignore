@@ -55,3 +55,12 @@ reports/probe-logs/
 reports/ab-baseline/**/*.wav
 reports/ab-baseline/work/
 bench/eval/adversarial/*.wav
+
+# G30 farm outputs (large audio); keep manifests/state via force-add if needed
+farm-output/**/*.wav
+farm-output/**/*.mp3
+farm-output/**/*.aiff
+farm-output/lite-server.log
+.resonara-baseline.pid
+.resonara-ui.pid
+.resonara-ui.log
