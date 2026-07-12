@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "name": "matrix-piper-rerender",
+  "concurrency": 1,
+  "jobs": [
+    {
+      "id": "en-numbers-and-dates__piper__audiobook",
+      "docId": "en-numbers-and-dates",
+      "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
+      "textPath": "samples/catalog/en-numbers-and-dates.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__audiobook.wav"
+    },
+    {
+      "id": "en-numbers-and-dates__piper__podcast",
+      "docId": "en-numbers-and-dates",
+      "engine": "piper",
+      "language": "en",
+      "profile": "podcast",
+      "textPath": "samples/catalog/en-numbers-and-dates.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__podcast.wav"
+    },
+    {
+      "id": "en-numbers-and-dates__piper__news",
+      "docId": "en-numbers-and-dates",
+      "engine": "piper",
+      "language": "en",
+      "profile": "news",
+      "textPath": "samples/catalog/en-numbers-and-dates.txt",
+      "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__news.wav"
+    }
+  ]
+}

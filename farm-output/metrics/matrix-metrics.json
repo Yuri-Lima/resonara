@@ -1,23 +1,23 @@
 {
   "batch": "matrix",
-  "generatedAt": "2026-07-12T15:40:06.258Z",
+  "generatedAt": "2026-07-12T16:54:47.661Z",
   "aggregates": {
     "total": 36,
     "measured": 36,
     "failed": 0,
-    "meanWer": 0.11554404863885168,
+    "meanWer": 0.1149412865951534,
     "meanConformance": 1,
-    "meanRtf": 0.3992139347839496,
-    "meanDurationSec": 221.7865001111111,
+    "meanRtf": 0.4140001452057462,
+    "meanDurationSec": 221.69409675000003,
     "meanF0Variance": null,
     "meanSpeechRate": null,
     "invalidAudio": 0,
     "byEngine": {
       "piper": {
         "n": 18,
-        "meanWer": 0.1341247769433018,
+        "meanWer": 0.13291925285590525,
         "meanConformance": 1,
-        "meanRtf": 0.5178662693228892
+        "meanRtf": 0.5474386901664823
       },
       "platform": {
         "n": 18,
@@ -29,21 +29,21 @@
     "byProfile": {
       "audiobook": {
         "n": 12,
-        "meanWer": 0.11596687386934375,
+        "meanWer": 0.11573536902175964,
         "meanConformance": 1,
-        "meanRtf": 0.3975305309762562
+        "meanRtf": 0.4155700094164268
       },
       "podcast": {
         "n": 12,
-        "meanWer": 0.1156158938738297,
+        "meanWer": 0.1150787395122256,
         "meanConformance": 1,
-        "meanRtf": 0.4117572128325073
+        "meanRtf": 0.4230406033652103
       },
       "news": {
         "n": 12,
-        "meanWer": 0.11504937817338168,
+        "meanWer": 0.11400975125147507,
         "meanConformance": 1,
-        "meanRtf": 0.38835406054308547
+        "meanRtf": 0.40338982283560126
       }
     },
     "byContentType": {
@@ -67,17 +67,17 @@
       },
       "numbers-and-dates": {
         "n": 6,
-        "meanWer": 0.24943082150095877,
+        "meanWer": 0.24581424923876913,
         "meanConformance": 1,
-        "meanRtf": 0.13138284735088676
+        "meanRtf": 0.2201001098816658
       }
     },
     "byLanguage": {
       "en": {
         "n": 24,
-        "meanWer": 0.13612378894137747,
+        "meanWer": 0.13521964587583005,
         "meanConformance": 1,
-        "meanRtf": 0.31377969668376055
+        "meanRtf": 0.33595901231645536
       },
       "pt-BR": {
         "n": 12,
@@ -564,79 +564,82 @@
     },
     {
       "id": "en-numbers-and-dates__piper__audiobook",
+      "docId": "en-numbers-and-dates",
       "engine": "piper",
+      "language": "en",
+      "profile": "audiobook",
       "contentType": "numbers-and-dates",
       "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__audiobook.wav",
       "status": "measured",
-      "wer": 0.24991637828899033,
+      "wer": 0.24713832011798123,
       "pauseConformance": 1,
       "f0Variance": null,
       "speechRate": null,
-      "durationSec": 39.986625,
-      "rtf": 0.12054030566470665,
-      "ms": 4820,
-      "bytes": 5758176,
+      "durationSec": 39.547313,
+      "rtf": 0.3370140469467546,
+      "ms": 13328,
+      "bytes": 5694916,
       "validAudio": true,
       "method": {
         "pause": "ffmpeg-silencedetect",
         "wer": "duration-density-proxy"
       },
-      "docId": "en-numbers-and-dates",
-      "profile": "audiobook",
-      "language": "en",
       "werIsProxy": true
     },
     {
       "id": "en-numbers-and-dates__piper__podcast",
+      "docId": "en-numbers-and-dates",
       "engine": "piper",
+      "language": "en",
+      "profile": "podcast",
       "contentType": "numbers-and-dates",
       "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__podcast.wav",
       "status": "measured",
-      "wer": 0.2493341688861037,
+      "wer": 0.24288831654685436,
       "pauseConformance": 1,
       "f0Variance": null,
       "speechRate": null,
-      "durationSec": 39.89375,
-      "rtf": 0.1412000626664578,
-      "ms": 5633,
-      "bytes": 5744802,
+      "durationSec": 38.893604,
+      "rtf": 0.27660074905889404,
+      "ms": 10758,
+      "bytes": 5600782,
       "validAudio": true,
       "method": {
         "pause": "ffmpeg-silencedetect",
         "wer": "duration-density-proxy"
       },
-      "docId": "en-numbers-and-dates",
-      "profile": "podcast",
-      "language": "en",
       "werIsProxy": true
     },
     {
       "id": "en-numbers-and-dates__piper__news",
+      "docId": "en-numbers-and-dates",
       "engine": "piper",
+      "language": "en",
+      "profile": "news",
       "contentType": "numbers-and-dates",
       "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__piper__news.wav",
       "status": "measured",
-      "wer": 0.2490419173277823,
+      "wer": 0.23656639426490286,
       "pauseConformance": 1,
       "f0Variance": null,
       "speechRate": null,
-      "durationSec": 39.847292,
-      "rtf": 0.08326789183064183,
-      "ms": 3318,
-      "bytes": 5738112,
+      "durationSec": 37.960229,
+      "rtf": 0.2636970393408322,
+      "ms": 10010,
+      "bytes": 5466376,
       "validAudio": true,
       "method": {
         "pause": "ffmpeg-silencedetect",
         "wer": "duration-density-proxy"
       },
-      "docId": "en-numbers-and-dates",
-      "profile": "news",
-      "language": "en",
       "werIsProxy": true
     },
     {
       "id": "en-numbers-and-dates__platform__audiobook",
+      "docId": "en-numbers-and-dates",
       "engine": "platform",
+      "language": "en",
+      "profile": "audiobook",
       "contentType": "numbers-and-dates",
       "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__audiobook.wav",
       "status": "measured",
@@ -653,14 +656,16 @@
         "pause": "ffmpeg-silencedetect",
         "wer": "duration-density-proxy"
       },
-      "docId": "en-numbers-and-dates",
-      "profile": "audiobook",
-      "language": "en",
+      "retryEngine": "platform",
+      "retried": true,
       "werIsProxy": true
     },
     {
       "id": "en-numbers-and-dates__platform__podcast",
+      "docId": "en-numbers-and-dates",
       "engine": "platform",
+      "language": "en",
+      "profile": "podcast",
       "contentType": "numbers-and-dates",
       "outPath": "/private/tmp/trace-sweG30-20260712-163649/farm-output/matrix/en-numbers-and-dates__platform__podcast.wav",
       "status": "measured",
@@ -677,9 +682,8 @@
         "pause": "ffmpeg-silencedetect",
         "wer": "duration-density-proxy"
       },
-      "docId": "en-numbers-and-dates",
-      "profile": "podcast",
-      "language": "en",
+      "retryEngine": "platform",
+      "retried": true,
       "werIsProxy": true
     },
     {

@@ -1,6 +1,6 @@
 # Farm metrics — matrix
 
-Generated: 2026-07-12T15:40:06.258Z
+Generated: 2026-07-12T16:54:47.661Z
 
 ## Aggregates
 
@@ -9,9 +9,9 @@ Generated: 2026-07-12T15:40:06.258Z
 | total | 36 |
 | measured | 36 |
 | failed | 0 |
-| mean WER | 0.0939 |
+| mean WER | 0.1149 |
 | mean pause conformance | 100.0% |
-| mean RTF | 0.399 |
+| mean RTF | 0.414 |
 | invalid audio | 0 |
 
 ## Per row
@@ -36,11 +36,11 @@ Generated: 2026-07-12T15:40:06.258Z
 | en-dialogue-script__platform__audiobook | platform | audiobook | en | 0.144 | 100% | 0.76 | true |
 | en-dialogue-script__platform__podcast | platform | podcast | en | 0.144 | 100% | 0.76 | true |
 | en-dialogue-script__platform__news | platform | news | en | 0.144 | 100% | 0.64 | true |
-| en-numbers-and-dates__piper__audiobook | platform | undefined | undefined | — | 100% | 0.12 | true |
-| en-numbers-and-dates__piper__podcast | platform | undefined | undefined | — | 100% | 0.14 | true |
-| en-numbers-and-dates__piper__news | platform | undefined | undefined | — | 100% | 0.08 | true |
-| en-numbers-and-dates__platform__audiobook | platform | undefined | undefined | — | 100% | 0.10 | true |
-| en-numbers-and-dates__platform__podcast | platform | undefined | undefined | — | 100% | 0.08 | true |
+| en-numbers-and-dates__piper__audiobook | piper | audiobook | en | 0.247 | 100% | 0.34 | true |
+| en-numbers-and-dates__piper__podcast | piper | podcast | en | 0.243 | 100% | 0.28 | true |
+| en-numbers-and-dates__piper__news | piper | news | en | 0.237 | 100% | 0.26 | true |
+| en-numbers-and-dates__platform__audiobook | platform | audiobook | en | 0.250 | 100% | 0.10 | true |
+| en-numbers-and-dates__platform__podcast | platform | podcast | en | 0.249 | 100% | 0.08 | true |
 | en-numbers-and-dates__platform__news | platform | news | en | 0.249 | 100% | 0.26 | true |
 | pt-artigo__piper__audiobook | piper | audiobook | pt-BR | 0.022 | 100% | 0.77 | true |
 | pt-artigo__piper__podcast | piper | podcast | pt-BR | 0.035 | 100% | 0.79 | true |
@@ -62,5 +62,4 @@ Generated: 2026-07-12T15:40:06.258Z
 | short-article | platform | news | 0.977 |
 | news | platform | news | 0.945 |
 | dialogue-script | platform | news | 0.936 |
-| unknown | platform | undefined | 0.739 |
-| numbers-and-dates | platform | news | 0.845 |
+| numbers-and-dates | platform | podcast | 0.864 |
