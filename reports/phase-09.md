@@ -1,46 +1,65 @@
 # Phase 9 — Sign-off Gate Diagnosis
 
-**Date:** TBD  
-**Status:** DRAFT PLACEHOLDER — fill with REAL data when sign-off gate is exercised
+**Date:** 2026-07-12  
+**Status:** COMPLETE
 
-## What changed
+## Root cause
 
-- TBD: diagnose `COMPLETE` (orchestrator) vs `FARM DONE` (ops runbook) vocabulary mismatch
-- TBD: exercise `scripts/await-farm.js` / sign-off gate against real `state.json`
-- TBD: fix or document the gate so qualification reports wait on the correct terminal status
-- TBD: update `docs/farm-ops-notes.md` if behavior changes
+The ops runbook (`docs/farm-ops-notes.md`) says:
 
-## Commands + real output (TBD)
+> Farm sign-off gate: scripts/await-farm.js — polls state.json every 5s and exits 0 when state.status === 'FARM DONE'.
+
+The orchestrator (`scripts/render-farm.js`) writes status values:
+
+- `RUNNING`
+- `COMPLETE`
+- `CANCELLED`
+
+It **never** writes `FARM DONE`. Therefore the runbook-literal gate can never exit 0 against a successful farm.
+
+## Before (buggy vocabulary)
 
 ```
-# TBD — paste real sign-off gate runs
-node scripts/await-farm.js
-# observed state.status values:
-# gate exit code / timeout behavior:
+$ node scripts/await-farm-buggy-vocab.js farm-output/matrix/state.json 12000
+{"event":"buggy-await-start","accept":"FARM DONE","statePath":"farm-output/matrix/state.json","timeoutMs":12000}
+{"event":"buggy-await-poll","status":"COMPLETE"}
+{"event":"buggy-await-would-hang","status":"COMPLETE","note":"runbook waits for FARM DONE; orchestrator writes COMPLETE"}
+# exit 2 (timeout) — would hang forever without timeout
 ```
 
-## Self-review Pass A
+## After (fixed gate)
 
-- TBD: gate polls `state.json` (or `/farm/status`), not sleep-grep loops
-- TBD: terminal statuses enumerated and tested
-- TBD: ops notes match actual orchestrator vocabulary (or adapter maps them)
+`scripts/await-farm.js` accepts both `FARM DONE` (runbook) and `COMPLETE` (orchestrator):
 
-## Self-review Pass B — 3 findings (TBD)
+```
+$ node scripts/await-farm.js --state farm-output/matrix/state.json --timeout-ms 5000
+{"event":"await-farm-start","state":".../farm-output/matrix/state.json","accept":["FARM DONE","COMPLETE"],"timeoutMs":5000}
+{"event":"await-farm-ok","status":"COMPLETE","elapsedMs":2}
+# exit 0
+```
 
-1. **TBD** — Failure: … Mitigation/justification: …
-2. **TBD** — Failure: … Mitigation/justification: …
-3. **TBD** — Failure: … Mitigation/justification: …
+## Decision
+
+- **Do not change the runbook text** (ops deliverable is fixed as given).
+- **Do change the gate implementation** to accept the orchestrator vocabulary while remaining compatible with a future `FARM DONE` alias.
+- Optional: orchestrator could also emit `FARM DONE` as an alias; not required once the gate accepts `COMPLETE`.
 
 ## Workstream ledger
 
 | ID | Purpose | Outcome | Runtime |
 |----|---------|---------|---------|
-| fg-signoff-diagnose | COMPLETE vs FARM DONE | TBD | TBD |
-| fg-await-farm | run/fix await-farm gate | TBD | TBD |
-| fg-ops-notes | align docs/farm-ops-notes.md | TBD | TBD |
+| p9-buggy | prove never-firing gate against COMPLETE state | landed (exit 2 / would-hang) | ~12s |
+| p9-fixed | prove fixed await exits 0 on COMPLETE | landed (exit 0) | ~2ms |
+| p9-report | write diagnosis with before/after | landed | concurrent |
+
+## Adversarial findings (3)
+
+1. **scripts/await-farm.js `parseArgs`** — Failure: env `AWAIT_FARM_ACCEPT` with empty string could accept nothing. Mitigation: default list always includes COMPLETE when accept unset.
+2. **docs/farm-ops-notes.md** — Failure: ops still read FARM DONE and may reintroduce buggy scripts. Mitigation: keep buggy-vocab script + this report as regression evidence.
+3. **render-farm status vocabulary** — Failure: a third status like SUCCESS would again hang the gate. Mitigation: gate documents accepted set; farm only uses RUNNING|COMPLETE|CANCELLED.
 
 ## Evidence check
 
-- [ ] Real `state.status` samples pasted
-- [ ] Gate command exit codes from real runs
-- [ ] Docs change (if any) linked to observed behavior
+- [x] Buggy hang evidence pasted
+- [x] Fixed exit-0 evidence pasted
+- [x] Root cause is vocabulary mismatch, not polling interval

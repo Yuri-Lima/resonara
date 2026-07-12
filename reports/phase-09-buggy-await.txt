@@ -1,0 +1,3 @@
+{"event":"buggy-await-start","accept":"FARM DONE","statePath":"farm-output/matrix/state.json","timeoutMs":12000}
+{"event":"buggy-await-poll","status":"COMPLETE"}
+{"event":"buggy-await-would-hang","status":"COMPLETE","note":"runbook waits for FARM DONE; orchestrator writes COMPLETE"}
