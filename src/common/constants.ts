@@ -1,18 +1,4 @@
-export const QUEUE_TRANSCODE = 'audio-transcode';
-export const QUEUE_NORMALIZE = 'audio-normalize';
-export const QUEUE_WAVEFORM = 'audio-waveform';
-export const QUEUE_METADATA = 'audio-metadata';
-export const QUEUE_SILENCE = 'audio-silence';
-export const QUEUE_TRIM = 'audio-trim';
-
-export const ALL_QUEUES = [
-  QUEUE_TRANSCODE,
-  QUEUE_NORMALIZE,
-  QUEUE_WAVEFORM,
-  QUEUE_METADATA,
-  QUEUE_SILENCE,
-  QUEUE_TRIM,
-] as const;
+/** Shared media constants used by TTS export / ffmpeg helpers. */
 
 export type OutputFormat = 'mp3' | 'aac' | 'flac' | 'ogg' | 'opus' | 'wav';
 

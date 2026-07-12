@@ -27,7 +27,7 @@ export default () => ({
       originals: process.env.MINIO_BUCKET_ORIGINALS || 'audio-originals',
       derivatives: process.env.MINIO_BUCKET_DERIVATIVES || 'audio-derivatives',
       artifacts: process.env.MINIO_BUCKET_ARTIFACTS || 'audio-artifacts',
-      samples: process.env.MINIO_BUCKET_SAMPLES || 'piano-samples',
+      samples: process.env.MINIO_BUCKET_SAMPLES || 'tts-samples',
     },
   },
   ffmpeg: {
@@ -50,7 +50,7 @@ export default () => ({
       process.env.RESONARA_DATA_DIR ||
       path.join(os.homedir(), '.resonara', 'data'),
     productName: 'Resonara',
-    tagline: 'Shape sound. Speak the long form. Play freely.',
+    tagline: 'Offline long-form text-to-speech',
   },
   piper: {
     path: process.env.PIPER_PATH || '',

@@ -1,8 +1,12 @@
-# Audio Pipeline Dashboard
+# Resonara UI
 
-Static vanilla HTML dashboard for the audio processing service.
+Product surface for offline long-form **text-to-speech**.
 
-- Open locally: `make ui` from repo root
-- GitHub Pages: enable Pages on `/ui` (or deploy `ui/` as site root)
+| Path | Purpose |
+|------|---------|
+| `/ui/` | Redirects to Voice |
+| `/ui/voice/` | **Primary product** — synthesize, library, settings |
+| `/ui/deliverable/` | Release / frontier dashboard (dev/ship) |
+| `/ui/eval-lab/` | Human CMOS eval lab (certification, not end-user) |
 
-Preview: [preview.gif](./preview.gif)
+Open locally: `npm run ui` (starts lite API + opens Voice).

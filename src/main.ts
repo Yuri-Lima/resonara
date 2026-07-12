@@ -46,7 +46,7 @@ async function bootstrap() {
     next();
   });
 
-  // Serve dashboard + piano + voice UI same-origin
+  // Serve Voice UI + optional dev dashboards same-origin
   app.useStaticAssets(join(process.cwd(), 'ui'), { prefix: '/ui' });
   // Sample texts for in-UI demo Play buttons
   app.useStaticAssets(join(process.cwd(), 'samples'), { prefix: '/samples' });
@@ -62,7 +62,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Resonara')
     .setDescription(
-      'Shape sound. Speak the long form. Play freely. — Audio lab, sample piano, long-form system TTS.',
+      'Offline long-form text-to-speech — multi-engine (Piper, Kokoro, optional expressive), en + pt-BR, documents → chaptered audio, optional quality gates.',
     )
     .setVersion('2.1.0')
     .build();
@@ -79,7 +79,7 @@ async function bootstrap() {
   await app.listen(port, host);
   // eslint-disable-next-line no-console
   console.log(
-    `Resonara ${host}:${port} — Swagger /docs — Lab /ui/ — Piano /ui/piano/ — Voice /ui/voice/ — TTS dashboard /ui/deliverable/`,
+    `Resonara ${host}:${port} — Swagger /docs — Voice /ui/ — TTS dashboard /ui/deliverable/`,
   );
 }
 

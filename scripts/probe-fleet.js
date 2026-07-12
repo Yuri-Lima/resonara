@@ -2,7 +2,7 @@
 /**
  * Feature-truth probe fleet — one feature or all.
  * Usage: node scripts/probe-fleet.js <feature|all>
- * Features: kokoro whisper qa alignment library feeds cover epub preprocessor cli watch ptbr
+ * Features: kokoro whisper qa alignment library feeds(DESCOPED) cover epub preprocessor cli watch ptbr
  */
 const http = require('http');
 const fs = require('fs');
@@ -111,7 +111,6 @@ async function ensureServer() {
       ...process.env,
       RESONARA_LITE: '1',
       RESONARA_DESKTOP: '1',
-      RESONARA_FEEDS: '1',
       PORT: String(PORT),
       PIPER_PATH:
         process.env.PIPER_PATH ||
@@ -506,75 +505,21 @@ async function probeLibrary() {
 }
 
 async function probeFeeds() {
-  const logs = [];
-  const gaps = [];
-  let verdict = 'BROKEN';
-  let fix = 'M';
-  try {
-    const r = await synthAndWait({
-      text: 'Podcast feed probe episode about offline audio distribution.',
-      engine: 'auto',
-      language: 'en',
-      qa: 'off',
-      title: 'Feed Probe Episode',
-    });
-    logs.push(`synth ok=${r.ok} id=${r.id}`);
-    const feeds = await request('GET', '/feeds');
-    logs.push(`GET /feeds → ${feeds.status}\n${JSON.stringify(feeds.body, null, 2).slice(0, 2000)}`);
-    if (feeds.status === 503 || /disabled/i.test(JSON.stringify(feeds.body))) {
-      verdict = 'UNREACHABLE';
-      gaps.push('Feeds disabled (RESONARA_FEEDS)');
-      fix = 'S';
-    } else if (r.ok) {
-      const rss = await request('GET', `/feeds/${r.id}/rss.xml`);
-      logs.push(`GET /feeds/${r.id}/rss.xml → ${rss.status}\n${String(rss.body).slice(0, 2000)}`);
-      const xml = String(rss.body || rss.raw?.toString() || '');
-      const hasChannel = /<rss|<feed/i.test(xml) && /<channel|<entry/i.test(xml);
-      const enclosure = xml.match(/url=["']([^"']+)["']/i) || xml.match(/<enclosure[^>]+url=["']([^"']+)/i);
-      let encOk = false;
-      if (enclosure) {
-        let url = enclosure[1];
-        logs.push(`enclosure url=${url}`);
-        if (url.startsWith('http')) {
-          // extract path
-          try {
-            const u = new URL(url);
-            const enc = await request('GET', u.pathname + u.search);
-            logs.push(`enclosure GET ${u.pathname} → ${enc.status} bytes=${enc.raw?.length}`);
-            encOk = enc.status === 200 && enc.raw?.length > 100;
-          } catch (e) {
-            logs.push(`enclosure fetch err ${e.message}`);
-          }
-        } else {
-          const enc = await request('GET', url);
-          logs.push(`enclosure GET ${url} → ${enc.status}`);
-          encOk = enc.status === 200;
-        }
-      }
-      const itunes = /itunes:/i.test(xml);
-      const guid = /<guid/i.test(xml);
-      if (hasChannel && encOk && itunes && guid) {
-        verdict = 'WORKING';
-        fix = 'S';
-      } else if (hasChannel) {
-        verdict = 'PARTIAL';
-        if (!encOk) gaps.push('Enclosure did not resolve with 200');
-        if (!itunes) gaps.push('Missing iTunes tags');
-        if (!guid) gaps.push('Missing stable GUID');
-        fix = 'M';
-      } else {
-        verdict = 'BROKEN';
-        gaps.push('RSS not valid');
-      }
-    } else {
-      gaps.push('synth failed for feed job');
-    }
-  } catch (e) {
-    logs.push(`ERROR: ${e.stack || e}`);
-    gaps.push(String(e.message || e));
-  }
-  writeReport('06-feeds.md', verdictMd('Podcast feeds', verdict, logs.join('\n\n'), gaps, fix));
-  return { feature: 'Podcast feeds', verdict, gaps, fixEstimate: fix, evidence: logs.join('\n') };
+  const logs = [
+    'DESCOPED: Podcast RSS feeds removed — Resonara is TTS-only (no podcast host).',
+  ];
+  const gaps = ['Product scope: offline long-form TTS only'];
+  writeReport(
+    '06-feeds.md',
+    verdictMd('Podcast feeds', 'DESCOPED', logs.join('\n\n'), gaps, '—'),
+  );
+  return {
+    feature: 'Podcast feeds',
+    verdict: 'DESCOPED',
+    gaps,
+    fixEstimate: '—',
+    evidence: logs.join('\n'),
+  };
 }
 
 async function probeCover() {

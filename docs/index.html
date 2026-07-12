@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Resonara — Shape sound. Speak the long form. Play freely.</title>
-  <meta name="description" content="Resonara is a cross-platform desktop audio studio for macOS and Windows: audio lab, hybrid sample piano, and offline long-form system TTS. No Docker. No cloud account." />
+  <title>Resonara — Offline long-form text-to-speech</title>
+  <meta name="description" content="Resonara is offline long-form text-to-speech for macOS and Windows: multi-engine neural TTS, en + pt-BR, documents to chaptered audio. No Docker. No cloud account." />
   <meta name="theme-color" content="#020617" />
   <link rel="canonical" href="https://yuri-lima.github.io/resonara/" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Resonara" />
-  <meta property="og:description" content="Shape sound. Speak the long form. Play freely. Desktop audio lab, piano, and long-form system TTS for macOS & Windows." />
+  <meta property="og:description" content="Offline long-form text-to-speech for macOS & Windows — multi-engine, en + pt-BR, documents to chaptered audio." />
   <meta property="og:url" content="https://yuri-lima.github.io/resonara/" />
   <meta property="og:image" content="https://yuri-lima.github.io/resonara/assets/og-card.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Resonara" />
-  <meta name="twitter:description" content="Offline desktop audio studio — lab, piano, and long-form system TTS." />
+  <meta name="twitter:description" content="Offline long-form text-to-speech — multi-engine neural TTS on your machine." />
   <meta name="twitter:image" content="https://yuri-lima.github.io/resonara/assets/og-card.png" />
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="assets/logo.svg" />
@@ -31,7 +31,7 @@
     "name": "Resonara",
     "applicationCategory": "MultimediaApplication",
     "operatingSystem": "macOS, Windows",
-    "description": "Cross-platform desktop audio studio: audio lab, hybrid sample piano, and offline long-form system TTS.",
+    "description": "Offline long-form text-to-speech: multi-engine neural TTS, en + pt-BR, documents to chaptered audio.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "url": "https://yuri-lima.github.io/resonara/",
     "downloadUrl": "https://github.com/Yuri-Lima/resonara/releases/latest",
@@ -60,16 +60,16 @@
 
   <main id="main">
     <section class="hero container">
-      <div class="eyebrow"><span class="dot" aria-hidden="true"></span> Offline desktop studio · v2.1</div>
+      <div class="eyebrow"><span class="dot" aria-hidden="true"></span> Offline long-form TTS · v2.1</div>
       <h1>
-        <span class="grad">Shape sound.</span><br />
-        Speak the long form.<br />
-        Play freely.
+        <span class="grad">Text to voice.</span><br />
+        Long form. Offline.<br />
+        On your machine.
       </h1>
       <p class="lede">
-        Resonara is a professional audio workspace for macOS and Windows —
-        transcode and loudnorm, play a hybrid sample piano, and speak long documents
-        with offline neural engines (Piper, Kokoro, optional expressive). Fully local. No cloud account.
+        Resonara turns documents into chaptered speech on macOS and Windows —
+        offline neural engines (Piper, Kokoro, optional expressive), English + pt-BR,
+        optional quality gates. Fully local. No cloud account.
       </p>
       <div class="hero-cta">
         <a class="btn btn-primary" data-download="primary" data-mac-label="Download for macOS" data-win-label="Download for Windows" href="https://github.com/Yuri-Lima/resonara/releases/download/v2.1.0/Resonara-2.1.0-arm64.dmg">
@@ -92,48 +92,48 @@
         <span><strong>MIT</strong> open source</span>
       </div>
       <figure class="hero-visual">
-        <img src="assets/preview.gif" width="860" height="484" alt="Resonara audio pipeline dashboard preview" />
+        <img src="assets/preview.gif" width="860" height="484" alt="Resonara Voice TTS preview" />
       </figure>
     </section>
 
     <section id="features" class="alt">
       <div class="container">
         <div class="section-head">
-          <h2>Three studios. One install.</h2>
-          <p>Everything runs on your machine — ideal for privacy, offline work, and deterministic audio pipelines.</p>
+          <h2>One product. Text to voice.</h2>
+          <p>Everything runs on your machine — privacy, offline work, and deterministic long-form speech.</p>
         </div>
         <div class="grid-3">
           <article class="card">
-            <div class="icon" aria-hidden="true">◈</div>
-            <h3>Audio lab</h3>
-            <p>Production-grade local processing powered by ffmpeg.</p>
-            <ul>
-              <li>Import with magic-byte validation</li>
-              <li>Transcode MP3, AAC, FLAC, OGG, Opus, WAV</li>
-              <li>Two-pass EBU R128 loudnorm</li>
-              <li>Waveform, silence detect, trim &amp; stream</li>
-            </ul>
-          </article>
-          <article class="card">
-            <div class="icon" aria-hidden="true">♪</div>
-            <h3>Hybrid piano</h3>
-            <p>Sample-pack instrument with takes and export.</p>
-            <ul>
-              <li>Play notes from the upright seed pack</li>
-              <li>Record and manage takes</li>
-              <li>Analysis hooks into the job pipeline</li>
-              <li>Export ready for further processing</li>
-            </ul>
-          </article>
-          <article class="card">
             <div class="icon" aria-hidden="true">◎</div>
-            <h3>Voice (TTS)</h3>
-            <p>Long-form speech with offline neural engines (Piper, Kokoro, optional expressive).</p>
+            <h3>Long-form TTS</h3>
+            <p>Paste or import a document. Get chaptered speech.</p>
             <ul>
-              <li>macOS <code>say</code> · Windows System.Speech</li>
+              <li>Piper · Kokoro · optional expressive</li>
               <li>Automatic chunk → synthesize → concat</li>
               <li>Built for multi-paragraph / 10k+ words</li>
-              <li>Progress without freezing the UI</li>
+              <li>English + Brazilian Portuguese</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="icon" aria-hidden="true">◈</div>
+            <h3>Documents in</h3>
+            <p>Import the formats you already write in.</p>
+            <ul>
+              <li>EPUB, PDF, DOCX, Markdown, plain text</li>
+              <li>Preprocessor for footers and noise</li>
+              <li>SSML + pronunciation dictionary</li>
+              <li>Dialogue multi-speaker parsing</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="icon" aria-hidden="true">✓</div>
+            <h3>Optional quality gates</h3>
+            <p>Verify synthesis when you need confidence.</p>
+            <ul>
+              <li>Whisper WER round-trip QA</li>
+              <li>Forced alignment / timestamps</li>
+              <li>Job library with resume &amp; download</li>
+              <li>CLI + watch-folder automation</li>
             </ul>
           </article>
         </div>
@@ -153,11 +153,11 @@
           </div>
           <div class="step">
             <h3>Launch</h3>
-            <p>Resonara starts a local lite engine and opens the studio UI automatically.</p>
+            <p>Resonara starts a local lite engine and opens the Voice UI automatically.</p>
           </div>
           <div class="step">
             <h3>Create</h3>
-            <p>Process audio, play piano, or paste a long document into Voice — then export.</p>
+            <p>Paste or import a long document, synthesize offline, then export chaptered audio.</p>
           </div>
         </div>
       </div>
@@ -177,7 +177,7 @@
                    │  127.0.0.1
 ┌──────────────────▼──────────────────────┐
 │  NestJS engine                          │
-│  Tracks · Jobs · Piano · TTS · Health   │
+│  TTS · STT (QA) · Library · Health      │
 │  Socket.IO progress · fluent-ffmpeg     │
 ├──────── lite ─────────┬── full ─────────┤
 │  sql.js · filesystem  │  Postgres       │
@@ -251,7 +251,7 @@
               </tr>
               <tr>
                 <td>Piano</td>
-                <td class="muted"><code>/ui/piano/</code></td>
+                <td class="muted"><code>/ui/voice/</code></td>
                 <td class="muted">Sample instrument &amp; takes</td>
               </tr>
               <tr>
@@ -290,7 +290,7 @@
       <div class="footer-inner">
         <div class="footer-brand">
           <strong>Resonara</strong>
-          <p>Shape sound. Speak the long form. Play freely.</p>
+          <p>Offline long-form text-to-speech.</p>
         </div>
         <div class="footer-cols">
           <div>

@@ -25,7 +25,7 @@ describe('StorageService lite mode', () => {
                     originals: 'audio-originals',
                     derivatives: 'audio-derivatives',
                     artifacts: 'audio-artifacts',
-                    samples: 'piano-samples',
+                    samples: 'tts-samples',
                   },
                 };
               }

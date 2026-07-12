@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Open the Resonara TTS improvement dashboard with a live API so Play buttons work.
+# Open Resonara Voice (primary product UI) with a live lite API.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PORT="${RESONARA_UI_PORT:-3847}"
-URL="http://127.0.0.1:${PORT}/ui/deliverable/"
+URL="http://127.0.0.1:${PORT}/ui/voice/"
 
 need_build=0
 if [[ ! -f "$ROOT/dist/main.js" ]]; then

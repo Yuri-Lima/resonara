@@ -108,7 +108,7 @@ async function ensureServer(opts = {}) {
     env: {
       ...process.env,
       RESONARA_LITE: '1',
-      RESONARA_FEEDS: process.env.RESONARA_FEEDS || '1',
+
       PORT: String(PORT),
       PIPER_PATH:
         process.env.PIPER_PATH ||
