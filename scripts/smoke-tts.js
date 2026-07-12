@@ -35,7 +35,7 @@ async function main() {
 
   const paragraph =
     'Resonara shapes sound for creators who need offline tools. ' +
-    'Two-pass loudness, sample piano, and system voices keep long documents speakable without a cloud account. ';
+    'Offline neural voices keep long documents speakable without a cloud account. ';
   const text = Array.from({ length: 12 }, (_, i) => `Paragraph ${i + 1}. ${paragraph.repeat(3)}`).join(
     '\n\n',
   );

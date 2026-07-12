@@ -4,10 +4,6 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 import configuration from './config/configuration';
-import { Track } from './entities/track.entity';
-import { TranscodeJob } from './entities/transcode-job.entity';
-import { SamplePack } from './entities/sample-pack.entity';
-import { PianoTake } from './entities/piano-take.entity';
 import { TtsJob } from './entities/tts-job.entity';
 import { TtsBatch } from './entities/tts-batch.entity';
 import { PronunciationEntry } from './entities/pronunciation.entity';
@@ -15,11 +11,7 @@ import { Bookmark } from './entities/bookmark.entity';
 import { FfmpegModule } from './ffmpeg/ffmpeg.module';
 import { GatewayModule } from './gateway/gateway.module';
 import { HealthModule } from './health/health.module';
-import { JobsModule } from './jobs/jobs.module';
-import { PianoModule } from './piano/piano.module';
-import { QueueModule } from './queue/queue.module';
 import { StorageModule } from './storage/storage.module';
-import { TracksModule } from './tracks/tracks.module';
 import { TtsModule } from './tts/tts.module';
 import { SttModule } from './stt/stt.module';
 
@@ -43,16 +35,7 @@ const isLite =
             type: 'sqljs',
             location: path.join(dataDir, 'resonara.db'),
             autoSave: true,
-            entities: [
-              Track,
-              TranscodeJob,
-              SamplePack,
-              PianoTake,
-              TtsJob,
-              TtsBatch,
-              PronunciationEntry,
-              Bookmark,
-            ],
+            entities: [TtsJob, TtsBatch, PronunciationEntry, Bookmark],
             synchronize: true,
             logging: false,
           };
@@ -64,16 +47,7 @@ const isLite =
           username: config.get<string>('database.username'),
           password: config.get<string>('database.password'),
           database: config.get<string>('database.name'),
-          entities: [
-            Track,
-            TranscodeJob,
-            SamplePack,
-            PianoTake,
-            TtsJob,
-            TtsBatch,
-            PronunciationEntry,
-            Bookmark,
-          ],
+          entities: [TtsJob, TtsBatch, PronunciationEntry, Bookmark],
           synchronize: true,
           logging: false,
         };
@@ -82,10 +56,6 @@ const isLite =
     StorageModule,
     FfmpegModule,
     GatewayModule,
-    QueueModule,
-    TracksModule,
-    JobsModule,
-    PianoModule,
     HealthModule,
     TtsModule,
     SttModule,

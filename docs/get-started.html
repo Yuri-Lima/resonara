@@ -56,7 +56,7 @@ npm run desktop:dev    <span class="c"># Electron + lite API :3847</span>
 
 <span class="c"># API only</span>
 RESONARA_LITE=1 PORT=3000 npm run start:lite</pre>
-      <p>Open <code>/ui/</code>, <code>/ui/piano/</code>, <code>/ui/voice/</code>, and Swagger at <code>/docs</code>.</p>
+      <p>Open <code>/ui/voice/</code> (product) and Swagger at <code>/docs</code>.</p>
 
       <h2 id="full">Full stack</h2>
       <pre class="code">docker compose up -d postgres redis minio minio-init
@@ -85,8 +85,8 @@ npm run dist:all</pre>
       <ul>
         <li><code>GET /health</code> — product, mode, ffmpeg, TTS</li>
         <li><code>POST /tts/synthesize</code> — long-form system TTS job</li>
-        <li><code>POST /tracks/upload</code> · normalize · transcode · trim</li>
-        <li><code>GET /piano/packs</code> · takes · export</li>
+        <li><code>GET /tts/engines</code> · <code>GET /tts/voices</code></li>
+        <li><code>GET /tts/library</code> · job download / chapters</li>
         <li>WebSocket <code>/jobs</code> — <code>subscribe</code> → <code>job:progress</code></li>
       </ul>
 

@@ -160,7 +160,7 @@ async function createWindow() {
     return { action: 'deny' };
   });
 
-  await mainWindow.loadURL(`http://127.0.0.1:${PORT}/ui/`);
+  await mainWindow.loadURL(`http://127.0.0.1:${PORT}/ui/voice/`);
 }
 
 app.whenReady().then(async () => {

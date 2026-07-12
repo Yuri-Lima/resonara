@@ -1,8 +1,8 @@
 # Resonara
 
-**Shape sound. Speak the long form. Play freely.**
+**Offline long-form text-to-speech.**
 
-Offline-first desktop audio studio — production tools, a hybrid piano, and long-form neural TTS that runs entirely on your machine.
+Multi-engine neural TTS on your machine: documents → chaptered audio (en + pt-BR), optional quality gates. No cloud account.
 
 [![Website](https://img.shields.io/badge/website-yuri--lima.github.io%2Fresonara-0d9488?style=for-the-badge&logo=github)](https://yuri-lima.github.io/resonara/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-334155?style=for-the-badge)](./LICENSE)
@@ -31,13 +31,13 @@ assembly inserts profile silence only at non-forced joins, and
 
 ## Why Resonara
 
-Most “AI audio” tools push speech and processing to the cloud. Resonara keeps the full loop local: import and normalize audio, play and record piano, synthesize long-form speech with offline neural engines, verify quality with Whisper, and ship chaptered files — without an account, API key, or always-on network.
+Most TTS tools push speech to the cloud. Resonara keeps the full loop local: import a document, synthesize long-form speech with offline neural engines, verify quality with Whisper (optional), and ship chaptered files — without an account, API key, or always-on network.
 
-| Studio | Capabilities |
-|--------|----------------|
-| **Audio Lab** | Import · transcode · two-pass EBU R128 loudnorm · trim · silence detect · waveform · stream & export |
-| **Hybrid Piano** | Sample-pack piano · take recording · analyze & export into the same job model |
-| **Voice** | Long-form TTS with **Kokoro**, **Piper**, optional **expressive** (Chatterbox), and platform voices · **English + pt-BR** · document import · read-along · library · CLI |
+| Product | Capabilities |
+|---------|----------------|
+| **Voice** | Long-form TTS with **Kokoro**, **Piper**, optional **expressive** (Chatterbox), and platform fallback · **English + pt-BR** · document import · library · CLI · optional QA gates |
+
+**Not in scope:** generic audio lab, hybrid piano, podcast hosting, or music takes.
 
 End users install a normal **macOS** or **Windows** app. No Docker, no Node, no terminal required.
 
@@ -45,20 +45,14 @@ End users install a normal **macOS** or **Windows** app. No Docker, no Node, no 
 
 ## Features
 
-### Audio production
-- Two-pass **EBU R128** loudness normalization (not single-pass)
-- Transcode, trim, silence detection, waveform peaks, HTTP Range streaming
-- ffmpeg path resolution for GUI apps that strip `PATH`
-
-### Voice / long-form TTS
+### Long-form TTS
 - **Engines** behind one interface: **Kokoro-82M** · **Piper** · optional **expressive** (Chatterbox) · platform (`say` / SAPI)
 - Language-aware routing: English prefers Kokoro when available; **pt-BR never falls back to English Kokoro**
 - SSML subset, pronunciation dictionary, dialogue multi-speaker, seamless chunk concat
 - Document import: EPUB, PDF, DOCX, Markdown, plain text with configurable preprocessing
-- **Synthesis QA**: offline **faster-whisper** round-trip **WER** per chunk (`sample` / `full`) with one auto-retry
-- **Read-along**: forced alignment, karaoke UI, EPUB 3 Media Overlays export
-- **Library**: bookshelf, resume, bookmarks, sleep timer, 0.5×–3.0× pitch-preserving speed
-- Cover art + metadata embed; optional LAN **podcast RSS** (`RESONARA_FEEDS=1`)
+- **Optional synthesis QA**: offline **faster-whisper** round-trip **WER** per chunk (`sample` / `full`) with one auto-retry
+- **Read-along**: forced alignment, timestamps / subtitles
+- **Library**: job bookshelf, resume, bookmarks, speed-adjusted download
 - Real **CLI** + watch-folder automation
 
 ### Multilingual (en · pt-BR)
@@ -71,7 +65,7 @@ End users install a normal **macOS** or **Windows** app. No Docker, no Node, no 
 - Live job progress over Socket.IO
 - Health checks for ffmpeg and TTS engines
 
-Competitive research and roadmap: [COMPETITIVE_ANALYSIS.md](./COMPETITIVE_ANALYSIS.md) · [IMPROVEMENT_ROADMAP.md](./IMPROVEMENT_ROADMAP.md) · [reports/INDEX.md](./reports/INDEX.md)
+Historical research (archived): [docs/history/](./docs/history/) · [reports/INDEX.md](./reports/INDEX.md)
 
 ---
 
@@ -93,7 +87,7 @@ Competitive research and roadmap: [COMPETITIVE_ANALYSIS.md](./COMPETITIVE_ANALYS
 2. Open the disk image and drag **Resonara** into **Applications**
 3. Launch from Applications  
    - Unsigned builds: right-click → **Open** on first launch
-4. The app starts a local engine and opens the studio UI
+4. The app starts a local engine and opens the Voice UI
 
 **Requirements:** macOS 12+ · Apple Silicon (arm64 DMG; Intel via local electron-builder if needed)
 
@@ -153,9 +147,8 @@ RESONARA_LITE=1 PORT=3000 npm run start:lite
 
 | Surface | URL |
 |---------|-----|
-| Audio Lab | http://127.0.0.1:3000/ui/ |
-| Piano | http://127.0.0.1:3000/ui/piano/ |
-| Voice | http://127.0.0.1:3000/ui/voice/ |
+| Voice (product) | http://127.0.0.1:3000/ui/voice/ |
+| UI root (redirect) | http://127.0.0.1:3000/ui/ |
 | Deliverable dashboard | http://127.0.0.1:3000/ui/deliverable/ |
 | OpenAPI | http://127.0.0.1:3000/docs |
 
@@ -295,29 +288,9 @@ Product metadata, mode (`lite` | `full`), and checks for database, ffmpeg, and T
 | `GET` | `/tts/jobs/:id/download` | Audio / chapter / EPUB3-MO export |
 | `GET` | `/tts/jobs/:id/qa` | Per-chunk WER table |
 | `GET` | `/tts/library` | Bookshelf aggregation |
-| `GET` | `/feeds/:jobId/rss.xml` | Podcast RSS (when feeds enabled) |
 | `POST` | `/stt/transcribe` | Offline Whisper transcription |
 
-### Audio Lab (selected)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/tracks/upload` | Upload with magic-byte validation |
-| `POST` | `/tracks/:id/transcode` | Format conversion job |
-| `POST` | `/tracks/:id/normalize` | Two-pass EBU R128 |
-| `GET` | `/tracks/:id/waveform` | Peaks + RMS |
-| `GET` | `/tracks/:id/stream` | HTTP Range / 206 |
-| `WS` | `/jobs` | `subscribe` → progress events |
-
-### Piano
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/piano/packs` | Sample packs |
-| `POST` | `/piano/takes` | Create take |
-| `POST` | `/piano/takes/:id/export` | Export take |
-
----
 
 ## Packaging
 
@@ -346,16 +319,14 @@ resonara/
 ├── desktop/              # Electron main + preload
 ├── src/
 │   ├── ffmpeg/           # Processing + path resolution
-│   ├── tracks/           # Audio Lab API
-│   ├── piano/            # Sample piano + takes
 │   ├── tts/              # Engines, chunker, QA, library, feeds, export
 │   ├── stt/              # Offline Whisper service
 │   ├── jobs/ · queue/    # Workers + inline runner
 │   ├── storage/          # MinIO or filesystem (lite)
 │   └── health/           # /health
-├── ui/                   # Lab · piano · voice · deliverable dashboard
+├── ui/                   # Voice product UI · deliverable · eval-lab
 ├── scripts/              # CLI, demos, model downloads, smoke tests
-├── samples/              # Demo texts + piano pack seeds
+├── samples/              # Demo texts for TTS probes
 ├── tools/                # Local venvs & models (gitignored binaries)
 ├── reports/              # Phase evidence & audits
 └── docs/                 # Marketing / product site sources
@@ -391,7 +362,6 @@ resonara/
 | [IMPROVEMENT_PLAN.md](./IMPROVEMENT_PLAN.md) | Earlier TTS improvement plan |
 | [MULTILINGUAL_PLAN.md](./MULTILINGUAL_PLAN.md) | en / pt-BR design |
 | [AUDIO_ARCHITECTURE.md](./AUDIO_ARCHITECTURE.md) | Lab pipeline |
-| [PIANO_ARCHITECTURE.md](./PIANO_ARCHITECTURE.md) | Piano module |
 | [reports/INDEX.md](./reports/INDEX.md) | Session / phase evidence index |
 | [WINDOWS_TESTING.md](./WINDOWS_TESTING.md) | Windows packaging verification |
 
@@ -399,7 +369,6 @@ resonara/
 
 ## Security notes
 
-- **Podcast feeds** (`RESONARA_FEEDS`) are unauthenticated by design for LAN podcast apps. Keep them off on public interfaces; bind to localhost or a trusted network when enabled.
 - Desktop lite binds the API to **localhost** by default.
 - No cloud TTS/STT is required for core features; model downloads are explicit opt-in.
 
@@ -433,7 +402,7 @@ resonara/
 
 <p align="center">
   <strong>Resonara</strong><br/>
-  <em>Shape sound. Speak the long form. Play freely.</em><br/>
+  <em>Offline long-form text-to-speech.</em><br/>
   <a href="https://yuri-lima.github.io/resonara/">Product site</a>
   ·
   <a href="https://github.com/Yuri-Lima/resonara/releases">Releases</a>

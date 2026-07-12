@@ -848,7 +848,6 @@
     if (s.engine && $('#set-engine')) $('#set-engine').value = s.engine;
     if (s.language && $('#set-lang')) $('#set-lang').value = s.language;
     if (s.pause && $('#set-pause')) $('#set-pause').value = s.pause;
-    if ($('#set-feeds')) $('#set-feeds').checked = s.feeds !== false;
     if (s.engine && $('#engine-select')) $('#engine-select').value = s.engine;
     if (s.language && $('#language-select')) $('#language-select').value = s.language;
   }
@@ -858,7 +857,6 @@
       engine: $('#set-engine')?.value || 'auto',
       language: $('#set-lang')?.value || 'auto',
       pause: $('#set-pause')?.value || 'audiobook',
-      feeds: $('#set-feeds')?.checked !== false,
     };
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
     applySettings();

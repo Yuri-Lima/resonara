@@ -61,16 +61,16 @@ async function main() {
   try {
     const health = await waitHealth();
     const ui = await get('/ui/');
-    const piano = await get('/ui/piano/');
     const voice = await get('/ui/voice/');
     const voices = await get('/tts/voices');
+    const engines = await get('/tts/engines');
     const result = {
       health,
       uiStatus: ui.status,
-      pianoStatus: piano.status,
       voiceStatus: voice.status,
       voicesStatus: voices.status,
-      uiHasResonara: /Resonara/i.test(ui.body),
+      enginesStatus: engines.status,
+      voiceHasResonara: /Resonara/i.test(voice.body),
       product: health.product,
       mode: health.mode,
       checks: health.checks,
@@ -78,8 +78,12 @@ async function main() {
     console.log(JSON.stringify(result, null, 2));
     if (health.product !== 'Resonara') throw new Error('product name missing');
     if (health.checks?.ffmpeg !== 'ok') throw new Error('ffmpeg not ok');
-    if (ui.status !== 200 || !result.uiHasResonara) throw new Error('UI not branded');
-    if (piano.status !== 200 || voice.status !== 200) throw new Error('UI surfaces missing');
+    if (voice.status !== 200 || !result.voiceHasResonara) {
+      throw new Error('Voice UI missing or not branded');
+    }
+    if (voices.status !== 200 || engines.status !== 200) {
+      throw new Error('TTS API surfaces missing');
+    }
   } finally {
     child.kill('SIGTERM');
     await new Promise((r) => setTimeout(r, 500));

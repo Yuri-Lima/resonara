@@ -5,6 +5,21 @@ All notable changes to Resonara are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Removed
+
+- **Hybrid Piano** product surface (UI, API, sample packs, takes)
+- **Audio Lab** product surface (track upload/transcode/loudnorm/trim/waveform UI + APIs)
+- **Podcast RSS feeds** (`/feeds`, `RESONARA_FEEDS`)
+- Transcode job queue / BullMQ audio workers tied only to Lab + Piano
+
+### Changed
+
+- Product focus: **offline long-form text-to-speech** only (multi-engine, en + pt-BR, documents → chaptered audio, optional QA)
+- Desktop and `/ui/` open **Voice** as the primary surface
+- Tagline and package description retargeted away from “audio studio / play freely”
+
 ## [2.1.0] — 2026-07-12
 
 ### Added

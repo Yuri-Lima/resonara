@@ -1,7 +1,7 @@
 {
   "name": "resonara",
   "version": "2.1.0",
-  "description": "Resonara \u2014 Shape sound. Speak the long form. Play freely. Offline desktop audio lab, piano, and long-form neural TTS (Piper + Kokoro + optional expressive Chatterbox + pt-BR).",
+  "description": "Resonara \u2014 Offline long-form text-to-speech. Multi-engine (Piper + Kokoro + optional expressive Chatterbox), en + pt-BR, documents to chaptered audio, optional quality gates.",
   "private": true,
   "license": "MIT",
   "scripts": {

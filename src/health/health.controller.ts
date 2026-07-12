@@ -73,7 +73,7 @@ export class HealthController {
       status: healthy ? 'ok' : 'degraded',
       product: 'Resonara',
       mode: lite ? 'lite' : 'full',
-      tagline: 'Shape sound. Speak the long form. Play freely.',
+      tagline: 'Offline long-form text-to-speech',
       checks,
       tts: tts,
       piper: {

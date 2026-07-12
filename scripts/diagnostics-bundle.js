@@ -52,7 +52,7 @@ fs.writeFileSync(
   redact({
     RESONARA_LITE: process.env.RESONARA_LITE || null,
     RESONARA_DESKTOP: process.env.RESONARA_DESKTOP || null,
-    RESONARA_FEEDS: process.env.RESONARA_FEEDS || null,
+
     PORT: process.env.PORT || null,
     // paths only, not secrets
     PIPER_PATH: process.env.PIPER_PATH || null,
