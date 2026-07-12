@@ -10,15 +10,16 @@
   <a class="skip" href="#main">Skip to main</a>
   <header class="top">
     <h1>Resonara Eval Lab</h1>
-    <p class="sub">Blind CMOS / PMOS listening — system identity hidden until you commit scores.</p>
+    <p class="sub">Blind <strong>human CMOS</strong> / PMOS listening — system identity hidden until you commit scores. This is the only Gate 2 certifying path.</p>
   </header>
   <main id="main">
     <section id="setup" class="panel" aria-labelledby="setup-h">
       <h2 id="setup-h">Session</h2>
+      <p class="help"><strong>Gate 2:</strong> load <code>session-manifest-gate2.json</code> (build with <code>npm run eval:gate2:manifest</code>). Save the downloaded ledger under <code>bench/eval/human-sessions/</code> before any PASS claim.</p>
       <label>Manifest URL or path
-        <input id="manifestUrl" type="text" value="/ui/eval-lab/session-manifest.json" aria-describedby="manifest-help" />
+        <input id="manifestUrl" type="text" value="/ui/eval-lab/session-manifest-gate2.json" aria-describedby="manifest-help" />
       </label>
-      <p id="manifest-help" class="help">Loads paired A/B renders with randomized order. Anchors included for sanity.</p>
+      <p id="manifest-help" class="help">Loads paired A/B renders with randomized order. Identical-anchor trial included for sanity. Scores are written to the ledger <em>before</em> unblinding.</p>
       <button id="btnLoad" type="button">Load session</button>
       <p id="sessionMeta" class="meta" aria-live="polite"></p>
     </section>

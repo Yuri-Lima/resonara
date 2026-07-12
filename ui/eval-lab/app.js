@@ -78,7 +78,10 @@
       trialId: t.id,
       fixture: t.fixture,
       timestamp: new Date().toISOString(),
-      cmosAb: cmos, // positive → B better
+      cmosAb: cmos, // positive → B better (HUMAN CMOS)
+      isHumanCmos: true,
+      protocol: (state.manifest && state.manifest.protocol) || 'human-CMOS-blind-v1',
+      certifiesGate2: !!(state.manifest && state.manifest.certifiesGate2),
       pmos: {
         pitch: parseInt($('pmosPitch').value, 10),
         rhythm: parseInt($('pmosRhythm').value, 10),
@@ -164,17 +167,35 @@
     }
     const mean = n ? sum / n : null;
 
+    const certifies = !!(state.manifest && state.manifest.certifiesGate2);
+    let gateLine = '';
+    if (certifies) {
+      if (!anchorOk) {
+        gateLine =
+          '<p><strong>Gate 2:</strong> NOT CERTIFIED — anchor sanity failed. Discard this session.</p>';
+      } else if (mean == null || n < 4) {
+        gateLine =
+          '<p><strong>Gate 2:</strong> NOT CERTIFIED — need n≥4 expressive-vs-piper human scores.</p>';
+      } else if (mean >= 0.5) {
+        gateLine = `<p><strong>Gate 2 (human CMOS):</strong> CERTIFIED_PASS mean ${mean.toFixed(2)} (n=${n}). Save ledger to <code>bench/eval/human-sessions/</code>.</p>`;
+      } else {
+        gateLine = `<p><strong>Gate 2 (human CMOS):</strong> CERTIFIED_FAIL mean ${mean.toFixed(2)} (n=${n}) — expressive does not beat Piper on this panel. Save ledger honestly.</p>`;
+      }
+    }
     const html = [
+      `<p><strong>Protocol:</strong> ${state.manifest?.protocol || 'human-CMOS'} · <strong>human CMOS only</strong> (not automated proxy)</p>`,
       `<p><strong>Anchor sanity:</strong> ${anchorOk ? 'PASS' : 'FAIL — discard session'} ${anchorNotes.join('; ')}</p>`,
       mean != null
-        ? `<p><strong>Mean CMOS (expressive vs piper):</strong> ${mean.toFixed(2)} (n=${n})</p>`
+        ? `<p><strong>Mean human CMOS (expressive vs piper):</strong> ${mean.toFixed(2)} (n=${n})</p>`
         : '<p>No expressive-vs-piper pairs in this session.</p>',
+      gateLine,
       '<table><thead><tr><th>Trial</th><th>Fixture</th><th>A</th><th>B</th><th>CMOS</th><th>Expr</th></tr></thead><tbody>',
       ...rows.map(
         (r) =>
           `<tr><td>${r.trialId}</td><td>${r.fixture}</td><td>${r.systemA}</td><td>${r.systemB}</td><td>${r.cmosAb}</td><td>${r.pmos.expressiveness}</td></tr>`,
       ),
       '</tbody></table>',
+      '<p class="help">Download ledger and place under <code>bench/eval/human-sessions/</code>, then run <code>npm run eval:gate2:status</code>.</p>',
     ];
     $('summaryBody').innerHTML = html.join('');
     state.unblinded = rows;
@@ -188,7 +209,7 @@
     });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `eval-results-${state.manifest?.sessionId || 'session'}.jsonl`;
+    a.download = `human-cmos-${state.manifest?.sessionId || 'session'}.jsonl`;
     a.click();
   }
 

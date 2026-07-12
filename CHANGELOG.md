@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - macOS / Windows installer targets for the expressive release (`Resonara-2.1.0-arm64.dmg`, `Resonara Setup 2.1.0.exe`)
 - **Product-path direction runtime** (`direction-runtime.ts`): job `exaggeration`, REM per-segment controls, and `humanize` directed AF are applied at synth time (not scaffolding)
 - Content→affect fallback for plain monologues (`contentAffectFromText`) when `humanize=true`
-- Gate 2 product-path re-cert harness (`npm run recert:gate2`) and scored artifacts (`bench/eval/gate2-product-path-*`, mean CMOS **+0.75** PASS)
+- Gate 2 product-path re-cert harness (`npm run recert:gate2`) and scored artifacts (`bench/eval/gate2-product-path-*`, proxy diagnostic only; human CMOS NOT CERTIFIED)
 - `blind-gate.js --expr-root` / `--tag` so product-path scoring does not clobber offline Gate 2 ledgers
 
 ### Changed
@@ -25,13 +25,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Marketing/docs download URLs now point at **v2.1.0** macOS DMG/ZIP and Windows NSIS assets
 - Expressive synth no longer hardcodes `exaggeration: 0.55` over the request/REM value
 - REM compile keeps native tags for expressive; non-expressive still gets speakable-only text
-- Frontier dashboard Gate 2 figure uses **product-path +0.75** (shipping path), not offline directed-final alone
+- Frontier dashboard Gate 2 figure uses **human CMOS not yet run; prior automated PASS claims invalid
 - `styleProfile: drama` maps to narrative affect (not animated/joy); emotion comes from content/REM
 
 ### Fixed
 
+- **Gate 2 methodology:** automated circular F0-band “CMOS” scorer no longer certifies; status is `NOT_CERTIFIED_AWAITING_HUMAN_PANEL` until human eval-lab ledger exists. Offline directed-final “+1.0 PASS” and product-path “+0.75 PASS” quarantined as invalid.
 - Dead `directedAudioFilter` / `emotionToAffect` — now invoked via `FfmpegService.applyAudioFilter` when `humanize=true`
-- Gate 2 honesty: offline directed-final (+1.0) vs product-path re-cert (+0.75)
+- Gate 2 honesty: invalid automated PASS claims quarantined; human panel required
 - `render-expressive-fixtures.js` expressive CLI flag `--out` → `--output` (matches `synthesize.py`)
 - Multi-emotion dialogue: document-level AF stays neutral (`multiControl`) so grief/joy do not paint the whole clip
 

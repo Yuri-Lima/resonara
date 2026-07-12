@@ -1,0 +1,115 @@
+{
+  "sessionId": "gate2-human-42",
+  "seed": 42,
+  "createdAt": "2026-07-12T11:01:23.096Z",
+  "protocol": "human-CMOS-blind-v1-gate2",
+  "certifiesGate2": true,
+  "instructions": "Gate 2 human panel: expressive (product-path) vs Piper. Identities hidden. Score CMOS −3..+3. Identical anchor must be ~0. Download ledger to bench/eval/human-sessions/ BEFORE trusting any PASS claim.",
+  "trials": [
+    {
+      "id": "t1",
+      "fixture": "death-scene",
+      "fixtureLabel": "death-scene",
+      "anchor": null,
+      "presentation": {
+        "A": {
+          "system": "piper",
+          "url": "/bench/baseline/piper/death-scene.wav"
+        },
+        "B": {
+          "system": "expressive",
+          "url": "/bench/candidates/product-path/death-scene.wav"
+        }
+      },
+      "_truth": {
+        "aSystem": "piper",
+        "bSystem": "expressive",
+        "flipped": false
+      }
+    },
+    {
+      "id": "t5",
+      "fixture": "death-scene",
+      "fixtureLabel": "ANCHOR identical (must score ~0)",
+      "anchor": "identical",
+      "presentation": {
+        "A": {
+          "system": "piper",
+          "url": "/bench/baseline/piper/death-scene.wav"
+        },
+        "B": {
+          "system": "piper",
+          "url": "/bench/baseline/piper/death-scene.wav"
+        }
+      },
+      "_truth": {
+        "aSystem": "piper",
+        "bSystem": "piper",
+        "flipped": true
+      }
+    },
+    {
+      "id": "t4",
+      "fixture": "newscast",
+      "fixtureLabel": "newscast",
+      "anchor": null,
+      "presentation": {
+        "A": {
+          "system": "piper",
+          "url": "/bench/baseline/piper/newscast.wav"
+        },
+        "B": {
+          "system": "expressive",
+          "url": "/bench/candidates/product-path/newscast.wav"
+        }
+      },
+      "_truth": {
+        "aSystem": "piper",
+        "bSystem": "expressive",
+        "flipped": false
+      }
+    },
+    {
+      "id": "t2",
+      "fixture": "picnic",
+      "fixtureLabel": "picnic",
+      "anchor": null,
+      "presentation": {
+        "A": {
+          "system": "expressive",
+          "url": "/bench/candidates/product-path/picnic.wav"
+        },
+        "B": {
+          "system": "piper",
+          "url": "/bench/baseline/piper/picnic.wav"
+        }
+      },
+      "_truth": {
+        "aSystem": "piper",
+        "bSystem": "expressive",
+        "flipped": true
+      }
+    },
+    {
+      "id": "t3",
+      "fixture": "dialogue-performance",
+      "fixtureLabel": "dialogue-performance",
+      "anchor": null,
+      "presentation": {
+        "A": {
+          "system": "piper",
+          "url": "/bench/baseline/piper/dialogue-performance.wav"
+        },
+        "B": {
+          "system": "expressive",
+          "url": "/bench/candidates/product-path/dialogue-performance.wav"
+        }
+      },
+      "_truth": {
+        "aSystem": "piper",
+        "bSystem": "expressive",
+        "flipped": false
+      }
+    }
+  ]
+}

@@ -2,17 +2,29 @@
 window.RESONARA_EXPRESSIVE = {
   version: '2.1.0-expressive',
   gate2: {
-    // Shipping gate = live product path (autoDirect+REM+humanize), not offline AF-only
-    cmos: 0.75,
-    n: 4,
-    ci95: [0.0, 1.5],
-    anchorSanity: 'pass',
-    protocol: 'CMOS-blind-v1-affect-fitness',
-    ledger: 'bench/eval/gate2-product-path-ledger.jsonl',
-    source: 'product-path',
+    // Path 1: only human blind CMOS certifies. Automated proxy is diagnostic only.
+    status: 'NOT_CERTIFIED_AWAITING_HUMAN_PANEL',
+    certified: false,
+    pass: false,
+    cmos: null,
+    n: 0,
+    ci95: null,
+    anchorSanity: 'n/a',
+    protocol: 'human-CMOS-blind-v1-gate2',
+    ledger: 'bench/eval/human-sessions/',
+    source: 'awaiting-human-panel',
     detail:
-      'product-path: death +1, picnic +2, dialogue 0, newscast 0 (mean +0.75). Offline directed-final filter-family evidence remains +1.0.',
-    offlineDirectedFinalCmos: 1.0,
+      'Gate 2 NOT CERTIFIED — awaiting human blind panel (ui/eval-lab). Prior automated "+0.75 PASS" and offline "+1.0 PASS" claims are INVALID (circular F0-band proxy / post-hoc DSP).',
+    invalidPriorClaims: {
+      productPathCircularProxy: {
+        claimed: '+0.75 PASS',
+        status: 'INVALID_CIRCULAR_PROXY',
+      },
+      offlineDirectedFinal: {
+        claimed: '+1.0 PASS',
+        status: 'INVALID_POST_HOC_DSP',
+      },
+    },
   },
   landscape: [
     { name: 'Chatterbox Turbo', code: 'MIT', weights: 'MIT', params: '350M', ptBR: 'pack', controls: 'tags+exagg', ship: true, bench: true, score: 9.1 },

@@ -1,0 +1,43 @@
+{
+  "gate": 2,
+  "exprRoot": "bench/candidates/directed-final",
+  "tag": "directed-final",
+  "metricName": "objective-prosody-proxy-v2",
+  "isHumanCmos": false,
+  "certified": false,
+  "gateStatus": "INVALID_POST_HOC_DSP",
+  "meanProxyExpressiveVsPiper": -1.25,
+  "meanCmosExpressiveVsPiper": -1.25,
+  "n": 4,
+  "pass": false,
+  "humanCmosNotRun": true,
+  "note": "Objective prosody proxy only. Not CMOS. Gate 2 requires human blind panel (ui/eval-lab).",
+  "ledger": "/private/tmp/trace-sweG29-20260712-013205/bench/eval/gate2-directed-final-ledger.jsonl",
+  "unblind": [
+    {
+      "fixture": "death-scene",
+      "proxyExpressiveVsPiper": -2,
+      "cmosExpressiveVsPiper": -2,
+      "flip": false
+    },
+    {
+      "fixture": "picnic",
+      "proxyExpressiveVsPiper": -2,
+      "cmosExpressiveVsPiper": -2,
+      "flip": true
+    },
+    {
+      "fixture": "dialogue-performance",
+      "proxyExpressiveVsPiper": -1,
+      "cmosExpressiveVsPiper": -1,
+      "flip": true
+    },
+    {
+      "fixture": "newscast",
+      "proxyExpressiveVsPiper": 0,
+      "cmosExpressiveVsPiper": 0,
+      "flip": false
+    }
+  ],
+  "quarantine": "INVALID — post-hoc offline DSP (directed-final), not a product capability"
+}

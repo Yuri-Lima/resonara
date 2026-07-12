@@ -13,7 +13,7 @@ eslint modified paths → clean
 | Gate | Result |
 |------|--------|
 | Gate 1 raw | FAIL (mean −2) — honest; direction required |
-| Gate 2 directed | **PASS mean CMOS +1.0** |
+| Gate 2 directed | **NOT CERTIFIED — awaiting human panel** (prior +1.0 INVALID circular/DSP) |
 
 ## Affect contrast
 

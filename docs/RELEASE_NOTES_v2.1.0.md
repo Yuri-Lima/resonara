@@ -29,7 +29,7 @@ npm run dist:all
 
 1. **Optional expressive TTS** — Chatterbox Turbo/full behind the same Voice UI; Expressive Pack via `npm run download:expressive`.
 2. **REM + direction** — expression markup, auto-direction, casting, humanization micro-layer.
-3. **Eval lab** — blind CMOS sessions, prosody metrics, Gate reports under `bench/` / `reports/`.
+3. **Eval lab** — blind **human** CMOS sessions (only Gate 2 certifier). Automated prosody proxy is diagnostic only; Gate 2 is NOT CERTIFIED until a human ledger exists.
 4. **Frontier dashboard** — `/ui/deliverable/` Human-Voice Frontier section.
 5. **Same desktop shell** — macOS DMG + Windows NSIS still bundle Piper en + pt-BR; Kokoro/Whisper/expressive remain on-demand.
 

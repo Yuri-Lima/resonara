@@ -46,5 +46,6 @@ Job metadata stores `expression` (`exaggeration`, `affect`, `humanize`, `segment
 - Long-form RTF may be 2–10× real-time on Apple Silicon — background job with progress.
 - pt-BR on expressive tier: Chatterbox Multilingual pack when installed; otherwise REM degrades on Piper/Kokoro pt-BR voices.
 - Interactive preview uses Kokoro/Piper; expressive is the performance path.
-- **Gate 2 shipping score** is product-path re-cert (**mean CMOS +0.75**, PASS) via `npm run recert:gate2` → `bench/eval/gate2-product-path-*`. Offline `directed-final` (+1.0) is filter-family evidence only.
+- **Gate 2 is NOT CERTIFIED** until a human blind panel ledger exists (`ui/eval-lab` → `bench/eval/human-sessions/`). Automated “CMOS +0.75/+1.0 PASS” claims are **invalid** (circular F0-band proxy / post-hoc DSP).
+- Diagnostic only: `npm run recert:gate2:score` writes an **objective prosody proxy** (not CMOS). `npm run eval:proxy:adversarial` checks the proxy does not reward F0-band doctors.
 - Plain monologues without REM emotion tags still get content→affect when `humanize=true` (`contentAffectFromText`: grief / joy / news).

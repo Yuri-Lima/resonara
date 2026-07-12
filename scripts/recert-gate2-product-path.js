@@ -210,7 +210,11 @@ function runBlindGateProduct() {
     const j = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
     j.source = 'product-path';
     j.note =
-      'Scored from product direction path (autoDirect+REM+humanize AF), not offline directed-final.';
+      'Objective prosody proxy only on product-path WAVs. NOT human CMOS. NOT a Gate 2 pass.';
+    j.gateStatus = 'NOT_CERTIFIED_AWAITING_HUMAN_PANEL';
+    j.certified = false;
+    j.pass = false;
+    j.humanCmosNotRun = true;
     fs.writeFileSync(mapPath, JSON.stringify(j, null, 2));
     return j;
   }
@@ -219,7 +223,7 @@ function runBlindGateProduct() {
 
 function writeReport(summary, metas) {
   const lines = [
-    '# Gate 2 product-path re-certification',
+    '# Gate 2 product-path — diagnostic render + proxy (NOT certified)',
     '',
     `**Date:** ${new Date().toISOString()}`,
     `**Source:** \`bench/candidates/product-path/\` (live product direction path)`,
@@ -242,13 +246,25 @@ function writeReport(summary, metas) {
       `| ${m.fixture} | ${m.affect} | ${m.exaggeration.toFixed(2)} | \`${(m.af || 'none').slice(0, 40)}…\` |`,
     );
   }
-  lines.push('', '## CMOS (proxy protocol, same as blind-gate.js)', '');
+  lines.push(
+    '',
+    '## Objective prosody proxy (NOT CMOS)',
+    '',
+    'Automated relative proxy only. **Does not certify Gate 2.**',
+    '',
+  );
   if (summary) {
     lines.push('```json', JSON.stringify(summary, null, 2), '```', '');
+    const mean =
+      summary.meanProxyExpressiveVsPiper != null
+        ? summary.meanProxyExpressiveVsPiper
+        : summary.meanCmosExpressiveVsPiper;
     lines.push(
-      summary.pass
-        ? `**PASS** mean CMOS **${summary.meanCmosExpressiveVsPiper}** ≥ +0.5`
-        : `**FAIL** mean CMOS **${summary.meanCmosExpressiveVsPiper}** (threshold +0.5)`,
+      `**Status:** \`${summary.gateStatus || 'NOT_CERTIFIED_AWAITING_HUMAN_PANEL'}\``,
+      '',
+      `Proxy score (expressive vs Piper): **${mean}** (n=${summary.n}). Human CMOS not run.`,
+      '',
+      'This is **not** a PASS. Gate 2 requires `ui/eval-lab` human blind panel → `bench/eval/human-sessions/`.',
     );
   } else {
     lines.push('_No summary — scoring failed._');
@@ -257,9 +273,10 @@ function writeReport(summary, metas) {
     '',
     '## Honesty',
     '',
-    '- This is **not** a re-label of `directed-final/` offline artifacts.',
-    '- Scores use the same objective CMOS proxy as Gate 2 (prosody metrics), not a fresh human panel.',
-    '- If FAIL: product path is wired but may not yet beat Piper on this proxy — ship scaffolding is fixed; quality is measured honestly.',
+    '- Product-path audio is real product wiring (not offline directed-final DSP alone).',
+    '- Proxy is **not** MOS/CMOS; absolute F0 band rewards were removed as circular.',
+    '- Offline directed-final "+1.0 PASS" is **INVALID — post-hoc DSP**.',
+    '- Run `node scripts/adversarial-proxy-sanity.js` and `node scripts/gate2-status.js`.',
     '',
   );
   const p = path.join(EVAL_DIR, 'gate2-product-path-report.md');
@@ -328,14 +345,19 @@ function main() {
   const summary = runBlindGateProduct();
   writeReport(summary, metas);
 
-  if (summary && !summary.pass) process.exitCode = 2;
+  // Never exit 2 for proxy "fail" — proxy does not certify. Human panel is separate.
   console.log(
     JSON.stringify(
       {
-        ok: !!(summary && summary.pass),
-        mean: summary && summary.meanCmosExpressiveVsPiper,
+        ok: true,
+        certified: false,
+        gateStatus:
+          (summary && summary.gateStatus) ||
+          'NOT_CERTIFIED_AWAITING_HUMAN_PANEL',
+        meanProxy: summary && (summary.meanProxyExpressiveVsPiper ?? summary.meanCmosExpressiveVsPiper),
         n: summary && summary.n,
         outDir: OUT_DIR,
+        note: 'Product-path render diagnostic only; human CMOS not run',
       },
       null,
       2,

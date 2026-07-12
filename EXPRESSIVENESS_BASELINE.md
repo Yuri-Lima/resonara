@@ -104,4 +104,4 @@ Metrics JSON: `bench/metrics/baseline-piper.json`, `baseline-kokoro.json`
 1. **Directed drama** must show higher F0 variance/range on death-scene (and lower or distinct contour on picnic) than Piper baseline — not a global variance max.
 2. **Newscast** must stay relatively flat (no over-acting).
 3. Pause conformance and WER must not regress vs v2.0.0.
-4. Blind CMOS ≥ +0.5 for directed expressive stack vs this Piper default (Gate 2).
+4. Blind **human** CMOS ≥ +0.5 for directed expressive stack vs this Piper default (Gate 2). Automated proxy is not CMOS; as of 2026-07-12 Gate 2 is **NOT CERTIFIED — awaiting human panel**.

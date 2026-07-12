@@ -1,25 +1,62 @@
 # Evaluation Report — Expressive Tier Campaign
 
-**Date:** 2026-07-12  
-**Protocol:** CMOS-blind-v1 + objective prosody proxies  
+**Date:** 2026-07-12 (methodology correction same day)  
+**Protocol:** **Human CMOS-blind-v1** (certifying) + objective prosody proxy (diagnostic only)  
 **Machine:** Apple M4 Max, MPS
 
-## Headline
+## Headline — Gate 2 status
 
-| Gate | Comparison | Mean CMOS | n | Pass (≥+0.5) |
-|------|------------|-----------|---|--------------|
-| Gate 1 | Raw expressive vs Piper | see `bench/eval/gate1-unblind.json` | 4 | multi-factor proxy |
-| Gate 2 (offline AF) | Directed-final vs Piper | **+1.0** (`gate2-unblind.json`) | 4 | filter-family evidence |
-| Gate 2 (**product path**) | Live autoDirect+REM+humanize vs Piper | **+0.75** (`gate2-product-path-unblind.json`) | 4 | **shipping gate** |
+| Gate | Comparison | Result | Certifying? |
+|------|------------|--------|-------------|
+| Gate 1 | Raw expressive vs Piper | see `bench/eval/gate1-unblind.json` (proxy history) | No — diagnostic |
+| Gate 2 | Expressive product-path vs Piper | **`NOT_CERTIFIED_AWAITING_HUMAN_PANEL`** | **Yes — human only** |
 
-Ledgers written **before** unblinding (`bench/eval/gate*-ledger.jsonl`).
+**Honest status:** Gate 2 is **not certified**. No human blind panel ledger exists under `bench/eval/human-sessions/`. Automated scores must not be reported as CMOS PASS.
 
-## Anchor discipline
+How to certify:
 
-| Anchor | Expected | Result |
-|--------|----------|--------|
-| Identical A/B (same wav) | CMOS ≈ 0 | forced 0 in protocol |
-| Current default (Piper) as hidden reference | mid-scale MUSHRA | used in eval-lab sessions |
+1. `npm run eval:gate2:manifest`
+2. Serve app; open `/ui/eval-lab/`; load `session-manifest-gate2.json`
+3. Score all trials (including identical anchor); download ledger
+4. Save to `bench/eval/human-sessions/<id>.jsonl`
+5. `npm run eval:gate2:status`
+
+## Invalid prior claims (quarantined)
+
+| Claim | Status | Why |
+|-------|--------|-----|
+| Offline Gate 2 CMOS **+1.0 PASS** (`directed-final`) | **INVALID — post-hoc DSP** | Offline ffmpeg AF applied to raw Chatterbox; not product capability; also scored by circular proxy |
+| Product-path Gate 2 CMOS **+0.75 PASS** | **INVALID — circular proxy** | `affectFitness()` rewarded absolute F0 bands reverse-engineered from target audio (`mean < 165`, `mean > 208`) |
+
+These numbers must not appear as shipping evidence. See `bench/eval/INVALID-QUARANTINE.md`.
+
+## Methodology defect (fixed)
+
+`scripts/blind-gate.js` previously used a hand-tuned `affectFitness()`:
+
+```text
+if (mean < 165) s += 1.0;   // "directed death ~161 Hz"
+if (mean > 208) s += 1.0;   // "directed picnic ~206 Hz"
+```
+
+That is circular: the scorer rewards the F0 bands the candidate was built to land in. A self-graded proxy is **not** blind human CMOS.
+
+**Path taken:** Path 1 — human blind panel is the only certifying measurement. Eval-lab is wired for Gate 2 self-administered sessions. Until a human session exists, status is **NOT CERTIFIED — awaiting human panel**.
+
+**Proxy retained as diagnostic only:**
+
+- Renamed: **objective prosody proxy v2** (not CMOS)
+- Absolute F0 band rewards removed
+- Relative anti-flat energy / anti-metronome rate only; news prefers stability a priori
+- Never sets `pass: true` or `certified: true`
+- Adversarial sanity: `npm run eval:proxy:adversarial`
+
+## Anchor discipline (human panel)
+
+| Anchor | Expected | Enforcement |
+|--------|----------|-------------|
+| Identical A/B (same wav) | CMOS ≈ 0 | Session invalid if \|CMOS\| > 1 |
+| System identity | Hidden until all scores committed | eval-lab UI |
 
 ## Objective prosody — flat-affect baseline (Piper)
 
@@ -29,16 +66,7 @@ Ledgers written **before** unblinding (`bench/eval/gate*-ledger.jsonl`).
 | picnic | 195.70 | 2300.72 | 1069.16 |
 | **ratio** | 0.975 | **1.008** | 0.865 |
 
-**Finding:** death ≈ picnic. This is the "reads, does not perform" signature.
-
-## Objective prosody — raw Chatterbox Turbo
-
-| Fixture | F0 mean | F0 var | Prosodic diversity | Energy std |
-|---------|---------|--------|--------------------|------------|
-| death-scene | 174.9 | 826.8 | 126.8 | 0.042 |
-| picnic | 192.4 | 531.0 | 356.1 | 0.045 |
-
-Death/picnic **F0 mean separation ~17 Hz** (vs Piper ~5 Hz). Absolute F0 variance is lower (more controlled pitch track); multi-factor Gate scoring weights energy/rate variance + contextual drama, not max variance.
+**Finding:** death ≈ picnic on Piper. This is the "reads, does not perform" signature. This is **descriptive**, not a Gate 2 pass.
 
 ## Content-type engine defaults
 
@@ -52,109 +80,43 @@ Death/picnic **F0 mean separation ~17 Hz** (vs Piper ~5 Hz). Absolute F0 varianc
 | long-form chapter job | **expressive** (background) | quality over speed |
 | pt-BR | **piper** (default) / expressive pack optional | honest scope |
 
+## Diagnostic proxy on product-path (not certifying)
+
+Re-scored with **objective-prosody-proxy-v2** (no absolute F0 bands):
+
+| Source | mean proxy (expressive vs Piper) | pass? |
+|--------|----------------------------------|-------|
+| product-path | **−0.25** | no (and not a CMOS gate) |
+| directed-final (quarantined) | strongly negative under v2 | INVALID post-hoc DSP |
+
+**Honest engineering conclusion:** on the defensible relative proxy, product-path expressive does **not** beat Piper. Human CMOS is still unrun. A documented “not yet” is the correct shipping claim.
+
+## Product path (wired, quality uncertified)
+
+The product path is implemented:
+
+- Job/REM `exaggeration` → Chatterbox
+- `humanize` → breath markers + `directedAudioFilter` via ffmpeg
+- Content→affect fallback for plain monologues
+- multiControl dialogue keeps document AF neutral
+
+**Wiring ≠ quality certification.** Product-path audio may or may not beat Piper on human CMOS; that is unmeasured until a panel runs.
+
+## Adversarial proxy sanity
+
+See `bench/eval/adversarial/adversarial-report.json` (run `npm run eval:proxy:adversarial`).
+
+- Legacy circular scorer: **rewards** F0-band DSP doctors → INVALID
+- objective-prosody-proxy-v2: **must not** reward those doctors
+
 ## Pause + WER regression
 
-Pause-probe and WER gates remain on Piper/Kokoro defaults. Expressive tier target pause conformance ≥90% after boundary assembly (compose-only; does not replace pause architecture).
+Pause-probe and WER gates remain on Piper/Kokoro defaults.
 
 ## pt-BR honest scope
 
-Chatterbox Multilingual lists pt-BR. This campaign primary metrics are **en-US**. pt-BR fixtures exist (`samples/expressive/pt-br/`); quality is **best-effort** until a dedicated pt-BR listening panel. Do not claim parity.
+Primary metrics are **en-US**. pt-BR is best-effort until a dedicated panel.
 
 ## Packaging
 
-Installer size **unchanged** — Expressive Pack is optional download (`node scripts/download-expressive-pack.js` → `~/.resonara/expressive-pack`). Weights cached via Hugging Face hub offline after first fetch.
-
-## Gate 2 result (measured this session)
-
-```json
-{
-  "gate": 2,
-  "meanCmosExpressiveVsPiper": 1,
-  "n": 4,
-  "pass": true,
-  "ledger": "/private/tmp/trace-sweG29-20260712-013205/bench/eval/gate2-ledger.jsonl",
-  "unblind": [
-    {
-      "fixture": "death-scene",
-      "cmosExpressiveVsPiper": 2,
-      "flip": false
-    },
-    {
-      "fixture": "picnic",
-      "cmosExpressiveVsPiper": 2,
-      "flip": true
-    },
-    {
-      "fixture": "dialogue-performance",
-      "cmosExpressiveVsPiper": 0,
-      "flip": true
-    },
-    {
-      "fixture": "newscast",
-      "cmosExpressiveVsPiper": 0,
-      "flip": false
-    }
-  ]
-}
-```
-
-**PASS** — mean CMOS **+1.0** ≥ +0.5 on directed expressive + humanization vs Piper.
-
-Affect contrast (F0 mean death vs picnic): Piper **4.86 Hz** → Directed **45.1 Hz** (~9×).
-
-Gate 1 raw Turbo (no direction): **FAIL** mean −2 — proves model-only is insufficient; direction+humanization is required (claim rebuttal).
-
-## Honesty note — Gate 2 vs product path (2026-07-12 revision)
-
-Gate 2 WAVs under `bench/candidates/directed-final/` were originally produced by an
-**offline ffmpeg directed-affect filter** applied to raw Chatterbox renders (same
-graphs as `directedAudioFilter()` in `src/tts/expression/humanization.ts`).
-
-**Before this fix**, the product path did **not** reproduce that pipeline:
-- `exaggeration` was hardcoded to `0.55` in `synthesizeOneRaw`
-- REM was flattened to plain text (controls discarded)
-- `directedAudioFilter` / `emotionToAffect` were never called from `src/`
-
-**After the product-path fix** (`direction-runtime` + `tts.service` wiring):
-- Job `exaggeration` and REM-derived exaggeration are passed to Chatterbox
-- REM native tags are kept for the expressive engine
-- When `humanize=true`, the same directed AF graph runs via `FfmpegService.applyAudioFilter`
-- Multi-emotion REM documents synth per-segment controls (`multiControl`)
-- Plain monologues get content→affect fallback (`contentAffectFromText`) when humanize is on
-
-## Gate 2 product-path re-certification (measured 2026-07-12)
-
-Pipeline: `autoDirect → breath markers → REM compile → buildExpressionRuntime → Chatterbox (runtime exaggeration) → expressionAudioFilter`.
-
-Harness: `npm run recert:gate2` → `scripts/recert-gate2-product-path.js`  
-Artifacts: `bench/candidates/product-path/`, `bench/eval/gate2-product-path-*`
-
-```json
-{
-  "gate": 2,
-  "exprRoot": "bench/candidates/product-path",
-  "tag": "product-path",
-  "meanCmosExpressiveVsPiper": 0.75,
-  "n": 4,
-  "pass": true,
-  "unblind": [
-    { "fixture": "death-scene", "cmosExpressiveVsPiper": 1 },
-    { "fixture": "picnic", "cmosExpressiveVsPiper": 2 },
-    { "fixture": "dialogue-performance", "cmosExpressiveVsPiper": 0 },
-    { "fixture": "newscast", "cmosExpressiveVsPiper": 0 }
-  ]
-}
-```
-
-| Fixture | Affect | Exaggeration | Notes |
-|---------|--------|--------------|-------|
-| death-scene | grief | 0.58 | content affect + grief AF (`asetrate*0.92`) |
-| picnic | joy | 0.62 | content affect + joy AF (`asetrate*1.07`) |
-| dialogue-performance | neutral | ~0.51 | multiControl; document AF neutral |
-| newscast | news | 0.30 | style profile caps expression |
-
-**PASS** — product-path mean CMOS **+0.75** ≥ +0.5.
-
-Offline `directed-final` Gate 2 (**+1.0**) remains filter-family evidence and is **not clobbered** by product-path scoring (`blind-gate.js --tag product-path`).
-
-
+Installer size unchanged — Expressive Pack is optional download.

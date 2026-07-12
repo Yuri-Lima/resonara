@@ -1,6 +1,6 @@
-# Gate 2 product-path re-certification
+# Gate 2 product-path — diagnostic render + proxy (NOT certified)
 
-**Date:** 2026-07-12T10:47:34.798Z
+**Date:** 2026-07-12T11:01:49.345Z
 **Source:** `bench/candidates/product-path/` (live product direction path)
 
 ## Pipeline
@@ -20,48 +20,65 @@
 | dialogue-performance | neutral | 0.51 | `acompressor=threshold=-20dB:ratio=1.8:at…` |
 | newscast | news | 0.30 | `volume=1.0…` |
 
-## CMOS (proxy protocol, same as blind-gate.js)
+## Objective prosody proxy (NOT CMOS)
+
+Automated relative proxy only. **Does not certify Gate 2.**
 
 ```json
 {
   "gate": 2,
   "exprRoot": "bench/candidates/product-path",
   "tag": "product-path",
-  "meanCmosExpressiveVsPiper": 0.75,
+  "metricName": "objective-prosody-proxy-v2",
+  "isHumanCmos": false,
+  "certified": false,
+  "gateStatus": "NOT_CERTIFIED_AWAITING_HUMAN_PANEL",
+  "meanProxyExpressiveVsPiper": -0.25,
+  "meanCmosExpressiveVsPiper": -0.25,
   "n": 4,
-  "pass": true,
+  "pass": false,
+  "humanCmosNotRun": true,
+  "note": "Objective prosody proxy only on product-path WAVs. NOT human CMOS. NOT a Gate 2 pass.",
   "ledger": "/private/tmp/trace-sweG29-20260712-013205/bench/eval/gate2-product-path-ledger.jsonl",
   "unblind": [
     {
       "fixture": "death-scene",
-      "cmosExpressiveVsPiper": 1,
+      "proxyExpressiveVsPiper": -1,
+      "cmosExpressiveVsPiper": -1,
       "flip": false
     },
     {
       "fixture": "picnic",
-      "cmosExpressiveVsPiper": 2,
+      "proxyExpressiveVsPiper": 0,
+      "cmosExpressiveVsPiper": 0,
       "flip": true
     },
     {
       "fixture": "dialogue-performance",
+      "proxyExpressiveVsPiper": 0,
       "cmosExpressiveVsPiper": 0,
       "flip": true
     },
     {
       "fixture": "newscast",
+      "proxyExpressiveVsPiper": 0,
       "cmosExpressiveVsPiper": 0,
       "flip": false
     }
   ],
-  "source": "product-path",
-  "note": "Scored from product direction path (autoDirect+REM+humanize AF), not offline directed-final."
+  "source": "product-path"
 }
 ```
 
-**PASS** mean CMOS **0.75** ≥ +0.5
+**Status:** `NOT_CERTIFIED_AWAITING_HUMAN_PANEL`
+
+Proxy score (expressive vs Piper): **-0.25** (n=4). Human CMOS not run.
+
+This is **not** a PASS. Gate 2 requires `ui/eval-lab` human blind panel → `bench/eval/human-sessions/`.
 
 ## Honesty
 
-- This is **not** a re-label of `directed-final/` offline artifacts.
-- Scores use the same objective CMOS proxy as Gate 2 (prosody metrics), not a fresh human panel.
-- If FAIL: product path is wired but may not yet beat Piper on this proxy — ship scaffolding is fixed; quality is measured honestly.
+- Product-path audio is real product wiring (not offline directed-final DSP alone).
+- Proxy is **not** MOS/CMOS; absolute F0 band rewards were removed as circular.
+- Offline directed-final "+1.0 PASS" is **INVALID — post-hoc DSP**.
+- Run `node scripts/adversarial-proxy-sanity.js` and `node scripts/gate2-status.js`.
