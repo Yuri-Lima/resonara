@@ -11,12 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Optional **expressive** TTS tier (Chatterbox Turbo/full, MIT) with Expressive Pack download
 - REM expression markup, auto-direction, casting, humanization micro-layer
-- Blind evaluation lab + prosody metrics + CMOS gates
+- Blind evaluation lab + prosody metrics; Gate 2 certifies only via **human** CMOS (eval-lab)
 - Human-Voice Frontier deliverable dashboard section
 - macOS / Windows installer targets for the expressive release (`Resonara-2.1.0-arm64.dmg`, `Resonara Setup 2.1.0.exe`)
 - **Product-path direction runtime** (`direction-runtime.ts`): job `exaggeration`, REM per-segment controls, and `humanize` directed AF are applied at synth time (not scaffolding)
 - Content→affect fallback for plain monologues (`contentAffectFromText`) when `humanize=true`
-- Gate 2 product-path re-cert harness (`npm run recert:gate2`) and scored artifacts (`bench/eval/gate2-product-path-*`, proxy diagnostic only; human CMOS NOT CERTIFIED)
+- Gate 2 product-path diagnostic harness (`npm run recert:gate2`) + objective prosody proxy artifacts (`bench/eval/gate2-product-path-*`; human CMOS NOT CERTIFIED)
 - `blind-gate.js --expr-root` / `--tag` so product-path scoring does not clobber offline Gate 2 ledgers
 
 ### Changed
@@ -25,7 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Marketing/docs download URLs now point at **v2.1.0** macOS DMG/ZIP and Windows NSIS assets
 - Expressive synth no longer hardcodes `exaggeration: 0.55` over the request/REM value
 - REM compile keeps native tags for expressive; non-expressive still gets speakable-only text
-- Frontier dashboard Gate 2 figure uses **human CMOS not yet run; prior automated PASS claims invalid
+- Frontier dashboard Gate 2 figure shows **NOT CERTIFIED** until a human panel ledger exists (prior automated PASS claims invalid)
+- Automated proxy ledger fields use `meanProxyExpressiveVsPiper` / `proxyAb` only (no stale `*Cmos*` keys on the proxy path)
 - `styleProfile: drama` maps to narrative affect (not animated/joy); emotion comes from content/REM
 
 ### Fixed

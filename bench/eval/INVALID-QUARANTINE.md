@@ -14,6 +14,7 @@ These artifacts are retained for audit history only. **Do not cite as PASS.**
 - Files: historical `gate2-product-path-*` when they claimed `pass: true`
 - Label: **INVALID — circular objective proxy mislabeled as CMOS**
 - Product-path renders themselves may be useful engineering artifacts; the **PASS claim** is invalid
+- Current diagnostic file uses **proxy-named** keys only (`meanProxyExpressiveVsPiper`, not `meanCmosExpressiveVsPiper`)
 
 ## Current honest status
 
@@ -22,3 +23,5 @@ See `bench/eval/gate2-status.json` and `npm run eval:gate2:status`.
 Until a human ledger exists under `human-sessions/`, Gate 2 is:
 
 **NOT_CERTIFIED_AWAITING_HUMAN_PANEL**
+
+Diagnostic proxy (not certifying): product-path mean **−0.25** under `meanProxyExpressiveVsPiper`.

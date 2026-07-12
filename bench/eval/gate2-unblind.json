@@ -7,7 +7,7 @@
   "certified": false,
   "pass": false,
   "gateStatus": "INVALID_POST_HOC_DSP",
-  "quarantine": "INVALID — post-hoc offline DSP scored by circular F0-band proxy. Do not cite as PASS.",
+  "quarantine": "INVALID \u2014 post-hoc offline DSP scored by circular F0-band proxy. Do not cite as PASS.",
   "historicalInvalidClaim": {
     "meanCmosExpressiveVsPiper": 1,
     "claimedPass": true,
