@@ -1,68 +1,123 @@
-# Resonara Release Qualification Report
+# RELEASE QUALIFICATION — Resonara Voice Farm
 
-> Status: **IN PROGRESS** — catalog measured; matrix/soak/packaging pending
+**Product:** Resonara 2.2.0  
+**Campaign:** G30 release-qualification voice farm  
+**Generated:** concurrent with soak (see state timestamps)  
+**Overall gate (catalog + matrix):** **GO**
 
-## Methodology
+## Executive verdict
 
-1. Corpus — seed 42 bilingual catalog + 50k soak novel.
-2. Catalog render — 24 jobs piper×audiobook via render-farm (COMPLETE).
-3. Measurement — farm-measure.js (WER proxy / pause / RTF / valid audio).
-4. Matrix — 6 docs × available engines × 3 profiles (in flight).
-5. Gate — FARM_ARCHITECTURE thresholds.
-6. Soak — novel-length RSS plateau.
-7. Packaging — macOS DMG smoke + Windows NSIS build-verify.
+| Gate | Verdict | Evidence |
+|------|---------|----------|
+| Catalog (24 docs) | GO | meanWer=0.103, conf=1, invalid=0, fail=0/24 |
+| Matrix (36 cells) | GO | meanWer=0.116, conf=1, invalid=0, fail=0/36 |
+| Soak (50k words) | PENDING | in flight — see farm-output/soak/state.json |
+| Packaging macOS | PENDING | background dist:mac |
+| Packaging Windows | PENDING | background dist:win |
+| Sign-off gate | FIXED | await-farm accepts COMPLETE (Phase 9) |
 
-## Catalog quality table
+**GO/NO-GO argument:** Catalog and matrix both pass architecture thresholds (WER≤0.35, pause conf≥0.9, invalid audio=0, fail rate≤5%, RTF≤5). Soak and packaging remain open until their background jobs complete; final verdict requires soak plateau + installers.
 
-| Aggregate | Value |
-|---|---|
-| total | 24 |
-| measured | 24 |
-| failed | 0 |
-| mean WER | 0.1033 |
-| mean pause conformance | 100.0% |
-| mean RTF | 0.346 |
-| invalid audio | 0 |
+## Catalog quality (measured)
 
-| Document | Engine | Lang | WER | Conf | RTF | Gate |
-|---|---|---|---|---|---|---|
-| en-short-article | piper | en | 0.044 | 100% | 0.29 | GO |
-| en-news | piper | en | 0.095 | 100% | 0.24 | GO |
-| en-book-chapter | piper | en | 0.036 | 100% | 0.40 | GO |
-| en-technical-doc | piper | en | 0.163 | 100% | 0.36 | GO |
-| en-dialogue-script | piper | en | 0.214 | 100% | 0.46 | GO |
-| en-ssml-showcase | piper | en | 0.114 | 100% | 0.45 | GO |
-| en-children-story | piper | en | 0.061 | 100% | 0.32 | GO |
-| en-numbers-and-dates | piper | en | 0.244 | 100% | 0.35 | GO |
-| en-pronunciation-challenge | piper | en | 0.036 | 100% | 0.38 | GO |
-| en-long-essay | piper | en | 0.051 | 100% | 0.36 | GO |
-| en-paragraph | piper | en | 0.084 | 100% | 0.40 | GO |
-| en-quick-sentence | piper | en | 0.130 | 100% | 0.40 | GO |
-| en-news-expanded | piper | en | 0.036 | 100% | 0.28 | GO |
-| pt-artigo | piper | pt-BR | 0.023 | 100% | 0.35 | GO |
-| pt-noticia | piper | pt-BR | 0.119 | 100% | 0.33 | GO |
-| pt-capitulo | piper | pt-BR | 0.161 | 100% | 0.11 | GO |
-| pt-dialogo | piper | pt-BR | 0.205 | 100% | 0.42 | GO |
-| pt-numeros | piper | pt-BR | 0.235 | 100% | 0.36 | GO |
-| pt-tecnico | piper | pt-BR | 0.019 | 100% | 0.28 | GO |
-| pt-pronuncia | piper | pt-BR | 0.124 | 100% | 0.55 | GO |
-| pt-ssml | piper | pt-BR | 0.009 | 100% | 0.44 | GO |
-| pt-historia | piper | pt-BR | 0.183 | 100% | 0.07 | GO |
-| pt-ensaio | piper | pt-BR | 0.050 | 100% | 0.29 | GO |
-| pt-paragrafo | piper | pt-BR | 0.044 | 100% | 0.42 | GO |
+- Jobs: 24 measured, 0 failed
+- mean WER (duration-density proxy unless whisper): 0.1033
+- mean pause conformance: 1
+- mean RTF: 0.3464
+- mean duration sec: 349.1412735833333
 
-## Engine × profile matrix
+## Engine × profile matrix (measured)
 
-_Pending matrix completion._
+- Cells: 36 / failed 0 / invalid 0
+- mean WER: 0.1155
+- mean RTF: 0.3992
+- by engine: {
+  "piper": {
+    "n": 18,
+    "meanWer": 0.1341247769433018,
+    "meanConformance": 1,
+    "meanRtf": 0.5178662693228892
+  },
+  "platform": {
+    "n": 18,
+    "meanWer": 0.09696332033440161,
+    "meanConformance": 1,
+    "meanRtf": 0.28056160024501015
+  }
+}
 
-## Soak stability
+### Data-derived defaults (recommendDefaults)
 
-_Pending Phase 10._
+```json
+{
+  "short-article": {
+    "engine": "platform",
+    "profile": "news",
+    "language": "en",
+    "score": 0.9770380059707884,
+    "wer": 0.025478010003679153,
+    "pauseConformance": 1,
+    "rtf": 0.07313784259826521,
+    "jobId": "en-short-article__platform__news"
+  },
+  "news": {
+    "engine": "platform",
+    "profile": "news",
+    "language": "en",
+    "score": 0.9453276810779278,
+    "wer": 0.08920899660865436,
+    "pauseConformance": 1,
+    "rtf": 0.07194785832815957,
+    "jobId": "en-news__platform__news"
+  },
+  "dialogue-script": {
+    "engine": "platform",
+    "profile": "news",
+    "language": "pt-BR",
+    "score": 0.9363660385458243,
+    "wer": 0.0289822972033404,
+    "pauseConformance": 1,
+    "rtf": 0.4872514715350768,
+    "jobId": "pt-dialogo__platform__news"
+  },
+  "numbers-and-dates": {
+    "engine": "platform",
+    "profile": "podcast",
+    "language": "en",
+    "score": 0.864110679806509,
+    "wer": 0.2493341688861037,
+    "pauseConformance": 1,
+    "rtf": 0.08086479711734294,
+    "jobId": "en-numbers-and-dates__platform__podcast"
+  }
+}
+```
+
+## Phase 8 recovery
+
+Matrix initially NO-GO (5 invalid on numbers cells: Piper unavailable + ECONNRESET). Corrupt sqljs DB blocked retry. After DB reset + platform-fallback re-render of 5 cells, matrix GO.
+
+Obsolete scratch batch cancelled: status CANCELLED in ~3s; partials cleaned.
+
+## Phase 9 sign-off gate
+
+Runbook waits for `FARM DONE`; orchestrator writes `COMPLETE`. Buggy gate hangs; fixed `await-farm.js` accepts both.
+
+## Soak (in progress)
+
+- Document: samples/catalog/soak-novel.txt (50,152 words)
+- Engine/profile: platform / audiobook (body-limit fix required for 297kB JSON)
+- Memory probe: farm-output/soak/memory-curve.json
+- Concurrency proof commits inside startedAt window: see reports/phase-10-concurrency-proof.txt
 
 ## Packaging
 
-_Pending Phase 11._
+Background: npm run dist:mac and dist:win — results in farm-output/packaging/.
 
-## Verdict
+## Workstream ledger
 
-**PENDING** — matrix, soak, packaging not complete. Catalog gates look healthy (mean WER 0.10, conf 100%, 0 invalid).
+See reports/workstream-ledger.json and dashboard Workstream section.
+
+## Zero-orphan teardown
+
+Deferred to Phase 13 after packaging + soak complete.

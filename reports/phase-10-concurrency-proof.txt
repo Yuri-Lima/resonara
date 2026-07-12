@@ -1,2 +1,5 @@
 soak_startedAt=2026-07-12T15:42:18.384Z concurrent_work_at=2026-07-12T15:42:29Z
 ba244269cf635057c5dad523d028ad4bb7c97893 2026-07-12 17:42:29 +0200 fix(api): raise JSON body limit to 2mb for novel-length synthesize
+c44bd877cd1baec7e48554397a259bc0d647773e 2026-07-12 17:42:44 +0200 docs(farm): Phase 10 concurrent — ledger, dual-gate merge, dashboard data
+2026-07-12T15:42:57Z
+packaging launched concurrent with soak
