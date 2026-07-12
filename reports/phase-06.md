@@ -1,13 +1,46 @@
-# Phase 6 Report — Evaluation Lab
+# Phase 6 — Catalog Measurement Sweep
 
-## Delivered
-- ui/eval-lab/ index.html + app.js + styles.css (blind A/B, keyboard CMOS -3..+3, PMOS sliders)
-- scripts/eval-session.js build + aggregate
-- Anchor discipline: identical + current-default anchors
+**Date:** TBD  
+**Status:** DRAFT PLACEHOLDER — fill with REAL data when catalog measurement runs
 
-## Adversarial (3)
-1. UI loads local file URLs — needs `make ui` / static server for audio CORS.
-2. Results write to eval-results.jsonl client-side download when no backend.
-3. Manifest must be rebuilt after new renders.
+## What changed
 
-## Workstream: scaffold landed Phase 3; session tooling Phase 6.
+- TBD: run `scripts/farm-measure.js` over `farm-output/catalog/`
+- TBD: emit `farm-metrics.json` / `farm-metrics.md` (or catalog-scoped metrics)
+- TBD: aggregate WER, pause conformance, RTF, valid-audio rate
+- TBD: per-engine / per-language / per-content-type rollups
+
+## Commands + real output (TBD)
+
+```
+# TBD — paste real command invocations and stdout/stderr
+node scripts/farm-measure.js --batch catalog
+# exit code:
+# key metrics:
+```
+
+## Self-review Pass A
+
+- TBD: every completed catalog WAV has valid header check
+- TBD: WER marked `werIsProxy: true` when whisper not used
+- TBD: progress file pollable during sweep
+- TBD: no fabricated metrics
+
+## Self-review Pass B — 3 findings (TBD)
+
+1. **TBD** — Failure: … Mitigation/justification: …
+2. **TBD** — Failure: … Mitigation/justification: …
+3. **TBD** — Failure: … Mitigation/justification: …
+
+## Workstream ledger
+
+| ID | Purpose | Outcome | Runtime |
+|----|---------|---------|---------|
+| bg-catalog-measure | measure catalog WAVs | TBD | TBD |
+| fg-metrics-review | inspect aggregates vs gates | TBD | TBD |
+
+## Evidence check
+
+- [ ] Metrics pasted from real farm-measure output (not invented)
+- [ ] Paths to metrics artifacts listed
+- [ ] Gate-relevant numbers (WER / pause / RTF / valid-audio) cited with sources

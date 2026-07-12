@@ -1,23 +1,47 @@
-# Phase 10 Report — Listening Gate 2 (directed performance)
+# Phase 10 — Novel-Length Soak
 
-## Protocol
-Directed REM + exaggeration on full ChatterboxTTS vs Piper default.
-**Certifying target:** mean **human** CMOS ≥ +0.5 (eval-lab blind panel).
+**Date:** TBD  
+**Status:** DRAFT PLACEHOLDER — fill with REAL data when soak batch + memory probe complete
 
-## Status (methodology correction 2026-07-12)
+## What changed
 
-**NOT_CERTIFIED_AWAITING_HUMAN_PANEL**
+- TBD: run soak batch on `samples/catalog/soak-novel.txt` (~50k words)
+- TBD: primary engine × audiobook profile
+- TBD: `scripts/soak-memory-probe.js` (or equivalent) RSS curve sampling
+- TBD: prove RSS plateau (no monotonic growth across chunk samples)
 
-Prior automated “PASS” numbers are invalid (circular F0-band proxy and/or post-hoc DSP).
-See `bench/eval/INVALID-QUARANTINE.md` and `bench/eval/gate2-status.json`.
+## Commands + real output (TBD)
 
-## Artifacts
-- Product path renders: `bench/candidates/product-path/`
-- Human ledgers (when present): `bench/eval/human-sessions/`
-- Diagnostic proxy only: `bench/eval/gate2-product-path-unblind.json` (`pass: false`, not CMOS)
-- Adversarial proxy sanity: `bench/eval/adversarial/adversarial-report.json`
+```
+# TBD — paste real soak + memory probe outputs
+node scripts/render-farm.js run --batch soak
+node scripts/soak-memory-probe.js
+# soak state.status / done / failed:
+# RSS samples / plateau verdict:
+```
 
-## Notes
-1. Human eval-lab session is required for Gate 2 sign-off.
-2. Automated objective prosody proxy is diagnostic only and must not be labeled CMOS PASS.
-3. Chapter-length directed render is long-RTF — job progress UI must show ETA.
+## Self-review Pass A
+
+- TBD: soak job(s) completed or failures isolated and explained
+- TBD: RSS sampled across chunks with timestamps
+- TBD: plateau criterion applied as documented in FARM_ARCHITECTURE.md
+- TBD: no fabricated memory curves
+
+## Self-review Pass B — 3 findings (TBD)
+
+1. **TBD** — Failure: … Mitigation/justification: …
+2. **TBD** — Failure: … Mitigation/justification: …
+3. **TBD** — Failure: … Mitigation/justification: …
+
+## Workstream ledger
+
+| ID | Purpose | Outcome | Runtime |
+|----|---------|---------|---------|
+| bg-soak-farm | novel-length render | TBD | TBD |
+| bg-soak-memory | RSS plateau probe | TBD | TBD |
+
+## Evidence check
+
+- [ ] Soak state.json path + final status pasted
+- [ ] RSS sample table or artifact path (real numbers)
+- [ ] Plateau / leak verdict with criterion reference
