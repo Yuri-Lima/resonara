@@ -467,8 +467,10 @@
   loadDict();
 })();
 
-
-  /* —— Library + Read-along (G27) —— */
+/* —— Library + Read-along (G27) —— */
+(function readAlongLayer() {
+  'use strict';
+  const API = '';
   const libraryGrid = document.getElementById('library-grid');
   const continueRail = document.getElementById('continue-rail');
   const readalongPanel = document.getElementById('readalong-panel');
@@ -476,44 +478,9 @@
   const raAudio = document.getElementById('ra-audio');
   const syncBadge = document.getElementById('sync-badge');
   let raWords = [];
-  let raSentences = [];
   let raJobId = null;
   let sleepTimer = null;
   let lastResumeSend = 0;
-
-  async function loadLibrary() {
-    if (!libraryGrid) return;
-    const q = document.getElementById('library-search')?.value || '';
-    const engine = document.getElementById('library-engine')?.value || '';
-    const params = new URLSearchParams();
-    if (q) params.set('q', q);
-    if (engine) params.set('engine', engine);
-    const res = await fetch(API + '/tts/library?' + params.toString());
-    if (!res.ok) return;
-    const data = await res.json();
-    if (continueRail) {
-      continueRail.innerHTML = (data.continueListening || [])
-        .map(
-          (c) =>
-            `<button type="button" class="library-card" data-id="${c.id}">${escapeHtml(c.title)} · ${Math.round(c.progressPct)}%</button>`,
-        )
-        .join('');
-    }
-    if (!data.items?.length) {
-      libraryGrid.innerHTML =
-        '<p>No books yet — synthesize something to fill the shelf.</p>';
-      return;
-    }
-    libraryGrid.innerHTML = data.items
-      .map((c) => {
-        return `<article class="library-card" role="listitem" tabindex="0" data-id="${c.id}">
-          <strong>${escapeHtml(c.title)}</strong>
-          <div class="meta">${escapeHtml(c.engine)} · ${escapeHtml(c.language || '')}${c.audioMissing ? ' · audio missing' : ''}</div>
-          <div class="progress" aria-hidden="true"><i style="width:${c.progressPct || 0}%"></i></div>
-        </article>`;
-      })
-      .join('');
-  }
 
   function escapeHtml(s) {
     return String(s || '')
@@ -522,16 +489,23 @@
       .replace(/>/g, '&gt;');
   }
 
-  libraryGrid?.addEventListener('click', (e) => {
+  function onCardActivate(e) {
     const card = e.target.closest('[data-id]');
-    if (card) openReadAlong(card.getAttribute('data-id'));
+    if (!card || e.target.closest('[data-retry]')) return;
+    openReadAlong(card.getAttribute('data-id'));
+  }
+
+  libraryGrid?.addEventListener('click', onCardActivate);
+  libraryGrid?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const card = e.target.closest('[data-id]');
+      if (card) {
+        e.preventDefault();
+        openReadAlong(card.getAttribute('data-id'));
+      }
+    }
   });
-  continueRail?.addEventListener('click', (e) => {
-    const card = e.target.closest('[data-id]');
-    if (card) openReadAlong(card.getAttribute('data-id'));
-  });
-  document.getElementById('library-search')?.addEventListener('input', () => loadLibrary());
-  document.getElementById('library-engine')?.addEventListener('change', () => loadLibrary());
+  continueRail?.addEventListener('click', onCardActivate);
 
   async function openReadAlong(jobId) {
     raJobId = jobId;
@@ -551,7 +525,6 @@
       endMs: w.endMs,
     }));
     if (!raWords.length && job.text) {
-      // proportional fallback client-side
       const words = job.text.trim().split(/\s+/);
       const dur = (job.metadata?.duration || 60) * 1000;
       const step = dur / Math.max(1, words.length);
@@ -618,7 +591,6 @@
         active.scrollIntoView({ block: 'center', behavior: 'smooth' });
       }
     }
-    // resume throttle
     const now = Date.now();
     if (raJobId && now - lastResumeSend > 5000 && !raAudio.paused) {
       lastResumeSend = now;
@@ -696,7 +668,6 @@
     loadBookmarks(raJobId);
   });
 
-  // Keyboard: space play/pause when focus in readalong
   readalongText?.addEventListener('keydown', (e) => {
     if (e.code === 'Space') {
       e.preventDefault();
@@ -705,8 +676,7 @@
     } else if (e.code === 'ArrowLeft') raAudio.currentTime = Math.max(0, raAudio.currentTime - 5);
     else if (e.code === 'ArrowRight') raAudio.currentTime += 5;
   });
-
-  loadLibrary();
+})();
 
 /* ——— Resonara v2 IA layer ——— */
 (function v2Ia() {
@@ -773,15 +743,23 @@
     } else if (e.key === 'Escape') help?.close();
   });
 
+  let librarySearchTimer = null;
+
   async function loadLibrary() {
-    const rail = $('#library-rail');
+    const rail = $('#library-grid') || $('#library-rail');
     const cont = $('#continue-rail');
     if (!rail) return;
     rail.setAttribute('aria-busy', 'true');
     rail.innerHTML = '<p class="loading-state">Loading library…</p>';
     try {
-      const data = await api('/tts/library?page=1&limit=24');
+      const q = $('#library-search')?.value?.trim() || '';
+      const engine = $('#library-engine')?.value || '';
+      const params = new URLSearchParams({ page: '1', limit: '24' });
+      if (q) params.set('q', q);
+      if (engine) params.set('engine', engine);
+      const data = await api('/tts/library?' + params.toString());
       const items = data.items || data.jobs || data || [];
+      const contItems = data.continueListening || items.slice(0, 5);
       if (!items.length) {
         rail.innerHTML =
           '<p class="empty-state">No audiobooks yet. Open <strong>Synthesize</strong> and create your first paragraph.</p>';
@@ -790,27 +768,34 @@
       }
       rail.innerHTML = '';
       if (cont) {
-        cont.innerHTML = items
-          .slice(0, 5)
-          .map(
-            (j) =>
-              `<a class="library-card" href="#job-${j.id}" data-id="${j.id}">▶ ${escapeHtml(j.metadata?.title || j.title || j.id.slice(0, 8))}</a>`,
-          )
+        cont.innerHTML = contItems
+          .map((j) => {
+            const title = escapeHtml(j.metadata?.title || j.title || j.id?.slice?.(0, 8) || 'Untitled');
+            const pct =
+              typeof j.progressPct === 'number' ? ` · ${Math.round(j.progressPct)}%` : '';
+            return `<button type="button" class="library-card continue-card" data-id="${j.id}">▶ ${title}${pct}</button>`;
+          })
           .join('');
       }
       for (const j of items) {
         const card = document.createElement('article');
         card.className = 'library-card';
+        card.setAttribute('data-id', j.id);
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'listitem');
+        const pct = Math.max(0, Math.min(100, Number(j.progressPct) || 0));
         card.innerHTML = `
           <img class="cover" alt="" src="/tts/jobs/${j.id}/cover" loading="lazy" width="160" height="160" />
           <h3>${escapeHtml(j.metadata?.title || j.title || 'Untitled')}</h3>
-          <p class="meta">${escapeHtml(j.engine || '')} · ${escapeHtml(j.status || '')}</p>
+          <p class="meta">${escapeHtml(j.engine || '')} · ${escapeHtml(j.status || j.language || '')}</p>
+          <div class="progress" aria-hidden="true"><i style="width:${pct}%"></i></div>
           <button type="button" data-retry="${j.id}" class="ghost" ${j.status === 'failed' ? '' : 'hidden'}>Retry</button>
         `;
         rail.appendChild(card);
       }
       rail.querySelectorAll('[data-retry]').forEach((btn) =>
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
           try {
             await api(`/tts/jobs/${btn.dataset.retry}/retry`, { method: 'POST' });
             toast('Retry started');
@@ -826,6 +811,12 @@
       rail.setAttribute('aria-busy', 'false');
     }
   }
+
+  $('#library-search')?.addEventListener('input', () => {
+    clearTimeout(librarySearchTimer);
+    librarySearchTimer = setTimeout(loadLibrary, 220);
+  });
+  $('#library-engine')?.addEventListener('change', () => loadLibrary());
 
   function escapeHtml(s) {
     return String(s || '')
