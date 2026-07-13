@@ -40,6 +40,31 @@ body {
 }
 .brand h1 { margin: 0 0 0.25rem; font-size: 1.5rem; }
 .tagline { margin: 0; color: var(--muted); }
+.top-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.back-voice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #0f1419;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.back-voice:hover, .back-voice:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
 .badge {
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -50,6 +75,34 @@ body {
 .badge.go { color: var(--go); border-color: var(--go); }
 .badge.nogo { color: var(--nogo); border-color: var(--nogo); }
 .badge.pending { color: var(--pending); border-color: var(--pending); }
+.primary-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.65rem 2rem;
+  background: #0c1219;
+  border-bottom: 1px solid var(--border);
+}
+.primary-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-weight: 600;
+}
+.primary-nav a:hover, .primary-nav a:focus-visible {
+  color: var(--text);
+  border-color: var(--border);
+  background: #121a24;
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.primary-nav a[aria-current="page"] {
+  color: var(--text);
+  border-color: var(--accent);
+  background: #152033;
+}
 .toc {
   display: flex;
   flex-wrap: wrap;
