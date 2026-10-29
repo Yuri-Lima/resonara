@@ -258,7 +258,7 @@ The CLI boots a lite server if none is running, polls job progress, and writes a
 | **Lite** | `RESONARA_LITE=1` / desktop | Filesystem + sql.js | Inline runner |
 | **Full** | Server / Compose | MinIO + Postgres | BullMQ + Redis |
 
-Deep dives: [AUDIO_ARCHITECTURE.md](./AUDIO_ARCHITECTURE.md) · [PIANO_ARCHITECTURE.md](./PIANO_ARCHITECTURE.md)
+Deep dives: [ARCHITECTURE.md](./ARCHITECTURE.md) · [PAUSE_ARCHITECTURE.md](./PAUSE_ARCHITECTURE.md)
 
 ---
 
@@ -357,11 +357,12 @@ resonara/
 
 | Document | Topic |
 |----------|--------|
-| [COMPETITIVE_ANALYSIS.md](./COMPETITIVE_ANALYSIS.md) | Landscape vs ebook2audiobook, Storyteller, Audiobookshelf, Kokoro, Whisper |
-| [IMPROVEMENT_ROADMAP.md](./IMPROVEMENT_ROADMAP.md) | Pillars A–F and phase map |
-| [IMPROVEMENT_PLAN.md](./IMPROVEMENT_PLAN.md) | Earlier TTS improvement plan |
-| [MULTILINGUAL_PLAN.md](./MULTILINGUAL_PLAN.md) | en / pt-BR design |
-| [AUDIO_ARCHITECTURE.md](./AUDIO_ARCHITECTURE.md) | Lab pipeline |
+| [ROADMAP.md](./ROADMAP.md) | What's planned next |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | System architecture |
+| [PAUSE_ARCHITECTURE.md](./PAUSE_ARCHITECTURE.md) | Prosody & pause pipeline |
+| [PAUSE_TUNING.md](./PAUSE_TUNING.md) | Pause tuning backlog |
+| [EXPRESSION_MARKUP.md](./EXPRESSION_MARKUP.md) | Expression markup reference |
+| [CHANGELOG.md](./CHANGELOG.md) | Release history |
 | [reports/INDEX.md](./reports/INDEX.md) | Session / phase evidence index |
 | [WINDOWS_TESTING.md](./WINDOWS_TESTING.md) | Windows packaging verification |
 
